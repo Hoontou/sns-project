@@ -1,0 +1,27 @@
+version: '3'
+services:
+  client:
+    image: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client/src:/usr/src/app/src:z
+      - ./client/public:/usr/src/app/public:z
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+
+  main-back:
+    image: main-back
+    build:
+      context: ./back/main-back
+      dockerfile: Dockerfile
+    volumes:
+      - ./back/main-back/src:/usr/src/app/src:z
+    ports:
+      - '4000:80'
+    environment:
+      - PORT=80
+      - NODE_ENV=development
