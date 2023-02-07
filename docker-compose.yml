@@ -5,6 +5,7 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+    container_name: client
     volumes:
       - ./client/src:/usr/src/app/src:z
       - ./client/public:/usr/src/app/public:z
@@ -16,12 +17,13 @@ services:
   main-back:
     image: main-back
     build:
-      context: ./back/main-back
+      context: ./server/main-back
       dockerfile: Dockerfile
+    container_name: main-back
     volumes:
-      - ./back/main-back/src:/usr/src/app/src:z
+      - ./server/main-back/src:/usr/src/app/src:z
     ports:
-      - '4000:80'
+      - '4000:4000'
     environment:
-      - PORT=80
+      - PORT=4000
       - NODE_ENV=development
