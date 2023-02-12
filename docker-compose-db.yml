@@ -12,7 +12,7 @@ services:
     ports:
       - '5433:5432'
     environment:
-      POSTGRES_PASSWORD: '1234'
+      POSTGRES_PASSWORD: 'postgres'
 
   redis:
     image: redis
