@@ -17,7 +17,12 @@ postgres, mongodb, redis, (엘라스틱서치 써보고싶다)
 앱 실행  
 docker-compose up --build  
 DB 실행  
-docker-compose -f "docker-compose-db.yml" up
+docker-compose -f "db.yml" up
+
+localhost:3000으로 진입  
+/ -> signin  
+/signup -> signup  
+/up -> 사진영상업로드
 
 ---
 
@@ -37,9 +42,9 @@ docker-compose -f "docker-compose-db.yml" up
 
 사진, 영상 URL 관리 - mongo
 
-## upload
+## upload - fastify
 
-azure 저장소에 업로드 - azure storage
+azure 저장소에 업로드.
 
 ## search
 
