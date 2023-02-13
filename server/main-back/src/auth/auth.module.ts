@@ -19,6 +19,6 @@ import { UserModule } from '../user/user.module';
     forwardRef(() => UserModule),
   ],
   providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  exports: [AuthService, JwtStrategy, PassportModule],
 })
 export class AuthModule {}
