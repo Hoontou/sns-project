@@ -28,6 +28,7 @@ export class UserTable {
     } catch (error) {
       success = false;
       console.log(error.code);
+      //아래의 23505코드는 postgres의 unique 충돌 코드임.
       if (error.code === '23505') {
         throw new ConflictException('Existing username or eamil');
       }

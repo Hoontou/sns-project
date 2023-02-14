@@ -29,7 +29,7 @@ export class AuthService {
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken }; //토큰을 바로넘기지 말고 이렇게 객체로 넘긴다.
     } else {
-      throw new UnauthorizedException('login failed');
+      throw new UnauthorizedException('login failed'); // 비밀번호가 틀렸을 경우, 를 추가할까?
     }
   }
 }
