@@ -37,8 +37,7 @@ export class UserTable {
       if (success == true) {
         this.userNumsTable.createUserNums(newUser);
       }
-
-      return newUser;
     }
+    return newUser;
   }
 }

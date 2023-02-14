@@ -9,7 +9,7 @@ import { UserTable } from '../user/repo/user.repository';
 export class AuthService {
   constructor(private userTable: UserTable, private jwtService: JwtService) {}
 
-  async signUp(signupDto: SignUpDto): Promise<User> {
+  async signUp(signupDto: SignUpDto) {
     const user = signupDto;
     const salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(user.password, salt);
@@ -19,7 +19,9 @@ export class AuthService {
 
   async signIn(signinDto: SignInDto): Promise<{ accessToken: string }> {
     const { email, password } = signinDto;
-    const user = await this.userTable.db.findOne({ where: { email } });
+    const user: User | null = await this.userTable.db.findOne({
+      where: { email },
+    });
 
     if (user && (await bcrypt.compare(password, user.password))) {
       //로그인 성공한 상태이고 이제 JWT를 생성해야함. Secret + Patload(페이로드는 중요정보 넣지마라.)

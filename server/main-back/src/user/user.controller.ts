@@ -40,7 +40,7 @@ export class UserController {
   // }//////////////////////////////////////////////////////////////////////////////////////
 
   @Post('/signup')
-  signUp(@Body(ValidationPipe) signupDto: SignUpDto): Promise<User> {
+  signUp(@Body(ValidationPipe) signupDto: SignUpDto) {
     return this.authService.signUp(signupDto);
   }
 
