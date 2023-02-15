@@ -27,3 +27,16 @@ services:
     environment:
       - PORT=4000
       - NODE_ENV=development
+
+  upload:
+    image: upload
+    build:
+      context: ./server/upload
+      dockerfile: Dockerfile
+    container_name: upload
+    volumes:
+      - ./server/upload/src:/usr/src/app/src:z
+    ports:
+      - '4001:4001'
+    environment:
+      - NODE_ENV=development
