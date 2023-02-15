@@ -21,7 +21,9 @@ export class UserController {
     private authService: AuthService,
   ) {}
 
-  @Get('/hoc')
+  //----------------------------------------------------------------------------------------------
+  //아.. 근데 지금 인증 틀렸을 시 AuthGuard에서 exeption 오류로그를 찍어내는데 마음에 안든다....
+  @Get('/hoc') //필요한 파라미터는 없고, signin으로부터 클라이언트가 받은 쿠키안에 토큰 필요
   @UseGuards(AuthGuard())
   hoc(@Req() req) {
     return req.user; //아직은 그냥 유저정보 보내줌
@@ -38,12 +40,18 @@ export class UserController {
   // { 토큰 틀렸을 시
   //   "statusCode": 401,
   //   "message": "Unauthorized"
-  // }
+  // }----------------------------------------------------------------------------------------------
 
   @Post('/signup')
   signUp(@Body(ValidationPipe) signupDto: SignUpDto) {
     return this.authService.signUp(signupDto);
   }
+  //NEED THIS
+  //   {
+  //     "email": "hoontou@gmail.com",
+  //     "password": "test",
+  //     "username": "hoon"
+  // }----------------------------------------------------------------------------------------------
 
   @Post('/signin')
   async signIn(
@@ -63,4 +71,10 @@ export class UserController {
       sucess: true,
     };
   }
+
+  //NEED THIS
+  //   {
+  //     "email": "hoontou@gmail.com",
+  //     "password": "popo8959"
+  // }----------------------------------------------------------------------------------------------
 }

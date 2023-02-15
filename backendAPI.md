@@ -4,7 +4,7 @@
 
 # 회원가입, 로그인, 인증인가
 
-## 4000/user/signup
+## 4000/user/signup 회원가입
 
 ### req
 
@@ -16,7 +16,7 @@ password: test}
 
 {이메일, 이름, 해쉬된 비번, uuid, createdAt}
 
-## 4000/user/signin
+## 4000/user/signin 로그인
 
 ### req
 
@@ -27,7 +27,7 @@ password: test}
 성공시 {success: true}, 쿠키에 Authorization: jwt토큰 담김,
 실패시 오류뜸.
 
-## 4000/user/hoc
+## 4000/user/hoc 인증인가
 
 ### req
 
