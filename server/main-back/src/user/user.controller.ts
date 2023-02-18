@@ -22,7 +22,7 @@ export class UserController {
   ) {}
 
   //----------------------------------------------------------------------------------------------
-  //아.. 근데 지금 인증 틀렸을 시 AuthGuard에서 exeption 오류로그를 찍어내는데 마음에 안든다....
+  //아.. 근데 지금 인증 틀렸을 시 AuthGuard에서 exeption 오류로그를 찍어내는데 마음에 안든다.... 걍 로그 안뜨게 하고싶다.
   @Get('/hoc') //필요한 파라미터는 없고, signin으로부터 클라이언트가 받은 쿠키안에 토큰 필요
   @UseGuards(AuthGuard())
   hoc(@Req() req) {
@@ -58,17 +58,21 @@ export class UserController {
     @Body(ValidationPipe) signinDto: SignInDto,
     @Res({ passthrough: true }) res,
     //네스트.com에서는 Response 타입 붙이라고 하는데? 붙이면 쿠키타입이 없다고 나옴. TS버전문제인가
-  ): Promise<{ sucess: boolean }> {
+  ): Promise<{ success: boolean }> {
     //아니근데 떡하니 async붙여놨는데 리턴타입의 정의를 적어야하나?
-    const jwt: { accessToken: string } = await this.authService.signIn(
-      signinDto,
-    );
+    const jwt: { accessToken: string; login: boolean } =
+      await this.authService.signIn(signinDto);
+    if (jwt.login == false) {
+      //로그인 플래그가 실패면,
+      return { success: false };
+    }
+    //로그인 플래그 성공이면 쿠키에 담아서 보낸다.
     res.cookie('Authorization', jwt.accessToken, {
       httpOnly: true,
       maxAge: 60 * 60 * 24 * 30, //30 day
     });
     return {
-      sucess: true,
+      success: true,
     };
   }
 

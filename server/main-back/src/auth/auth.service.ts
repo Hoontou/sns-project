@@ -17,7 +17,9 @@ export class AuthService {
     return this.userTable.signUp(user);
   }
 
-  async signIn(signinDto: SignInDto): Promise<{ accessToken: string }> {
+  async signIn(
+    signinDto: SignInDto,
+  ): Promise<{ accessToken: string; login: boolean }> {
     const { email, password } = signinDto;
     const user: User | null = await this.userTable.db.findOne({
       where: { email },
@@ -27,9 +29,9 @@ export class AuthService {
       //로그인 성공한 상태이고 이제 JWT를 생성해야함. Secret + Patload(페이로드는 중요정보 넣지마라.)
       const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
-      return { accessToken }; //토큰을 바로넘기지 말고 이렇게 객체로 넘긴다.
+      return { accessToken, login: true }; //토큰을 바로넘기지 말고 이렇게 객체로 넘긴다.
     } else {
-      throw new UnauthorizedException('login failed'); // 비밀번호가 틀렸을 경우, 를 추가할까?
+      return { accessToken: 'foo', login: false };
     }
   }
 }

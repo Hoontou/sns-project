@@ -40,6 +40,7 @@ export class UserNums extends BaseEntity {
   @Column({ default: 0 })
   postCount: number;
 
+  //유저테이블과 포린키 연결하고 cascade 삭제 설정.
   @OneToOne(() => User, {
     onDelete: 'CASCADE',
   })

@@ -10,9 +10,18 @@ services:
       - ./client/src:/usr/src/app/src:z
       - ./client/public:/usr/src/app/public:z
     ports:
-      - '3000:3000'
+      - '3001:3000'
     environment:
       - NODE_ENV=development
+
+  nginx:
+    container_name: nginx
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - '3000:80'
 
   main-back:
     image: main-back
@@ -25,7 +34,6 @@ services:
     ports:
       - '4000:4000'
     environment:
-      - PORT=4000
       - NODE_ENV=development
 
   upload:

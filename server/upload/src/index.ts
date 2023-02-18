@@ -2,11 +2,12 @@ import fastify from 'fastify';
 
 const server = fastify();
 
-server.get('/ping', async (request, reply) => {
+server.get('/hi', async (request, reply) => {
+  console.log('hi');
   return 'pong\n';
 });
 
-server.listen({ port: 4001 }, (err, address) => {
+server.listen({ host: '0.0.0.0', port: 4001 }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
