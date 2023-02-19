@@ -43,7 +43,9 @@ export class UserController {
   // }----------------------------------------------------------------------------------------------
 
   @Post('/signup')
-  signUp(@Body(ValidationPipe) signupDto: SignUpDto) {
+  signUp(
+    @Body(ValidationPipe) signupDto: SignUpDto,
+  ): Promise<{ success: boolean; code?: string; msg?: string }> {
     return this.authService.signUp(signupDto);
   }
   //NEED THIS
@@ -60,20 +62,18 @@ export class UserController {
     //네스트.com에서는 Response 타입 붙이라고 하는데? 붙이면 쿠키타입이 없다고 나옴. TS버전문제인가
   ): Promise<{ success: boolean }> {
     //아니근데 떡하니 async붙여놨는데 리턴타입의 정의를 적어야하나?
-    const jwt: { accessToken: string; login: boolean } =
+    const jwt: { success: boolean; accessToken?: string } =
       await this.authService.signIn(signinDto);
-    if (jwt.login == false) {
+    if (jwt.success == false) {
       //로그인 플래그가 실패면,
-      return { success: false };
+      return { success: jwt.success };
     }
     //로그인 플래그 성공이면 쿠키에 담아서 보낸다.
     res.cookie('Authorization', jwt.accessToken, {
       httpOnly: true,
       maxAge: 60 * 60 * 24 * 30, //30 day
     });
-    return {
-      success: true,
-    };
+    return { success: jwt.success };
   }
 
   //NEED THIS

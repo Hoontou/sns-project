@@ -19,19 +19,19 @@ export class AuthService {
 
   async signIn(
     signinDto: SignInDto,
-  ): Promise<{ accessToken: string; login: boolean }> {
+  ): Promise<{ accessToken?: string; success: boolean }> {
     const { email, password } = signinDto;
     const user: User | null = await this.userTable.db.findOne({
       where: { email },
     });
-
+    //성공시
     if (user && (await bcrypt.compare(password, user.password))) {
       //로그인 성공한 상태이고 이제 JWT를 생성해야함. Secret + Patload(페이로드는 중요정보 넣지마라.)
       const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
-      return { accessToken, login: true }; //토큰을 바로넘기지 말고 이렇게 객체로 넘긴다.
-    } else {
-      return { accessToken: 'foo', login: false };
+      return { accessToken, success: true }; //토큰을 바로넘기지 말고 이렇게 객체로 넘긴다.
     }
+    //실패시
+    return { success: false };
   }
 }

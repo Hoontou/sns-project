@@ -12,7 +12,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fastify": "^4.13.0"
+    "@fastify/multipart": "^7.4.1",
+    "fastify": "^4.13.0",
+    "fastify-multer": "^2.0.3",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.13.0",

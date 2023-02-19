@@ -19,6 +19,8 @@ docker-compose up --build
 DB 실행  
 docker-compose -f "docker-compose-db.yml" up
 
+localhost:3000으로 진입
+
 ---
 
 ## main-back - nestjs
