@@ -48,3 +48,4 @@ services:
       - '4001:4001'
     environment:
       - NODE_ENV=development
+      - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=firstkuberstorage;AccountKey=S6BuUU12Y0Cy+s6hDFnHwnKzrgnnUOJ80YOI+i6tSPJt4wnBDNEgw/Aw5rGjqmK1hZXDJHxumVNn+AStov8++g==;EndpointSuffix=core.windows.net
