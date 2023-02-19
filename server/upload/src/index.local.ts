@@ -1,3 +1,5 @@
+//local업로드만 있을때의 백업본
+
 import fastify from 'fastify';
 import multer from 'fastify-multer';
 import { v4 as uuidv4 } from 'uuid';
