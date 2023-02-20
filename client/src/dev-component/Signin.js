@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 const Signin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('hoontou@gmail.com');
+  const [password, setPassword] = useState('test');
 
   const onEmailHandler = (e) => {
     setEmail(e.currentTarget.value);
@@ -18,6 +18,10 @@ const Signin = () => {
       password,
     };
     axios.post('/main-back/user/signin', signInForm).then((res) => {
+      if (res.data.success === true) {
+        localStorage.setItem('userUuid', res.data.userUuid);
+        localStorage.setItem('username', res.data.username);
+      }
       alert(res.data.success);
     });
   };
@@ -26,9 +30,13 @@ const Signin = () => {
       this is signin
       <form onSubmit={onSubmitHandler}>
         <label>이메일</label>
-        <input onChange={onEmailHandler} type='email' />
+        <input
+          onChange={onEmailHandler}
+          type='email'
+          defaultValue={'hoontou@gmail.com'}
+        />
         <label>비밀번호</label>
-        <input onChange={onPasswordHandler} />
+        <input onChange={onPasswordHandler} defaultValue={'test'} />
 
         <button type='submit'>로그인</button>
       </form>

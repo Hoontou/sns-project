@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
 const Signin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('hoontou@gmail.com');
+  const [password, setPassword] = useState('test');
+  const [username, setUsername] = useState('hoontou');
 
   const onEmailHandler = (e) => {
     setEmail(e.currentTarget.value);
@@ -31,11 +31,15 @@ const Signin = () => {
       this is signup, 비번 영어숫자만, 이름 영어만
       <form onSubmit={onSubmitHandler}>
         <label>이메일</label>
-        <input onChange={onEmailHandler} type='email' />
+        <input
+          onChange={onEmailHandler}
+          type='email'
+          defaultValue={'hoontou@gmail.com'}
+        />
         <label>비밀번호</label>
-        <input onChange={onPasswordHandler} />
+        <input onChange={onPasswordHandler} defaultValue={'test'} />
         <label>username</label>
-        <input onChange={onUsernameHandler} />
+        <input onChange={onUsernameHandler} defaultValue={'hoontou'} />
 
         <button type='submit'>회원가입</button>
       </form>
