@@ -49,3 +49,29 @@ services:
     environment:
       - NODE_ENV=development
       - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=snsupload;AccountKey=b+HaSNIncUqm4dfw9sKnZHsEZGvOaQ3pqVtduMFCHZ/64eDi42SADUCZ2NL7w1Wwwdm43sW7+yZ/+AStmdGUBw==;EndpointSuffix=core.windows.net
+
+  metadata:
+    image: metadata
+    build:
+      context: ./server/metadata
+      dockerfile: Dockerfile
+    container_name: metadata
+    volumes:
+      - ./server/metadata/src:/usr/src/app/src:z
+    ports:
+      - '4002:4002'
+    environment:
+      - NODE_ENV=development
+
+  alert:
+    image: alert
+    build:
+      context: ./server/alert
+      dockerfile: Dockerfile
+    container_name: alert
+    volumes:
+      - ./server/alert/src:/usr/src/app/src:z
+    ports:
+      - '4003:4003'
+    environment:
+      - NODE_ENV=development

@@ -1,13 +1,13 @@
 version: '3'
 services:
   mgdb:
-    image: mongo
+    image: mongo:latest
     restart: always
     ports:
       - '27018:27017'
 
   pgdb:
-    image: postgres
+    image: postgres:latest
     restart: always
     ports:
       - '5433:5432'
@@ -15,7 +15,18 @@ services:
       POSTGRES_PASSWORD: 'postgres'
 
   redis:
-    image: redis
+    image: redis:latest
     restart: always
     ports:
       - 6380:6379
+
+  rabbit:
+    image: rabbitmq:latest
+    container_name: rabbit
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    expose:
+      - '5672'
+      - '15672'
+    restart: always

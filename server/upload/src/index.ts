@@ -10,9 +10,10 @@ import { BlobServiceClient } from '@azure/storage-blob';
 import { uploadRequest } from './interface'; //req 파라미터의 타입 명시를 해줘야함.
 
 const server = fastify();
-//////////////////////////////////////////////////////////////
+
 //azure 스토리지 접근을 위한 string키
-const connString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+const connString: string | undefined =
+  process.env.AZURE_STORAGE_CONNECTION_STRING;
 if (!connString) {
   throw Error('missing connString');
 }
@@ -40,7 +41,7 @@ server.register(multer.contentParser); //multer로 로컬에 저장하는 미들
 //클라이언트에서 4개까지만 컷해서 보내주고 있음 지금.
 
 //파일이름 생성을 위한 uuid, count 만들어서 req에 끼워넣는 미들웨어.
-const addUuidToReq = (req, reply, next) => {
+const addUuidToReq = (req: uploadRequest, reply, next) => {
   req.uuid = uuidv4();
   req.count = 0;
   req.nameList = [];
@@ -54,8 +55,8 @@ const cpUpload = upload.fields([
   { name: 'comment', maxCount: 1 },
   { name: 'alertUuid', maxCount: 1 },
 ]);
+//메인 로직
 server.post(
-  //메인 로직
   '/uploadfiles',
   { preHandler: [addUuidToReq, cpUpload] }, //uuid생성 미들웨어 먼저 호출.
   async (req: uploadRequest, reply) => {

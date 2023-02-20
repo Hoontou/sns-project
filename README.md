@@ -28,13 +28,14 @@ localhost:3000으로 진입
 
 ## main-back - nestjs
 
-유저정보, 게시글, 댓글 관리 - postgres
+유저정보, 게시글, 댓글 관리 - postgres  
+리프레시 토큰?
 
 ## sub-back
 
 좋아요, 팔로우 관리 - mongo
 
-## notification
+## alert
 
 알림 관리 - mongo
 
