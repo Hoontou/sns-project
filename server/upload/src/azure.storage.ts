@@ -1,4 +1,5 @@
 //https://github.com/Azure-Samples/AzureStorageSnippets/blob/master/blobs/howto/JavaScript/NodeJS-v12/dev-guide/upload-blob-from-local-file-path.js
+//https://learn.microsoft.com/ko-kr/azure/storage/blobs/storage-quickstart-blobs-nodejs?tabs=managed-identity%2Croles-azure-portal%2Csign-in-azure-cli#upload-blobs-to-a-container
 //마소 Azure제공 코드.
 //코드좀 읽어보고 내맘대로 수정했음.
 
@@ -55,7 +56,7 @@ export async function uploadToAzure(
       createBlobFromLocalPath(
         containerClient,
         localFileList[i],
-        `files/${localFileList[i]}`,
+        `files/${uuid}/${localFileList[i]}`,
         uploadOptions,
       ),
     );

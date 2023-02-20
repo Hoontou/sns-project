@@ -28,7 +28,7 @@ const Upload = () => {
     //then을 안받아도 되게 느슨한 연결로 만들어 보자.
   };
   return (
-    <>
+    <div>
       <h2>4개보다 많이올려도 네개만 올라감., jpg, mp4, png만 가능</h2>
 
       <form onSubmit={onSubmit} encType='multipart/form-data'>
@@ -42,7 +42,7 @@ const Upload = () => {
         <input onChange={onCommentHandler} />
         <button type='submit'>upload</button>
       </form>
-    </>
+    </div>
   );
 };
 
