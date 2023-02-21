@@ -39,4 +39,10 @@ export class AuthService {
     //실패시
     return { success: false };
   }
+
+  async refreshToken(email): Promise<string> {
+    const payload = { email };
+    const accessToken = await this.jwtService.sign(payload);
+    return accessToken;
+  }
 }

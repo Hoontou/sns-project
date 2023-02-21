@@ -10,6 +10,9 @@ const Upload = () => {
   };
   const onSubmit = async (e) => {
     e.preventDefault();
+    const userUuid = await axios.get('/main-back/user/hoc').then((res) => {
+      return res.data.userUuid;
+    }); //나중에 클라이언트 구현시 HOC 실패 방어코드 짜야함.
     const contents = e.target.up.files; //인풋에서 가져와서
     const formData = new FormData();
     const alertUuid = uuidv4(); //게시물 업로드중 알람을 위한 uuid
@@ -20,6 +23,7 @@ const Upload = () => {
     //게시글 코멘트와 알람 uuid를 담는다.
     formData.append('comment', JSON.stringify({ comment }));
     formData.append('alertUuid', JSON.stringify({ alertUuid }));
+    formData.append('userUuid', JSON.stringify({ userUuid }));
 
     axios //업로드 서버로 보낸다.
       .post('/upload/uploadfiles', formData);

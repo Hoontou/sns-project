@@ -12,9 +12,7 @@ export class UserTable {
     public db: Repository<User>,
     private userNumsTable: UserNumsTable,
   ) {}
-  async signUp(
-    user: SignUpDto,
-  ): Promise<{ success: boolean; code?: string; msg?: string }> {
+  async signUp(user: SignUpDto): Promise<{ success: boolean; msg?: string }> {
     //근데 받아오는 user객체의 비밀번호는 암호화 돼 있어서 정확히는 Dto에 부합하지 않음.
     const newUser: User = this.db.create(user);
     let success = true;
@@ -28,7 +26,7 @@ export class UserTable {
       //console.log(error.code);
       //아래의 23505코드는 postgres의 unique 충돌 코드임.
       if (error.code === '23505') {
-        return { success, code: error.code, msg: 'Existing username or eamil' };
+        return { success, msg: 'Existing username or eamil' };
       }
       return { success, msg: 'DB insert err' };
     } finally {

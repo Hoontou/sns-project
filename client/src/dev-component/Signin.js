@@ -18,10 +18,6 @@ const Signin = () => {
       password,
     };
     axios.post('/main-back/user/signin', signInForm).then((res) => {
-      if (res.data.success === true) {
-        localStorage.setItem('userUuid', res.data.userUuid);
-        localStorage.setItem('username', res.data.username);
-      }
       alert(res.data.success);
     });
   };

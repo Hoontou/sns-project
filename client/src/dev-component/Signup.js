@@ -21,9 +21,12 @@ const Signin = () => {
       email,
       password,
       username,
-    };
+    }; //나중에 main-back의 DTO에 부합하지 않으면 모달로 오류뱉어야함
     axios.post('/main-back/user/signup', signUpForm).then((res) => {
       alert(res.data.success);
+      if (res.data.success === false) {
+        alert(res.data.msg);
+      }
     });
   };
   return (

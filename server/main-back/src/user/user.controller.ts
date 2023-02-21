@@ -28,16 +28,23 @@ export class UserController {
     private authService: AuthService,
   ) {}
 
+  @Get('/')
+  hi(@Req() req) {
+    console.log(req.cookies);
+    console.log('hi');
+    return 'hi';
+  }
   //----------------------------------------------------------------------------------------------
   //아.. 근데 지금 인증 틀렸을 시 AuthGuard에서 exeption 오류로그를 찍어내는데 마음에 안든다.... 걍 로그 안뜨게 하고싶다.
   @Get('/hoc') //필요한 파라미터는 없고, signin으로부터 클라이언트가 받은 쿠키안에 토큰 필요
   @UseGuards(AuthGuard())
   hoc(@Req() req): userInfoResponse {
+    console.log('hi');
     return {
+      success: true,
       userUuid: req.user.id,
       username: req.user.username,
-      success: true,
-    }; //실패시 핸들링을 좀 다듬어야겠다. 지금은 실패시 API 오류만 내뱉는데..
+    }; //실패시 핸들링을 만들어야 한다. 지금은 실패시 API 오류만 내뱉는다.
   }
 
   //   { 정상적인 bare토큰으로 hoc get리퀘스트 했을시, req.user.
@@ -53,10 +60,28 @@ export class UserController {
   //   "message": "Unauthorized"
   // }----------------------------------------------------------------------------------------------
 
+  @Get('/refresh') //JWT 리프레시. 토큰 만료되기 전에 여기로 요청넣어야함.
+  @UseGuards(AuthGuard())
+  async refresh(
+    @Req() req,
+    @Res({ passthrough: true }) res,
+  ): Promise<{ success: boolean }> {
+    const refreshedToken = await this.authService.refreshToken(req.user.email);
+
+    res.cookie('Authorization', refreshedToken, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 30, //30 day
+    });
+
+    return {
+      success: true,
+    }; //실패시 핸들링을 만들어야 한다. 지금은 실패시 API 오류만 내뱉는다.
+  }
+
   @Post('/signup')
   signUp(
     @Body(ValidationPipe) signupDto: SignUpDto,
-  ): Promise<{ success: boolean; code?: string; msg?: string }> {
+  ): Promise<{ success: boolean; msg?: string }> {
     return this.authService.signUp(signupDto);
   }
   //NEED THIS
@@ -79,7 +104,7 @@ export class UserController {
         httpOnly: true,
         maxAge: 60 * 60 * 24 * 30, //30 day
       });
-      delete certInfo.accessToken; //쿠키에넣었으니 삭제
+      delete certInfo.accessToken; //쿠키에 담았으니까 지워준다.
     }
     return certInfo;
   }

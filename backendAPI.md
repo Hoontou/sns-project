@@ -24,7 +24,7 @@ password: test}
 
 ### res
 
-성공시 {success: true}, 쿠키에 Authorization: jwt토큰 담김,
+성공시 {success: true}, 쿠키에 Authorization: jwt토큰, uuid username담김
 실패시 오류뜸.
 
 ## 4000/user/hoc 인증인가
@@ -35,8 +35,7 @@ password: test}
 
 ### res
 
-적절한 토큰이면 {이메일, 이름, 해쉬된 비번, uuid, createdAt},  
- 아니라면 오류.
+{success: boolean}
 
 # 파일업로드
 

@@ -2,6 +2,7 @@ import multer from 'fastify-multer';
 import { uploadRequest } from './interface';
 import { mkdirSync } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 //클라이언트로 받은 파일을 저장하기 위해 설정.
 const storage = multer.diskStorage({
@@ -27,6 +28,7 @@ const cpUpload = upload.fields([
   { name: 'file', maxCount: 4 },
   { name: 'comment', maxCount: 1 },
   { name: 'alertUuid', maxCount: 1 },
+  { name: 'userUuid', maxCount: 1 },
 ]);
 
 //파일이름 생성을 위한 uuid, count 만들어서 req에 끼워넣는 미들웨어.

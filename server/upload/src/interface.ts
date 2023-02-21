@@ -5,5 +5,5 @@ export interface uploadRequest extends FastifyRequest {
   uuid: string;
   count: number;
   nameList: string[];
-  body: { comment: string; alertUuid: string };
+  body: { comment: string; alertUuid: string; userUuid: string };
 }

@@ -10,7 +10,7 @@ password: test}
 
 ### res
 
-{이메일, 이름, 해쉬된 비번, uuid, createdAt}
+{success: boolean}
 
 ## 4000/user/signin 로그인
 
@@ -20,7 +20,7 @@ password: test}
 
 ### res
 
-성공시 {success: true}, 쿠키에 Authorization: jwt토큰 담김,
+성공시 {success: true}, 쿠키에 Authorization: jwt토큰이랑 uuid, username 담김
 실패시 오류뜸.
 
 ## 4000/user/hoc 인증인가
@@ -31,5 +31,4 @@ password: test}
 
 ### res
 
-적절한 토큰이면 {이메일, 이름, 해쉬된 비번, uuid, createdAt},  
- 아니라면 오류.
+{success: boolean}
