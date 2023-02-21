@@ -5,6 +5,7 @@ import { SignUpDto, SignInDto } from '../user/dto/user.dto';
 import { User } from 'src/user/entity/user.entity';
 import { UserTable } from '../user/repo/user.repository';
 import { userInfoResponse } from '../user/user.controller';
+import { crypter } from './crypter';
 
 @Injectable()
 export class AuthService {
@@ -28,10 +29,9 @@ export class AuthService {
       //로그인 성공한 상태이고 이제 JWT를 생성해야함. Secret + Patload(페이로드는 중요정보 넣지마라.)
       const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
-
       return {
         accessToken,
-        userUuid: user.id,
+        userUuid: crypter.encrypt(user.id),
         username: user.username,
         success: true,
       }; //토큰을 바로넘기지 말고 이렇게 객체로 넘긴다.
@@ -40,9 +40,9 @@ export class AuthService {
     return { success: false };
   }
 
-  async refreshToken(email): Promise<string> {
+  async refreshToken(email: string): Promise<string> {
     const payload = { email };
-    const accessToken = await this.jwtService.sign(payload);
+    const accessToken: string = await this.jwtService.sign(payload);
     return accessToken;
   }
 }

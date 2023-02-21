@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 import { User } from 'src/user/entity/user.entity';
 import { UserTable } from '../user/repo/user.repository';
+import { JwtSecret, crypter } from './crypter';
 
 //쿠키로 바로 토큰가져오게
 const cookieExtractor = (req): string => {
@@ -13,7 +14,7 @@ const cookieExtractor = (req): string => {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userTable: UserTable) {
     super({
-      secretOrKey: 'auth',
+      secretOrKey: JwtSecret,
       jwtFromRequest: cookieExtractor,
     });
   }
@@ -27,6 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException();
     }
+    user.id = crypter.encrypt(user.id);
     return user;
   }
 }

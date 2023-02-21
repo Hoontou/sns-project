@@ -29,7 +29,7 @@ export class UserController {
   ) {}
 
   @Get('/')
-  hi(@Req() req) {
+  hi() {
     console.log('hi');
     return 'hi';
   }
@@ -136,7 +136,6 @@ export class UserController {
         maxAge: 60 * 60 * 24 * 30, //30 day
       });
       delete certInfo.accessToken; //쿠키에 담았으니까 지워준다.
-      console.log(createdAt);
     }
     return certInfo; //{ success, userUuid?, username? }
   }
