@@ -19,3 +19,16 @@ upload MSA는 게시글uuid를 생성해서 그것으로 폴더생성, 파일들
 
 미들웨어완성, 1번까지 했으니까
 234할차례.
+
+또 1번을 매 요청마다 실행하는게 아닌 파일삭제해주는 객체를 만들어서  
+알아서 카운트 세서 카운트차면 싹다 삭제하게 만들어보자.
+
+---
+
+azure storage  
+https://github.com/Azure-Samples/AzureStorageSnippets/blob/master/blobs/howto/JavaScript/NodeJS-v12/dev-guide/upload-blob-from-local-file-path.js  
+https://learn.microsoft.com/ko-kr/azure/storage/blobs/storage-quickstart-blobs-nodejs?tabs=managed-identity%2Croles-azure-portal%2Csign-in-azure-cli#upload-blobs-to-a-container  
+마소 Azure제공 코드.
+
+fastify-multer  
+https://www.npmjs.com/package/fastify-multer
