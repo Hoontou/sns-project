@@ -30,7 +30,6 @@ export class UserController {
 
   @Get('/')
   hi(@Req() req) {
-    console.log(req.cookies);
     console.log('hi');
     return 'hi';
   }
