@@ -105,7 +105,7 @@ export class UserController {
       });
       delete certInfo.accessToken; //쿠키에 담았으니까 지워준다.
     }
-    return certInfo;
+    return certInfo; //{ success, userUuid?, username? }
   }
 
   //NEED THIS
