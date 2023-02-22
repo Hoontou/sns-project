@@ -13,10 +13,13 @@ meatadata 구상
 
 풀스캔써야하는데...
 
-{ 유저(작성자)uuid, 게시글 uuid, 코멘트, Date?, count? }
+{ 유저(작성자)uuid, 게시글 uuid, 코멘트, Date?, count? }  
 스토리지url/게시글uuid/게시글uuid.몇번째.확장자 로 url생성.
 아.. 이거 그냥 count만 있으면 url생성 쉽겠는데 제대로 요청하려면 확장자까지 있어야할듯?
 확장자 순서대로 담은 배열까지 필요한거같은데..
 ->{ 유저(작성자)uuid, 게시글 uuid, 코멘트, Date?, 확장자[]? }
 document보고 url파싱하는건 클라이언트에서 하게 하면 서버부하 덜가게할 수 있을듯.
 그냥 서버는 유저uuid로 풀스캔 때려서 응답으로 보내면 끝?
+
+몽고 몽구스
+https://mongoosejs.com/docs/index.html
