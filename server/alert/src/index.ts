@@ -2,7 +2,7 @@ import fastify from 'fastify';
 
 const server = fastify();
 
-server.listen({ host: '0.0.0.0', port: 4003 }, (err, address) => {
+server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);

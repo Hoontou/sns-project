@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/mongodb": "^6.2.0",
+    "crypto-js": "^4.1.1",
     "fastify": "^4.13.0",
     "mongoose": "^6.9.2"
   },

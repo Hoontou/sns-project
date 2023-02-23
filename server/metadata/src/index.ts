@@ -1,24 +1,14 @@
 import fastify from 'fastify';
-import mongoose from 'mongoose';
+import { connectMongo } from './database/initialize.mongo';
 
 const server = fastify();
-async function connectMongo() {
-  await mongoose.connect('mongodb://mgdb:27017/test');
-}
-const test = async () => {
-  const kittySchema = new mongoose.Schema({
-    name: String,
-  });
-  const Kitten = mongoose.model('Kitten', kittySchema);
-  const silence = new Kitten({ name: 'Silence' });
-  const result = await silence.save();
-  console.log(result);
-};
+connectMongo();
 
-connectMongo().catch((err) => console.log(err));
-test();
+server.post('/tstinput', (req, reply) => {
+  console.log(req.body);
+});
 
-server.listen({ host: '0.0.0.0', port: 4002 }, (err, address) => {
+server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);

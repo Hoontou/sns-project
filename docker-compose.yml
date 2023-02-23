@@ -32,7 +32,7 @@ services:
     volumes:
       - ./server/main-back/src:/usr/src/app/src:z
     ports:
-      - '4000:4000'
+      - '4000:80'
     environment:
       - NODE_ENV=development
 
@@ -45,7 +45,7 @@ services:
     volumes:
       - ./server/upload/src:/usr/src/app/src:z
     ports:
-      - '4001:4001'
+      - '4001:80'
     environment:
       - NODE_ENV=development
       - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=snsupload;AccountKey=b+HaSNIncUqm4dfw9sKnZHsEZGvOaQ3pqVtduMFCHZ/64eDi42SADUCZ2NL7w1Wwwdm43sW7+yZ/+AStmdGUBw==;EndpointSuffix=core.windows.net
@@ -59,7 +59,7 @@ services:
     volumes:
       - ./server/metadata/src:/usr/src/app/src:z
     ports:
-      - '4002:4002'
+      - '4002:80'
     environment:
       - NODE_ENV=development
 
@@ -72,6 +72,6 @@ services:
     volumes:
       - ./server/alert/src:/usr/src/app/src:z
     ports:
-      - '4003:4003'
+      - '4003:80'
     environment:
       - NODE_ENV=development

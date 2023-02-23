@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 //formData로 부터 가져올 애들 명시해서 multer인스턴스로 저장인듯?
-const cpUpload = upload.fields([
+const uploadToLoacl = upload.fields([
   { name: 'file', maxCount: 4 },
   { name: 'comment', maxCount: 1 },
   { name: 'alertUuid', maxCount: 1 },
@@ -39,5 +39,5 @@ const addUuidToReq = (req: uploadRequest, reply, next) => {
   next();
 };
 
-export { cpUpload, addUuidToReq };
+export { uploadToLoacl, addUuidToReq };
 //파일저장 미들웨어, req에 필요한 변수들생성해주는 미들웨어

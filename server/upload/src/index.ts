@@ -2,7 +2,7 @@ import fastify from 'fastify';
 import { remove as fsRemove } from 'fs-extra'; //fs보다 진화된? 라이브러리, remove는 async방식임.
 //걍 폴더 날려버린다. 개굿 https://github.com/jprichardson/node-fs-extra/blob/HEAD/docs/remove.md
 //Removes a file or directory. The directory can have contents. If the path does not exist, silently does nothing.
-import { addUuidToReq, cpUpload } from './middleware';
+import { addUuidToReq, uploadToLoacl } from './middleware';
 import { client as azureClient } from './azure.client';
 import multer from 'fastify-multer';
 import { uploadToAzure } from './azure.storage'; //REST API req인자 사용을 위해서 이렇게 해야함.
@@ -23,7 +23,7 @@ server.register(cors, {
 //메인 로직
 server.post(
   '/uploadfiles',
-  { preHandler: [addUuidToReq, cpUpload] }, //uuid생성 미들웨어 먼저 호출.
+  { preHandler: [addUuidToReq, uploadToLoacl] }, //uuid생성 미들웨어 먼저 호출.
   async (req: uploadRequest, reply) => {
     const { comment } = JSON.parse(req.body.comment);
     const { alertUuid } = JSON.parse(req.body.alertUuid);
@@ -55,7 +55,7 @@ server.post(
 //   return { success: true };
 // }); hoc 엑시오스 테스트코드. 근데 쿠키가 안날라가서 폐기. hoc는 클라이언트에서 진행하는걸로..
 
-server.listen({ host: '0.0.0.0', port: 4001 }, (err, address) => {
+server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
