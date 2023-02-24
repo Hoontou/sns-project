@@ -2,11 +2,11 @@ import fastify from 'fastify';
 import { remove as fsRemove } from 'fs-extra'; //fs보다 진화된? 라이브러리, remove는 async방식임.
 //걍 폴더 날려버린다. 개굿 https://github.com/jprichardson/node-fs-extra/blob/HEAD/docs/remove.md
 //Removes a file or directory. The directory can have contents. If the path does not exist, silently does nothing.
-import { addUuidToReq, uploadToLoacl } from './middleware';
-import { client as azureClient } from './azure.client';
+import { addUuidToReq, uploadToLoacl } from './common/middleware';
+import { client as azureClient } from './azure/azure.client';
 import multer from 'fastify-multer';
-import { uploadToAzure } from './azure.storage'; //REST API req인자 사용을 위해서 이렇게 해야함.
-import { uploadRequest } from './interface'; //req 파라미터의 타입 명시를 해줘야함.
+import { uploadToAzure } from './azure/azure.storage'; //REST API req인자 사용을 위해서 이렇게 해야함.
+import { uploadRequest } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
