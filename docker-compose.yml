@@ -34,6 +34,7 @@ services:
     ports:
       - '4000:80'
     environment:
+      - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
 
   upload:
@@ -47,6 +48,7 @@ services:
     ports:
       - '4001:80'
     environment:
+      - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
       - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=snsupload;AccountKey=b+HaSNIncUqm4dfw9sKnZHsEZGvOaQ3pqVtduMFCHZ/64eDi42SADUCZ2NL7w1Wwwdm43sW7+yZ/+AStmdGUBw==;EndpointSuffix=core.windows.net
 
@@ -61,6 +63,7 @@ services:
     ports:
       - '4002:80'
     environment:
+      - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
 
   alert:
@@ -74,4 +77,5 @@ services:
     ports:
       - '4003:80'
     environment:
+      - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development

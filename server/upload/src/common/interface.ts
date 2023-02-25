@@ -7,3 +7,10 @@ export interface uploadRequest extends FastifyRequest {
   nameList: string[];
   body: { comment: string; alertUuid: string; userUuid: string };
 }
+
+export interface MetadataDto {
+  userUuid: string;
+  postUuid: string;
+  files: string[];
+  comment: string;
+}

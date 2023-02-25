@@ -5,7 +5,7 @@ import { SignUpDto, SignInDto } from '../user/dto/user.dto';
 import { User } from 'src/user/entity/user.entity';
 import { UserTable } from '../user/repo/user.repository';
 import { userInfoResponse } from '../user/user.controller';
-import { crypter } from './crypter';
+import { crypter } from '../common/crypter';
 
 @Injectable()
 export class AuthService {

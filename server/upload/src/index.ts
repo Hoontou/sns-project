@@ -5,35 +5,43 @@ import { remove as fsRemove } from 'fs-extra'; //fs보다 진화된? 라이브�
 import { addUuidToReq, uploadToLoacl } from './common/middleware';
 import { client as azureClient } from './azure/azure.client';
 import multer from 'fastify-multer';
-import { uploadToAzure } from './azure/azure.storage'; //REST API req인자 사용을 위해서 이렇게 해야함.
-import { uploadRequest } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
+import { uploadToAzure } from './azure/azure.storage';
+import { MetadataDto, uploadRequest } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
+import { crypter } from './common/crypter';
+import { rabbit } from './common/amqp';
 
 const server = fastify();
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 server.register(cookie, {} as FastifyCookieOptions);
-server.register(multer.contentParser); //multer로 로컬에 저장하는 미들웨어 등록
+server.register(multer.contentParser);
 server.register(cors, {
   origin: true,
 });
-//여기서 file은 클라이언트에서 적은 키값, 4개이상 들어오면 status 413 날라간다.
-//클라이언트에서 4개까지만 컷해서 보내주고 있음 지금.
-//메인 로직
+
 server.post(
   '/uploadfiles',
-  { preHandler: [addUuidToReq, uploadToLoacl] }, //uuid생성 미들웨어 먼저 호출.
+  { preHandler: [addUuidToReq, uploadToLoacl] }, //순서대로 미들웨어 호출됨.
   async (req: uploadRequest, reply) => {
     const { comment } = JSON.parse(req.body.comment);
     const { alertUuid } = JSON.parse(req.body.alertUuid);
-    const { userUuid } = JSON.parse(req.body.userUuid); //클라이언트에서 hoc진행해서 보내준것임.
     //추후 알람 MSA에서 사용할 uuid, 계획은 uuid로 알람 삭제하면 게시물 post성공했다는 뜻.
     //로직 다 처리하고 알람 삭제해주면 됨
-    const postUuid: string = req.uuid; //post식별할 uuid
-    const postCount: number = req.count + 1; //저장할땐 0부터 했는데 이제 1더해주자
+    const { userUuid } = JSON.parse(req.body.userUuid); //클라이언트에서 hoc해서 보내준 값이고 암호화 돼있음.
+    const postUuid: string = req.uuid;
     const postList: string[] = req.nameList;
-
+    const metadataForm: MetadataDto = {
+      userUuid: crypter.decrypt(userUuid),
+      postUuid,
+      files: postList,
+      comment,
+    };
+    (await rabbit).sendToQueue(
+      'metadata',
+      Buffer.from(JSON.stringify(metadataForm)),
+    );
     console.log('start uploading');
     console.log(postList);
     //console.log('======azure status======');
@@ -55,10 +63,11 @@ server.post(
 //   return { success: true };
 // }); hoc 엑시오스 테스트코드. 근데 쿠키가 안날라가서 폐기. hoc는 클라이언트에서 진행하는걸로..
 
-server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
+server.listen({ host: '0.0.0.0', port: 80 }, async (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
   }
+  await rabbit; //래빗초기화
   console.log(`Server listening at ${address}`);
 });

@@ -10,9 +10,7 @@ const storage = multer.diskStorage({
   },
   filename: (req: uploadRequest, file, cb) => {
     const fileExtension = file.originalname.split('.'); //확장자만 추출
-    const name = `${req.uuid}.${req.count}.${
-      fileExtension[fileExtension.length - 1]
-    }`;
+    const name = `${req.count}.${fileExtension[fileExtension.length - 1]}`;
     cb(null, name); //파일 이름은 uuid.count.확장자
     req.count += 1;
     req.nameList.push(name);
