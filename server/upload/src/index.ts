@@ -11,7 +11,7 @@ import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import { crypter } from './common/crypter';
-import { rabbit } from './common/amqp';
+import { rabbitMQ } from './common/amqp';
 
 const server = fastify();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -38,7 +38,7 @@ server.post(
       files: postList,
       comment,
     };
-    (await rabbit).sendToQueue(
+    await rabbitMQ.channel.sendToQueue(
       'metadata',
       Buffer.from(JSON.stringify(metadataForm)),
     );
@@ -68,6 +68,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, async (err, address) => {
     console.error(err);
     process.exit(1);
   }
-  await rabbit; //래빗초기화
+  await rabbitMQ.initialize(['metadata']);
   console.log(`Server listening at ${address}`);
 });

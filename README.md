@@ -72,6 +72,8 @@ fastify 정보가 별로없어서 답답하긴 한데 서드파티 패키지? �
 
 ## 래빗MQ 연결
 
+https://github.com/amqp-node/amqplib/tree/main/examples/tutorials  
+https://www.rabbitmq.com/getstarted.html  
 공식문서, 구글링 통해서 몇시간의 삽질 끝에 제대로 연결성공. 래빗이 작동을 안했는데,  
 tsconfig의 모듈: commonjs라서 오류가 발생하는것 같음. commonjs식으로 require하면 작동한다.  
 네스트의 기본 tsconfig을 가져와서 쓰다보니 이미 익숙해져있는데 바꾸기란 쉽지 않겠다고 판단.  

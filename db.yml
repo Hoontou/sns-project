@@ -21,7 +21,7 @@ services:
       - 6380:6379
 
   rabbit:
-    image: rabbitmq:3.8.1-management
+    image: rabbitmq:latest
     container_name: rabbit
     ports:
       - '5672:5672'

@@ -29,6 +29,10 @@ export class AuthService {
       //로그인 성공한 상태이고 이제 JWT를 생성해야함. Secret + Patload(페이로드는 중요정보 넣지마라.)
       const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
+      const tst = crypter.encrypt(user.id);
+      console.log(tst);
+      console.log(crypter.decrypt(tst));
+
       return {
         accessToken,
         userUuid: crypter.encrypt(user.id),
