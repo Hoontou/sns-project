@@ -21,4 +21,4 @@ class Crypto {
   }
 }
 
-export const crypter = new Crypto('CreamIsPig');
+export const crypter = new Crypto('2e47f242a46d13eeb22aabc01d5e5d05');
