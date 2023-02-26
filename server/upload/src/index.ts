@@ -38,7 +38,8 @@ server.post(
       files: postList,
       comment,
     };
-    await rabbitMQ.channel.sendToQueue(
+    rabbitMQ.channel.sendToQueue(
+      //메타데이터로 보낸다.
       'metadata',
       Buffer.from(JSON.stringify(metadataForm)),
     );

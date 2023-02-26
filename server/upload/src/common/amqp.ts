@@ -55,13 +55,13 @@ class RabbitMQ {
     this.channel = await this.conn.createChannel();
     queList.forEach(async (que) => {
       await this.channel.assertQueue(que, { durable: true });
-      await this.channel.consume(
-        que,
-        (message) => {
-          console.log(" [x] Received '%s'", message.content.toString());
-        },
-        { noAck: true },
-      );
+      // await this.channel.consume(
+      //   que,
+      //   (message) => {
+      //     console.log(" [x] Received '%s'", message.content.toString());
+      //   },
+      //   { noAck: true },
+      // );
     });
     console.log('RabbitMQ connected');
   }

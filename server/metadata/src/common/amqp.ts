@@ -1,3 +1,6 @@
+import { MetadataDto } from 'src/database/schema';
+import { newMeatadata } from '../database/schema';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const amqp = require('amqplib');
 const RABBIT = process.env.RABBIT;
@@ -52,6 +55,12 @@ if (!RABBIT) {
 //위는 리팩토링 전 함수형
 //아래는 리팩토링 후 객체형
 
+const handleMetadata = (message) => {
+  const data: MetadataDto = JSON.parse(message.content.toString());
+  console.log('metadata MSA catch metadata from upload');
+  newMeatadata(data); //몽고디비 저장 함수
+};
+
 class RabbitMQ {
   private conn;
   public channel;
@@ -67,7 +76,10 @@ class RabbitMQ {
       await this.channel.consume(
         que,
         (message) => {
-          console.log(" [x] Received '%s'", message.content.toString());
+          const targetQue: string = message.fields.routingKey;
+          if (targetQue === 'metadata') {
+            handleMetadata(message);
+          }
         },
         { noAck: true },
       );
