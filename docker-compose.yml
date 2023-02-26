@@ -63,6 +63,7 @@ services:
     ports:
       - '4002:80'
     environment:
+      - MONGO_URI=mongodb://mgdb:27017/metadata
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
 
@@ -77,5 +78,6 @@ services:
     ports:
       - '4003:80'
     environment:
+      - MONGO_URI=mongodb://mgdb:27017/alert
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development

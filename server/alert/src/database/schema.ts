@@ -1,16 +1,15 @@
 import mongoose from 'mongoose';
 
 const metadataSchema = new mongoose.Schema({
-  _id: String,
-  //받은 objectid로 _id에 바로넣기
   userUuid: String,
+  postUuid: String,
   comment: String,
   files: Array,
 });
 
 export interface MetadataDto {
-  _id: string;
   userUuid: string;
+  postUuid: string;
   files: string[];
   commnet: string;
 }
