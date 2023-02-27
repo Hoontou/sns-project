@@ -14,6 +14,7 @@ const Upload = () => {
     const userUuid = await axios.get('/main-back/user/hoc').then((res) => {
       return res.data.userUuid;
     }); //나중에 클라이언트 구현시 HOC 실패 방어코드 짜야함.
+    console.log(userUuid);
     const contents = e.target.up.files; //인풋에서 가져와서
     const formData = new FormData();
     const alert_id = ObjectId(); //게시물 업로드중 알람을 위한 uuid

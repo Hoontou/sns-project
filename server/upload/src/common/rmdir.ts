@@ -1,5 +1,4 @@
-import { mkdirSync } from 'fs';
-import { remove as fsRemove } from 'fs-extra';
+import { remove as fsRemove } from 'fs-extra'; //fs보다 진화된? 라이브러리, remove는 async방식임.
 
 class RmDirer {
   private count: number;
