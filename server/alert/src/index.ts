@@ -4,10 +4,6 @@ import { connectMongo } from './database/initialize.mongo';
 import { rabbitMQ } from './common/amqp';
 const server = fastify();
 
-server.post('/tstinput', (req, reply) => {
-  console.log(req.body);
-});
-
 server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
   if (err) {
     console.error(err);

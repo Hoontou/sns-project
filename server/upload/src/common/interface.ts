@@ -14,3 +14,15 @@ export interface MetadataDto {
   files: string[];
   comment: string;
 }
+
+export interface AlertDto {
+  _id: string;
+  userUuid: string;
+  type: number;
+  content: uploadResult;
+}
+
+interface uploadResult {
+  success: boolean;
+  post_id: string;
+}

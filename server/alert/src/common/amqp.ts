@@ -1,5 +1,5 @@
-import { MetadataDto } from 'src/database/schema';
-import { newMeatadata } from '../database/schema';
+import { AlertDto } from 'src/database/schema';
+import { newAlert } from '../database/schema';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const amqp = require('amqplib');
@@ -8,10 +8,11 @@ if (!RABBIT) {
   throw new Error('missing RABBIT');
 }
 
-const handleMetadata = (message) => {
-  const data: MetadataDto = JSON.parse(message.content.toString());
-  console.log('metadata MSA catch metadata from upload');
-  newMeatadata(data); //몽고디비 저장 함수
+const handleAlert = (message) => {
+  const data: AlertDto = JSON.parse(message.content.toString());
+  console.log('alert MSA catch alertForm from upload');
+  console.log(data);
+  newAlert(data); //몽고디비 저장 함수
 };
 
 class RabbitMQ {
@@ -30,8 +31,8 @@ class RabbitMQ {
         que,
         (message) => {
           const targetQue: string = message.fields.routingKey;
-          if (targetQue === 'metadata') {
-            handleMetadata(message);
+          if (targetQue === 'alert') {
+            handleAlert(message);
           }
         },
         { noAck: true },

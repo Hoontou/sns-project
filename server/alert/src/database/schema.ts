@@ -1,28 +1,36 @@
 import mongoose from 'mongoose';
 
-const metadataSchema = new mongoose.Schema({
+const alertSchema = new mongoose.Schema({
+  _id: String,
   userUuid: String,
-  postUuid: String,
-  comment: String,
-  files: Array,
+  type: Number,
+  content: Object,
 });
 
-export interface MetadataDto {
+export interface AlertDto {
+  _id: string;
   userUuid: string;
-  postUuid: string;
-  files: string[];
-  commnet: string;
+  type: number;
+  content: uploadResult | otherAlert;
 }
 
-const Metadata = mongoose.model('metadata', metadataSchema);
+interface uploadResult {
+  success: boolean;
+  post_id: string;
+}
+interface otherAlert {
+  otherthings: boolean;
+}
+
+const Alert = mongoose.model('alert', alertSchema);
 
 //Dto파싱해서 document로 만들어 저장까지 해주는 함수.
-export const newMeatadata = (metadataDto: MetadataDto) => {
-  const newOne = new Metadata(metadataDto);
+export const newAlert = (alertDto: AlertDto) => {
+  const newOne = new Alert(alertDto);
   newOne
     .save()
-    .then(() => console.log('meatadata stored in mongo successfully'))
-    .catch(() => console.log('err when storing metadata in mongo'));
+    .then(() => console.log('alert stored in mongo successfully'))
+    .catch(() => console.log('err when storing alert in mongo'));
   //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
   return newOne;
 };
