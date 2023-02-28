@@ -1,17 +1,15 @@
 import fastify from 'fastify';
+import { connectMongo } from './database/initialize.mongo';
+import { rabbitMQ } from './common/amqp';
 import fastifyIO from 'fastify-socket.io';
+import cors from '@fastify/cors';
 
 const server = fastify();
 
 server.register(fastifyIO);
-
-server.ready().then(() => {
-  // we need to wait for the server to be ready, else `server.io` is undefined
-  server.io.on('connection', (socket) => {
-    console.log('connected');
-  });
+server.register(cors, {
+  origin: true,
 });
-
 server.get('/', (req, rep) => {
   rep.send('hi');
 });
@@ -21,6 +19,9 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
     console.error(err);
     process.exit(1);
   }
+
+  connectMongo();
+  rabbitMQ.initialize(['alert']);
 
   console.log(`Server listening at ${address}`);
 });

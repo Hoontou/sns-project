@@ -21,6 +21,10 @@ server.register(cors, {
   origin: true,
 });
 
+server.get('/', (req, rep) => {
+  rep.send('hi');
+});
+
 server.post(
   '/uploadfiles',
   { preHandler: [add_idToReq, uploadToLoacl] }, //순서대로 미들웨어 호출됨.

@@ -13,7 +13,7 @@ class RmDirer {
       this.count = 0;
     }
   }
-  rm(): void {
+  private rm(): void {
     fsRemove(`./files`, () => {
       console.log('Folder Deleted');
     });

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { ObjectId } from '../common/genobjectid';
 
 const Upload = () => {
