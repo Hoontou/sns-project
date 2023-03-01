@@ -1,26 +1,12 @@
 import mongoose from 'mongoose';
+import { AlertDto } from 'src/common/interface';
 
 const alertSchema = new mongoose.Schema({
   _id: String,
   userUuid: String,
-  type: Number,
+  type: String,
   content: Object,
 });
-
-export interface AlertDto {
-  _id: string;
-  userUuid: string;
-  type: number;
-  content: uploadResult | otherAlert;
-}
-
-interface uploadResult {
-  success: boolean;
-  post_id: string;
-}
-interface otherAlert {
-  otherthings: boolean;
-}
 
 const Alert = mongoose.model('alert', alertSchema);
 

@@ -30,8 +30,6 @@ export class AuthService {
       const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
       const test = crypter.encrypt(user.id);
-      console.log(test);
-      console.log(crypter.decrypt(test));
       return {
         accessToken,
         userUuid: crypter.encrypt(user.id),

@@ -18,11 +18,13 @@ export interface MetadataDto {
 export interface AlertDto {
   _id: string;
   userUuid: string;
-  type: number;
-  content: uploadResult;
-}
+  type: Upload;
+  content: UploadResult;
+} //타입과 result는 계속해서 추가.
 
-interface uploadResult {
+interface UploadResult {
   success: boolean;
   post_id: string;
 }
+
+type Upload = 'upload';
