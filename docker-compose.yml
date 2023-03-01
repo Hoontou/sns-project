@@ -14,15 +14,6 @@ services:
     environment:
       - NODE_ENV=development
 
-  nginx:
-    container_name: nginx
-    restart: always
-    build:
-      dockerfile: Dockerfile
-      context: ./nginx
-    ports:
-      - '3000:80'
-
   main-back:
     image: main-back
     build:
