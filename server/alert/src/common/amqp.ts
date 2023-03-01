@@ -13,7 +13,7 @@ const handleAlert = (message) => {
   const data: AlertDto = JSON.parse(message.content.toString());
   const socket = socketManager.getSocket(data.userUuid);
   if (socket) {
-    socket.emit('tst', 'tst');
+    socket.emit('tst', data);
     console.log('소켓전송');
   }
   console.log('alert MSA catch alertForm from upload');

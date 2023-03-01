@@ -13,7 +13,6 @@ const Alert = mongoose.model('alert', alertSchema);
 //Dto파싱해서 document로 만들어 저장까지 해주는 함수.
 export const newAlert = (alertDto: AlertDto) => {
   const newOne = new Alert(alertDto);
-  console.log(newOne);
 
   newOne
     .save()
