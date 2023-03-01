@@ -21,7 +21,7 @@ server.ready().then(() => {
 
     socket.on('disconnecting', (reason) => {
       socketManager.disconnSock(userUuid);
-      console.log(userUuid, 'disconn');
+      console.log(userUuid, reason);
       //테스트코드, 연결종료 시 소켓정보 날려버림.
       //console.log(socketManager.container);
     });

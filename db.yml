@@ -1,14 +1,5 @@
 version: '3'
 services:
-  nginx:
-    container_name: nginx
-    restart: always
-    build:
-      dockerfile: Dockerfile
-      context: ./nginx
-    ports:
-      - '3000:80'
-
   mgdb:
     image: mongo:latest
     restart: always
@@ -30,7 +21,7 @@ services:
       - 6380:6379
 
   rabbit:
-    image: rabbitmq:latest
+    image: rabbitmq:3.8.5-management
     container_name: rabbit
     ports:
       - '5672:5672'

@@ -17,9 +17,8 @@ export const newAlert = (alertDto: AlertDto) => {
   newOne
     .save()
     .then(() => console.log('alert stored in mongo successfully'))
-    .catch((err) => {
+    .catch(() => {
       console.log('err when storing alert in mongo');
-      console.log(err);
     });
   //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
   return newOne;

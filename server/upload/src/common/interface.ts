@@ -26,5 +26,4 @@ interface UploadResult {
   success: boolean;
   post_id: string;
 }
-
 type Upload = 'upload';

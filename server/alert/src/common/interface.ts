@@ -6,7 +6,7 @@ import { Handshake } from 'socket.io/dist/socket';
 export interface AlertDto {
   _id: string;
   userUuid: string;
-  type: Upload;
+  type: Upload; //유니온으로 나열할 예정.
   content: UploadResult;
 } //타입과 result는 계속해서 추가.
 
