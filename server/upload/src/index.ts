@@ -88,6 +88,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, async (err, address) => {
     console.error(err);
     process.exit(1);
   }
-  await rabbitMQ.initialize(['metadata', 'alert']);
+  rabbitMQ.initialize(['metadata', 'alert']);
   console.log(`Server listening at ${address}`);
 });

@@ -3,6 +3,7 @@ import fastifyIO from 'fastify-socket.io';
 import { socketManager } from './alert.server/socket.manager';
 import { SocketEx } from './common/interface';
 import { crypter } from './common/crypter';
+import { rabbitMQ } from './common/amqp';
 const server = fastify();
 
 server.register(fastifyIO);
@@ -19,7 +20,7 @@ server.ready().then(() => {
 
     socket.on('disconnecting', (reason) => {
       socketManager.disconnSock(userUuid);
-      console.log(userUuid, reason);
+      console.log(userUuid, 'disconn');
       //테스트코드, 연결종료 시 소켓정보 날려버림.
       //console.log(socketManager.container);
     });
@@ -31,6 +32,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
     console.error(err);
     process.exit(1);
   }
-
+  rabbitMQ.initialize(['metadata', 'alert']);
   console.log(`Server listening at ${address}`);
 });

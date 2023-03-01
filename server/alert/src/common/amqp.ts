@@ -1,5 +1,6 @@
-import { AlertDto } from 'src/database/schema';
 import { newAlert } from '../database/schema';
+import { AlertDto } from './interface';
+import { socketManager } from '../alert.server/socket.manager';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const amqp = require('amqplib');
@@ -10,8 +11,13 @@ if (!RABBIT) {
 
 const handleAlert = (message) => {
   const data: AlertDto = JSON.parse(message.content.toString());
+  const socket = socketManager.getSocket(data.userUuid);
+  if (socket) {
+    socket.emit('tst', 'tst');
+    console.log('소켓전송');
+  }
   console.log('alert MSA catch alertForm from upload');
-  console.log(data);
+  // console.log(data);
   newAlert(data); //몽고디비 저장 함수
 };
 

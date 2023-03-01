@@ -12,7 +12,7 @@ const handleMetadata = (message) => {
   const data: MetadataDto = JSON.parse(message.content.toString());
   //날라온 메세지 파싱
   console.log('metadata MSA catch metadata from upload');
-  console.log(data);
+  //console.log(data);
   newMeatadata(data); //몽고디비 저장 함수
 };
 

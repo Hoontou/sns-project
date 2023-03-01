@@ -6,10 +6,8 @@ import { Socket } from 'socket.io';
 //   connAt: Date;
 // }
 
-type SocketOrFlase = Socket | false;
-
 class SocketManager {
-  private container;
+  public container;
   constructor() {
     this.container = {};
   }
@@ -23,14 +21,14 @@ class SocketManager {
   } //객체를 아예 지워버리면 뭔가 비용이 많이발생할것같음.
   //false로 해놓고 나중에 한꺼번에 false인것들 지워버리게 하자.
 
-  getSocket(userUuid: string): SocketOrFlase {
-    const sock: Socket = this.container[userUuid];
-    return sock || false; //sock이 false, 또는 객체가 아예 없든지 둘다 false 리턴함.
+  getSocket(userUuid: string): Socket | false | undefined {
+    const sock: Socket | false | undefined = this.container[userUuid];
+    return sock; //sock이 false, 또는 객체가 아예 없든지 둘다 false 리턴함.
   }
 
   delSocket(): void {
     for (const key in this.container) {
-      const socket: SocketOrFlase = this.container[key];
+      const socket: Socket | false = this.container[key];
       if (socket) {
         delete this.container[key];
       }
