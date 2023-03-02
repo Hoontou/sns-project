@@ -27,3 +27,7 @@ type이나, 내용이나 등등.
 
 알람Form
 \_id, userUuid, type, content
+
+알람삽입시 요청에서 uuid추출해서
+uuid로 소켓 검색 후 있으면?
+그 소켓으로 알람전송

@@ -33,10 +33,12 @@ server.post(
     const decUuid: string = crypter.decrypt(userUuid);
     const post_id: string = req._id;
     const postList: string[] = req.postList;
-    //console.log('======start azure upload======');
-    //await uploadToAzure(azureClient, postList, post_id);
+    console.log('start uploading');
+    console.log(postList);
+    console.log('======start azure upload======');
+    await uploadToAzure(azureClient, postList, post_id);
     //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석해놓음.
-    //console.log('======upload end======');
+    console.log('======upload end======');
     const metadataForm: MetadataDto = {
       _id: post_id,
       userUuid: decUuid,
@@ -62,8 +64,6 @@ server.post(
       'alert',
       Buffer.from(JSON.stringify(alertFrom)),
     );
-    console.log('start uploading');
-    console.log(postList);
 
     rmDirer.counter();
     //현재 5카운트마다 삭제시킴. 근데 이거 오류날 가능성 있어서 잘 체크해야함

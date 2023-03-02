@@ -14,8 +14,9 @@ server.ready().then(() => {
   server.io.on('connection', (socket: SocketEx) => {
     const userUuid: string = crypter.decrypt(socket.handshake.headers.uuid);
     socketManager.setSock(userUuid, socket);
-    //useruuid랑 소켓이랑 연결해서 정보저장.
+    //useruuid랑 소켓이랑 매핑해서 정보저장.
     console.log(userUuid, 'connected');
+
     //테스트코드, 매번 새 연결마다 소켓정보 잘 업데이트 됨.
     //console.log(socketManager.container[userUuid].id);
 

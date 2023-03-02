@@ -15,7 +15,7 @@ export interface MetadataDto {
   commnet: string;
 }
 
-const Metadata = mongoose.model('metadata', metadataSchema);
+export const Metadata = mongoose.model('metadata', metadataSchema);
 
 //Dto파싱해서 document로 만들어 저장까지 해주는 함수.
 export const newMeatadata = (metadataDto: MetadataDto) => {
