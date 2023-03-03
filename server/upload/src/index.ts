@@ -54,16 +54,13 @@ server.post(
         post_id,
       },
     };
-    rabbitMQ.channel.sendToQueue(
-      //메타데이터로 보낸다.
-      'metadata',
-      Buffer.from(JSON.stringify(metadataForm)),
-    );
-    rabbitMQ.channel.sendToQueue(
-      //alert로 보낸다.
-      'alert',
-      Buffer.from(JSON.stringify(alertFrom)),
-    );
+    // rabbitMQ.channel.sendToQueue(
+    //   //메타데이터로 보낸다.
+    //   'metadata',
+    //   Buffer.from(JSON.stringify(metadataForm)),
+    // );
+    rabbitMQ.sendMsg('metadata', metadataForm);
+    rabbitMQ.sendMsg('alert', alertFrom);
 
     rmDirer.counter();
     //현재 5카운트마다 삭제시킴. 근데 이거 오류날 가능성 있어서 잘 체크해야함
