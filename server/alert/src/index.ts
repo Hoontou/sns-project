@@ -35,6 +35,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
     process.exit(1);
   }
   connectMongo();
-  rabbitMQ.initialize(['metadata', 'alert']);
+  rabbitMQ.initialize(['alert']);
   console.log(`Server listening at ${address}`);
 });
