@@ -1,6 +1,3 @@
-import { MetadataDto } from 'src/database/schema';
-import { newMeatadata } from '../database/schema';
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const amqp = require('amqplib');
 const RABBIT = process.env.RABBIT;
@@ -8,17 +5,26 @@ if (!RABBIT) {
   throw new Error('missing RABBIT');
 }
 
-const handleMetadata = (message) => {
-  const data: MetadataDto = JSON.parse(message.content.toString());
-  //날라온 메세지 파싱
-  console.log('metadata MSA catch metadata from upload');
-  //console.log(data);
-  newMeatadata(data); //몽고디비 저장 함수
+const handleUsernum = (message) => {
+  const data = JSON.parse(message.tostring());
+  console.log(data);
 };
+
+// const handleAlert = (message) => {
+//   const data: AlertDto = JSON.parse(message.content.toString());
+//   const socket = socketManager.getSocket(data.userUuid);
+//   if (socket) {
+//     socket.emit('tst', data);
+//     console.log('소켓전송');
+//   }
+//   console.log('alert MSA catch alertForm from upload');
+//   // console.log(data);
+//   newAlert(data); //몽고디비 저장 함수
+// };
 
 class RabbitMQ {
   private conn;
-  private channel;
+  public channel;
   constructor(private rabbitUrl) {
     this.rabbitUrl = rabbitUrl;
   }
@@ -32,18 +38,14 @@ class RabbitMQ {
         que,
         (message) => {
           const targetQue: string = message.fields.routingKey;
-          if (targetQue === 'metadata') {
-            handleMetadata(message);
+          if (targetQue === 'user') {
+            console.log(JSON.parse(message.content.toString()));
           }
         },
         { noAck: true },
       );
     });
     console.log('RabbitMQ connected');
-  }
-
-  sendMsg(targetQue: string, msgForm: object): void {
-    this.channel.sendToQueue(targetQue, Buffer.from(JSON.stringify(msgForm)));
   }
 }
 

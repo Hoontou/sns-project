@@ -7,7 +7,7 @@ import { Socket } from 'socket.io';
 // }
 
 class SocketManager {
-  public container;
+  private container;
   constructor() {
     this.container = {};
   }

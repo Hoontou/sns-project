@@ -19,10 +19,10 @@ export interface AlertDto {
   _id: string;
   userUuid: string;
   type: Upload;
-  content: UploadResult;
+  content: UploadContent;
 } //타입과 result는 계속해서 추가.
 
-interface UploadResult {
+interface UploadContent {
   success: boolean;
   post_id: string;
 }

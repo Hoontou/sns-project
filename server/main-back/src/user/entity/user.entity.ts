@@ -6,7 +6,9 @@ import {
   CreateDateColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
+import { Post, Comment, CoComment } from '../../comment/entity/comment.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -24,6 +26,15 @@ export class User extends BaseEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[]; // 유저는 여러개 글 가질수 있음.
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[]; //유저는 댓글 여러개 쓸 수 있음.
+
+  @OneToMany(() => CoComment, (cocomment) => cocomment.user)
+  cocomments: CoComment[]; //유저는 댓글 여러개 쓸 수 있음.
 }
 
 @Entity()

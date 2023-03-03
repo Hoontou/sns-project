@@ -23,7 +23,7 @@ const handleAlert = (message) => {
 
 class RabbitMQ {
   private conn;
-  public channel;
+  private channel;
   constructor(private rabbitUrl) {
     this.rabbitUrl = rabbitUrl;
   }
@@ -45,6 +45,10 @@ class RabbitMQ {
       );
     });
     console.log('RabbitMQ connected');
+  }
+
+  sendMsg(targetQue: string, msgForm: object): void {
+    this.channel.sendToQueue(targetQue, Buffer.from(JSON.stringify(msgForm)));
   }
 }
 
