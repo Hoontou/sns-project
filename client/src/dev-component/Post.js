@@ -19,6 +19,7 @@ const Post = () => {
   };
   //https://snsupload.blob.core.windows.net/640146dbed25fdb4ff51c266/0.png
   //{('https://snsupload.blob.core.windows.net/',`${i._id}`,'/',`${j}`)}
+  //이미지 소스 url을 string 핸들링 작업 해야함.
   return (
     <div>
       this is post<button onClick={onClick}>getPosts</button>
