@@ -57,7 +57,7 @@ export class Comment extends BaseEntity {
   post: Post;
 
   @OneToMany(() => CoComment, (cocomment) => cocomment.comment)
-  cocomments: CoComment[]; //유저는 댓글 여러개 쓸 수 있음.
+  cocomments: CoComment[]; //유저는 댓글 여러개 쓸 수 있음
 }
 
 @Entity()
