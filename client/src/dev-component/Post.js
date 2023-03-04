@@ -26,7 +26,6 @@ const Post = () => {
           return (
             <div>
               <h2>post_id = {i._id}</h2>
-              <h3>title : {i.comment}</h3>
               {i.files.map((j) => {
                 return (
                   <img

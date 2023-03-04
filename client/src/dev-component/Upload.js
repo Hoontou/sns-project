@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { ObjectId } from '../common/genobjectid';
 
 const Upload = () => {
-  const [comment, setcomment] = useState('');
+  const [title, setTitle] = useState('');
 
-  const onCommentHandler = (e) => {
-    setcomment(e.currentTarget.value);
+  const onTitleHandler = (e) => {
+    setTitle(e.currentTarget.value);
   };
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ const Upload = () => {
       formData.append('file', contents[i]);
     }
     //게시글 코멘트와 알람 uuid를 담는다.
-    formData.append('comment', JSON.stringify({ comment }));
+    formData.append('title', JSON.stringify({ title }));
     formData.append('alert_id', JSON.stringify({ alert_id }));
     formData.append('userUuid', JSON.stringify({ userUuid }));
 
@@ -43,8 +43,8 @@ const Upload = () => {
           name='up'
           accept='.mp4, .jpg, .png'
         />
-        <label>코멘트</label>
-        <input onChange={onCommentHandler} />
+        <label>타이틀</label>
+        <input onChange={onTitleHandler} />
         <button type='submit'>upload</button>
       </form>
     </div>

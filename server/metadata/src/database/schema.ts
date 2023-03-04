@@ -4,7 +4,6 @@ const metadataSchema = new mongoose.Schema({
   _id: String,
   //받은 objectid로 _id에 바로넣기
   userUuid: String,
-  comment: String,
   files: Array,
 });
 
@@ -12,7 +11,6 @@ export interface MetadataDto {
   _id: string;
   userUuid: string;
   files: string[];
-  commnet: string;
 }
 
 export const Metadata = mongoose.model('metadata', metadataSchema);

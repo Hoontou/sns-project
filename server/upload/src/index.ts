@@ -1,17 +1,20 @@
 import fastify from 'fastify';
 import { rmDirer } from './common/rmdir';
-//걍 폴더 날려버린다. 개굿 https://github.com/jprichardson/node-fs-extra/blob/HEAD/docs/remove.md
-//Removes a file or directory. The directory can have contents. If the path does not exist, silently does nothing.
 import { add_idToReq, uploadToLoacl } from './common/middleware';
 import { client as azureClient } from './azure/azure.client';
 import multer from 'fastify-multer';
 import { uploadToAzure } from './azure/azure.storage';
-import { MetadataDto, uploadRequest, AlertDto } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
+import {
+  MetadataDto,
+  uploadRequest,
+  AlertDto,
+  parserDto,
+} from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
-import { crypter } from './common/crypter';
 import { rabbitMQ } from './common/amqp';
+import { reqParser } from './common/req.parser';
 
 const server = fastify();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -25,42 +28,17 @@ server.post(
   '/uploadfiles',
   { preHandler: [add_idToReq, uploadToLoacl] }, //순서대로 미들웨어 호출됨.
   async (req: uploadRequest, reply) => {
-    const { comment } = JSON.parse(req.body.comment);
-    const { alert_id } = JSON.parse(req.body.alert_id);
-    //추후 알람 MSA에서 사용할 _id, 계획은 _id로 알람 삭제하면 게시물 post성공했다는 뜻.
-    //로직 다 처리하고 알람 삭제해주면 됨
-    const { userUuid } = JSON.parse(req.body.userUuid); //클라이언트에서 hoc해서 보내준 값이고 암호화 돼있음.
-    const decUuid: string = crypter.decrypt(userUuid);
-    const post_id: string = req._id;
-    const postList: string[] = req.postList;
+    const { title, post_id, postList, metadataForm, alertForm }: parserDto =
+      reqParser(req);
     console.log('start uploading');
     console.log(postList);
     console.log('======start azure upload======');
-    await uploadToAzure(azureClient, postList, post_id);
-    //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석해놓음.
+    await uploadToAzure(azureClient, postList, post_id); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
     console.log('======upload end======');
-    const metadataForm: MetadataDto = {
-      _id: post_id,
-      userUuid: decUuid,
-      files: postList,
-      comment,
-    };
-    const alertFrom: AlertDto = {
-      _id: alert_id,
-      userUuid: decUuid,
-      type: 'upload',
-      content: {
-        success: true,
-        post_id,
-      },
-    };
-    // rabbitMQ.channel.sendToQueue(
-    //   //메타데이터로 보낸다.
-    //   'metadata',
-    //   Buffer.from(JSON.stringify(metadataForm)),
-    // );
+
+    //여기에 이제 메인백의 post컨트롤러로 post_id랑 title, useruuid 날려야함.
     rabbitMQ.sendMsg('metadata', metadataForm);
-    rabbitMQ.sendMsg('alert', alertFrom);
+    rabbitMQ.sendMsg('alert', alertForm);
 
     rmDirer.counter();
     //현재 5카운트마다 삭제시킴. 근데 이거 오류날 가능성 있어서 잘 체크해야함

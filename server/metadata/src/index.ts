@@ -10,7 +10,6 @@ const server = fastify();
 server.post(
   '/getposts',
   async (req: metadataRequest, reply): Promise<{ posts: MetadataDto[] }> => {
-    console.log(req.body);
     const decUuid = crypter.decrypt(req.body.userUuid);
     const posts: MetadataDto[] = await Metadata.find({ userUuid: decUuid });
     return { posts };

@@ -23,7 +23,7 @@ const upload = multer({ storage });
 //formData로 부터 가져올 애들 명시해서 multer인스턴스로 저장인듯?
 const uploadToLoacl = upload.fields([
   { name: 'file', maxCount: 4 },
-  { name: 'comment', maxCount: 1 },
+  { name: 'title', maxCount: 1 },
   { name: 'alert_id', maxCount: 1 },
   { name: 'userUuid', maxCount: 1 },
 ]);

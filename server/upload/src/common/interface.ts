@@ -5,14 +5,21 @@ export interface uploadRequest extends FastifyRequest {
   _id: string;
   count: number;
   postList: string[];
-  body: { comment: string; alert_id: string; userUuid: string };
+  body: { title: string; alert_id: string; userUuid: string };
+}
+
+export interface parserDto {
+  title: string;
+  post_id: string;
+  postList: string[];
+  metadataForm: MetadataDto;
+  alertForm: AlertDto;
 }
 
 export interface MetadataDto {
   _id: string;
   userUuid: string;
   files: string[];
-  comment: string;
 }
 
 export interface AlertDto {
