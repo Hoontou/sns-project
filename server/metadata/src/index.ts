@@ -7,6 +7,7 @@ import { crypter } from './common/crypter';
 
 const server = fastify();
 
+//from Client
 server.post(
   '/getposts',
   async (req: metadataRequest, reply): Promise<{ posts: MetadataDto[] }> => {

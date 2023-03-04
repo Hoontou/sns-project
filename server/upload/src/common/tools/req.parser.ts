@@ -1,7 +1,12 @@
 import { crypter } from './crypter';
-import { AlertDto, MetadataDto, parserDto, uploadRequest } from './interface';
+import {
+  AlertDto,
+  MetadataDto,
+  parserInterface,
+  uploadRequest,
+} from '../interface';
 
-export const reqParser = (req: uploadRequest): parserDto => {
+export const reqParser = (req: uploadRequest): parserInterface => {
   const { title } = JSON.parse(req.body.title);
   const { alert_id } = JSON.parse(req.body.alert_id);
   //추후 알람 MSA에서 사용할 _id, 계획은 _id로 알람 삭제하면 게시물 post성공했다는 뜻.

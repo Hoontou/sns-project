@@ -8,7 +8,7 @@ export interface uploadRequest extends FastifyRequest {
   body: { title: string; alert_id: string; userUuid: string };
 }
 
-export interface parserDto {
+export interface parserInterface {
   title: string;
   post_id: string;
   postList: string[];

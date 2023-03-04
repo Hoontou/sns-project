@@ -1,7 +1,7 @@
 import multer from 'fastify-multer';
 import { uploadRequest } from './interface';
 import { mkdirSync } from 'fs';
-import { ObjectId } from './gen.objectid';
+import { ObjectId } from './tools/gen.objectid';
 
 //클라이언트로 받은 파일을 저장하기 위해 설정.
 const storage = multer.diskStorage({

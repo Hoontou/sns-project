@@ -1,20 +1,15 @@
 import fastify from 'fastify';
-import { rmDirer } from './common/rmdir';
+import { rmDirer } from './common/tools/rmdir';
 import { add_idToReq, uploadToLoacl } from './common/middleware';
 import { client as azureClient } from './azure/azure.client';
 import multer from 'fastify-multer';
 import { uploadToAzure } from './azure/azure.storage';
-import {
-  MetadataDto,
-  uploadRequest,
-  AlertDto,
-  parserDto,
-} from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
+import { uploadRequest, parserInterface } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import { rabbitMQ } from './common/amqp';
-import { reqParser } from './common/req.parser';
+import { reqParser } from './common/tools/req.parser';
 
 const server = fastify();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -24,12 +19,19 @@ server.register(cors, {
   origin: true,
 });
 
+//from Client
 server.post(
   '/uploadfiles',
   { preHandler: [add_idToReq, uploadToLoacl] }, //순서대로 미들웨어 호출됨.
   async (req: uploadRequest, reply) => {
-    const { title, post_id, postList, metadataForm, alertForm }: parserDto =
-      reqParser(req);
+    const {
+      title,
+      post_id,
+      postList,
+      metadataForm,
+      alertForm,
+    }: parserInterface = reqParser(req);
+
     console.log('start uploading');
     console.log(postList);
     console.log('======start azure upload======');
