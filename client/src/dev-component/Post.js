@@ -17,22 +17,28 @@ const Post = () => {
     });
     console.log(postList);
   };
-  //https://snsupload.blob.core.windows.net/640146dbed25fdb4ff51c266/0.png
-  //{('https://snsupload.blob.core.windows.net/',`${i._id}`,'/',`${j}`)}
-  //이미지 소스 url을 string 핸들링 작업 해야함.
+  //https://snsupload.blob.core.windows.net/post_id/files[0]
   return (
     <div>
       this is post<button onClick={onClick}>getPosts</button>
-      {postList.map((i) => {
-        return i.files.map((j) => {
+      <div>
+        {postList.map((i) => {
           return (
-            <img
-              src='https://snsupload.blob.core.windows.net/640146dbed25fdb4ff51c266/0.png'
-              alt='img'
-            />
+            <div>
+              <h2>post_id = {i._id}</h2>
+              <h3>title : {i.comment}</h3>
+              {i.files.map((j) => {
+                return (
+                  <img
+                    src={`https://snsupload.blob.core.windows.net/${i._id}/${j}`}
+                    alt='img'
+                  />
+                );
+              })}
+            </div>
           );
-        });
-      })}
+        })}
+      </div>
     </div>
   );
 };
