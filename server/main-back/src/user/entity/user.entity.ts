@@ -4,11 +4,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  OneToOne,
-  JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Post, Comment, CoComment } from '../../comment/entity/comment.entity';
+import { Comment } from 'src/post/entity/comment.entity';
+import { CoComment } from 'src/post/entity/comment.entity';
+import { Post } from 'src/post/entity/post.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -34,27 +34,5 @@ export class User extends BaseEntity {
   comments: Comment[]; //유저는 댓글 여러개 쓸 수 있음.
 
   @OneToMany(() => CoComment, (cocomment) => cocomment.user)
-  cocomments: CoComment[]; //유저는 댓글 여러개 쓸 수 있음.
-}
-
-@Entity()
-export class UserNums extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ default: 0 })
-  follower: number;
-
-  @Column({ default: 0 })
-  following: number;
-
-  @Column({ default: 0 })
-  postCount: number;
-
-  //유저테이블과 포린키 연결하고 cascade 삭제 설정.
-  @OneToOne(() => User, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  user: User;
+  cocomments: CoComment[]; //유저는 대댓 여러개 쓸 수 있음.
 }

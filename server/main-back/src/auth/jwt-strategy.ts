@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 import { User } from 'src/user/entity/user.entity';
-import { UserTable } from '../user/repo/user.repository';
+import { UserTable } from '../user/repository/user.repository';
 import { JwtSecret, crypter } from '../common/crypter';
 
 //쿠키로 바로 토큰가져오게

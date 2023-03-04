@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { SignUpDto, SignInDto } from '../user/dto/user.dto';
+import { SignUpDto, SignInDto } from '../user/dto/sign.dto';
 import { User } from 'src/user/entity/user.entity';
-import { UserTable } from '../user/repo/user.repository';
+import { UserTable } from '../user/repository/user.repository';
 import { userInfoResponse } from '../user/user.controller';
 import { crypter } from '../common/crypter';
 
