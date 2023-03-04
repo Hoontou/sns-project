@@ -1,21 +1,27 @@
 import axios from 'axios';
 import { useState } from 'react';
 
+interface MetadataDto {
+  _id: string;
+  userUuid: string;
+  files: string[];
+}
+
 const Post = () => {
-  const [postList, setPostList] = useState([]);
+  const [postList, setPostList] = useState<Array<MetadataDto>>([]);
 
   const onClick = async () => {
     const userUuid = await axios.get('/main-back/user/hoc').then((res) => {
       return res.data.userUuid;
     });
-    axios.post('/metadata/getposts', { userUuid }).then(async (res) => {
+    axios.post('/metadata/getposts', { userUuid }).then((res) => {
       //res.data =  MetadataDto[]
-      setPostList([...postList, ...res.data.posts]);
+      const posts: MetadataDto[] = res.data.posts;
+      setPostList([...postList, ...posts]);
       //기존의 postlist에다가 뒤에 가져온 posts를 붙인다.
       //나중에 mongo에서 limit걸어서 스크롤 내릴수록 계속 불러올거임.
-      //지금은 메타데이터에서 포스트를 싹다 불러와줌.
+      //지금은 메타데이터에서 포스트를 싹다 불러와줌. 한번만 클릭해
     });
-    console.log(postList);
   };
   //https://snsupload.blob.core.windows.net/post_id/files[0]
   return (

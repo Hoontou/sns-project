@@ -1,22 +1,22 @@
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import axios from 'axios';
 const Signin = () => {
   const [email, setEmail] = useState('hoontou@gmail.com');
   const [password, setPassword] = useState('test');
   const [username, setUsername] = useState('hoontou');
 
-  const onEmailHandler = (e) => {
+  const onEmailHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.currentTarget.value);
   };
-  const onPasswordHandler = (e) => {
+  const onPasswordHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.currentTarget.value);
   };
-  const onUsernameHandler = (e) => {
+  const onUsernameHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.currentTarget.value);
   };
 
-  const onSubmitHandler = (event) => {
-    event.preventDefault();
+  const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const signUpForm = {
       email,
       password,
