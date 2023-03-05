@@ -2,7 +2,6 @@ import {
   Entity,
   BaseEntity,
   Column,
-  CreateDateColumn,
   //JoinColumn,
   PrimaryColumn,
   ManyToOne,
@@ -14,16 +13,19 @@ import { Comment } from './comment.entity';
 @Entity()
 export class Post extends BaseEntity {
   @PrimaryColumn()
-  post_id: string; //post objectId를 내가 넣어줘야함. 자동생성 아님.
+  _id: string; //post objectId를 내가 넣어줘야함. 자동생성 아님.
 
-  @Column()
-  comment: string;
+  // @Column()
+  // title: string;
 
   @Column({ default: 0 })
   likes: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column({ default: 0 })
+  commentCount: number;
+
+  // @CreateDateColumn()
+  // createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   //@JoinColumn()

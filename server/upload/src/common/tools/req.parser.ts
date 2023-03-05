@@ -21,6 +21,8 @@ export const reqParser = (req: uploadRequest): parserInterface => {
     _id: post_id,
     userUuid: decUuid,
     files: postList,
+    title,
+    createdAt: new Date(),
   };
 
   const alertForm: AlertDto = {
@@ -34,7 +36,6 @@ export const reqParser = (req: uploadRequest): parserInterface => {
     },
   };
   return {
-    title,
     post_id,
     postList,
     metadataForm,

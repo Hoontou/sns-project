@@ -24,19 +24,14 @@ server.post(
   '/uploadfiles',
   { preHandler: [add_idToReq, uploadToLoacl] }, //순서대로 미들웨어 호출됨.
   async (req: uploadRequest, reply) => {
-    const {
-      title,
-      post_id,
-      postList,
-      metadataForm,
-      alertForm,
-    }: parserInterface = reqParser(req);
+    const { post_id, postList, metadataForm, alertForm }: parserInterface =
+      reqParser(req);
 
     console.log('start uploading');
     console.log(postList);
-    console.log('======start azure upload======');
-    await uploadToAzure(azureClient, postList, post_id); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
-    console.log('======upload end======');
+    //console.log('======start azure upload======');
+    //await uploadToAzure(azureClient, postList, post_id); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
+    //console.log('======upload end======');
 
     //여기에 이제 메인백의 post컨트롤러로 post_id랑 title, useruuid 날려야함.
     rabbitMQ.sendMsg('metadata', metadataForm);

@@ -9,7 +9,6 @@ export interface uploadRequest extends FastifyRequest {
 }
 
 export interface parserInterface {
-  title: string;
   post_id: string;
   postList: string[];
   metadataForm: MetadataDto;
@@ -20,6 +19,8 @@ export interface MetadataDto {
   _id: string;
   userUuid: string;
   files: string[];
+  title: string;
+  createdAt: Date;
 }
 
 export interface AlertDto {
