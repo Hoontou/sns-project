@@ -4,7 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { SignUpDto, SignInDto } from '../user/dto/sign.dto';
 import { User } from 'src/user/entity/user.entity';
 import { UserTable } from '../user/repository/user.repository';
-import { userInfoResponse } from '../user/user.controller';
+import { UserInfoResponse } from '../user/user.controller';
 import { crypter } from '../common/crypter';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class AuthService {
     return this.userTable.signUp(user);
   }
 
-  async signIn(signinDto: SignInDto): Promise<userInfoResponse> {
+  async authenticate(signinDto: SignInDto): Promise<UserInfoResponse> {
     const { email, password } = signinDto;
     const user: User | null = await this.userTable.db.findOne({
       where: { email },
@@ -29,7 +29,6 @@ export class AuthService {
       //로그인 성공한 상태이고 이제 JWT를 생성해야함. Secret + Patload(페이로드는 중요정보 넣지마라.)
       const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
-      const test = crypter.encrypt(user.id);
       return {
         accessToken,
         userUuid: crypter.encrypt(user.id),

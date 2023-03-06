@@ -7,8 +7,8 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Comment } from 'src/post/entity/comment.entity';
-import { CoComment } from 'src/post/entity/comment.entity';
 import { Post } from 'src/post/entity/post.entity';
+import { CoComment } from 'src/post/entity/cocomment.entity';
 
 @Entity()
 export class User extends BaseEntity {

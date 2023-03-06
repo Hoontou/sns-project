@@ -94,3 +94,10 @@ ex) forEach문 안에 if (que == 컨슘사용할 큐) {channel.consume(컨슘로
 일단 댓글은 무조건 pgdb에 넣는다. cascading 삭제와 포린키 매핑해서 조인해야지 댓글관리가 쉬우니까.  
 또 지금 리액트가 그냥 js인데 ts로 마이그레이션 해야할듯. 점점 프런트도 코드가 불어나면서 중구난방이 될거같다.  
 메인백에 댓글관리 하기로했다. 이제 댓글기능 구현 할건데 그전에 리액트를 ts로 마이그레이션 해야할듯
+
+---
+
+리액트 ts로 바꿨고 리팩토링도 많이했음.
+class validater 쓰려다가 안함.
+post comment cocomment 테이블 정의했고 pgadmin으로 erd 사진이랑 create table 띄워보니 의도대로 된듯?
+이제 테스트하면서 구현하면 됨.

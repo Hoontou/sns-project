@@ -1,6 +1,6 @@
 import { FastifyRequest } from 'fastify';
 
-export interface metadataRequest extends FastifyRequest {
+export interface MetadataRequest extends FastifyRequest {
   // _id: string;
   // count: number;
   // postList: string[];

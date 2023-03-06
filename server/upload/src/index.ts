@@ -4,7 +4,7 @@ import { add_idToReq, uploadToLoacl } from './common/middleware';
 import { client as azureClient } from './azure/azure.client';
 import multer from 'fastify-multer';
 import { uploadToAzure } from './azure/azure.storage';
-import { uploadRequest, parserInterface } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
+import { UploadRequest, ParserInterface } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
@@ -23,8 +23,8 @@ server.register(cors, {
 server.post(
   '/uploadfiles',
   { preHandler: [add_idToReq, uploadToLoacl] }, //순서대로 미들웨어 호출됨.
-  async (req: uploadRequest, reply) => {
-    const { post_id, postList, metadataForm, alertForm }: parserInterface =
+  async (req: UploadRequest, reply) => {
+    const { post_id, postList, metadataForm, alertForm }: ParserInterface =
       reqParser(req);
 
     console.log('start uploading');

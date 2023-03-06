@@ -2,7 +2,7 @@ import fastify from 'fastify';
 import { connectMongo } from './database/initialize.mongo';
 import { rabbitMQ } from './common/amqp';
 import { Metadata, MetadataDto } from './database/schema';
-import { metadataRequest } from './common/interface';
+import { MetadataRequest } from './common/interface';
 import { crypter } from './common/crypter';
 
 const server = fastify();
@@ -10,7 +10,7 @@ const server = fastify();
 //from Client
 server.post(
   '/getposts',
-  async (req: metadataRequest, reply): Promise<{ posts: MetadataDto[] }> => {
+  async (req: MetadataRequest, reply): Promise<{ posts: MetadataDto[] }> => {
     const decUuid = crypter.decrypt(req.body.userUuid);
     const posts: MetadataDto[] = await Metadata.find({ userUuid: decUuid });
     return { posts };
