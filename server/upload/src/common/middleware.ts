@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
   filename: (req: UploadRequest, file, cb) => {
     const fileExtension = file.originalname.split('.'); //확장자만 추출
     const name = `${req.count}.${fileExtension[fileExtension.length - 1]}`;
-    cb(null, name); //파일 이름은 uuid.count.확장자
+    cb(null, name); //파일 이름은 Id.count.확장자
     req.count += 1;
     req.postList.push(name);
   },
@@ -25,10 +25,10 @@ const uploadToLoacl = upload.fields([
   { name: 'file', maxCount: 4 },
   { name: 'title', maxCount: 1 },
   { name: 'alert_id', maxCount: 1 },
-  { name: 'userUuid', maxCount: 1 },
+  { name: 'userId', maxCount: 1 },
 ]);
 
-//파일이름 생성을 위한 uuid, count 만들어서 req에 끼워넣는 미들웨어.
+//파일이름 생성을 위한 Id, count 만들어서 req에 끼워넣는 미들웨어.
 const add_idToReq = (req: UploadRequest, reply, next) => {
   req._id = ObjectId();
   req.count = 0;

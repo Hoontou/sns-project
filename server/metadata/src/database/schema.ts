@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const metadataSchema = new mongoose.Schema({
   _id: String,
   //받은 objectid로 _id에 바로넣기
-  userUuid: String,
+  userId: String,
   files: Array,
   title: String,
   createdAt: Date,
@@ -11,7 +11,7 @@ const metadataSchema = new mongoose.Schema({
 
 export interface MetadataDto {
   _id: string;
-  userUuid: string;
+  userId: string;
   files: string[];
   title: string;
   createdAt: Date;

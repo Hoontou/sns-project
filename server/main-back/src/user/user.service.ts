@@ -38,7 +38,7 @@ export class UserService {
 
     return {
       success: true,
-      userUuid: req.user.id,
+      userId: req.user.id,
       username: req.user.username,
     }; //실패시 핸들링을 만들어야 한다. 지금은 실패시 API 오류만 내뱉는다.
   }
@@ -72,6 +72,6 @@ export class UserService {
       });
       delete certInfo.accessToken; //쿠키에 담았으니까 지워준다.
     }
-    return certInfo; //{ success, userUuid?, username? }
+    return certInfo; //{ success, userId?, username? }
   }
 }

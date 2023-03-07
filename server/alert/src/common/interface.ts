@@ -5,7 +5,7 @@ import { Handshake } from 'socket.io/dist/socket';
 //알람 DTO 정의
 export interface AlertDto {
   _id: string;
-  userUuid: string;
+  userId: string;
   type: Upload; //유니온으로 나열할 예정.
   content: UploadResult;
 } //타입과 result는 계속해서 추가.
@@ -26,5 +26,5 @@ interface handshakeEx extends Handshake {
   headers: IncomingHttpHeadersEx;
 }
 interface IncomingHttpHeadersEx extends IncomingHttpHeaders {
-  uuid: string;
+  userid: string;
 }

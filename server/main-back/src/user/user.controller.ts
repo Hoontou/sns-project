@@ -16,7 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 export interface UserInfoResponse {
   success: boolean;
-  userUuid?: string;
+  userId?: string;
   username?: string;
   accessToken?: string;
 }

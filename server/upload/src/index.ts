@@ -33,7 +33,7 @@ server.post(
     //await uploadToAzure(azureClient, postList, post_id); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
     //console.log('======upload end======');
 
-    //여기에 이제 메인백의 post컨트롤러로 post_id랑 title, useruuid 날려야함.
+    //여기에 이제 메인백의 post컨트롤러로 post_id랑 title, userId 날려야함.
     rabbitMQ.sendMsg('metadata', metadataForm);
     rabbitMQ.sendMsg('alert', alertForm);
 

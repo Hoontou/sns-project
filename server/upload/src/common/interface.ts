@@ -5,7 +5,7 @@ export interface UploadRequest extends FastifyRequest {
   _id: string;
   count: number;
   postList: string[];
-  body: { title: string; alert_id: string; userUuid: string };
+  body: { title: string; alert_id: string; userId: string };
 }
 
 export interface ParserInterface {
@@ -17,7 +17,7 @@ export interface ParserInterface {
 
 export interface MetadataDto {
   _id: string;
-  userUuid: string;
+  userId: string;
   files: string[];
   title: string;
   createdAt: Date;
@@ -25,7 +25,7 @@ export interface MetadataDto {
 
 export interface AlertDto {
   _id: string;
-  userUuid: string;
+  userId: string;
   type: Upload;
   content: UploadContent;
 } //타입과 content는 계속해서 추가.

@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 interface AlertDto {
   _id: string;
-  userUuid: string;
+  userId: string;
   type: Upload; //유니온으로 나열할 예정.
   content: UploadResult;
 } //타입과 result는 계속해서 추가.
@@ -17,28 +17,29 @@ interface UploadResult {
 
 const AlertSock = () => {
   const [alertItems, setAlertItems] = useState<Array<string>>([]);
-  const userUuid = localStorage.getItem('userUuid');
-  if (!userUuid) {
-    return <div>this is alert socket, but no useruuid</div>;
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    return <div>this is alert socket, but no userId</div>;
+  } else {
+    const socket = io({
+      extraHeaders: {
+        userid: userId, //헤더 키는 소문자로 날라가더라.
+      },
+    });
+    socket.on('tst', (data: AlertDto) => {
+      console.log('소켓수신');
+      setAlertItems([...alertItems, data.content.post_id]);
+      console.log(data);
+    });
+    return (
+      <div>
+        this is alert socket
+        {alertItems.map((i) => {
+          return <div key={`alert${i}`}>${i}</div>;
+        })}
+      </div>
+    );
   }
-  const socket = io({
-    extraHeaders: {
-      uuid: userUuid,
-    },
-  });
-  socket.on('tst', (data: AlertDto) => {
-    console.log('소켓수신');
-    setAlertItems([...alertItems, data.content.post_id]);
-    console.log(data);
-  });
-  return (
-    <div>
-      this is alert socket
-      {alertItems.map((i) => {
-        return <div>${i}</div>;
-      })}
-    </div>
-  );
 };
 
 export default AlertSock;

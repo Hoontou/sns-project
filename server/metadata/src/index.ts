@@ -11,10 +11,10 @@ const server = fastify();
 server.post(
   '/getposts',
   async (req: MetadataRequest, reply): Promise<{ posts: MetadataDto[] }> => {
-    const decUuid = crypter.decrypt(req.body.userUuid);
-    const posts: MetadataDto[] = await Metadata.find({ userUuid: decUuid });
+    const decId = crypter.decrypt(req.body.userId);
+    const posts: MetadataDto[] = await Metadata.find({ userId: decId });
     return { posts };
-    //나중에 useruuid 빼고 보내라. 아니면 암호화해서 보내던지.
+    //나중에 userId 빼고 보내라. 아니면 암호화해서 보내던지.
   },
 );
 

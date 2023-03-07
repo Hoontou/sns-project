@@ -31,7 +31,7 @@ export class AuthService {
       const accessToken = await this.jwtService.sign(payload);
       return {
         accessToken,
-        userUuid: crypter.encrypt(user.id),
+        userId: crypter.encrypt(user.id),
         username: user.username,
         success: true,
       }; //토큰을 바로넘기지 말고 이렇게 객체로 넘긴다.

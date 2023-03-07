@@ -20,7 +20,7 @@ const Signin = () => {
     };
     axios.post('/main-back/user/signin', signInForm).then((res) => {
       alert(res.data.success);
-      localStorage.setItem('userUuid', res.data.userUuid); //AES로 암호화 된 uuid
+      localStorage.setItem('userId', res.data.userId); //AES로 암호화 된 id(int)
       localStorage.setItem('username', res.data.username);
     });
   };

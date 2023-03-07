@@ -11,7 +11,7 @@ if (!RABBIT) {
 
 const handleAlert = (message) => {
   const data: AlertDto = JSON.parse(message.content.toString());
-  const socket = socketManager.getSocket(data.userUuid);
+  const socket = socketManager.getSocket(data.userId);
   if (socket) {
     socket.emit('tst', data);
     console.log('소켓전송');

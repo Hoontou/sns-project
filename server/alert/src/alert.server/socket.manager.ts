@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 
 // export interface AlertServer {
-//   userUuid: string;
+//   userId: string;
 //   socket: Socket;
 //   connAt: Date;
 // }
@@ -13,18 +13,18 @@ class SocketManager {
     //빈번한 수정에는 Map이 그냥 객체보다 성능좋다고 한다. MDN피셜임.
   }
 
-  setSock(userUuid: string, socket: Socket): void {
-    this.container.set(userUuid, socket);
-  } //컨테이너에 {uuid: {obj}, uuid2: {obj2},,,} 이렇게 넣는다.
+  setSock(userId: string, socket: Socket): void {
+    this.container.set(userId, socket);
+  } //컨테이너에 {Id: {obj}, Id2: {obj2},,,} 이렇게 넣는다.
 
-  disconnSock(userUuid: string): void {
-    this.container.set(userUuid, false);
+  disconnSock(userId: string): void {
+    this.container.set(userId, false);
   } //객체를 아예 지워버리면 뭔가 비용이 많이발생할것같음.
   //false로 해놓고 나중에 한꺼번에 false인것들 지워버리게 하자.
   //conn, disconn이 빈번한데 그때마다 지우는것보다 업데이트로.
 
-  getSocket(userUuid: string): Socket | false | undefined {
-    const sock: Socket | false | undefined = this.container.get(userUuid);
+  getSocket(userId: string): Socket | false | undefined {
+    const sock: Socket | false | undefined = this.container.get(userId);
     return sock; //sock이 false, 또는 객체가 아예 없든지 둘다 false 리턴함.
   }
 

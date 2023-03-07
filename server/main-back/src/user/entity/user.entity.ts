@@ -12,7 +12,7 @@ import { CoComment } from 'src/post/entity/cocomment.entity';
 
 @Entity()
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column({ unique: true })
