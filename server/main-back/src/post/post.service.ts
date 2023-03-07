@@ -40,7 +40,7 @@ export class PostService {
   //쿼리빌더 코드
   //const { post_id, userId } = postDto;
   //await this.postTable.db
-  // .createQueryBuilder(
+  // .createQueryBuilder()
   // .insert()
   // .into(Post)
   // .values({
@@ -52,19 +52,18 @@ export class PostService {
   //그냥 integer id를 쓸까? 쿼리빌더쓰면 pg에서 뱉는 오류를 그대로 볼 수 있긴한데
   //오류가 발생할 수 없게 설계하면 쿼리빌더가 필요없을것 같긴하고.
   //근데 또 쿼리빌더쓰면 user찾는 1개의 쿼리를 아낄수있긴한데..
+
+  //userId를 int로 바꾸고 쿼리빌더로 insert 성공
   async posting(postDto: PostDto): Promise<void> {
-    const user = await this.userTable.db.findOne({
-      where: { id: postDto.userId },
-    });
-    if (!user) {
-      //hoc를 거치고 거기서 리턴받은 useruuid이므로 오류가 날리는 없음.
-      throw new NotFoundException();
-    }
-    const postForm = {
-      id: postDto.post_id,
-      user,
-    };
-    const newPost: Post = this.postTable.db.create(postForm);
-    this.postTable.db.save(newPost);
+    const { post_id, userId } = postDto;
+    await this.postTable.db
+      .createQueryBuilder()
+      .insert()
+      .into(Post)
+      .values({
+        id: post_id,
+        user: () => `${userId}`,
+      })
+      .execute();
   }
 }
