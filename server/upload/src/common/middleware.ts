@@ -1,14 +1,14 @@
 import multer from 'fastify-multer';
-import { uploadRequest } from './interface';
+import { UploadRequest } from './interface';
 import { mkdirSync } from 'fs';
 import { ObjectId } from './tools/gen.objectid';
 
 //클라이언트로 받은 파일을 저장하기 위해 설정.
 const storage = multer.diskStorage({
-  destination: (req: uploadRequest, file, cb) => {
+  destination: (req: UploadRequest, file, cb) => {
     cb(null, `files/${req._id}/`); //파일 저장 경로
   },
-  filename: (req: uploadRequest, file, cb) => {
+  filename: (req: UploadRequest, file, cb) => {
     const fileExtension = file.originalname.split('.'); //확장자만 추출
     const name = `${req.count}.${fileExtension[fileExtension.length - 1]}`;
     cb(null, name); //파일 이름은 uuid.count.확장자
@@ -29,7 +29,7 @@ const uploadToLoacl = upload.fields([
 ]);
 
 //파일이름 생성을 위한 uuid, count 만들어서 req에 끼워넣는 미들웨어.
-const add_idToReq = (req: uploadRequest, reply, next) => {
+const add_idToReq = (req: UploadRequest, reply, next) => {
   req._id = ObjectId();
   req.count = 0;
   req.postList = [];
