@@ -13,7 +13,7 @@ import { Comment } from './comment.entity';
 @Entity()
 export class Post extends BaseEntity {
   @PrimaryColumn()
-  _id: string; //post objectId를 내가 넣어줘야함. 자동생성 아님.
+  id: string; //post objectId를 내가 넣어줘야함. 자동생성 아님.
 
   // @Column()
   // title: string;
@@ -29,7 +29,7 @@ export class Post extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   //@JoinColumn()
-  user: User;
+  user: User; //포린키, 작성자 uuid
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[]; //Post는 댓글 여러개 가지고 있음.
