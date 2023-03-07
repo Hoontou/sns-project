@@ -22,7 +22,7 @@ export class Post extends BaseEntity {
   likes: number;
 
   @Column({ default: 0 })
-  commentCount: number;
+  commentcount: number;
 
   // @CreateDateColumn()
   // createdAt: Date;

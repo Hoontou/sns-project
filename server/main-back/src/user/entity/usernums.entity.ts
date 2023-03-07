@@ -9,7 +9,7 @@ import {
 import { User } from './user.entity';
 
 @Entity()
-export class UserNums extends BaseEntity {
+export class Usernums extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,7 +20,7 @@ export class UserNums extends BaseEntity {
   following: number;
 
   @Column({ default: 0 })
-  postCount: number;
+  postcount: number;
 
   //유저테이블과 포린키 연결하고 cascade 삭제 설정.
   @OneToOne(() => User, {

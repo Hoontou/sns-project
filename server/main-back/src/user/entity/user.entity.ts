@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Comment } from 'src/post/entity/comment.entity';
 import { Post } from 'src/post/entity/post.entity';
-import { CoComment } from 'src/post/entity/cocomment.entity';
+import { Cocomment } from 'src/post/entity/cocomment.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -33,6 +33,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[]; //유저는 댓글 여러개 쓸 수 있음.
 
-  @OneToMany(() => CoComment, (cocomment) => cocomment.user)
-  cocomments: CoComment[]; //유저는 대댓 여러개 쓸 수 있음.
+  @OneToMany(() => Cocomment, (cocomment) => cocomment.user)
+  cocomments: Cocomment[]; //유저는 대댓 여러개 쓸 수 있음.
 }

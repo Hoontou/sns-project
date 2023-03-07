@@ -2,17 +2,29 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { User } from '../entity/user.entity';
-import { UserNums } from '../entity/usernums.entity';
+import { Usernums } from '../entity/usernums.entity';
 
 @Injectable()
-export class UserNumsTable {
+export class UsernumsTable {
   constructor(
-    @InjectRepository(UserNums)
-    public db: Repository<UserNums>,
+    @InjectRepository(Usernums)
+    public db: Repository<Usernums>,
   ) {}
 
   async createUserNums(user: User) {
-    const newUserNum: UserNums = this.db.create({ user });
+    const newUserNum: Usernums = this.db.create({ user });
     this.db.save(newUserNum);
+  }
+
+  //from postRepository
+  async addPost(userId: string) {
+    await this.db
+      .createQueryBuilder()
+      .update(Usernums)
+      .set({
+        postcount: () => 'postcount + 1',
+      })
+      .where('id = :id', { id: userId })
+      .execute();
   }
 }

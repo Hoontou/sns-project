@@ -7,11 +7,11 @@ import { Post } from './entity/post.entity';
 import { Comment } from './entity/comment.entity';
 import { PostController } from './post.controller';
 import { PostService } from './post.service';
-import { CoComment } from './entity/cocomment.entity';
+import { Cocomment } from './entity/cocomment.entity';
 import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, Comment, CoComment]), UserModule],
+  imports: [TypeOrmModule.forFeature([Post, Comment, Cocomment]), UserModule],
   providers: [PostTable, CommentTable, CoCommentTable, PostService],
   controllers: [PostController],
 })

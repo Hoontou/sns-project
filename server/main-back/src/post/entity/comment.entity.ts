@@ -10,7 +10,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Post } from './post.entity';
-import { CoComment } from './cocomment.entity';
+import { Cocomment } from './cocomment.entity';
 
 @Entity()
 export class Comment extends BaseEntity {
@@ -24,10 +24,10 @@ export class Comment extends BaseEntity {
   likes: number;
 
   @Column({ default: 0 })
-  cocommentCount: number;
+  cocommentcount: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdat: Date;
 
   //유저테이블, 포스트테이블과 포린키 연결하고 cascade 삭제 설정.
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
@@ -38,6 +38,6 @@ export class Comment extends BaseEntity {
   //@JoinColumn()
   post: Post;
 
-  @OneToMany(() => CoComment, (cocomment) => cocomment.comment)
-  cocomments: CoComment[]; //유저는 댓글 여러개 쓸 수 있음
+  @OneToMany(() => Cocomment, (cocomment) => cocomment.comment)
+  cocomments: Cocomment[]; //유저는 댓글 여러개 쓸 수 있음
 }

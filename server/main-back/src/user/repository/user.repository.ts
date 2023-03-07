@@ -3,14 +3,14 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { User } from '../entity/user.entity';
 import { SignUpDto } from '../dto/sign.dto';
-import { UserNumsTable } from './usernums.repository';
+import { UsernumsTable } from './usernums.repository';
 
 @Injectable()
 export class UserTable {
   constructor(
     @InjectRepository(User)
     public db: Repository<User>,
-    private userNumsTable: UserNumsTable,
+    private userNumsTable: UsernumsTable,
   ) {}
   async signUp(user: SignUpDto): Promise<{ success: boolean; msg?: string }> {
     //근데 받아오는 user객체의 비밀번호는 암호화 돼 있어서 정확히는 Dto에 부합하지 않음.
@@ -32,6 +32,7 @@ export class UserTable {
     } finally {
       //유저생성 성공했으면 usernums테이블에 insert한다.
       if (success == true) {
+        console.log(newUser);
         this.userNumsTable.createUserNums(newUser);
       }
     }

@@ -14,7 +14,7 @@ export class PostController {
   //이것은 업로드로부터 온 요청이니까 hoc 필요없음.
   //res: {success: boolean}
   @Post('/posting')
-  posting(@Body(ValidationPipe) postDto: PostDto): Promise<void> {
+  posting(@Body(ValidationPipe) postDto: PostDto) {
     return this.postService.posting(postDto);
   }
 }
