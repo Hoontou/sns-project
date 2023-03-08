@@ -20,10 +20,10 @@ export class CommentDto {
   userId: string; //작성자
 
   @IsNotEmpty()
-  postId: string; //부모 post id (objectid)
+  post_id: string; //부모 post id (objectid)
 }
 
-export class CoCommentDto {
+export class CocommentDto {
   @IsNotEmpty()
   comment: string;
 

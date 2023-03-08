@@ -1,6 +1,6 @@
 import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { PostService } from './post.service';
-import { PostDto } from './dto/post.dto';
+import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
 
 @Controller('post')
 export class PostController {
@@ -14,7 +14,21 @@ export class PostController {
   //이것은 업로드로부터 온 요청이니까 hoc 필요없음.
   //res: {success: boolean}
   @Post('/posting')
-  posting(@Body(ValidationPipe) postDto: PostDto) {
+  posting(
+    @Body(ValidationPipe) postDto: PostDto,
+  ): Promise<{ success: boolean }> {
     return this.postService.posting(postDto);
   }
+
+  @Post('/commenting')
+  commenting(
+    @Body(ValidationPipe) commentDto: CommentDto,
+  ): Promise<{ success: boolean }> {
+    return this.postService.commenting(commentDto);
+  }
+
+  // @Post('/cocommenting')
+  // cocommenting(@Body(ValidationPipe) cocommentDto: CocommentDto) {
+  //   return this.postService.cocommenting(cocommentDto);
+  // }
 }

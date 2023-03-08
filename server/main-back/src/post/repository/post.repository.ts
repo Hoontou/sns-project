@@ -3,17 +3,15 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Post } from '../entity/post.entity';
 import { PostDto } from '../dto/post.dto';
-import { UsernumsTable } from '../../user/repository/usernums.repository';
 
 @Injectable()
 export class PostTable {
   constructor(
     @InjectRepository(Post)
     public db: Repository<Post>,
-    private usernumsTable: UsernumsTable,
   ) {}
 
-  async addPost(postDto: PostDto) {
+  async addPost(postDto: PostDto): Promise<void> {
     const { post_id, userId } = postDto;
     await this.db
       .createQueryBuilder()
@@ -24,9 +22,17 @@ export class PostTable {
         user: () => `${userId}`,
       })
       .execute();
-    await this.usernumsTable.addPost(userId);
+  }
 
-    return { success: true };
+  async addComment(post_id: string): Promise<void> {
+    await this.db
+      .createQueryBuilder()
+      .update(Post)
+      .set({
+        commentcount: () => `commentcount + 1`,
+      })
+      .where('id = :id', { id: post_id })
+      .execute();
   }
 }
 

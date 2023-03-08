@@ -32,3 +32,8 @@ password: test}
 ### res
 
 {success: boolean}
+
+---
+
+typeorm 오류나서 그냥 바닐라 쿼리 날리기 위해 pg모듈 쓴다.
+https://node-postgres.com/apis/client
