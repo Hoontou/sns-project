@@ -24,7 +24,7 @@ export class UsernumsTable {
       .set({
         postcount: () => 'postcount + 1',
       })
-      .where('id = :id', { id: userId })
+      .where('userId = :id', { id: userId })
       .execute();
   }
 }
