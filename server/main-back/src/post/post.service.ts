@@ -25,7 +25,7 @@ export class PostService {
   }
 
   async commenting(commentDto: CommentDto): Promise<{ success: boolean }> {
-    //코멘트 테이블에 코멘트 삽입, 포스트테이블에서 포스트 찾아서 코멘트 카운트 올리기.
+    //코멘트 테이블에 코멘트 삽입, 포스트테이블에서 포스트 찾아서 코멘트 카운트 올리기
     await this.commentTable.addComment(commentDto);
     await this.postTable.addComment(commentDto.postId);
 
