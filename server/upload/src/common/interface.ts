@@ -13,6 +13,12 @@ export interface ParserInterface {
   postList: string[];
   metadataForm: MetadataDto;
   alertForm: AlertDto;
+  postingForm: PostingDto;
+}
+
+export interface PostingDto {
+  userId: string;
+  postId: string;
 }
 
 export interface MetadataDto {

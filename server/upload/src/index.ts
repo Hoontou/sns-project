@@ -10,6 +10,7 @@ import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import { rabbitMQ } from './common/amqp';
 import { reqParser } from './common/tools/req.parser';
+import axios from 'axios';
 
 const server = fastify();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -24,8 +25,13 @@ server.post(
   '/uploadfiles',
   { preHandler: [add_idToReq, uploadToLoacl] }, //순서대로 미들웨어 호출됨.
   async (req: UploadRequest, reply) => {
-    const { post_id, postList, metadataForm, alertForm }: ParserInterface =
-      reqParser(req);
+    const {
+      post_id,
+      postList,
+      metadataForm,
+      alertForm,
+      postingForm,
+    }: ParserInterface = reqParser(req);
 
     console.log('start uploading');
     console.log(postList);
@@ -33,10 +39,10 @@ server.post(
     //await uploadToAzure(azureClient, postList, post_id); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
     //console.log('======upload end======');
 
-    //여기에 이제 메인백의 post컨트롤러로 post_id랑 title, userId 날려야함.
-    rabbitMQ.sendMsg('metadata', metadataForm);
-    rabbitMQ.sendMsg('alert', alertForm);
-
+    rabbitMQ.sendMsg('metadata', metadataForm); //메타데이터 저장
+    rabbitMQ.sendMsg('alert', alertForm); //알람 생성, 저장
+    axios.post('http://main-back/post/posting', postingForm); //pgdb에 post정보 저장
+    //.then((res) => console.log(res.data));
     rmDirer.counter();
     //현재 5카운트마다 삭제시킴. 근데 이거 오류날 가능성 있어서 잘 체크해야함
     //빠르게 요청클릭해도 오류 없긴한데...

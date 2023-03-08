@@ -14,7 +14,7 @@ const handleAlert = (message) => {
   const socket = socketManager.getSocket(data.userId);
   if (socket) {
     socket.emit('tst', data);
-    console.log('소켓전송');
+    console.log('업로드 소켓전송');
   }
   console.log('alert MSA catch alertForm from upload');
   // console.log(data);

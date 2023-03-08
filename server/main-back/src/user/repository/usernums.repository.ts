@@ -17,7 +17,7 @@ export class UsernumsTable {
   }
 
   //from postRepository
-  async addPost(userId: string) {
+  async addPost(userId: string | number) {
     await this.db
       .createQueryBuilder()
       .update(Usernums)

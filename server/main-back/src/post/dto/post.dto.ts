@@ -3,13 +3,13 @@ import { IsNotEmpty } from 'class-validator';
 
 export class PostDto {
   @IsNotEmpty()
-  post_id: string;
+  postId: string;
 
   // @IsNotEmpty()
   // title: string;
 
   @IsNotEmpty()
-  userId: string; //작성자 id (uuid)
+  userId: string | number; //작성자 id
 }
 
 export class CommentDto {
@@ -17,19 +17,19 @@ export class CommentDto {
   comment: string;
 
   @IsNotEmpty()
-  userId: string; //작성자
+  userId: string | number; //작성자
 
   @IsNotEmpty()
-  post_id: string; //부모 post id (objectid)
+  postId: string; //부모 post id (objectid)
 }
 
 export class CocommentDto {
   @IsNotEmpty()
-  comment: string;
+  cocomment: string;
 
   @IsNotEmpty()
   userId: string;
 
   @IsNotEmpty()
-  commentId: number; //부모 comment id (int)
+  commentId: number | string; //부모 comment id (int)
 }

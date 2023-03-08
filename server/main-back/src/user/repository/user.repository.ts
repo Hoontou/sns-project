@@ -32,7 +32,6 @@ export class UserTable {
     } finally {
       //유저생성 성공했으면 usernums테이블에 insert한다.
       if (success == true) {
-        console.log(newUser);
         this.userNumsTable.createUserNums(newUser);
       }
     }

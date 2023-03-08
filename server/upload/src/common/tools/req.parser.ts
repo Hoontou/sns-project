@@ -4,6 +4,7 @@ import {
   MetadataDto,
   ParserInterface,
   UploadRequest,
+  PostingDto,
 } from '../interface';
 
 export const reqParser = (req: UploadRequest): ParserInterface => {
@@ -16,6 +17,11 @@ export const reqParser = (req: UploadRequest): ParserInterface => {
   const decId: string = crypter.decrypt(userId);
   const post_id: string = req._id;
   const postList: string[] = req.postList;
+
+  const postingForm: PostingDto = {
+    postId: post_id,
+    userId: decId,
+  };
   const metadataForm: MetadataDto = {
     _id: post_id,
     userId: decId,
@@ -39,5 +45,6 @@ export const reqParser = (req: UploadRequest): ParserInterface => {
     postList,
     metadataForm,
     alertForm,
+    postingForm,
   };
 };

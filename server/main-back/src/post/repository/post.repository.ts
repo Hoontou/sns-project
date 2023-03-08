@@ -12,13 +12,13 @@ export class PostTable {
   ) {}
 
   async addPost(postDto: PostDto): Promise<void> {
-    const { post_id, userId } = postDto;
+    const { postId, userId } = postDto;
     await this.db
       .createQueryBuilder()
       .insert()
       .into(Post)
       .values({
-        id: post_id,
+        id: postId,
         user: () => `${userId}`,
       })
       .execute();

@@ -12,7 +12,7 @@ export class CommentTable {
   ) {}
 
   async addComment(commentDto: CommentDto): Promise<void> {
-    const { post_id, userId, comment } = commentDto;
+    const { postId, userId, comment } = commentDto;
     //const queryText = `INSERT INTO public.comment(comment, "userId", "postId) VALUES ('${comment}', ${userId}, '${post_id}')`;
     //console.log(queryText);
     await this.db
@@ -21,9 +21,20 @@ export class CommentTable {
       .into(Comment)
       .values({
         comment: () => `'${comment}'`,
-        post: () => `'${post_id}'`,
+        post: () => `'${postId}'`,
         user: () => `${userId}`,
       })
+      .execute();
+  }
+
+  async addCocomment(commentId: number | string) {
+    await this.db
+      .createQueryBuilder()
+      .update(Comment)
+      .set({
+        cocommentcount: () => `cocommentcount + 1`,
+      })
+      .where('id = :id', { id: commentId })
       .execute();
   }
 }
