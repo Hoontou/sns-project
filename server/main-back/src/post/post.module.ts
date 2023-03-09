@@ -9,9 +9,14 @@ import { PostController } from './post.controller';
 import { PostService } from './post.service';
 import { Cocomment } from './entity/cocomment.entity';
 import { UserModule } from '../user/user.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, Comment, Cocomment]), UserModule],
+  imports: [
+    TypeOrmModule.forFeature([Post, Comment, Cocomment]),
+    UserModule,
+    AuthModule,
+  ],
   providers: [PostTable, CommentTable, CoCommentTable, PostService],
   controllers: [PostController],
 })

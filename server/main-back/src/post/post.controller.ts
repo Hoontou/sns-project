@@ -5,10 +5,12 @@ import {
   Get,
   Post,
   Req,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('post')
 export class PostController {
@@ -60,9 +62,8 @@ export class PostController {
 
   //req: { "postId": "1"}
   @Delete('/delpost')
-  delPost(@Req() req) {
-    const postId: string = req.body.postId;
-
-    return this.postService.delPost(postId);
+  @UseGuards(AuthGuard())
+  delPost(@Req() req): Promise<void> {
+    return this.postService.delPost(req);
   }
 }

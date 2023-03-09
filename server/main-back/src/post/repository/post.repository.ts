@@ -35,7 +35,7 @@ export class PostTable {
       .execute();
   }
 
-  async delPost(postId: string) {
+  async delPost(postId: string): Promise<void> {
     await this.db
       .createQueryBuilder()
       .delete()

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { PostTable } from './repository/post.repository';
 import { CommentTable } from './repository/comment.repository';
 import { CoCommentTable } from './repository/cocomment.repository';
@@ -6,6 +6,9 @@ import { CommentDto, PostDto, CocommentDto } from './dto/post.dto';
 import { UserTable } from '../user/repository/user.repository';
 import { UsernumsTable } from 'src/user/repository/usernums.repository';
 import { rabbitMQ } from 'src/common/amqp';
+import { AlertDto } from '../common/interface';
+import { crypter } from 'src/common/crypter';
+import { ObjectId } from '../common/gen.objectid';
 
 @Injectable()
 export class PostService {
@@ -41,8 +44,22 @@ export class PostService {
     return { success: true };
   }
 
-  async delPost(postId: string) {
-    rabbitMQ.sendMsg('alert', { tst: 'tst' });
-    return this.postTable.delPost(postId);
+  async delPost(@Req() req): Promise<void> {
+    //alertForm 생성을 위해 userId, postId 파싱
+    const postId: string = req.body.postId;
+    await this.postTable.delPost(postId);
+
+    const userId = crypter.decrypt(req.user.id);
+    const alert_id = ObjectId();
+    const delAlertForm: AlertDto = {
+      _id: alert_id,
+      userId,
+      content: {
+        type: 'deletePost',
+        postId,
+        success: true,
+      },
+    };
+    rabbitMQ.sendMsg('alert', delAlertForm);
   }
 }

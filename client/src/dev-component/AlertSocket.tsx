@@ -1,22 +1,30 @@
 import { io } from 'socket.io-client';
 import { useState } from 'react';
 
-interface AlertDto {
+//알람 DTO 정의
+export interface AlertDto {
   _id: string;
   userId: string;
-  content: UploadResult;
+  content: UploadContent | DeletePostContent;
 } //타입과 result는 계속해서 추가.
 
 type Upload = 'upload';
-
-interface UploadResult {
+type DelPost = 'deletePost';
+interface UploadContent {
   type: Upload; //유니온으로 나열할 예정.
+  success: boolean;
+  postId: string;
+}
+interface DeletePostContent {
+  type: DelPost;
   success: boolean;
   postId: string;
 }
 
 const AlertSock = () => {
-  const [alertItems, setAlertItems] = useState<Array<UploadResult>>([]);
+  const [alertItems, setAlertItems] = useState<
+    Array<UploadContent | DeletePostContent>
+  >([]);
   const userId = localStorage.getItem('userId');
   if (!userId) {
     return <div>this is alert socket, but no userId</div>;
@@ -35,11 +43,7 @@ const AlertSock = () => {
       <div>
         this is alert socket
         {alertItems.map((i) => {
-          return (
-            <div key={i.type}>
-              {i.type}, {i.postId}
-            </div>
-          );
+          return <div key={i.type}>{i.type}</div>;
         })}
       </div>
     );

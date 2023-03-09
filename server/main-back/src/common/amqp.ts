@@ -12,17 +12,22 @@ class RabbitMQ {
     this.rabbitUrl = rabbitUrl;
   }
 
-  // async initialize(queList: string[]) {
-  //   this.conn = await amqp.connect(this.rabbitUrl);
-  //   this.channel = await this.conn.createChannel();
-  //   queList.forEach(async (que) => {
-  //     await this.channel.assertQueue(que, { durable: true });
-  //   });
-  //   console.log('RabbitMQ connected');
-  // }
-  async initialize() {
+  async initialize(queList: string[]) {
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
+    // queList.forEach(async (que) => {
+    //   await this.channel.assertQueue(que, { durable: true });
+    //   await this.channel.consume(
+    //     que,
+    //     (message) => {
+    //       const targetQue: string = message.fields.routingKey;
+    //       if (targetQue === 'alert') {
+    //         handleAlert(message);
+    //       }
+    //     },
+    //     { noAck: true },
+    //   );
+    // });
     console.log('RabbitMQ connected');
   }
 
