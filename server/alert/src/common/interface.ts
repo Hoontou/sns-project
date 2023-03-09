@@ -6,15 +6,15 @@ import { Handshake } from 'socket.io/dist/socket';
 export interface AlertDto {
   _id: string;
   userId: string;
-  type: Upload; //유니온으로 나열할 예정.
-  content: UploadResult;
+  content: UploadContent;
 } //타입과 result는 계속해서 추가.
 
 type Upload = 'upload';
 
-interface UploadResult {
+interface UploadContent {
+  type: Upload; //유니온으로 나열할 예정.
   success: boolean;
-  post_id: string;
+  postId: string;
 }
 
 //소켓정보의 헤더에 커스텀헤더 타입 정의를 위해.

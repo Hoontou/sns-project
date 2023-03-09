@@ -4,7 +4,6 @@ import { AlertDto } from 'src/common/interface';
 const alertSchema = new mongoose.Schema({
   _id: String,
   userId: String,
-  type: String,
   content: Object,
 });
 

@@ -36,6 +36,7 @@ class RabbitMQ {
       await this.channel.consume(
         que,
         (message) => {
+          console.log(message);
           const targetQue: string = message.fields.routingKey;
           if (targetQue === 'alert') {
             handleAlert(message);

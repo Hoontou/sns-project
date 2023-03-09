@@ -15,15 +15,15 @@ export const reqParser = (req: UploadRequest): ParserInterface => {
   //로직 다 처리하고 알람 삭제해주면 됨
   const { userId } = JSON.parse(req.body.userId); //클라이언트에서 hoc해서 보내준 값이고 암호화 돼있음.
   const decId: string = crypter.decrypt(userId);
-  const post_id: string = req._id;
+  const postId: string = req._id;
   const postList: string[] = req.postList;
 
   const postingForm: PostingDto = {
-    postId: post_id,
+    postId: postId,
     userId: decId,
   };
   const metadataForm: MetadataDto = {
-    _id: post_id,
+    _id: postId,
     userId: decId,
     files: postList,
     title,
@@ -34,14 +34,14 @@ export const reqParser = (req: UploadRequest): ParserInterface => {
     //업로드 완료했다는 알람 보내는것
     _id: alert_id,
     userId: decId,
-    type: 'upload',
     content: {
+      type: 'upload',
       success: true,
-      post_id,
+      postId,
     },
   };
   return {
-    post_id,
+    postId,
     postList,
     metadataForm,
     alertForm,

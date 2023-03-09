@@ -5,6 +5,7 @@ import { CoCommentTable } from './repository/cocomment.repository';
 import { CommentDto, PostDto, CocommentDto } from './dto/post.dto';
 import { UserTable } from '../user/repository/user.repository';
 import { UsernumsTable } from 'src/user/repository/usernums.repository';
+import { rabbitMQ } from 'src/common/amqp';
 
 @Injectable()
 export class PostService {
@@ -41,6 +42,7 @@ export class PostService {
   }
 
   async delPost(postId: string) {
+    rabbitMQ.sendMsg('alert', { tst: 'tst' });
     return this.postTable.delPost(postId);
   }
 }

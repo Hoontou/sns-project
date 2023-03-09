@@ -9,7 +9,7 @@ export interface UploadRequest extends FastifyRequest {
 }
 
 export interface ParserInterface {
-  post_id: string;
+  postId: string;
   postList: string[];
   metadataForm: MetadataDto;
   alertForm: AlertDto;
@@ -32,12 +32,12 @@ export interface MetadataDto {
 export interface AlertDto {
   _id: string;
   userId: string;
-  type: Upload;
   content: UploadContent;
 } //타입과 content는 계속해서 추가.
 
 interface UploadContent {
+  type: Upload;
   success: boolean;
-  post_id: string;
+  postId: string;
 }
 type Upload = 'upload';

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { pgClient } from './configs/pg';
+import { rabbitMQ } from './common/amqp';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,7 @@ async function bootstrap() {
   //const queryText = `INSERT INTO public.comment(comment, "userId", "postId) VALUES ('${comment}', ${userId}, '${post_id}')`;
   //console.log(queryText);
   //https://node-postgres.com/features/queries
+  rabbitMQ.initialize();
   await app.listen(80);
 }
 bootstrap();
