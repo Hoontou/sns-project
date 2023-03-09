@@ -24,14 +24,23 @@ export class PostTable {
       .execute();
   }
 
-  async addComment(post_id: string): Promise<void> {
+  async addComment(postId: string): Promise<void> {
     await this.db
       .createQueryBuilder()
       .update(Post)
       .set({
         commentcount: () => `commentcount + 1`,
       })
-      .where('id = :id', { id: post_id })
+      .where('id = :id', { id: postId })
+      .execute();
+  }
+
+  async delPost(postId: string) {
+    await this.db
+      .createQueryBuilder()
+      .delete()
+      .from(Post)
+      .where('id = :id', { id: postId })
       .execute();
   }
 }

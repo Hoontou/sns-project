@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Req,
+  ValidationPipe,
+} from '@nestjs/common';
 import { PostService } from './post.service';
 import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
 
@@ -48,5 +56,13 @@ export class PostController {
     @Body(ValidationPipe) cocommentDto: CocommentDto,
   ): Promise<{ success: boolean }> {
     return this.postService.cocommenting(cocommentDto);
+  }
+
+  //req: { "postId": "1"}
+  @Delete('/delpost')
+  delPost(@Req() req) {
+    const postId: string = req.body.postId;
+
+    return this.postService.delPost(postId);
   }
 }

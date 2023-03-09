@@ -39,4 +39,8 @@ export class PostService {
 
     return { success: true };
   }
+
+  async delPost(postId: string) {
+    return this.postTable.delPost(postId);
+  }
 }
