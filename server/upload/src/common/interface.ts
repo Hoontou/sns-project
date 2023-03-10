@@ -29,6 +29,7 @@ export interface MetadataDto {
   createdAt: Date;
 }
 
+//upload MSA쪽에서는 AlertDto가 이것만 있으면 됨.
 export interface AlertDto {
   _id: string;
   userId: string;

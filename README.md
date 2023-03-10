@@ -101,3 +101,21 @@ ex) forEach문 안에 if (que == 컨슘사용할 큐) {channel.consume(컨슘로
 class validater 쓰려다가 안함.
 post comment cocomment 테이블 정의했고 pgadmin으로 erd 사진이랑 create table 띄워보니 의도대로 된듯?
 이제 테스트하면서 구현하면 됨.
+
+---
+
+23.3.10
+post C, R, D 구현완료, R는 클라이언트에서 azure url파싱해서 사진까지 띄워줌.  
+C는 클라이언트에서 사진, title 인풋으로 시작함.  
+D는 아직 postmain API 요청으로만 접근 가능함.
+
+comment, cocomment는 아직 API 요청으로만 가능함.  
+post U와 comment D, U는 클라이언트 제대로 만들면서 구현할거임.  
+post U는 좀 귀찮을듯.
+
+이제 sub백에서 팔로우팔로잉, 글 좋아요, 댓글 좋아요, 그리고  
+팔로우취소 등등 구현 시작.
+섭백에 팔로우한 사람들이 최근 업로드한 게시글 다 긁어오기 같은거 구현하면 편할듯?  
+섭백까지 어느정도 만들면? sns에서 필요한 건 거의 다 만든듯?(기본적인것만)
+그 이후는 클라이언트 모양 잡고... 세부적인 기능 만들기.
+이 세부적인 기능은 진짜 욕심내면 끝도없을것같음...

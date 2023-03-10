@@ -55,7 +55,7 @@ export class PostService {
       _id: alert_id,
       userId,
       content: {
-        type: 'deletePost',
+        type: 'deletePost', // DelPost type임.
         postId,
         success: true,
       },
