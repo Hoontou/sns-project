@@ -21,5 +21,6 @@ async function bootstrap() {
   //https://node-postgres.com/features/queries
   rabbitMQ.initialize([]);
   await app.listen(80);
+  console.log(`main-back on 4000:80`);
 }
 bootstrap();

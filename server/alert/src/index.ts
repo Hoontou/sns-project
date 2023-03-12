@@ -37,5 +37,5 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
   }
   connectMongo();
   rabbitMQ.initialize(['alert']);
-  console.log(`Server listening at ${address}`);
+  console.log(`alert on 4004:80`);
 });

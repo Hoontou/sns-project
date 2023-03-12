@@ -27,5 +27,5 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
   connectMongo();
   rabbitMQ.initialize(['metadata']);
 
-  console.log(`Server listening at ${address}`);
+  console.log(`metadata on 4003:80`);
 });

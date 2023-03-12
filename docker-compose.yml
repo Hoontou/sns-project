@@ -28,6 +28,20 @@ services:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
 
+  sub-back:
+    image: sub-back
+    build:
+      context: ./server/sub-back
+      dockerfile: Dockerfile
+    container_name: sub-back
+    volumes:
+      - ./server/sub-back/src:/usr/src/app/src:z
+    ports:
+      - '4001:80'
+    environment:
+      - RABBIT=amqp://guest:guest@rabbit:5672
+      - NODE_ENV=development
+
   upload:
     image: upload
     build:
@@ -37,7 +51,7 @@ services:
     volumes:
       - ./server/upload/src:/usr/src/app/src:z
     ports:
-      - '4001:80'
+      - '4002:80'
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
@@ -52,7 +66,7 @@ services:
     volumes:
       - ./server/metadata/src:/usr/src/app/src:z
     ports:
-      - '4002:80'
+      - '4003:80'
     environment:
       - MONGO_URI=mongodb://mgdb:27017/metadata
       - RABBIT=amqp://guest:guest@rabbit:5672
@@ -67,7 +81,7 @@ services:
     volumes:
       - ./server/alert/src:/usr/src/app/src:z
     ports:
-      - '4003:80'
+      - '4004:80'
     environment:
       - MONGO_URI=mongodb://mgdb:27017/alert
       - RABBIT=amqp://guest:guest@rabbit:5672

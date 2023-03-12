@@ -20,9 +20,7 @@
     "crypto-js": "^4.1.1",
     "fastify": "^4.13.0",
     "fastify-multer": "^2.0.3",
-    "fs-extra": "^11.1.0",
-    "path": "^0.12.7",
-    "uuid": "^9.0.0"
+    "fs-extra": "^11.1.0"
   },
   "devDependencies": {
     "@types/node": "^18.14.0",
@@ -31,9 +29,7 @@
     "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "i": "^0.3.7",
     "nodemon": "^2.0.20",
-    "npm": "^9.5.1",
     "prettier": "^2.8.4",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.1",

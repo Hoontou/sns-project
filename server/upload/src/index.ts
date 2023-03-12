@@ -67,5 +67,5 @@ server.listen({ host: '0.0.0.0', port: 80 }, async (err, address) => {
     process.exit(1);
   }
   rabbitMQ.initialize([]);
-  console.log(`Server listening at ${address}`);
+  console.log(`upload on 4002:80`);
 });
