@@ -41,6 +41,7 @@ services:
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
+      - MONGO_URI=mongodb://mgdb:27017/alert
 
   upload:
     image: upload

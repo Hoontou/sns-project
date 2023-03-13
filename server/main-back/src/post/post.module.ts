@@ -10,10 +10,17 @@ import { PostService } from './post.service';
 import { Cocomment } from './entity/cocomment.entity';
 import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
+import { Commentnums, Cocommentnums } from './entity/count.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Post, Comment, Cocomment]),
+    TypeOrmModule.forFeature([
+      Post,
+      Comment,
+      Cocomment,
+      Commentnums,
+      Cocommentnums,
+    ]),
     UserModule,
     AuthModule,
   ],

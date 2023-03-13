@@ -16,6 +16,10 @@ import { AuthGuard } from '@nestjs/passport';
 export class PostController {
   constructor(private postService: PostService) {}
 
+  //포스트, 댓글, 대댓글 삽입과 카운트테이블생성, 카운트증가 까지 했음.
+  //댓, 대댓 가져오기는 쿼리빌더로 JOIN써서 할 예정.
+  //위에 줄 진행하기 전 섭백에 좋아요누른사람, 팔로우한사람 구현
+
   //여기 포스트 작업 오기 전에 클라이언트에서 따로 user controller로 hoc진행하고
   //userid까지 Dto에 넣어서 보내주기로 할거임.
   //근데 그러면 클라이언트와 서버와의 연결이 두번?

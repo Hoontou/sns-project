@@ -1,4 +1,5 @@
 import fastify from 'fastify';
+import { connectMongo } from './database/initialize.mongo';
 
 const server = fastify();
 
@@ -11,6 +12,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
     console.error(err);
     process.exit(1);
   }
-
+  connectMongo();
   console.log(`sub-back on 4001:80`);
 });

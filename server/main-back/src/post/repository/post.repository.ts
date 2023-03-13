@@ -11,6 +11,7 @@ export class PostTable {
     public db: Repository<Post>,
   ) {}
 
+  //새로운 포스트데이터 삽입
   async addPost(postDto: PostDto): Promise<void> {
     const { postId, userId } = postDto;
     await this.db
@@ -24,6 +25,7 @@ export class PostTable {
       .execute();
   }
 
+  //코멘트 작성되서 카운트 증가
   async addComment(postId: string): Promise<void> {
     await this.db
       .createQueryBuilder()
@@ -35,6 +37,7 @@ export class PostTable {
       .execute();
   }
 
+  //포스트 삭제
   async delPost(postId: string): Promise<void> {
     await this.db
       .createQueryBuilder()
