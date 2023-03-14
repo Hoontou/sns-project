@@ -10,7 +10,11 @@ const FollowSchema = new mongoose.Schema({
   userTo: String,
 });
 
-const CommentSchema;
+const CommentSchema = new mongoose.Schema({
+  userFrom: String,
+  type: Number, //0은 Comment, 1은 Cocomment
+  id: String, //pgdb의 primary key(number인데 String으로 파싱할거임.)
+});
 
 const MetadataSchema = new mongoose.Schema({
   _id: String,
