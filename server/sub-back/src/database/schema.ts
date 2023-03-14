@@ -1,6 +1,18 @@
 import mongoose from 'mongoose';
 
-const metadataSchema = new mongoose.Schema({
+const PostLikesSchema = new mongoose.Schema({
+  userFrom: String,
+  postTo: String,
+});
+
+const FollowSchema = new mongoose.Schema({
+  userForm: String,
+  userTo: String,
+});
+
+const CommentSchema;
+
+const MetadataSchema = new mongoose.Schema({
   _id: String,
   //받은 objectid로 _id에 바로넣기
   userId: String,
@@ -17,7 +29,7 @@ export interface MetadataDto {
   createdAt: Date;
 }
 
-export const Metadata = mongoose.model('metadata', metadataSchema);
+export const Metadata = mongoose.model('metadata', MetadataSchema);
 
 //Dto파싱해서 document로 만들어 저장까지 해주는 함수.
 export const newMeatadata = (metadataDto: MetadataDto) => {
