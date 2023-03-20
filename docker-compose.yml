@@ -56,7 +56,7 @@ services:
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
-      - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=snsupload;AccountKey=b+HaSNIncUqm4dfw9sKnZHsEZGvOaQ3pqVtduMFCHZ/64eDi42SADUCZ2NL7w1Wwwdm43sW7+yZ/+AStmdGUBw==;EndpointSuffix=core.windows.net
+      - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=snsupload;AccountKey=sVDkSKQZyQPURSTGJrDoCOjizHGlaiRdgCwC00qqBggymMWDqWH49aslc8tVLX9VIrZW7r6B2f/Z+AStBA649Q==;EndpointSuffix=core.windows.net
 
   metadata:
     image: metadata

@@ -51,7 +51,7 @@ server.post(
     //뭐가 성능상 좋은지 고민하고 테스트 해봐야할듯.
   },
 );
-//https://snsupload.blob.core.windows.net/915123b6-3100-4c28/915123b6-3100-4c28.0.png
+//https://snsupload.blob.core.windows.net/${postId}/${postId}.0.png
 //위 주소로 사진 볼수있음. 메타데이터에 보낼 정보임. string 핸들링해서 메타데이터로 넘기자.
 //azure컨테이너주소/_id/_id.몇번째.확장자 형식임.
 
