@@ -35,9 +35,9 @@ server.post(
 
     console.log('start uploading');
     console.log(postList);
-    //console.log('======start azure upload======');
-    //await uploadToAzure(azureClient, postList, postId); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
-    //console.log('======upload end======');
+    console.log('======start azure upload======');
+    await uploadToAzure(azureClient, postList, postId); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
+    console.log('======upload end======');
 
     rabbitMQ.sendMsg('metadata', metadataForm); //메타데이터 저장
     rabbitMQ.sendMsg('alert', alertForm); //알람 생성, 저장

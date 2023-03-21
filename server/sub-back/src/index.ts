@@ -1,5 +1,6 @@
 import fastify from 'fastify';
 import { connectMongo } from './database/initialize.mongo';
+import { rabbitMQ } from './common/amqp';
 
 const server = fastify();
 
@@ -13,5 +14,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
     process.exit(1);
   }
   connectMongo();
+  rabbitMQ.initialize(['sub']);
   console.log(`sub-back on 4001:80`);
 });

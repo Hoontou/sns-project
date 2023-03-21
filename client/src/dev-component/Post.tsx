@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 interface MetadataDto {
   _id: string;
-  userUuid: string;
+  user_id: string;
   files: string[];
 }
 
@@ -11,10 +11,11 @@ const Post = () => {
   const [postList, setPostList] = useState<Array<MetadataDto>>([]);
 
   const onClick = async () => {
-    const userUuid = await axios.get('/main-back/user/hoc').then((res) => {
-      return res.data.userUuid;
+    const user_id = await axios.get('/main-back/user/hoc').then((res) => {
+      return res.data.user_id;
     });
-    axios.post('/metadata/getposts', { userUuid }).then((res) => {
+    console.log(user_id);
+    axios.post('/metadata/getposts', { user_id }).then((res) => {
       //res.data =  MetadataDto[]
       const posts: MetadataDto[] = res.data.posts;
       setPostList([...postList, ...posts]);

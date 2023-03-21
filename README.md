@@ -134,3 +134,7 @@ MSA가 API형식으로 소통하는게 아니라 메세지큐 형태로 소통�
 이외에 찾아본것들, 재미있게 본 것들은
 ORM vs 그냥쿼리 랑 amqp vs rest api. 이 두개 내용은 재미있었다.
 나중에 다시 찾아봐라.
+https://levelup.gitconnected.com/raw-sql-vs-query-builder-vs-orm-eee72dbdd275  
+https://kyungyeon.dev/posts/3
+
+쿼리빌더 vs raw sql

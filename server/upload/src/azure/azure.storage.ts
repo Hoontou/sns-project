@@ -30,13 +30,13 @@ async function createBlobFromLocalPath(
 export async function uploadToAzure(
   blobServiceClient,
   localFileList: string[],
-  uuid: string,
+  _id: string,
 ) {
   const blobs: Promise<void>[] = [];
   //타입명시.
 
   // create container
-  const containerName = uuid;
+  const containerName = _id;
 
   const containerOptions = {
     access: 'container',
@@ -56,7 +56,7 @@ export async function uploadToAzure(
       createBlobFromLocalPath(
         containerClient,
         localFileList[i],
-        `files/${uuid}/${localFileList[i]}`,
+        `files/${_id}/${localFileList[i]}`,
         uploadOptions,
       ),
     );
