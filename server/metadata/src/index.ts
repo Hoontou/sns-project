@@ -11,11 +11,8 @@ const server = fastify();
 server.post(
   '/getposts',
   async (req: MetadataRequest, reply): Promise<{ posts: MetadataDto[] }> => {
-    console.log('hi');
     const decId = crypter.decrypt(req.body.userId);
-    console.log(decId);
     const posts: MetadataDto[] = await Metadata.find({ userId: decId });
-    console.log(posts);
 
     return { posts };
     //나중에 userId 빼고 보내라. 아니면 암호화해서 보내던지.

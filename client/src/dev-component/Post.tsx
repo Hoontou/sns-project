@@ -5,6 +5,8 @@ interface MetadataDto {
   _id: string;
   userId: string;
   files: string[];
+  title: string;
+  createdAt: Date;
 }
 
 const Post = () => {
@@ -33,13 +35,15 @@ const Post = () => {
         {postList.map((i) => {
           return (
             <div>
-              <h2>postId = {i._id}</h2>
               {i.files.map((j) => {
                 return (
-                  <img
-                    src={`https://snsupload.blob.core.windows.net/${i._id}/${j}`}
-                    alt='img'
-                  />
+                  <div>
+                    <img
+                      src={`https://snsupload.blob.core.windows.net/${i._id}/${j}`}
+                      alt='img'
+                    />
+                    <h4>{i.title}</h4>
+                  </div>
                 );
               })}
             </div>

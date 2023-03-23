@@ -14,13 +14,19 @@ postgres(typeorm), mongodb(mongoose), redis, 엘라스틱서치?
 
 앱 실행  
 docker-compose up --build  
-DB 실행  
-docker-compose -f "db.yml" up
+DB 실행, 이거 다운시키면 db 초기화됨.  
+docker-compose -f "db.yml" up  
+nginx 실행 백단 로그체크에 방해돼서 따로 빼놓음.  
+docker-compose -f "nginx.yml" up
+
+순서는 db업, 메인 업, nginx 업
+보안필요한 환경변수나 그런거 따로안빼놔서 그냥 도커로 up만하면 실행가능.
 
 localhost:3000으로 진입  
 / -> signin  
 /signup -> signup  
-/up -> 사진영상업로드
+/up -> 사진영상업로드, 사진 entity 크기제한 걸려있어서 지금은 용량작은 사진만 업로드가능.  
+/post -> 내가업로드한거 불러옴
 
 ---
 
