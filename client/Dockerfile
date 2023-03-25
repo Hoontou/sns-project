@@ -5,4 +5,5 @@ COPY package.json ./
 RUN npm i 
 
 COPY ./ ./
+RUN npm update sns-interfaces
 CMD npm start

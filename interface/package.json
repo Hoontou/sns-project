@@ -1,0 +1,12 @@
+{
+  "name": "sns-interfaces",
+  "version": "1.0.3",
+  "description": "interfaces for sns-project",
+  "types": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hoontou/sns-interface.git"
+  },
+  "author": "hoontou",
+  "license": "ISC"
+}
