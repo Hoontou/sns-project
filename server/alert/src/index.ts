@@ -5,6 +5,7 @@ import { SocketEx } from './common/interface';
 import { crypter } from './common/crypter';
 import { rabbitMQ } from './common/amqp';
 import { connectMongo } from './database/initialize.mongo';
+
 const server = fastify();
 
 server.register(fastifyIO);
