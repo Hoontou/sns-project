@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('post')
 export class PostController {
@@ -82,7 +81,6 @@ export class PostController {
   //알람 굳이 안날리려면 req.user를 파싱할 필요는 없다.
   //하지만 게시물 삭제는 중요한 부분이니 가드 통과는 해야할듯?
   @Delete('/delpost')
-  @UseGuards(AuthGuard())
   delPost(@Req() req): Promise<void> {
     return this.postService.delPost(req);
   }

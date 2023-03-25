@@ -43,6 +43,21 @@ services:
       - NODE_ENV=development
       - MONGO_URI=mongodb://mgdb:27017/alert
 
+  post:
+    image: post
+    build:
+      context: ./server/post
+      dockerfile: Dockerfile
+    container_name: post
+    volumes:
+      - ./server/post/src:/usr/src/app/src:z
+    ports:
+      - '4005:80'
+    environment:
+      - RABBIT=amqp://guest:guest@rabbit:5672
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mgdb:27017/alert
+
   upload:
     image: upload
     build:

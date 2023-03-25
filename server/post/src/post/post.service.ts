@@ -3,8 +3,6 @@ import { PostTable } from './repository/post.repository';
 import { CommentTable } from './repository/comment.repository';
 import { CoCommentTable } from './repository/cocomment.repository';
 import { CommentDto, PostDto, CocommentDto } from './dto/post.dto';
-import { UserTable } from '../user/repository/user.repository';
-import { UsernumsTable } from 'src/user/repository/usernums.repository';
 import { rabbitMQ } from 'src/common/amqp';
 import { AlertDto } from '../common/interface';
 import { crypter } from 'src/common/crypter';
@@ -14,10 +12,8 @@ import { ObjectId } from '../common/gen.objectid';
 export class PostService {
   constructor(
     private postTable: PostTable,
-    private userTable: UserTable,
     private commentTable: CommentTable,
     private cocommentTable: CoCommentTable,
-    private usernumsTable: UsernumsTable,
   ) {}
 
   //userId를 int로 바꾸고 쿼리빌더로 insert 성공
@@ -25,7 +21,7 @@ export class PostService {
     //포스트테이블에 내용 삽입
     await this.postTable.addPost(postDto);
     //유저의 총 게시물 수 카운트 증가.
-    await this.usernumsTable.addPost(postDto.userId);
+    //await this.usernumsTable.addPost(postDto.userId);
 
     return { success: true };
   }
@@ -54,17 +50,17 @@ export class PostService {
     const postId: string = req.body.postId;
     await this.postTable.delPost(postId);
 
-    const userId = crypter.decrypt(req.user.id);
-    const alert_id = ObjectId();
-    const delAlertForm: AlertDto = {
-      _id: alert_id,
-      userId,
-      content: {
-        type: 'deletePost', // DelPost type임.
-        postId,
-        success: true,
-      },
-    };
-    rabbitMQ.sendMsg('alert', delAlertForm);
+    // const userId = crypter.decrypt(req.user.id);
+    // const alert_id = ObjectId();
+    // const delAlertForm: AlertDto = {
+    //   _id: alert_id,
+    //   userId,
+    //   content: {
+    //     type: 'deletePost', // DelPost type임.
+    //     postId,
+    //     success: true,
+    //   },
+    // };
+    // rabbitMQ.sendMsg('alert', delAlertForm);
   }
 }

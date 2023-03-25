@@ -8,8 +8,6 @@ import { Comment } from './entity/comment.entity';
 import { PostController } from './post.controller';
 import { PostService } from './post.service';
 import { Cocomment } from './entity/cocomment.entity';
-import { UserModule } from '../user/user.module';
-import { AuthModule } from '../auth/auth.module';
 import { Commentnums, Cocommentnums } from './entity/count.entity';
 
 @Module({
@@ -21,8 +19,6 @@ import { Commentnums, Cocommentnums } from './entity/count.entity';
       Commentnums,
       Cocommentnums,
     ]),
-    UserModule,
-    AuthModule,
   ],
   providers: [PostTable, CommentTable, CoCommentTable, PostService],
   controllers: [PostController],

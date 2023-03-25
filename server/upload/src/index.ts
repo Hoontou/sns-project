@@ -36,12 +36,12 @@ server.post(
     console.log('start uploading');
     console.log(postList);
     console.log('======start azure upload======');
-    await uploadToAzure(azureClient, postList, postId); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
+    //await uploadToAzure(azureClient, postList, postId); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
     console.log('======upload end======');
 
     rabbitMQ.sendMsg('metadata', metadataForm); //메타데이터 저장
     rabbitMQ.sendMsg('alert', alertForm); //알람 생성, 저장
-    axios.post('http://main-back/post/posting', postingForm); //pgdb에 post정보 저장
+    axios.post('http://post/post/posting', postingForm); //pgdb에 post정보 저장
     //.then((res) => console.log(res.data));
     rmDirer.counter();
     //현재 5카운트마다 삭제시킴. 근데 이거 오류날 가능성 있어서 잘 체크해야함
