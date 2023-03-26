@@ -13,13 +13,7 @@ import { SignUpDto, SignInDto } from './dto/sign.dto';
 //import { User } from './entity/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
-
-export interface UserInfoResponse {
-  success: boolean;
-  userId?: string;
-  username?: string;
-  accessToken?: string;
-}
+import { UserInfoResponse } from 'sns-interfaces';
 
 @Controller('user')
 export class UserController {

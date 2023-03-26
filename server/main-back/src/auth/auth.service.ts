@@ -4,7 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { SignUpDto, SignInDto } from '../user/dto/sign.dto';
 import { User } from 'src/user/entity/user.entity';
 import { UserTable } from '../user/repository/user.repository';
-import { UserInfoResponse } from '../user/user.controller';
+import { UserInfoResponse } from 'sns-interfaces';
 import { crypter } from '../common/crypter';
 
 @Injectable()

@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
-import { AlertDto } from 'src/common/interface';
+import { AlertDto } from 'sns-interfaces';
 
 const alertSchema = new mongoose.Schema({
   _id: String,
   userId: String,
   content: Object,
+});
+alertSchema.index({
+  userId: 1,
 });
 
 const Alert = mongoose.model('alert', alertSchema);

@@ -5,7 +5,6 @@ import {
   Get,
   Post,
   Req,
-  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { PostService } from './post.service';

@@ -2,7 +2,7 @@ import { Injectable, Req, Res } from '@nestjs/common';
 import { UserTable } from './repository/user.repository';
 import { AuthService } from 'src/auth/auth.service';
 import { SignInDto } from './dto/sign.dto';
-import { UserInfoResponse } from './user.controller';
+import { UserInfoResponse } from 'sns-interfaces';
 
 @Injectable()
 export class UserService {

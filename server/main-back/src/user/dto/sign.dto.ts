@@ -10,7 +10,7 @@ import {
 export class SignInDto {
   @IsNotEmpty()
   @IsEmail()
-  public email: string;
+  email: string;
 
   @IsNotEmpty()
   @MinLength(4)

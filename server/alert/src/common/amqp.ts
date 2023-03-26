@@ -1,5 +1,5 @@
 import { newAlert } from '../database/schema';
-import { AlertDto } from './interface';
+import { AlertDto } from 'sns-interfaces';
 import { socketManager } from '../alert.server/socket.manager';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

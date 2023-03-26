@@ -1,11 +1,6 @@
 import { crypter } from './crypter';
-import {
-  AlertDto,
-  MetadataDto,
-  ParserInterface,
-  UploadRequest,
-  PostingDto,
-} from '../interface';
+import { ParserInterface, UploadRequest } from '../interface';
+import { AlertDto, MetadataDto, PostDto } from 'sns-interfaces';
 
 export const reqParser = (req: UploadRequest): ParserInterface => {
   const { title } = JSON.parse(req.body.title);
@@ -18,7 +13,7 @@ export const reqParser = (req: UploadRequest): ParserInterface => {
   const postId: string = req._id;
   const postList: string[] = req.postList;
 
-  const postingForm: PostingDto = {
+  const postingForm: PostDto = {
     postId: postId,
     userId: decId,
   };

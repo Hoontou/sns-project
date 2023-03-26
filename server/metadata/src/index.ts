@@ -1,9 +1,10 @@
 import fastify from 'fastify';
 import { connectMongo } from './database/initialize.mongo';
 import { rabbitMQ } from './common/amqp';
-import { Metadata, MetadataDto } from './database/schema';
+import { Metadata } from './database/schema';
 import { MetadataRequest } from './common/interface';
 import { crypter } from './common/crypter';
+import { MetadataDto } from 'sns-interfaces';
 
 const server = fastify();
 

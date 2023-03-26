@@ -1,6 +1,8 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import axios from 'axios';
-const Signin = () => {
+import { SignUpDto } from 'sns-interfaces';
+
+const Signup = () => {
   const [email, setEmail] = useState('hoontou@gmail.com');
   const [password, setPassword] = useState('test');
   const [username, setUsername] = useState('hoontou');
@@ -17,7 +19,7 @@ const Signin = () => {
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const signUpForm = {
+    const signUpForm: SignUpDto = {
       email,
       password,
       username,
@@ -50,4 +52,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default Signup;

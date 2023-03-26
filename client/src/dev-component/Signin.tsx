@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import axios from 'axios';
+import { SignInDto } from 'sns-interfaces';
 
 const Signin = () => {
   const [email, setEmail] = useState('hoontou@gmail.com');
@@ -14,7 +15,7 @@ const Signin = () => {
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const signInForm = {
+    const signInForm: SignInDto = {
       email,
       password,
     };

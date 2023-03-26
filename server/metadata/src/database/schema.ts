@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { MetadataDto } from 'sns-interfaces';
 
 const metadataSchema = new mongoose.Schema({
   _id: String,
@@ -8,14 +9,9 @@ const metadataSchema = new mongoose.Schema({
   title: String,
   createdAt: Date,
 });
-
-export interface MetadataDto {
-  _id: string;
-  userId: string;
-  files: string[];
-  title: string;
-  createdAt: Date;
-}
+metadataSchema.index({
+  userId: 1,
+});
 
 export const Metadata = mongoose.model('metadata', metadataSchema);
 

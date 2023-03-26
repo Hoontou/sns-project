@@ -1,13 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-
-interface MetadataDto {
-  _id: string;
-  userId: string;
-  files: string[];
-  title: string;
-  createdAt: Date;
-}
+import { MetadataDto } from 'sns-interfaces';
 
 const Post = () => {
   const [postList, setPostList] = useState<Array<MetadataDto>>([]);

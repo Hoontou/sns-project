@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 import { useState } from 'react';
-import { AlertContentUnion, AlertDto } from '../common/alert.interface';
+import { AlertContentUnion, AlertDto } from 'sns-interfaces';
 
 const AlertSock = () => {
   const [alertItems, setAlertItems] = useState<Array<AlertContentUnion>>([]);

@@ -1,4 +1,5 @@
 import { FastifyRequest } from 'fastify';
+import { MetadataDto, AlertDto, PostDto } from 'sns-interfaces';
 
 //ts에서 fastify req 인자 사용하려면 이렇게해야함
 export interface UploadRequest extends FastifyRequest {
@@ -13,32 +14,5 @@ export interface ParserInterface {
   postList: string[];
   metadataForm: MetadataDto;
   alertForm: AlertDto;
-  postingForm: PostingDto;
+  postingForm: PostDto;
 }
-
-export interface PostingDto {
-  userId: string;
-  postId: string;
-}
-
-export interface MetadataDto {
-  _id: string;
-  userId: string;
-  files: string[];
-  title: string;
-  createdAt: Date;
-}
-
-//upload MSA쪽에서는 AlertDto가 이것만 있으면 됨.
-export interface AlertDto {
-  _id: string;
-  userId: string;
-  content: UploadContent;
-} //타입과 content는 계속해서 추가.
-
-interface UploadContent {
-  type: Upload;
-  success: boolean;
-  postId: string;
-}
-type Upload = 'upload';

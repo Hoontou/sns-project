@@ -1,4 +1,4 @@
-import { MetadataDto } from 'src/database/schema';
+import { MetadataDto } from 'sns-interfaces';
 import { newMeatadata } from '../database/schema';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
