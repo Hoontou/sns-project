@@ -13,7 +13,7 @@ import { SignUpDto, SignInDto } from './dto/sign.dto';
 //import { User } from './entity/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { UserInfoResponse } from 'sns-interfaces';
+import { AuthResultRes } from 'sns-interfaces';
 
 @Controller('user')
 export class UserController {
@@ -33,7 +33,7 @@ export class UserController {
   async hoc(
     @Req() req,
     @Res({ passthrough: true }) res,
-  ): Promise<UserInfoResponse> {
+  ): Promise<AuthResultRes> {
     return this.userService.hoc(req, res);
   } //서비스 코드에 주석 많이달아놨음.
 
@@ -74,7 +74,7 @@ export class UserController {
     @Body(ValidationPipe) signinDto: SignInDto,
     @Res({ passthrough: true }) res,
     //네스트.com에서는 Response 타입 붙이라고 하는데? 붙이면 쿠키타입이 없다고 나옴. TS버전문제인가
-  ): Promise<UserInfoResponse> {
+  ): Promise<AuthResultRes> {
     return this.userService.signin(signinDto, res);
   }
 

@@ -35,11 +35,14 @@ export interface SignUpDto extends SignInDto {
   username: string;
 }
 
-export interface UserInfoResponse {
-  success: boolean;
-  userId?: string;
-  username?: string;
-  accessToken?: string;
+export type AuthResultRes = AuthSuccess | AuthFail;
+export interface AuthSuccess {
+  success: true;
+  userId: string;
+  username: string;
+}
+export interface AuthFail {
+  success: false;
 }
 
 export interface PostDto {

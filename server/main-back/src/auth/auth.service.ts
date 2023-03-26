@@ -4,8 +4,8 @@ import * as bcrypt from 'bcryptjs';
 import { SignUpDto, SignInDto } from '../user/dto/sign.dto';
 import { User } from 'src/user/entity/user.entity';
 import { UserTable } from '../user/repository/user.repository';
-import { UserInfoResponse } from 'sns-interfaces';
 import { crypter } from '../common/crypter';
+import { CertResult } from 'src/common/interface';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +19,7 @@ export class AuthService {
     return this.userTable.signUp(user);
   }
 
-  async authenticate(signinDto: SignInDto): Promise<UserInfoResponse> {
+  async authenticate(signinDto: SignInDto): Promise<CertResult> {
     const { email, password } = signinDto;
     const user: User | null = await this.userTable.db.findOne({
       where: { email },
@@ -34,10 +34,10 @@ export class AuthService {
         userId: crypter.encrypt(user.id),
         username: user.username,
         success: true,
-      }; //토큰을 바로넘기지 말고 이렇게 객체로 넘긴다.
+      }; //CertSuccess
     }
     //실패시
-    return { success: false };
+    return { success: false }; //CertFail
   }
 
   async refreshToken(email: string): Promise<string> {

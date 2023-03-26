@@ -2,7 +2,8 @@ import { Injectable, Req, Res } from '@nestjs/common';
 import { UserTable } from './repository/user.repository';
 import { AuthService } from 'src/auth/auth.service';
 import { SignInDto } from './dto/sign.dto';
-import { UserInfoResponse } from 'sns-interfaces';
+import { AuthResultRes } from 'sns-interfaces';
+import { CertResult } from '../common/interface';
 
 @Injectable()
 export class UserService {
@@ -13,7 +14,7 @@ export class UserService {
   //밑에 인증 리프레시랑 기능을 좀 합쳤다. 이렇게되면 매번 시간계산을 해야하는데
   //이게 자원을 좀 잡아먹을것 같긴한데... 새로운 객체를 두개나 생성하고, 계산까지.
   //그냥 리프레시를 써야하나?
-  async hoc(@Req() req, @Res() res): Promise<UserInfoResponse> {
+  async hoc(@Req() req, @Res() res): Promise<AuthResultRes> {
     const createdAt = new Date(req.cookies.createdAt);
     const now = new Date();
     //쿠키생성 하루가 지났으면 새로 JWT발급받고 생성시간 업데이트해서 날린다.
@@ -55,11 +56,9 @@ export class UserService {
   //   "message": "Unauthorized"
   // }----------------------------------------------------------------------------------------------
 
-  async signin(signinDto: SignInDto, res): Promise<UserInfoResponse> {
-    const certInfo: UserInfoResponse = await this.authService.authenticate(
-      signinDto,
-    );
-    if (certInfo.success == true) {
+  async signin(signinDto: SignInDto, res): Promise<AuthResultRes> {
+    const certInfo: CertResult = await this.authService.authenticate(signinDto);
+    if (certInfo.success === true) {
       const createdAt = new Date();
       //로그인 플래그 성공이면 쿠키에 담아서 보낸다.
       res.cookie('Authorization', certInfo.accessToken, {
@@ -71,7 +70,8 @@ export class UserService {
         maxAge: 60 * 60 * 24 * 30, //30 day
       });
       delete certInfo.accessToken; //쿠키에 담았으니까 지워준다.
+      return certInfo; //CertSuccess 토큰지워줘서 AuthResult 충족함.
     }
-    return certInfo; //{ success, userId?, username? }
+    return certInfo; //CertFail
   }
 }
