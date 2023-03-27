@@ -23,7 +23,7 @@ const preParser = (req: UploadRequest, reply, next) => {
   //File[] 인데, 아래 map에서 File에 mimetype이 없다고해서 못쓰는중
   //req.files 구조 수정해서 넥스트로 넘긴다. 뒤에선 바로 files로 접근가능
 
-  req.postId = ObjectId(); //postId가 된다.
+  req.postId = ObjectId();
   req.postList = [...req.files].map((file, index) => {
     const fileExtension = file.mimetype.split('/'); //확장자만 추출
     const name = `${index}.${fileExtension[fileExtension.length - 1]}`;
@@ -33,10 +33,10 @@ const preParser = (req: UploadRequest, reply, next) => {
 
   req.bufferList = [...req.files].map((file) => {
     return file.buffer;
-  });
+  }); //받은 파일에서 버퍼만 떼서 파싱
 
   next();
 };
 
 export { uploadToMemory, preParser };
-//파일저장 미들웨어, req에 필요한 변수들생성해주는 미들웨어
+//파일저장 미들웨어, req에 정보 넣어주는 미들웨어

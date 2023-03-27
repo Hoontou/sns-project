@@ -37,7 +37,7 @@ export const reqParser = (req: UploadRequest): void => {
       postId,
     },
   };
-
+  console.log('broadcasting to MSA');
   rabbitMQ.sendMsg('metadata', metadataForm); //메타데이터 저장
   rabbitMQ.sendMsg('alert', alertForm); //알람 생성, 저장
   axios.post('http://post/post/posting', postingForm); //pgdb에 post정보 저장
