@@ -5,5 +5,4 @@ COPY *.json ./
 RUN npm i 
 
 #COPY ./ ./
-RUN npm update sns-interfaces
 CMD npm run start:dev

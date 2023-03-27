@@ -7,6 +7,7 @@ import Navbar from '../../common/Navbar/Navbar';
 import { Button } from '@mui/material';
 import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
+import { resizer } from '../../../common/image.resizer';
 
 const Upload = () => {
   const navigate = useNavigate();
@@ -45,11 +46,25 @@ const Upload = () => {
       alert('업로드할 내용이 필요함');
       return;
     }
-    const userId = await axios.get('/main-back/user/hoc').then((res) => {
-      return res.data.userId;
-    }); //나중에 클라이언트 구현시 HOC 실패 방어코드 짜야함.
+    // const contents = sendingFileList; //인풋에서 가져와서
+    const contents: File[] | false = await resizer([...sendingFileList]); //리사이저로 복사배열보내고 리사이징배열 받는다.
+    const userId: string | false = await axios
+      .get('/main-back/user/hoc')
+      .then((res) => {
+        return res.data.userId;
+      })
+      .catch(() => {
+        alert('인증 에러');
+        return false;
+      }); //나중에 클라이언트 구현시 HOC 실패 방어코드 짜야함.
     //console.log(userId);
-    const contents = sendingFileList; //인풋에서 가져와서
+    if (contents === false || userId === false) {
+      //리사이징or인증 실패시 샌딩파일리스트 비우고 리턴.
+      setFileList([]);
+      return;
+    } //인증에러나면 걍 로그인페이지로 보내버려도 괜찮을듯.
+    //지금은 걍 해당페이지에 머무르게 하고 있으니까.
+
     const formData = new FormData();
     const alert_id = ObjectId(); //게시물 업로드중 알람을 위한 Id
     //인풋에 많이 담아도 네개 까지만 컷한다.
@@ -75,7 +90,7 @@ const Upload = () => {
         alert('need login');
         navigate('/signin');
       });
-  });
+  }, [navigate]);
 
   return (
     <div
