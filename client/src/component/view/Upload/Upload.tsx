@@ -46,25 +46,30 @@ const Upload = () => {
       alert('업로드할 내용이 필요함');
       return;
     }
-    // const contents = sendingFileList; //인풋에서 가져와서
+
     const contents: File[] | false = await resizer([...sendingFileList]); //리사이저로 복사배열보내고 리사이징배열 받는다.
+    if (contents === false) {
+      //리사이징 실패시 샌딩파일리스트 비우고 리턴.
+      setFileList([]);
+      alert('Err while image resizing');
+      return;
+    }
+
     const userId: string | false = await axios
       .get('/main-back/user/hoc')
       .then((res) => {
         return res.data.userId;
       })
       .catch(() => {
-        alert('인증 에러');
+        //nest 가드통과 못하면 413 에러 날라오고 catch로 잡기가능, 여기로 분기한다.
         return false;
-      }); //나중에 클라이언트 구현시 HOC 실패 방어코드 짜야함.
-    //console.log(userId);
-    if (contents === false || userId === false) {
-      //리사이징or인증 실패시 샌딩파일리스트 비우고 리턴.
-      setFileList([]);
+      });
+    if (userId === false) {
+      //인증실패시 로그인페이지로 이동
+      alert('Err while Authentication, need login');
+      navigate('/signin');
       return;
-    } //인증에러나면 걍 로그인페이지로 보내버려도 괜찮을듯.
-    //지금은 걍 해당페이지에 머무르게 하고 있으니까.
-
+    }
     const formData = new FormData();
     const alert_id = ObjectId(); //게시물 업로드중 알람을 위한 Id
     //인풋에 많이 담아도 네개 까지만 컷한다.
@@ -75,11 +80,13 @@ const Upload = () => {
     formData.append('title', JSON.stringify({ title }));
     formData.append('alert_id', JSON.stringify({ alert_id }));
     formData.append('userId', JSON.stringify({ userId }));
-    axios //업로드 서버로 보낸다.
+    await axios //업로드 서버로 보낸다.
       .post('/upload/uploadfiles', formData);
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
     //벗어나도 되면 그냥 알람MSA에 Id 보내고 페이지 벗어나자.
     //then을 안받아도 되게 느슨한 연결로 만들어 보자.
+    alert('file sending succeed');
+    navigate('/');
   };
 
   useEffect(() => {
