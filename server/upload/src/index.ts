@@ -9,7 +9,6 @@ import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import { rabbitMQ } from './common/amqp';
 import { reqParser } from './common/tools/req.parser';
-import { channel } from 'diagnostics_channel';
 
 const server = fastify();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
