@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
     cb(null, `files/${req._id}/`); //파일 저장 경로
   },
   filename: (req: UploadRequest, file, cb) => {
-    const fileExtension = file.originalname.split('.'); //확장자만 추출
+    const fileExtension = file.mimetype.split('/'); //확장자만 추출
     const name = `${req.count}.${fileExtension[fileExtension.length - 1]}`;
     cb(null, name); //파일 이름은 Id.count.확장자
     req.count += 1;
