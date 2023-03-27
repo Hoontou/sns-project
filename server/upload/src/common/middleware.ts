@@ -1,27 +1,16 @@
 import multer from 'fastify-multer';
 import { UploadRequest } from './interface';
-import { mkdirSync } from 'fs';
 import { ObjectId } from './tools/gen.objectid';
 
-//클라이언트로 받은 파일을 저장하기 위해 설정.
-const storage = multer.diskStorage({
-  destination: (req: UploadRequest, file, cb) => {
-    cb(null, `files/${req._id}/`); //파일 저장 경로
-  },
-  filename: (req: UploadRequest, file, cb) => {
-    const fileExtension = file.mimetype.split('/'); //확장자만 추출
-    const name = `${req.count}.${fileExtension[fileExtension.length - 1]}`;
-    cb(null, name); //파일 이름은 Id.count.확장자
-    req.count += 1;
-    req.postList.push(name);
-  },
-});
-
-//storage저장 설정 사용해서 multer 인스턴스? 생성인듯?
+//메모리에 저장. req.files로 접근할 수 있다.
+//근데 처리가 밀리면 위험함. 일단 최대사이즈를 4mb로 잡아놓긴 했다.
+//nginx와 client 사진 리사이징 에서 조절가능
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 //formData로 부터 가져올 애들 명시해서 multer인스턴스로 저장인듯?
-const uploadToLoacl = upload.fields([
+//file은 req.files로 접근, 나머지 text field는 바디로 접근가능.
+const uploadToMemory = upload.fields([
   { name: 'file', maxCount: 4 },
   { name: 'title', maxCount: 1 },
   { name: 'alert_id', maxCount: 1 },
@@ -29,13 +18,25 @@ const uploadToLoacl = upload.fields([
 ]);
 
 //파일이름 생성을 위한 Id, count 만들어서 req에 끼워넣는 미들웨어.
-const add_idToReq = (req: UploadRequest, reply, next) => {
-  req._id = ObjectId();
-  req.count = 0;
-  req.postList = [];
-  mkdirSync(`./files/${req._id}`, { recursive: true });
+const preParser = (req: UploadRequest, reply, next) => {
+  req.files = req.files.file;
+  //File[] 인데, 아래 map에서 File에 mimetype이 없다고해서 못쓰는중
+  //req.files 구조 수정해서 넥스트로 넘긴다. 뒤에선 바로 files로 접근가능
+
+  req.postId = ObjectId(); //postId가 된다.
+  req.postList = [...req.files].map((file, index) => {
+    const fileExtension = file.mimetype.split('/'); //확장자만 추출
+    const name = `${index}.${fileExtension[fileExtension.length - 1]}`;
+    //0.png, 1.jpg 이런식으로
+    return name;
+  });
+
+  req.bufferList = [...req.files].map((file) => {
+    return file.buffer;
+  });
+
   next();
 };
 
-export { uploadToLoacl, add_idToReq };
+export { uploadToMemory, preParser };
 //파일저장 미들웨어, req에 필요한 변수들생성해주는 미들웨어

@@ -1,16 +1,15 @@
 import fastify from 'fastify';
-import { rmDirer } from './common/tools/rmdir';
-import { add_idToReq, uploadToLoacl } from './common/middleware';
+import { preParser, uploadToMemory } from './common/middleware';
 import { client as azureClient } from './azure/azure.client';
 import multer from 'fastify-multer';
 import { uploadToAzure } from './azure/azure.storage';
-import { UploadRequest, ParserInterface } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
+import { UploadRequest } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import { rabbitMQ } from './common/amqp';
 import { reqParser } from './common/tools/req.parser';
-import axios from 'axios';
+import { channel } from 'diagnostics_channel';
 
 const server = fastify();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -23,37 +22,30 @@ server.register(cors, {
 //from Client
 server.post(
   '/uploadfiles',
-  { preHandler: [add_idToReq, uploadToLoacl] }, //순서대로 미들웨어 호출됨.
+  { preHandler: [uploadToMemory, preParser] }, //순서대로 미들웨어 호출됨.
   async (req: UploadRequest, reply) => {
-    const {
-      postId,
-      postList,
-      metadataForm,
-      alertForm,
-      postingForm,
-    }: ParserInterface = reqParser(req);
+    // azure에 업로드
+    // 주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
+    // 진행상황 콘솔출력은 함수안에 다 해놨음
+    try {
+      await uploadToAzure(
+        azureClient,
+        req.bufferList,
+        req.postList,
+        req.postId,
+      );
+    } catch {
+      return;
+    }
 
-    console.log('start uploading');
-    console.log(postList);
-    console.log('======start azure upload======');
-    //await uploadToAzure(azureClient, postList, postId); //주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
-    console.log('=======azure upload end=======');
-
-    rabbitMQ.sendMsg('metadata', metadataForm); //메타데이터 저장
-    rabbitMQ.sendMsg('alert', alertForm); //알람 생성, 저장
-    axios.post('http://post/post/posting', postingForm); //pgdb에 post정보 저장
-    //.then((res) => console.log(res.data));
-    rmDirer.counter();
-    //현재 5카운트마다 삭제시킴. 근데 이거 오류날 가능성 있어서 잘 체크해야함
-    //빠르게 요청클릭해도 오류 없긴한데...
-    //지금 azure 업로드를 await 걸지말지 모르는 상태이고,
-    //await안걸면 한번한번마다 삭제하는게 맞는거 같은데
-    //뭐가 성능상 좋은지 고민하고 테스트 해봐야할듯.
+    //업로드 끝난 후 메세지 뿌린다.
+    console.log('broadcasting to MSA');
+    reqParser(req); //req 파싱한 후 메세지 전송까지해준다. 에러처리 필요안할듯?
   },
 );
-//https://snsupload.blob.core.windows.net/${postId}/${postId}.0.png
+//https://snsupload.blob.core.windows.net/${postId}/0.png
 //위 주소로 사진 볼수있음. 메타데이터에 보낼 정보임. string 핸들링해서 메타데이터로 넘기자.
-//azure컨테이너주소/_id/_id.몇번째.확장자 형식임.
+//azure컨테이너주소/_id/몇번째.확장자 형식임.
 
 // server.get('/cootest', (req, reply) => {
 //   console.log(req.cookies);

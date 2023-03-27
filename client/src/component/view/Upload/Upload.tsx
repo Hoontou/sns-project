@@ -98,7 +98,7 @@ const Upload = () => {
       style={{ width: '95%', margin: '1.5rem auto' }}
     >
       <h2>4개보다 많이올려도 네개만 올라감., jpg, mp4, png만 가능</h2>
-      <h2>가로3:세로4 비율에 맞춰짐</h2>
+      <h2>가로3:세로4 비율로 보임. 나중에 반응형 으로 수정해야할듯?</h2>
       <div style={{ marginBottom: '1rem' }}>
         <label>타이틀</label>
         <input onChange={onTitleHandler} placeholder='우리집 고양이 귀엽죠' />

@@ -1,8 +1,10 @@
 import { crypter } from './crypter';
-import { ParserInterface, UploadRequest } from '../interface';
+import { UploadRequest } from '../interface';
 import { AlertDto, MetadataDto, PostDto } from 'sns-interfaces';
+import { rabbitMQ } from '../amqp';
+import axios from 'axios';
 
-export const reqParser = (req: UploadRequest): ParserInterface => {
+export const reqParser = (req: UploadRequest): void => {
   const { title } = JSON.parse(req.body.title);
   const { alert_id } = JSON.parse(req.body.alert_id);
   //추후 알람 MSA에서 사용할 _id, 계획은 _id로 알람 삭제하면 게시물 post성공했다는 뜻.
@@ -10,7 +12,7 @@ export const reqParser = (req: UploadRequest): ParserInterface => {
   //로직 다 처리하고 알람 삭제해주면 됨
   const { userId } = JSON.parse(req.body.userId); //클라이언트에서 hoc해서 보내준 값이고 암호화 돼있음.
   const decId: string = crypter.decrypt(userId);
-  const postId: string = req._id;
+  const postId: string = req.postId;
   const postList: string[] = req.postList;
 
   const postingForm: PostDto = {
@@ -35,11 +37,13 @@ export const reqParser = (req: UploadRequest): ParserInterface => {
       postId,
     },
   };
-  return {
-    postId,
-    postList,
-    metadataForm,
-    alertForm,
-    postingForm,
-  };
+
+  rabbitMQ.sendMsg('metadata', metadataForm); //메타데이터 저장
+  rabbitMQ.sendMsg('alert', alertForm); //알람 생성, 저장
+  axios.post('http://post/post/posting', postingForm); //pgdb에 post정보 저장
+  //.then((res) => console.log(res.data))
+  // .catch(() => {
+  //   console.log('cannot send axios request to post MSA');
+  //   throw new Error();
+  // });
 };
