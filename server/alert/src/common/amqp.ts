@@ -1,4 +1,4 @@
-import { newAlert } from '../database/schema';
+import { alertRepository } from '../database/schema';
 import { AlertDto } from 'sns-interfaces';
 import { socketManager } from '../alert.server/socket.manager';
 
@@ -18,15 +18,13 @@ const handleAlert = (message) => {
   }
   console.log('alert MSA catch alertForm from upload');
   // console.log(data);
-  newAlert(data); //몽고디비 저장 함수
+  alertRepository.saveAlert(data); //몽고디비 저장 함수
 };
 
 class RabbitMQ {
   private conn;
   private channel;
-  constructor(private rabbitUrl) {
-    this.rabbitUrl = rabbitUrl;
-  }
+  constructor(private rabbitUrl) {}
 
   async initialize(queList: string[]) {
     this.conn = await amqp.connect(this.rabbitUrl);

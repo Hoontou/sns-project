@@ -4,7 +4,6 @@ import { socketManager } from './alert.server/socket.manager';
 import { SocketEx } from './common/interface';
 import { crypter } from './common/crypter';
 import { rabbitMQ } from './common/amqp';
-import { connectMongo } from './database/initialize.mongo';
 
 const server = fastify();
 
@@ -36,7 +35,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
     console.error(err);
     process.exit(1);
   }
-  connectMongo();
   rabbitMQ.initialize(['alert']);
   console.log(`alert on 4004:80`);
 });

@@ -8,9 +8,7 @@ if (!RABBIT) {
 class RabbitMQ {
   private conn;
   private channel;
-  constructor(private rabbitUrl) {
-    this.rabbitUrl = rabbitUrl;
-  }
+  constructor(private rabbitUrl) {}
 
   async initialize(queList: string[]) {
     this.conn = await amqp.connect(this.rabbitUrl);

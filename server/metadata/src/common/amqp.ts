@@ -1,5 +1,5 @@
 import { MetadataDto } from 'sns-interfaces';
-import { newMeatadata } from '../database/schema';
+import { metaRepository } from '../database/schema';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const amqp = require('amqplib');
@@ -12,15 +12,13 @@ const handleMetadata = (message) => {
   const data: MetadataDto = JSON.parse(message.content.toString());
   //날라온 메세지 파싱
   console.log('metadata MSA catch metadata from upload');
-  newMeatadata(data); //몽고디비 저장 함수
+  metaRepository.saveMeatadata(data); //몽고디비 저장 함수
 };
 
 class RabbitMQ {
   private conn;
   private channel;
-  constructor(private rabbitUrl) {
-    this.rabbitUrl = rabbitUrl;
-  }
+  constructor(private rabbitUrl) {}
 
   async initialize(queList: string[]) {
     this.conn = await amqp.connect(this.rabbitUrl);
