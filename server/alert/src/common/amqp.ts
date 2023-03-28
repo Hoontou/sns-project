@@ -1,4 +1,4 @@
-import { alertRepository } from '../database/schema';
+import { alertRepository } from '../database/alert.repo';
 import { AlertDto } from 'sns-interfaces';
 import { socketManager } from '../alert.server/socket.manager';
 

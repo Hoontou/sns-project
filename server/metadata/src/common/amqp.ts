@@ -1,5 +1,5 @@
 import { MetadataDto } from 'sns-interfaces';
-import { metaRepository } from '../database/schema';
+import { metaRepository } from '../database/metadata.repo';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const amqp = require('amqplib');

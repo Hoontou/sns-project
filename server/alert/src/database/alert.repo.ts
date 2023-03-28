@@ -14,9 +14,10 @@ alertSchema.index({
 const Alert = mongoose.model('alert', alertSchema);
 
 class AlertRepository {
-  constructor(public readonly db) {
-    connectMongo();
-  }
+  //  constructor(public readonly db) {connectMongo();}
+  //스키마 다중연결을 고려해서 몽고연결은 index.ts에서
+  constructor(public readonly db) {}
+
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
   saveAlert(alertDto: AlertDto) {
     const newOne = new Alert(alertDto);

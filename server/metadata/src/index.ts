@@ -1,9 +1,10 @@
 import fastify from 'fastify';
 import { rabbitMQ } from './common/amqp';
-import { metaRepository } from './database/schema';
+import { metaRepository } from './database/metadata.repo';
 import { MetadataRequest } from './common/interface';
 import { crypter } from './common/crypter';
 import { MetadataDto } from 'sns-interfaces';
+import { connectMongo } from './database/initialize.mongo';
 
 const server = fastify();
 
@@ -26,6 +27,7 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
     console.error(err);
     process.exit(1);
   }
+  connectMongo();
   rabbitMQ.initialize(['metadata']);
   console.log(`metadata on 4003:80`);
 });

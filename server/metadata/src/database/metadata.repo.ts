@@ -17,9 +17,10 @@ metadataSchema.index({
 const Metadata = mongoose.model('metadata', metadataSchema);
 
 class MetaRepository {
-  constructor(public readonly db) {
-    connectMongo();
-  }
+  constructor(public readonly db) {}
+  //constructor(public readonly db) {connectMongo();}
+  //스키마 다중연결을 고려해서 몽고연결은 index.ts에서
+
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
   saveMeatadata(metadataDto: MetadataDto) {
     const newOne = new this.db(metadataDto);
