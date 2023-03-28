@@ -2,7 +2,7 @@ import fastify from 'fastify';
 import { preParser, uploadToMemory } from './common/middleware';
 import { client as azureClient } from './azure/azure.client';
 import multer from 'fastify-multer';
-import { uploadToAzure } from './azure/azure.storage';
+import { uploadToAzure } from './azure/azure.upload';
 import { UploadRequest } from './common/interface'; //req 파라미터의 타입 명시를 해줘야함.
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
