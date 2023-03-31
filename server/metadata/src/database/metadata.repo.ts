@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { MetadataDto } from 'sns-interfaces';
-import { connectMongo } from './initialize.mongo';
 
 const metadataSchema = new mongoose.Schema({
   _id: String,

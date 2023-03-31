@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { AlertDto } from 'sns-interfaces';
-import { connectMongo } from './initialize.mongo';
 
 const alertSchema = new mongoose.Schema({
   _id: String,

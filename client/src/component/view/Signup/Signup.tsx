@@ -40,12 +40,13 @@ const Signup = () => {
     });
   };
   useEffect(() => {
-    authHoc()
-      .then(() => {
+    authHoc().then((authRes) => {
+      if (authRes.success === true) {
         navigate('/');
-      })
-      .catch();
-  });
+      }
+    });
+  }, [navigate]);
+
   return (
     <div
       className='container text-center'

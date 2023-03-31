@@ -8,6 +8,7 @@ import { Button } from '@mui/material';
 import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
 import { resizer } from '../../../common/image.resizer';
+import { AuthResultRes } from 'sns-interfaces';
 
 const Upload = () => {
   const navigate = useNavigate();
@@ -54,22 +55,14 @@ const Upload = () => {
       alert('Err while image resizing');
       return;
     }
-
-    const userId: string | false = await axios
-      .get('/main-back/user/hoc')
-      .then((res) => {
-        return res.data.userId;
-      })
-      .catch(() => {
-        //nest 가드통과 못하면 413 에러 날라오고 catch로 잡기가능, 여기로 분기한다.
-        return false;
-      });
-    if (userId === false) {
-      //인증실패시 로그인페이지로 이동
+    const authRes: AuthResultRes = await authHoc();
+    if (authRes.success === false) {
+      //인증실패
       alert('Err while Authentication, need login');
       navigate('/signin');
       return;
     }
+
     const formData = new FormData();
     const alert_id = ObjectId(); //게시물 업로드중 알람을 위한 Id
     //인풋에 많이 담아도 네개 까지만 컷한다.
@@ -79,7 +72,7 @@ const Upload = () => {
     //게시글 코멘트와 알람 Id를 담는다.
     formData.append('title', JSON.stringify({ title }));
     formData.append('alert_id', JSON.stringify({ alert_id }));
-    formData.append('userId', JSON.stringify({ userId }));
+    formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     await axios //업로드 서버로 보낸다.
       .post('/upload/uploadfiles', formData);
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
@@ -91,12 +84,12 @@ const Upload = () => {
 
   useEffect(() => {
     //다른곳에서는 실패하면 /signin으로 이동하게.
-    authHoc()
-      .then()
-      .catch(() => {
-        alert('need login');
+    authHoc().then((authRes) => {
+      if (authRes.success === false) {
+        alert('Err while Authentication, need login');
         navigate('/signin');
-      });
+      }
+    });
   }, [navigate]);
 
   return (

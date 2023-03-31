@@ -29,8 +29,8 @@ const Signin = () => {
       if (result.success === true) {
         alert('login succeed');
         //AuthSuccess
-        localStorage.setItem('userId', result.userId); //AES로 암호화 된 id 원래(int)
-        localStorage.setItem('username', res.data.username);
+        // localStorage.setItem('userId', result.userId); //AES로 암호화 된 id 원래(int)
+        // localStorage.setItem('username', res.data.username);
         navigate('/');
       }
       if (result.success === false) {
@@ -41,12 +41,12 @@ const Signin = () => {
 
   useEffect(() => {
     //다른곳에서는 실패하면 /signin으로 이동하게.
-    authHoc()
-      .then(() => {
+    authHoc().then((authRes) => {
+      if (authRes.success === true) {
         navigate('/');
-      })
-      .catch();
-  });
+      }
+    });
+  }, [navigate]);
   return (
     <div
       className='container text-center'
