@@ -6,14 +6,13 @@ const options = {
   useWebWorker: true,
 };
 //최대 파일사이즈 1로, 클라이언트가 리사이징 수행. 시간걸림.
-export const resizer = async (imageList: File[]) => {
+export const resizer = async (imageList: File[]): Promise<File[] | false> => {
   try {
-    const list = await Promise.all(
+    return await Promise.all(
       imageList.map((i) => {
         return imageCompression(i, options);
       })
     );
-    return list;
   } catch {
     return false;
   }

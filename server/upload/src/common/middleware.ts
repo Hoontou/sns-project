@@ -20,6 +20,7 @@ const uploadToMemory = upload.fields([
 //파일이름 생성을 위한 Id, count 만들어서 req에 끼워넣는 미들웨어.
 const preParser = (req: UploadRequest, reply, next) => {
   req.files = req.files.file;
+  //console.log(req.files);
   //File[] 인데, 아래 map에서 File에 mimetype이 없다고해서 못쓰는중
   //req.files 구조 수정해서 넥스트로 넘긴다. 뒤에선 바로 files로 접근가능
 

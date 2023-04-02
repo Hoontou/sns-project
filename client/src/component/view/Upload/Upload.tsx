@@ -23,18 +23,18 @@ const Upload = () => {
   //인풋에 4개이상이면 리셋, 선택한이미지 볼수있게 image리스트에 푸시
   const checkFileCount = (e: ChangeEvent<HTMLFormElement>) => {
     const input = e.target;
-    const fileList = e.target.files;
+    const fileList: File[] = Object.values(e.target.files);
     if (fileList.length > 4) {
+      //네개넘으면 초기화시킴.
       alert('최대 4개까지만 올릴 수 있음');
       input.value = '';
     } else {
       setImages([]); //이미 들어있는 url 초기화
       setFileList([]);
-      const list = [];
-      for (let i = 0; i < fileList.length; i += 1) {
-        const url = URL.createObjectURL(fileList[i]);
-        list.push(url); //url 파싱해서 리스트에 넣고
-      }
+
+      const list = fileList.map((i) => {
+        return URL.createObjectURL(i);
+      });
       setFileList(fileList);
       setImages(list); //이미지 리스트에 붙여넣기
     }
@@ -43,11 +43,13 @@ const Upload = () => {
   //upload로 요청보낸다.
   const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (sendingFileList.length === 0 || title === '') {
       alert('업로드할 내용이 필요함');
       return;
     }
 
+    //보내기전 리사이징, 인증
     const contents: File[] | false = await resizer([...sendingFileList]); //리사이저로 복사배열보내고 리사이징배열 받는다.
     if (contents === false) {
       //리사이징 실패시 샌딩파일리스트 비우고 리턴.
@@ -63,15 +65,15 @@ const Upload = () => {
       return;
     }
 
+    //axios 보내기
     const formData = new FormData();
-    const alert_id = ObjectId(); //게시물 업로드중 알람을 위한 Id
     //인풋에 많이 담아도 네개 까지만 컷한다.
-    for (let i = 0; i < 4; i++) {
-      formData.append('file', contents[i]);
-    }
+    contents.map((i) => {
+      return formData.append('file', i);
+    });
     //게시글 코멘트와 알람 Id를 담는다.
     formData.append('title', JSON.stringify({ title }));
-    formData.append('alert_id', JSON.stringify({ alert_id }));
+    formData.append('alert_id', JSON.stringify({ alert_id: ObjectId() })); //게시물 업로드중 알람을 위한 Id
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     await axios //업로드 서버로 보낸다.
       .post('/upload/uploadfiles', formData);
