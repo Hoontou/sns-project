@@ -11,7 +11,7 @@ import { JwtSecret } from '../common/crypter';
     JwtModule.register({
       secret: JwtSecret,
       signOptions: {
-        expiresIn: 3600,
+        expiresIn: 3600 * 24 * 30,
       },
     }),
     PassportModule.register({

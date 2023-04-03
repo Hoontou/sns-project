@@ -1,3 +1,4 @@
+//메타데이터 DTO 정의
 export interface MetadataDto {
   _id: string;
   userId: string;
@@ -61,3 +62,6 @@ export interface CocommentDto {
   userId: string;
   commentId: number | string; //부모 comment id (int)
 }
+
+export const AlertQue = 'alert';
+export const MetadataQue = 'metadata';

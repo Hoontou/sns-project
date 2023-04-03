@@ -1,13 +1,18 @@
-import { Injectable, Req, Res } from '@nestjs/common';
+import { Injectable, Logger, Req, Res } from '@nestjs/common';
 import { UserTable } from './repository/user.repository';
 import { AuthService } from 'src/auth/auth.service';
 import { SignInDto } from './dto/sign.dto';
 import { AuthResultRes } from 'sns-interfaces';
 import { CertResult } from '../common/interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(private userTable: UserTable, private authService: AuthService) {}
+  constructor(
+    private userTable: UserTable,
+    private authService: AuthService,
+    private jwtService: JwtService,
+  ) {}
 
   //----------------------------------------------------------------------------------------------
   //아.. 근데 지금 인증 틀렸을 시 AuthGuard에서 exeption 오류로그를 찍어내는데 마음에 안든다.... 걍 로그 안뜨게 하고싶다.
@@ -15,6 +20,7 @@ export class UserService {
   //이게 자원을 좀 잡아먹을것 같긴한데... 새로운 객체를 두개나 생성하고, 계산까지.
   //그냥 리프레시를 써야하나?
   async hoc(@Req() req, @Res() res): Promise<AuthResultRes> {
+    const logger = new Logger('AuthHoc');
     const createdAt = new Date(req.cookies.createdAt);
     const now = new Date();
     //쿠키생성 하루가 지났으면 새로 JWT발급받고 생성시간 업데이트해서 날린다.
@@ -36,6 +42,7 @@ export class UserService {
       });
     }
     //위 코드만 싹다없애면 원래의 hoc임.
+    logger.log(`AuthHoc succeed`);
 
     return {
       success: true,
@@ -72,6 +79,7 @@ export class UserService {
       delete certInfo.accessToken; //쿠키에 담았으니까 지워준다.
       return certInfo; //CertSuccess 토큰지워줘서 AuthResult 충족함.
     }
+
     return certInfo; //CertFail
   }
 }

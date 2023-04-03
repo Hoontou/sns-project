@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 import { User } from 'src/user/entity/user.entity';
@@ -12,6 +12,7 @@ const cookieExtractor = (req): string => {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+  private readonly logger = new Logger('AuthGuard');
   constructor(private userTable: UserTable) {
     super({
       secretOrKey: JwtSecret,
@@ -26,8 +27,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new NotFoundException();
     }
+    this.logger.log(`{ id ${user.id} : ${user.username} } passed Guard`);
     user.id = crypter.encrypt(user.id);
     return user;
   }

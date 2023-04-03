@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { SignUpDto, SignInDto } from '../user/dto/sign.dto';
@@ -9,6 +9,7 @@ import { CertResult } from 'src/common/interface';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(private userTable: UserTable, private jwtService: JwtService) {}
 
   async signUp(signupDto: SignUpDto) {
@@ -29,6 +30,7 @@ export class AuthService {
       //로그인 성공한 상태이고 이제 JWT를 생성해야함. Secret + Patload(페이로드는 중요정보 넣지마라.)
       const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
+      this.logger.log(`{id: ${user.id}, ${user.username}} Login`);
       return {
         accessToken,
         userId: crypter.encrypt(user.id),
