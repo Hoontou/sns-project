@@ -23,8 +23,9 @@ export class UserService {
     const logger = new Logger('AuthHoc');
     const createdAt = new Date(req.cookies.createdAt);
     const now = new Date();
-    //쿠키생성 하루가 지났으면 새로 JWT발급받고 생성시간 업데이트해서 날린다.
-    if ((now.getTime() - createdAt.getTime()) / 1000 / 60 / 60 > 24) {
+    //쿠키생성 하루 * 15가 지났으면 새로 JWT발급받고 생성시간 업데이트해서 날린다.
+    if ((now.getTime() - createdAt.getTime()) / 1000 / 60 / 60 > 24 * 15) {
+      logger.log(`refresh token to ${req.user.id}`);
       //경과시간. 위에는 하루가 지났으면?
       //(now.getTime() - createdAt.getTime()) / 1000 / 60 분단위, 몇분지났나?
       //(now.getTime() - createdAt.getTime()) / 1000 / 60 / 60 시간단위
@@ -49,6 +50,7 @@ export class UserService {
       userId: req.user.id,
       username: req.user.username,
     }; //실패시 핸들링을 만들어야 한다. 지금은 실패시 API 오류만 내뱉는다.
+    //실패시엔 http err status 뱉으니까 클라이언트 단에서 하면 된다.
   }
   //   { 정상적인 bare토큰으로 hoc get리퀘스트 했을시, req.user.
   //     "id": "a6071dbf-3cfb-4b82-8863-92b78903fa91",
@@ -63,8 +65,8 @@ export class UserService {
   //   "message": "Unauthorized"
   // }----------------------------------------------------------------------------------------------
 
-  async signin(signinDto: SignInDto, res): Promise<AuthResultRes> {
-    const certInfo: CertResult = await this.authService.authenticate(signinDto);
+  async signIn(signinDto: SignInDto, res): Promise<AuthResultRes> {
+    const certInfo: CertResult = await this.authService.signIn(signinDto);
     if (certInfo.success === true) {
       const createdAt = new Date();
       //로그인 플래그 성공이면 쿠키에 담아서 보낸다.

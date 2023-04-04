@@ -40,6 +40,10 @@ localhost:3000으로 진입
 
 좋아요, 팔로우 관리 - mongo
 
+## post
+
+글, 댓글, 대댓글 관리 - nest, postgres
+
 ## alert
 
 알림 관리 - mongo, 웹소켓

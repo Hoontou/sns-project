@@ -20,7 +20,7 @@ export class AuthService {
     return this.userTable.signUp(user);
   }
 
-  async authenticate(signinDto: SignInDto): Promise<CertResult> {
+  async signIn(signinDto: SignInDto): Promise<CertResult> {
     const { email, password } = signinDto;
     const user: User | null = await this.userTable.db.findOne({
       where: { email },
