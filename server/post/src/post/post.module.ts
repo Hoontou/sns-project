@@ -9,6 +9,7 @@ import { PostController } from './post.controller';
 import { PostService } from './post.service';
 import { Cocomment } from './entity/cocomment.entity';
 import { Commentnums, Cocommentnums } from './entity/count.entity';
+import { AmqpModule } from 'src/common/amqp/amqp.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { Commentnums, Cocommentnums } from './entity/count.entity';
       Commentnums,
       Cocommentnums,
     ]),
+    AmqpModule,
   ],
   providers: [PostTable, CommentTable, CoCommentTable, PostService],
   controllers: [PostController],

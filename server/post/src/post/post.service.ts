@@ -1,12 +1,12 @@
-import { Injectable, Req } from '@nestjs/common';
+import { Inject, Injectable, Req } from '@nestjs/common';
 import { PostTable } from './repository/post.repository';
 import { CommentTable } from './repository/comment.repository';
 import { CoCommentTable } from './repository/cocomment.repository';
 import { CommentDto, PostDto, CocommentDto } from './dto/post.dto';
-import { rabbitMQ } from 'src/common/amqp';
-import { AlertDto } from '../common/interface';
+import { AlertDto } from 'sns-interfaces';
 import { crypter } from 'src/common/crypter';
 import { ObjectId } from '../common/gen.objectid';
+import { AmqpService } from 'src/common/amqp/amqp.service';
 
 @Injectable()
 export class PostService {
@@ -14,6 +14,7 @@ export class PostService {
     private postTable: PostTable,
     private commentTable: CommentTable,
     private cocommentTable: CoCommentTable,
+    private amqpService: AmqpService,
   ) {}
 
   //userId를 int로 바꾸고 쿼리빌더로 insert 성공

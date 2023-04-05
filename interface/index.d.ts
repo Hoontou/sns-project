@@ -63,5 +63,4 @@ export interface CocommentDto {
   commentId: number | string; //부모 comment id (int)
 }
 
-export const AlertQue = 'alert';
-export const MetadataQue = 'metadata';
+export type Que = 'alert' | 'metadata';
