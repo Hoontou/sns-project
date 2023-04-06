@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@grpc/grpc-js": "^1.8.13",
+    "@grpc/proto-loader": "^0.7.6",
     "amqplib": "^0.10.3",
     "crypto-js": "^4.1.1",
     "fastify": "^4.13.0",

@@ -38,6 +38,7 @@ services:
       - ./server/sub-back/src:/usr/src/app/src:z
     ports:
       - '4001:80'
+      - '40001:81'
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
