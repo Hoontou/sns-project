@@ -1,5 +1,4 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Usernums } from './entity/usernums.entity';
@@ -8,6 +7,7 @@ import { UserService } from './user.service';
 import { AuthModule } from '../auth/auth.module';
 import { UsernumsTable } from './repository/usernums.repository';
 import { JwtService } from '@nestjs/jwt';
+import { UserController } from './user.controller';
 
 @Module({
   imports: [

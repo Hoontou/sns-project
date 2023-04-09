@@ -14,31 +14,44 @@ services:
     environment:
       - NODE_ENV=development
 
-  main-back:
-    image: main-back
+  gateway:
+    image: gateway
     build:
-      context: ./server/main-back
+      context: ./server/gateway
       dockerfile: Dockerfile
-    container_name: main-back
+    container_name: gateway
     volumes:
-      - ./server/main-back/src:/usr/src/app/src:z
+      - ./server/gateway/src:/usr/src/app/src:z
     ports:
       - '4000:80'
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
 
-  sub-back:
-    image: sub-back
+  user:
+    image: user
     build:
-      context: ./server/sub-back
+      context: ./server/user
       dockerfile: Dockerfile
-    container_name: sub-back
+    container_name: user
     volumes:
-      - ./server/sub-back/src:/usr/src/app/src:z
+      - ./server/user/src:/usr/src/app/src:z
     ports:
       - '4001:80'
-      - '40001:81'
+    environment:
+      - RABBIT=amqp://guest:guest@rabbit:5672
+      - NODE_ENV=development
+
+  ffl:
+    image: ffl
+    build:
+      context: ./server/ffl
+      dockerfile: Dockerfile
+    container_name: ffl
+    volumes:
+      - ./server/ffl/src:/usr/src/app/src:z
+    ports:
+      - '4002:80'
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
@@ -53,7 +66,7 @@ services:
     volumes:
       - ./server/post/src:/usr/src/app/src:z
     ports:
-      - '4005:80'
+      - '4003:80'
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
@@ -68,7 +81,7 @@ services:
     volumes:
       - ./server/upload/src:/usr/src/app/src:z
     ports:
-      - '4002:80'
+      - '4004:80'
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
@@ -83,7 +96,7 @@ services:
     volumes:
       - ./server/metadata/src:/usr/src/app/src:z
     ports:
-      - '4003:80'
+      - '4005:80'
     environment:
       - MONGO_URI=mongodb://mgdb:27017/metadata
       - RABBIT=amqp://guest:guest@rabbit:5672
@@ -98,7 +111,7 @@ services:
     volumes:
       - ./server/alert/src:/usr/src/app/src:z
     ports:
-      - '4004:80'
+      - '4006:80'
     environment:
       - MONGO_URI=mongodb://mgdb:27017/alert
       - RABBIT=amqp://guest:guest@rabbit:5672

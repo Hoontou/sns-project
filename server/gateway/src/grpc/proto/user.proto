@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package user;
+
+service UserService {
+  rpc SignIn(SignInReq) returns (SignInRes) {};
+  rpc SignUp(SignUpReq) returns (SignUpRes) {};
+  rpc Guard(GuardReq) returns (GuardRes) {};
+}
+
+
+message SignInReq {
+  //SignInDto
+  string email = 1;
+  string password = 2;
+}
+message SignInRes {
+  //AuthResuleRes
+  bool success = 1;
+  //if succeed
+  string userId = 2;
+  string username = 3;
+}
+
+message SignUpReq {
+  //SignUpDto
+  string email = 1;
+  string password = 2;
+  string username = 3;
+}
+message SignUpRes {
+  bool success = 1;
+  //if failed
+  string msg = 2;
+}
+
+message GuardReq {
+  string accessToken = 1;
+  string expire = 2;
+}
+message GuardRes {
+  //AuthResuleRes
+  bool success = 1;
+  //if succeed
+  string userId = 2;
+  string username = 3;
+}

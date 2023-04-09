@@ -1,24 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { pgClient } from './configs/pg';
+import * as cookieParser from 'cookie-parser';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
-import { Logger } from '@nestjs/common';
-
-const logger = new Logger('Main');
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    {
-      transport: Transport.GRPC,
-      options: {
-        url: '0.0.0.0:80',
-        package: 'user',
-        protoPath: join(__dirname, 'proto/user.proto'),
-      },
-    },
-  );
+  const app = await NestFactory.create(AppModule);
 
   //https://docs.nestjs.com/faq/hybrid-application
   // const microserviceGrp = app.connectMicroservice<MicroserviceOptions>({
@@ -29,20 +16,14 @@ async function bootstrap() {
   //   },
   // });
 
+  app.use(cookieParser());
+  app.enableCors();
   //typerom 쿼리빌더 익숙하지 않으면 바닐라로 쿼리 날리려고 연결해놓음.
   //const queryText = `INSERT INTO public.comment(comment, "userId", "postId) VALUES ('${comment}', ${userId}, '${post_id}')`;
   //console.log(queryText);
   //https://node-postgres.com/features/queries
-
-  app.listen().then(() => {
-    logger.log('User Micrservice is listening...');
-    pgClient.connect((err) => {
-      if (err) {
-        logger.error('vanila pgdb connection error', err.stack);
-      } else {
-        logger.log('vanila pgdb connected');
-      }
-    });
-  });
+  await app.startAllMicroservices();
+  await app.listen(80);
+  console.log(`main-back on 4000:80`);
 }
 bootstrap();
