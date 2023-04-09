@@ -36,19 +36,19 @@ localhost:3000으로 진입
 리프레시 토큰?  
 그냥 가드 통과하면 쿠키 유효기간 다시 달아서 보내면 될거같은데? 서버비용은 좀 더 생각해 봐야겠음.
 
-## sub-back
+## sub-back - grpc(nest?)
 
 좋아요, 팔로우 관리 - mongo
 
-## post
+## post - nest/grpc
 
 글, 댓글, 대댓글 관리 - nest, postgres
 
-## alert
+## alert - fastify
 
 알림 관리 - mongo, 웹소켓
 
-## metadata
+## metadata - grpc
 
 사진, 영상 URL 관리 - mongo
 

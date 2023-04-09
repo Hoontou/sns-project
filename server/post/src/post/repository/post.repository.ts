@@ -1,11 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Post } from '../entity/post.entity';
 import { PostDto } from '../dto/post.dto';
 
 @Injectable()
 export class PostTable {
+  private logger = new Logger(PostTable.name);
   constructor(
     @InjectRepository(Post)
     public db: Repository<Post>,
@@ -22,7 +23,11 @@ export class PostTable {
         id: postId,
         user: () => `${userId}`,
       })
-      .execute();
+      .execute()
+      .then(() => {
+        this.logger.log('post stored in pgdb successfully');
+      })
+      .catch(() => this.logger.log('err when storing post in pgdb'));
   }
 
   //코멘트 작성되서 카운트 증가

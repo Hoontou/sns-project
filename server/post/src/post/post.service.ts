@@ -32,12 +32,8 @@ export class PostService {
     // });
 
     //포스트테이블에 내용 삽입
-    await this.postTable
-      .addPost(postDto)
-      .then(() => {
-        console.log('post stored in pgdb successfully');
-      })
-      .catch(() => console.log('err when storing post in pgdb'));
+    await this.postTable.addPost(postDto);
+
     //유저의 총 게시물 수 카운트 증가.
     //await this.usernumsTable.addPost(postDto.userId);
 
