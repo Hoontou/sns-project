@@ -1,4 +1,4 @@
-import { Inject, Injectable, Req } from '@nestjs/common';
+import { Inject, Injectable, Req, forwardRef } from '@nestjs/common';
 import { PostTable } from './repository/post.repository';
 import { CommentTable } from './repository/comment.repository';
 import { CoCommentTable } from './repository/cocomment.repository';
@@ -14,13 +14,30 @@ export class PostService {
     private postTable: PostTable,
     private commentTable: CommentTable,
     private cocommentTable: CoCommentTable,
-    private amqpService: AmqpService,
+    @Inject(forwardRef(() => AmqpService)) private amqpService: AmqpService,
   ) {}
 
   //userId를 int로 바꾸고 쿼리빌더로 insert 성공
   async posting(postDto: PostDto): Promise<{ success: boolean }> {
+    //굳이 validation 할 필요가 있나?
+    // const post = new PostDto();
+    // post.postId = postDto.postId;
+    // post.userId = postDto.userId;
+    // validate(post).then((err) => {
+    //   // errors is an array of validation errors
+    //   if (err.length > 0) {
+    //     console.log('post validation failed. errors: ', err);
+    //     return;
+    //   }
+    // });
+
     //포스트테이블에 내용 삽입
-    await this.postTable.addPost(postDto);
+    await this.postTable
+      .addPost(postDto)
+      .then(() => {
+        console.log('post stored in pgdb successfully');
+      })
+      .catch(() => console.log('err when storing post in pgdb'));
     //유저의 총 게시물 수 카운트 증가.
     //await this.usernumsTable.addPost(postDto.userId);
 

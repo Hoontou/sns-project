@@ -37,6 +37,7 @@ export class PostController {
     return 'hi';
   }
 
+  //지금은 래빗으로 대체했음.
   //from upload
   //need post_id to primary key, userUuid(작성자uuid) to foreign key
   //req: {postId: post objectId, userId: userUuid}

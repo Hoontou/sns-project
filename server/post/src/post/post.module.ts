@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PostTable } from './repository/post.repository';
 import { CommentTable } from './repository/comment.repository';
 import { CoCommentTable } from './repository/cocomment.repository';
@@ -20,9 +20,10 @@ import { AmqpModule } from 'src/common/amqp/amqp.module';
       Commentnums,
       Cocommentnums,
     ]),
-    AmqpModule,
+    forwardRef(() => AmqpModule),
   ],
   providers: [PostTable, CommentTable, CoCommentTable, PostService],
   controllers: [PostController],
+  exports: [PostService],
 })
 export class PostModule {}

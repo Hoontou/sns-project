@@ -1,12 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AmqpService } from './amqp.service';
-
-const amqpProvider = { provide: AmqpService, useValue: new AmqpService([]) };
+import { PostModule } from 'src/post/post.module';
 
 @Module({
-  imports: [],
+  imports: [forwardRef(() => PostModule)],
   controllers: [],
-  providers: [amqpProvider],
-  exports: [amqpProvider],
+  providers: [AmqpService],
+  exports: [AmqpService],
 })
 export class AmqpModule {}

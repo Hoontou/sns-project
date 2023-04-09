@@ -1,3 +1,4 @@
+import { AlertDto, MetadataDto, PostMessage, Que } from 'sns-interfaces';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const amqp = require('amqplib');
 const RABBIT = process.env.RABBIT;
@@ -31,7 +32,7 @@ class RabbitMQ {
     console.log('RabbitMQ connected');
   }
 
-  sendMsg(targetQue: string, msgForm: object): void {
+  sendMsg(targetQue: Que, msgForm: AlertDto | MetadataDto | PostMessage): void {
     this.channel.sendToQueue(targetQue, Buffer.from(JSON.stringify(msgForm)));
   }
 }

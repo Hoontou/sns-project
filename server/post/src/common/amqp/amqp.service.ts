@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Que } from 'sns-interfaces';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
+import { PostMessage, Que } from 'sns-interfaces';
+import { PostService } from '../../post/post.service';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const amqp = require('amqplib');
 
@@ -15,8 +16,10 @@ export class AmqpService {
   private conn;
   private channel;
 
-  constructor(private queList: Que[]) {
-    this.initialize([]);
+  constructor(
+    @Inject(forwardRef(() => PostService)) private postService: PostService,
+  ) {
+    this.initialize(['post']);
   }
 
   async initialize(queList: Que[]) {
@@ -27,12 +30,18 @@ export class AmqpService {
         await this.channel.assertQueue(que, { durable: true });
         await this.channel.consume(
           que,
-          //(message) => {
-          //const targetQue: string = message.fields.routingKey;
-          // if (targetQue === 'alert') {
-          //   handleAlert(message);
-          // }
-          //},
+          (message) => {
+            console.log('post MSA catch post from upload');
+            const data: PostMessage = JSON.parse(message.content.toString());
+            if (data.type == 'PostDto') {
+              this.postService.posting(data.content);
+            }
+
+            // const targetQue: string = message.fields.routingKey;
+            // if (targetQue === 'alert') {
+            //   handleAlert(message);
+            // }
+          },
           { noAck: true },
         );
       });

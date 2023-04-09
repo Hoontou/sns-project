@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { AmqpModule } from './common/amqp/amqp.module';
-import { HeroModule } from './hero/hero.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { HeroModule } from './hero/hero.module';
     AmqpModule,
     AuthModule,
     UserModule,
-    HeroModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [],

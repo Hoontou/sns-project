@@ -9,13 +9,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   //https://docs.nestjs.com/faq/hybrid-application
-  const microserviceGrp = app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.GRPC,
-    options: {
-      package: 'hero',
-      protoPath: join(__dirname, 'proto/hero.proto'),
-    },
-  });
+  // const microserviceGrp = app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.GRPC,
+  //   options: {
+  //     package: 'hero',
+  //     protoPath: join(__dirname, 'proto/hero.proto'),
+  //   },
+  // });
 
   app.use(cookieParser());
   app.enableCors();

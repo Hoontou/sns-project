@@ -46,21 +46,30 @@ export interface AuthFail {
   success: false;
 }
 
+export type PostMessage = PostDto | CommentDto | CocommentDto;
+
 export interface PostDto {
-  postId: string;
-  userId: string | number; //작성자 id
+  type: 'PostDto';
+  content: {
+    postId: string;
+    userId: string | number; //작성자 id}
+  };
 }
-
 export interface CommentDto {
-  comment: string;
-  userId: string | number; //작성자
-  postId: string; //부모 post id (objectid)
+  type: 'CommentDto';
+  content: {
+    comment: string;
+    userId: string | number; //작성자
+    postId: string; //부모 post id (objectid)
+  };
 }
-
 export interface CocommentDto {
-  cocomment: string;
-  userId: string;
-  commentId: number | string; //부모 comment id (int)
+  type: 'CocommentDto';
+  content: {
+    cocomment: string;
+    userId: string;
+    commentId: number | string; //부모 comment id (int)
+  };
 }
 
-export type Que = 'alert' | 'metadata';
+export type Que = 'alert' | 'metadata' | 'post' | 'main' | 'sub' | 'upload';

@@ -1,18 +1,12 @@
 import { Injectable, Logger, Req, Res } from '@nestjs/common';
-import { UserTable } from './repository/user.repository';
 import { AuthService } from 'src/auth/auth.service';
 import { SignInDto } from './dto/sign.dto';
 import { AuthResultRes } from 'sns-interfaces';
 import { CertResult } from '../common/interface';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private userTable: UserTable,
-    private authService: AuthService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   //----------------------------------------------------------------------------------------------
   //아.. 근데 지금 인증 틀렸을 시 AuthGuard에서 exeption 오류로그를 찍어내는데 마음에 안든다.... 걍 로그 안뜨게 하고싶다.
