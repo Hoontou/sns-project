@@ -23,6 +23,7 @@ import { AuthMiddleware } from './module/user/auth.middleware';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     //https://docs.nestjs.com/middleware 미들웨어 컨슈머 전역으로 설치하는법
+    //지금 user컨트롤러에는 제외해놨음
     consumer
       .apply(AuthMiddleware)
       .exclude('user/(.*)')
