@@ -35,12 +35,17 @@ export interface SignInDto {
 export interface SignUpDto extends SignInDto {
   username: string;
 }
+export interface AuthDto {
+  accessToken: string;
+  refresh: boolean;
+}
 
 export type AuthResultRes = AuthSuccess | AuthFail;
 export interface AuthSuccess {
   success: true;
   userId: string;
   username: string;
+  accessToken?: string;
 }
 export interface AuthFail {
   success: false;

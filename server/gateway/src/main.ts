@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { join } from 'path';
+import { Logger } from '@nestjs/common';
+
+const logger = new Logger('Main');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,8 +23,7 @@ async function bootstrap() {
   //const queryText = `INSERT INTO public.comment(comment, "userId", "postId) VALUES ('${comment}', ${userId}, '${post_id}')`;
   //console.log(queryText);
   //https://node-postgres.com/features/queries
-  await app.startAllMicroservices();
   await app.listen(80);
-  console.log(`main-back on 4000:80`);
+  logger.log(`gateway on 4000:80`);
 }
 bootstrap();

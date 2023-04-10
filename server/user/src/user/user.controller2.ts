@@ -75,7 +75,7 @@ export class UserController {
     @Res({ passthrough: true }) res,
     //네스트.com에서는 Response 타입 붙이라고 하는데? 붙이면 쿠키타입이 없다고 나옴. TS버전문제인가
   ): Promise<AuthResultRes> {
-    return this.userService.signIn(signinDto, res);
+    return this.authService.signIn(signinDto);
   }
 
   //NEED THIS

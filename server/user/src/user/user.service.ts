@@ -1,8 +1,6 @@
 import { Injectable, Logger, Req, Res } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
-import { SignInDto } from './dto/sign.dto';
 import { AuthResultRes } from 'sns-interfaces';
-import { CertResult } from '../common/interface';
 
 @Injectable()
 export class UserService {
@@ -58,24 +56,4 @@ export class UserService {
   //   "statusCode": 401,
   //   "message": "Unauthorized"
   // }----------------------------------------------------------------------------------------------
-
-  async signIn(signinDto: SignInDto, res): Promise<AuthResultRes> {
-    const certInfo: CertResult = await this.authService.signIn(signinDto);
-    if (certInfo.success === true) {
-      const createdAt = new Date();
-      //로그인 플래그 성공이면 쿠키에 담아서 보낸다.
-      res.cookie('Authorization', certInfo.accessToken, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 24 * 30, //30 day
-      });
-      res.cookie('createdAt', createdAt, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 24 * 30, //30 day
-      });
-      delete certInfo.accessToken; //쿠키에 담았으니까 지워준다.
-      return certInfo; //CertSuccess 토큰지워줘서 AuthResult 충족함.
-    }
-
-    return certInfo; //CertFail
-  }
 }

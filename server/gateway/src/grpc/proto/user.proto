@@ -5,7 +5,7 @@ package user;
 service UserService {
   rpc SignIn(SignInReq) returns (SignInRes) {};
   rpc SignUp(SignUpReq) returns (SignUpRes) {};
-  rpc Guard(GuardReq) returns (GuardRes) {};
+  rpc Auth(AuthReq) returns (AuthRes) {};
 }
 
 
@@ -18,8 +18,9 @@ message SignInRes {
   //AuthResuleRes
   bool success = 1;
   //if succeed
-  string userId = 2;
-  string username = 3;
+  optional string userId = 2;
+  optional string username = 3;
+  optional string accessToken = 4;
 }
 
 message SignUpReq {
@@ -31,17 +32,20 @@ message SignUpReq {
 message SignUpRes {
   bool success = 1;
   //if failed
-  string msg = 2;
+  optional string msg = 2;
 }
 
-message GuardReq {
+message AuthReq {
   string accessToken = 1;
-  string expire = 2;
+  //if need refresh
+  bool refresh = 2;
 }
-message GuardRes {
+message AuthRes {
   //AuthResuleRes
   bool success = 1;
   //if succeed
-  string userId = 2;
-  string username = 3;
+  optional string userId = 2;
+  optional string username = 3;
+  //if need refresh
+  optional string accessToken = 4;
 }
