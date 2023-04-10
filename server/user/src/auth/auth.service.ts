@@ -35,7 +35,7 @@ export class AuthService {
 
       return user;
     } catch {
-      this.logger.log('Authorization failed');
+      this.logger.error('Authorization failed');
       return { success: false };
     }
   }

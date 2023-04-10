@@ -14,7 +14,7 @@ export class UserService implements OnModuleInit {
       this.client.getService<UserGrpcService>('UserService');
   }
 
-  async auth(@Req() req, @Res() res) {
+  async auth(@Req() req, @Res() res): Promise<AuthResultRes> {
     const accessToken: string = req.cookies['Authorization'] || 'foo';
     if (accessToken === 'foo') {
       return { success: false };
@@ -37,6 +37,20 @@ export class UserService implements OnModuleInit {
       });
       delete authInfo.accessToken; //쿠키에 담았으니까 지워준다.
     }
+    return authInfo;
+  }
+  //미들웨어를 위한 메서드임. 리프레시 기능 삭제
+  async authMiddleware(@Req() req): Promise<AuthResultRes> {
+    const accessToken: string = req.cookies['Authorization'] || 'foo';
+    if (accessToken === 'foo') {
+      return { success: false };
+    }
+    const authInfo = await lastValueFrom(
+      this.userGrpcService.auth({
+        accessToken,
+        refresh: false,
+      }),
+    );
     return authInfo;
   }
 

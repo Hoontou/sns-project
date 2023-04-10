@@ -8,5 +8,6 @@ import { ClientsModule } from '@nestjs/microservices';
   imports: [ClientsModule.register([userMicroserviceOptions])],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}
