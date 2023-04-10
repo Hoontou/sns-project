@@ -28,14 +28,14 @@ export class UserController {
     return 'hi';
   }
 
-  @Get('/hoc') //필요한 파라미터는 없고, signin으로부터 클라이언트가 받은 쿠키안에 토큰 필요
-  @UseGuards(AuthGuard())
-  async hoc(
-    @Req() req,
-    @Res({ passthrough: true }) res,
-  ): Promise<AuthResultRes> {
-    return this.userService.hoc(req, res);
-  } //서비스 코드에 주석 많이달아놨음.
+  // @Get('/hoc') //필요한 파라미터는 없고, signin으로부터 클라이언트가 받은 쿠키안에 토큰 필요
+  // @UseGuards(AuthGuard())
+  // async hoc(
+  //   @Req() req,
+  //   @Res({ passthrough: true }) res,
+  // ): Promise<AuthResultRes> {
+  //   return this.userService.hoc(req, res);
+  // } //서비스 코드에 주석 많이달아놨음.
 
   //토큰 리프레시를 hoc랑 합쳐놨음. 지금은 사용안하는 코드.
   // @Get('/refresh') //JWT 리프레시. 토큰 만료되기 전에 여기로 요청넣어야함.

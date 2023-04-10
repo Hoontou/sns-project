@@ -40,14 +40,6 @@ export class AuthService {
     }
   }
 
-  async signUp(signupDto: SignUpDto) {
-    const user = signupDto;
-    const salt = await bcrypt.genSalt();
-    user.password = await bcrypt.hash(user.password, salt);
-
-    return this.userTable.signUp(user);
-  }
-
   async signIn(signinDto: SignInDto): Promise<AuthResultRes> {
     const { email, password } = signinDto;
     const user: User | null = await this.userTable.db.findOne({
@@ -71,9 +63,11 @@ export class AuthService {
     return { success: false };
   }
 
-  async refreshToken(email: string): Promise<string> {
-    const payload = { email };
-    const accessToken: string = await this.jwtService.sign(payload);
-    return accessToken;
+  async signUp(signupDto: SignUpDto) {
+    const user = signupDto;
+    const salt = await bcrypt.genSalt();
+    user.password = await bcrypt.hash(user.password, salt);
+
+    return this.userTable.signUp(user);
   }
 }

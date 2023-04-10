@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnModuleInit, Req, Res } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { AuthResultRes, SignInDto } from 'sns-interfaces';
+import { AuthResultRes, SignInDto, SignUpDto } from 'sns-interfaces';
 import { checkNeedRefresh } from 'src/common/checkneedrefresh';
 import { UserGrpcService } from 'src/grpc/grpc.interfaces';
 
@@ -59,5 +59,9 @@ export class UserService implements OnModuleInit {
       return authInfo;
     }
     return authInfo;
+  }
+
+  async signUp(signUpDto: SignUpDto) {
+    return lastValueFrom(this.userGrpcService.signUp(signUpDto));
   }
 }

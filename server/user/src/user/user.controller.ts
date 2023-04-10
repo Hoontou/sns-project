@@ -1,6 +1,6 @@
 import { Controller, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { SignInDto } from './dto/sign.dto';
+import { SignInDto, SignUpDto } from './dto/sign.dto';
 import { AuthResultRes, AuthDto } from 'sns-interfaces';
 import { UserService } from './user.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -20,7 +20,13 @@ export class UserController {
   }
 
   @GrpcMethod('UserService', 'Auth')
-  auth(AuthDto: AuthDto): Promise<AuthResultRes> {
-    return this.authService.auth(AuthDto);
+  auth(authDto: AuthDto): Promise<AuthResultRes> {
+    return this.authService.auth(authDto);
+  }
+
+  @GrpcMethod('UserService', 'SignUp')
+  @UsePipes(ValidationPipe)
+  signUp(signUpDto: SignUpDto): Promise<{ success: boolean; msg?: string }> {
+    return this.authService.signUp(signUpDto);
   }
 }
