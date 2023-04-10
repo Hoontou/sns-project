@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { Logger } from '@nestjs/common';
+import { LoggingInterceptor } from './common/middleware/logging.interceptor';
 
 const logger = new Logger('Main');
 
@@ -18,6 +19,7 @@ async function bootstrap() {
   // });
 
   app.use(cookieParser());
+  app.useGlobalInterceptors(new LoggingInterceptor());
   app.enableCors();
   //typerom 쿼리빌더 익숙하지 않으면 바닐라로 쿼리 날리려고 연결해놓음.
   //const queryText = `INSERT INTO public.comment(comment, "userId", "postId) VALUES ('${comment}', ${userId}, '${post_id}')`;

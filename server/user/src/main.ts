@@ -35,7 +35,7 @@ async function bootstrap() {
   //https://node-postgres.com/features/queries
 
   app.listen().then(() => {
-    logger.log('User Micrservice is listening...');
+    logger.log('user on 4001:80 (grpc server)');
     pgClient.connect((err) => {
       if (err) {
         logger.error('vanila pgdb connection error', err.stack);

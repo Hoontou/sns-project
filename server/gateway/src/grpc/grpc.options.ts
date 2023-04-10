@@ -1,10 +1,4 @@
-import {
-  ClientOptions,
-  MicroserviceOptions,
-  Transport,
-  GrpcMethod,
-  ClientProviderOptions,
-} from '@nestjs/microservices';
+import { Transport, ClientProviderOptions } from '@nestjs/microservices';
 import { join } from 'path';
 export const userMicroserviceOptions: ClientProviderOptions = {
   name: 'user',

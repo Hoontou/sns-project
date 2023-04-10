@@ -1,7 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
-import { User } from 'src/user/entity/user.entity';
 import { UserTable } from '../user/repository/user.repository';
 import { JwtSecret, crypter } from '../common/crypter';
 import { AuthSuccess } from 'sns-interfaces';
