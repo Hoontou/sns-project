@@ -1,21 +1,23 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AmqpModule } from './common/amqp/amqp.module';
-import { UserModule } from './module/user/user.module';
 import { AlertModule } from './module/alert/alert.module';
 import { MetadataModule } from './module/metadata/metadata.module';
 import { PostModule } from './module/post/post.module';
 import { FflModule } from './module/ffl/ffl.module';
 import { PostController } from './module/post/post.controller';
-import { AuthMiddleware } from './module/user/auth.middleware';
+import { AuthModule } from './module/auth/auth.module';
+import { AuthMiddleware } from './module/auth/auth.middleware';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     AmqpModule,
-    UserModule,
     MetadataModule,
     AlertModule,
     PostModule,
     FflModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],
@@ -26,7 +28,7 @@ export class AppModule implements NestModule {
     //지금 user컨트롤러에는 제외해놨음
     consumer
       .apply(AuthMiddleware)
-      .exclude('user/(.*)')
+      .exclude('auth/(.*)')
       .forRoutes(PostController);
   }
 }

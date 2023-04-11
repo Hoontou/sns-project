@@ -1,14 +1,15 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Req, Res } from '@nestjs/common';
 import { AuthResultRes, SignInDto, SignUpDto } from 'sns-interfaces';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
-@Controller('user')
-export class UserController {
-  constructor(private userService: UserService) {}
+@Controller('auth')
+export class AuthController {
+  private logger = new Logger(AuthController.name);
+  constructor(private authService: AuthService) {}
 
   @Get('/auth') //필요한 파라미터는 없고, signin으로부터 클라이언트가 받은 쿠키안에 토큰 필요
   async auth(@Req() req, @Res({ passthrough: true }) res) {
-    return this.userService.auth(req, res);
+    return this.authService.auth(req, res);
   }
 
   @Post('/signin')
@@ -17,7 +18,7 @@ export class UserController {
     @Res({ passthrough: true }) res,
     //네스트.com에서는 Response 타입 붙이라고 하는데? 붙이면 쿠키타입이 없다고 나옴. TS버전문제인가
   ): Promise<AuthResultRes> {
-    return this.userService.signIn(signInDto, res);
+    return this.authService.signIn(signInDto, res);
   }
 
   @Post('/signup')
@@ -25,6 +26,6 @@ export class UserController {
     @Body()
     signUpDto: SignUpDto,
   ): Promise<{ success: boolean; msg?: string }> {
-    return this.userService.signUp(signUpDto);
+    return this.authService.signUp(signUpDto);
   }
 }

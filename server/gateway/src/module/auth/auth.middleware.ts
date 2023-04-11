@@ -1,7 +1,7 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { UserService } from './user.service';
 import { AuthSuccess } from 'sns-interfaces';
+import { AuthService } from './auth.service';
 
 interface Req extends Request {
   user: AuthSuccess;
@@ -13,10 +13,10 @@ interface Req extends Request {
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   private logger = new Logger(AuthMiddleware.name);
-  constructor(private userService: UserService) {}
+  constructor(private authService: AuthService) {}
 
   async use(req: Req, res: Response, next: NextFunction) {
-    const authResult = await this.userService.auth(req, res);
+    const authResult = await this.authService.auth(req, res);
     //아래 코드로 교체하면 리프레시 기능 제외한 auth체크를 한다.
     //미들웨어 내의 작업에서도 리프레시 쿠키 셋업이 잘 된다.
     //위 코드를 쓰면 매 요청에 리프레시를 포함한 체크를 하는데.. 성능차이가 많이있을까?
