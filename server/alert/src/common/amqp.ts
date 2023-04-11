@@ -1,9 +1,8 @@
 import { alertRepository } from '../database/alert.repo';
-import { AlertDto } from 'sns-interfaces';
+import { AlertDto, Que } from 'sns-interfaces';
 import { socketManager } from '../alert.server/socket.manager';
+import * as amqp from 'amqplib';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const amqp = require('amqplib');
 const RABBIT = process.env.RABBIT;
 if (!RABBIT) {
   throw new Error('missing RABBIT');
@@ -16,7 +15,6 @@ const handleAlert = (message) => {
     socket.emit('tst', data);
     console.log('업로드 소켓전송');
   }
-  console.log('alert MSA catch alertForm from upload');
   // console.log(data);
   alertRepository.saveAlert(data); //몽고디비 저장 함수
 };
@@ -24,18 +22,21 @@ const handleAlert = (message) => {
 class RabbitMQ {
   private conn;
   private channel;
+  private options: { appId: Que };
   constructor(private rabbitUrl) {}
 
-  async initialize(queList: string[]) {
+  async initialize(whoAreU: Que, queList: Que[] = []) {
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
+    this.options = { appId: whoAreU };
     queList.forEach(async (que) => {
       await this.channel.assertQueue(que, { durable: true });
       await this.channel.consume(
         que,
         (message) => {
-          const targetQue: string = message.fields.routingKey;
-          if (targetQue === 'alert') {
+          const messageFrom: Que = message.properties.appId;
+          console.log(`${whoAreU} MSA catch message from ${messageFrom}`);
+          if (messageFrom === 'upload') {
             handleAlert(message);
           }
         },
@@ -45,8 +46,12 @@ class RabbitMQ {
     console.log('RabbitMQ connected');
   }
 
-  sendMsg(targetQue: string, msgForm: object): void {
-    this.channel.sendToQueue(targetQue, Buffer.from(JSON.stringify(msgForm)));
+  sendMsg(targetQue: Que, msgForm: object): void {
+    this.channel.sendToQueue(
+      targetQue,
+      Buffer.from(JSON.stringify(msgForm)),
+      this.options,
+    );
   }
 }
 

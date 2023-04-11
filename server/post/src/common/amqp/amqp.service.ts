@@ -1,8 +1,7 @@
 import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { PostMessage, Que } from 'sns-interfaces';
 import { PostService } from '../../post/post.service';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const amqp = require('amqplib');
+import * as amqp from 'amqplib';
 
 const RABBIT = process.env.RABBIT;
 if (!RABBIT) {
@@ -15,16 +14,18 @@ export class AmqpService {
   private rabbitUrl = RABBIT;
   private conn;
   private channel;
+  private options: { appId: Que };
 
   constructor(
     @Inject(forwardRef(() => PostService)) private postService: PostService,
   ) {
-    this.initialize(['post']);
+    this.initialize('post', ['post']);
   }
 
-  async initialize(queList: Que[]) {
+  async initialize(whoAreU: Que, queList: Que[]) {
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
+    this.options = { appId: whoAreU };
     if (queList.length > 0) {
       queList.forEach(async (que) => {
         await this.channel.assertQueue(que, { durable: true });
@@ -51,8 +52,12 @@ export class AmqpService {
     );
   }
 
-  sendMsg(targetQue: string, msgForm: object): void {
+  sendMsg(targetQue: Que, msgForm: object): void {
     this.logger.log(`send message to ${targetQue}`);
-    this.channel.sendToQueue(targetQue, Buffer.from(JSON.stringify(msgForm)));
+    this.channel.sendToQueue(
+      targetQue,
+      Buffer.from(JSON.stringify(msgForm)),
+      this.options,
+    );
   }
 }

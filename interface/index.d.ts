@@ -77,4 +77,11 @@ export interface CocommentDto {
   };
 }
 
-export type Que = 'alert' | 'metadata' | 'post' | 'main' | 'sub' | 'upload';
+export type Que =
+  | 'alert'
+  | 'metadata'
+  | 'post'
+  | 'ffl'
+  | 'upload'
+  | 'user'
+  | 'gateway';

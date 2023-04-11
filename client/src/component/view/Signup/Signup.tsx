@@ -31,7 +31,7 @@ const Signup = () => {
     }; //나중에 main-back의 DTO에 부합하지 않으면 모달로 오류뱉어야함
     //유저네임 4~10개
     //비번은 영어랑숫자만 4~20개 (현재는,)
-    axios.post('/gateway/user/signup', signUpForm).then((res) => {
+    axios.post('/gateway/auth/signup', signUpForm).then((res) => {
       if (res.data.success === true) {
         alert('signup succeed');
         navigate('/signin');

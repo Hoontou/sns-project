@@ -24,7 +24,7 @@ const Signin = () => {
       email,
       password,
     };
-    axios.post('/gateway/user/signin', signInForm).then((res) => {
+    axios.post('/gateway/auth/signin', signInForm).then((res) => {
       const result: AuthResultRes = res.data;
       if (result.success === true) {
         alert('login succeed');

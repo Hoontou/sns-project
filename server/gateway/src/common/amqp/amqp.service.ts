@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { Que } from 'sns-interfaces';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const amqp = require('amqplib');
+
+import * as amqp from 'amqplib';
 
 const RABBIT = process.env.RABBIT;
 if (!RABBIT) {
@@ -14,25 +14,32 @@ export class AmqpService {
   private rabbitUrl = RABBIT;
   private conn;
   private channel;
+  private options: { appId: Que };
 
-  constructor(private queList: Que[]) {
-    this.initialize([]);
+  constructor() {
+    this.initialize('gateway', ['gateway']);
   }
 
-  async initialize(queList: Que[]) {
+  async initialize(whoAreU: Que, queList: Que[]) {
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
+    this.options = { appId: whoAreU };
     if (queList.length > 0) {
       queList.forEach(async (que) => {
         await this.channel.assertQueue(que, { durable: true });
         await this.channel.consume(
           que,
-          //(message) => {
-          //const targetQue: string = message.fields.routingKey;
-          // if (targetQue === 'alert') {
-          //   handleAlert(message);
-          // }
-          //},
+          (message) => {
+            // this.logger.log('post MSA catch post from upload');
+            // const data: PostMessage = JSON.parse(message.content.toString());
+            // if (data.type == 'PostDto') {
+            //   this.postService.posting(data.content);
+            // }
+            // const targetQue: string = message.fields.routingKey;
+            // if (targetQue === 'alert') {
+            //   handleAlert(message);
+            // }
+          },
           { noAck: true },
         );
       });
@@ -42,8 +49,12 @@ export class AmqpService {
     );
   }
 
-  sendMsg(targetQue: string, msgForm: object): void {
+  sendMsg(targetQue: Que, msgForm: object): void {
     this.logger.log(`send message to ${targetQue}`);
-    this.channel.sendToQueue(targetQue, Buffer.from(JSON.stringify(msgForm)));
+    this.channel.sendToQueue(
+      targetQue,
+      Buffer.from(JSON.stringify(msgForm)),
+      this.options,
+    );
   }
 }

@@ -7,10 +7,10 @@ import { AuthGrpcService } from 'src/grpc/grpc.interfaces';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
-  private userGrpcService: AuthGrpcService;
+  private authGrpcService: AuthGrpcService;
   constructor(@Inject('auth') private client: ClientGrpc) {}
   onModuleInit() {
-    this.userGrpcService =
+    this.authGrpcService =
       this.client.getService<AuthGrpcService>('AuthService');
   }
 
@@ -19,8 +19,8 @@ export class AuthService implements OnModuleInit {
     if (accessToken === 'foo') {
       return { success: false };
     }
-    const authInfo = await lastValueFrom(
-      this.userGrpcService.auth({
+    const authInfo: AuthResultRes = await lastValueFrom(
+      this.authGrpcService.auth({
         accessToken,
         refresh: checkNeedRefresh(req.cookies.createdAt),
       }),
@@ -39,14 +39,15 @@ export class AuthService implements OnModuleInit {
     }
     return authInfo;
   }
+
   //미들웨어를 위한 메서드임. 리프레시 기능 삭제
   async authMiddleware(@Req() req): Promise<AuthResultRes> {
     const accessToken: string = req.cookies['Authorization'] || 'foo';
     if (accessToken === 'foo') {
       return { success: false };
     }
-    const authInfo = await lastValueFrom(
-      this.userGrpcService.auth({
+    const authInfo: AuthResultRes = await lastValueFrom(
+      this.authGrpcService.auth({
         accessToken,
         refresh: false,
       }),
@@ -55,8 +56,8 @@ export class AuthService implements OnModuleInit {
   }
 
   async signIn(signInDto: SignInDto, @Res() res): Promise<AuthResultRes> {
-    const authInfo = await lastValueFrom(
-      this.userGrpcService.signIn(signInDto),
+    const authInfo: AuthResultRes = await lastValueFrom(
+      this.authGrpcService.signIn(signInDto),
     );
 
     if (authInfo.success === true) {
@@ -76,6 +77,6 @@ export class AuthService implements OnModuleInit {
   }
 
   async signUp(signUpDto: SignUpDto) {
-    return lastValueFrom(this.userGrpcService.signUp(signUpDto));
+    return lastValueFrom(this.authGrpcService.signUp(signUpDto));
   }
 }

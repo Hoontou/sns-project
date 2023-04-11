@@ -7,7 +7,7 @@ import { FflModule } from './module/ffl/ffl.module';
 import { PostController } from './module/post/post.controller';
 import { AuthModule } from './module/auth/auth.module';
 import { AuthMiddleware } from './module/auth/auth.middleware';
-import { UserModule } from './user/user.module';
+import { UserModule } from './module/post/user/user.module';
 
 @Module({
   imports: [

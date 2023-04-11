@@ -14,6 +14,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
     process.exit(1);
   }
   connectMongo();
-  rabbitMQ.initialize(['sub']);
+  rabbitMQ.initialize('ffl', ['ffl']);
   console.log(`sub-back on 4001:80`);
 });
