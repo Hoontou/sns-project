@@ -30,8 +30,9 @@ export class AmqpService {
         await this.channel.consume(
           que,
           (message) => {
-            // this.logger.log('post MSA catch post from upload');
-            // const data: PostMessage = JSON.parse(message.content.toString());
+            const messageFrom: Que = message.properties.appId;
+            this.logger.log(`${whoAreU} MSA catch message from ${messageFrom}`);
+
             // if (data.type == 'PostDto') {
             //   this.postService.posting(data.content);
             // }

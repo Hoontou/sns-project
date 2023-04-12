@@ -36,6 +36,7 @@ class RabbitMQ {
         (message) => {
           const messageFrom: Que = message.properties.appId;
           console.log(`${whoAreU} MSA catch message from ${messageFrom}`);
+
           if (messageFrom === 'upload') {
             handleAlert(message);
           }

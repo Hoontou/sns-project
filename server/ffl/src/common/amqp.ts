@@ -28,8 +28,9 @@ class RabbitMQ {
       await this.channel.consume(
         que,
         (message) => {
-          // const messageFrom: Que = message.properties.appId;
-          // console.log(`${whoAreU} MSA catch message from ${messageFrom}`);
+          const messageFrom: Que = message.properties.appId;
+          console.log(`${whoAreU} MSA catch message from ${messageFrom}`);
+
           // if (targetQue === 'metadata') {
           //   handleMetadata(message);
           // }
