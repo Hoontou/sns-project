@@ -5,7 +5,7 @@ import { SignUpDto, SignInDto } from './dto/sign.dto';
 import { User } from 'src/user/entity/user.entity';
 import { UserTable } from '../user/repository/user.repository';
 import { crypter } from '../common/crypter';
-import { AuthDto, AuthResultRes } from 'sns-interfaces';
+import { AuthDto, AuthResultRes, AuthSuccess } from 'sns-interfaces';
 import { JwtStrategy } from './jwt-strategy';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class AuthService {
       const authInfo: { email: string; iat: string; exp: string } =
         await this.jwtService.verify(authDto.accessToken);
       //가져온 이메일로 유저정보 요청
-      const user = await this.jwtStrategy.validate(authInfo.email);
+      const user: AuthSuccess = await this.jwtStrategy.validate(authInfo.email);
 
       //refresh필요하다면? 토큰재발급해서 담아준다.
       if (authDto.refresh === true) {

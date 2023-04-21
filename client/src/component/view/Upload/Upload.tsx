@@ -9,12 +9,14 @@ import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
 import { resizer } from '../../../common/image.resizer';
 import { AuthResultRes } from 'sns-interfaces';
+import AlertSock from '../../AlertSocket';
 
 const Upload = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState<string>('');
   const [images, setImages] = useState<string[]>([]);
   const [sendingFileList, setFileList] = useState<File[]>([]);
+  const [userId, setId] = useState<string>('');
 
   const onTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.currentTarget.value);
@@ -75,13 +77,19 @@ const Upload = () => {
     formData.append('title', JSON.stringify({ title }));
     formData.append('alert_id', JSON.stringify({ alert_id: ObjectId() })); //게시물 업로드중 알람을 위한 Id
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
-    await axios //업로드 서버로 보낸다.
-      .post('/upload/uploadfiles', formData);
+    if (process.env.NODE_ENV === 'development') {
+      await axios //업로드 서버로 보낸다.
+        .post('/upload/uploadlocal', formData);
+    } else {
+      await axios //업로드 서버로 보낸다.
+        .post('/upload/uploadfiles', formData);
+    }
+
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
     //벗어나도 되면 그냥 알람MSA에 Id 보내고 페이지 벗어나자.
     //then을 안받아도 되게 느슨한 연결로 만들어 보자.
     alert('file sending succeed');
-    navigate('/');
+    navigate('/up');
   };
 
   useEffect(() => {
@@ -90,7 +98,9 @@ const Upload = () => {
       if (authRes.success === false) {
         alert('Err while Authentication, need login');
         navigate('/signin');
+        return;
       }
+      setId(authRes.userId);
     });
   }, [navigate]);
 

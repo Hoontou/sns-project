@@ -18,7 +18,6 @@ server.ready().then(() => {
     socketManager.setSock(userId, socket);
     //userId랑 소켓이랑 매핑해서 정보저장.
     console.log(userId, 'connected');
-
     //테스트코드, 매번 새 연결마다 소켓정보 잘 업데이트 됨.
     //console.log(socketManager.container[userId].id);
 
