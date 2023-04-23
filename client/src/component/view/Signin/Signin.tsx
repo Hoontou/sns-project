@@ -2,9 +2,24 @@ import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import { SignInDto, AuthResultRes } from 'sns-interfaces';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, TextField } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  CssBaseline,
+  FormControlLabel,
+  Grid,
+  TextField,
+  ThemeProvider,
+  Typography,
+} from '@mui/material';
 import { authHoc } from '../../../common/auth.hoc';
 import Navbar from '../../common/Navbar/Navbar';
+import { Copyright } from '@mui/icons-material';
+import { theme } from 'antd';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -55,24 +70,37 @@ const Signin = () => {
       this is signin
       <div>
         <form onSubmit={onSubmitHandler}>
-          <TextField
-            id='standard-basic'
-            label='Email'
-            variant='standard'
-            onChange={onEmailHandler}
-            type='email'
-            defaultValue={'hoontou@gmail.com'}
-          />
-          <TextField
-            id='standard-basic'
-            label='password'
-            variant='standard'
-            onChange={onPasswordHandler}
-            defaultValue={'test'}
-            type='password'
-          />
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                sx={{ m: 1, width: '30ch' }}
+                id='standard-basic'
+                label='Email'
+                variant='standard'
+                onChange={onEmailHandler}
+                type='email'
+                defaultValue={'hoontou@gmail.com'}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                sx={{ m: 1, width: '30ch' }}
+                id='standard-basic'
+                label='password'
+                variant='standard'
+                onChange={onPasswordHandler}
+                defaultValue={'test'}
+                type='password'
+              />
+            </Grid>
+          </Grid>
           <div style={{ marginTop: '0.5rem' }}>
-            <Button variant='outlined' size='medium' type='submit'>
+            <Button
+              variant='outlined'
+              size='medium'
+              type='submit'
+              sx={{ m: 1, width: '10ch' }}
+            >
               Login
             </Button>
           </div>

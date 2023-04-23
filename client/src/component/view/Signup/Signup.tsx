@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState, useEffect } from 'react';
 import axios from 'axios';
 import { SignUpDto } from 'sns-interfaces';
-import { Button, TextField } from '@mui/material';
+import { Button, Grid, TextField } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
@@ -56,32 +56,48 @@ const Signup = () => {
     >
       this is signup, 비번 영어숫자만, 이름 영어만
       <form onSubmit={onSubmitHandler}>
-        <TextField
-          id='standard-basic'
-          label='Email'
-          variant='standard'
-          onChange={onEmailHandler}
-          type='email'
-          defaultValue={'hoontou@gmail.com'}
-        />
-        <TextField
-          id='standard-basic'
-          label='Password'
-          variant='standard'
-          onChange={onPasswordHandler}
-          type='password'
-          defaultValue={'test'}
-        />
-        <TextField
-          id='standard-basic'
-          label='Username'
-          variant='standard'
-          onChange={onUsernameHandler}
-          defaultValue={'hoontou'}
-        />
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              sx={{ m: 1, width: '30ch' }}
+              id='standard-basic'
+              label='Username'
+              variant='standard'
+              onChange={onUsernameHandler}
+              defaultValue={'hoontou'}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              sx={{ m: 1, width: '30ch' }}
+              id='standard-basic'
+              label='Email'
+              variant='standard'
+              onChange={onEmailHandler}
+              type='email'
+              defaultValue={'hoontou@gmail.com'}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              sx={{ m: 1, width: '30ch' }}
+              id='standard-basic'
+              label='Password'
+              variant='standard'
+              onChange={onPasswordHandler}
+              type='password'
+              defaultValue={'test'}
+            />
+          </Grid>
+        </Grid>
         <div style={{ marginTop: '0.5rem' }}>
-          <Button variant='outlined' size='medium' type='submit'>
-            SignUp
+          <Button
+            sx={{ m: 1, width: '14ch' }}
+            variant='outlined'
+            size='medium'
+            type='submit'
+          >
+            Sign Up
           </Button>
         </div>
         <Link
