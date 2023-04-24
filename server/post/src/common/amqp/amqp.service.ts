@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
-import { PostMessage, Que } from 'sns-interfaces';
+import { Que } from 'sns-interfaces';
 import { PostService } from '../../post/post.service';
 import * as amqp from 'amqplib';
 
@@ -14,52 +14,54 @@ export class AmqpService {
   private rabbitUrl = RABBIT;
   private conn;
   private channel;
-  private options: { appId: Que };
-
+  private que: Que;
   constructor(
     @Inject(forwardRef(() => PostService)) private postService: PostService,
   ) {
-    this.initialize('post', ['post']);
+    this.initialize('post');
   }
 
-  async initialize(whoAreU: Que, queList: Que[]) {
+  async initialize(whoAreU: Que) {
+    this.que = whoAreU;
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
-    this.options = { appId: whoAreU };
-    if (queList.length > 0) {
-      queList.forEach(async (que) => {
-        await this.channel.assertQueue(que, { durable: true });
-        await this.channel.consume(
-          que,
-          (message) => {
-            const messageFrom: Que = message.properties.appId;
-            this.logger.log(`${whoAreU} MSA catch message from ${messageFrom}`);
+    await this.channel.assertExchange(this.que, 'topic', { durable: true });
 
-            const data: PostMessage = JSON.parse(message.content.toString());
-            if (data.type == 'PostDto') {
-              this.postService.posting(data.content);
-            }
+    const { anonQue } = this.channel.assertQueue('', {
+      exclusive: true,
+    });
+    await this.bindUpload(anonQue);
 
-            // const targetQue: string = message.fields.routingKey;
-            // if (targetQue === 'alert') {
-            //   handleAlert(message);
-            // }
-          },
-          { noAck: true },
-        );
-      });
-    }
-    this.logger.log(
-      `AMQP connected, ${queList.length > 0 ? queList : 'nothing'} asserted`,
+    await this.channel.consume(
+      anonQue,
+      (msg) => {
+        //console.log(msg);
+        //exchange 출처 체크후 해당 핸들러로 전달
+        if (msg.fields.exchange === 'upload') {
+          this.uploadHandler(msg);
+        }
+      },
+      { noAck: true },
     );
+
+    this.logger.log(`AMQP connected, ${this.que} asserted`);
   }
 
-  sendMsg(targetQue: Que, msgForm: object): void {
-    this.logger.log(`send message to ${targetQue}`);
-    this.channel.sendToQueue(
-      targetQue,
-      Buffer.from(JSON.stringify(msgForm)),
-      this.options,
-    );
+  async bindUpload(que) {
+    await this.channel.bindQueue(que, 'upload', 'upload');
+  }
+
+  uploadHandler(msg) {
+    //exchange가 upload인 메세지가 여기로 전달됨.
+    //key 체크해서 해당 핸들러로 전달.
+
+    const content = JSON.parse(msg.content.toString());
+    if (msg.fields.routingKey == 'upload') {
+      this.postService.posting(content);
+    }
+  }
+
+  publishMsg(key, msgForm) {
+    this.channel.publish(this.que, key, Buffer.from(JSON.stringify(msgForm)));
   }
 }

@@ -1,4 +1,4 @@
-import { AlertDto, MetadataDto, PostMessage, Que } from 'sns-interfaces';
+import { Que } from 'sns-interfaces';
 import * as amqp from 'amqplib';
 
 const RABBIT = process.env.RABBIT;
@@ -9,37 +9,19 @@ if (!RABBIT) {
 class RabbitMQ {
   private conn;
   private channel;
-  private options: { appId: Que };
+  private que: Que;
   constructor(private rabbitUrl) {}
 
-  async initialize(whoAreU: Que, queList: Que[] = []) {
+  async initialize(whoAreU: Que) {
+    this.que = whoAreU;
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
-    this.options = { appId: whoAreU };
 
-    queList.forEach(async (que) => {
-      await this.channel.assertQueue(que, { durable: true });
-      // await this.channel.consume(
-      //   que,
-      //   (message) => {
-      // const messageFrom: Que = message.properties.appId;
-      // console.log(`${whoAreU} MSA catch message from ${messageFrom}`);
-      //     if (targetQue === 'metadata') {
-      //       handleMetadata(message);
-      //     }
-      //   },
-      //   { noAck: true },
-      // );
-    });
-    console.log('RabbitMQ connected');
+    await this.channel.assertExchange(this.que, 'topic', { durable: true });
   }
 
-  sendMsg(targetQue: Que, msgForm: AlertDto | MetadataDto | PostMessage): void {
-    this.channel.sendToQueue(
-      targetQue,
-      Buffer.from(JSON.stringify(msgForm)),
-      this.options,
-    );
+  publishMsg(key, msgForm) {
+    this.channel.publish(this.que, key, Buffer.from(JSON.stringify(msgForm)));
   }
 }
 export const rabbitMQ = new RabbitMQ(RABBIT);

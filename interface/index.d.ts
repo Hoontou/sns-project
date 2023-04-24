@@ -85,3 +85,12 @@ export type Que =
   | 'upload'
   | 'user'
   | 'gateway';
+
+export interface UploadMessage {
+  userId: string;
+  postId: string;
+  alertId: string;
+  files: string[];
+  title: string;
+  createdAt: Date;
+}

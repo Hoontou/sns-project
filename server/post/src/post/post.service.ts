@@ -3,9 +3,8 @@ import { PostTable } from './repository/post.repository';
 import { CommentTable } from './repository/comment.repository';
 import { CoCommentTable } from './repository/cocomment.repository';
 import { CommentDto, PostDto, CocommentDto } from './dto/post.dto';
-import { AlertDto } from 'sns-interfaces';
-import { crypter } from 'src/common/crypter';
-import { ObjectId } from '../common/gen.objectid';
+import { UploadMessage } from 'sns-interfaces';
+
 import { AmqpService } from 'src/common/amqp/amqp.service';
 
 @Injectable()
@@ -18,7 +17,7 @@ export class PostService {
   ) {}
 
   //userId를 int로 바꾸고 쿼리빌더로 insert 성공
-  async posting(postDto: PostDto): Promise<{ success: boolean }> {
+  async posting(content: UploadMessage): Promise<{ success: boolean }> {
     //굳이 validation 할 필요가 있나?
     // const post = new PostDto();
     // post.postId = postDto.postId;
@@ -31,7 +30,11 @@ export class PostService {
     //   }
     // });
 
-    //포스트테이블에 내용 삽입
+    //파싱 후 포스트테이블에 내용 삽입
+    const postDto: PostDto = {
+      postId: content.postId,
+      userId: content.userId,
+    };
     await this.postTable.addPost(postDto);
 
     //유저의 총 게시물 수 카운트 증가.

@@ -1,52 +1,46 @@
-import { MetadataDto, Que } from 'sns-interfaces';
-import { metaRepository } from '../database/metadata.repo';
+import { Que } from 'sns-interfaces';
 import * as amqp from 'amqplib';
+import { uploadHandler } from './handler/upload.handler';
 
 const RABBIT = process.env.RABBIT;
 if (!RABBIT) {
   throw new Error('missing RABBIT');
 }
 
-const handleMetadata = (message) => {
-  const data: MetadataDto = JSON.parse(message.content.toString());
-  //날라온 메세지 파싱
-  metaRepository.saveMeatadata(data); //몽고디비 저장 함수
-};
-
 class RabbitMQ {
   private conn;
   private channel;
-  private options: { appId: Que };
+  private que: Que;
   constructor(private rabbitUrl) {}
 
-  async initialize(whoAreU: Que, queList: Que[] = []) {
+  async initialize(whoAreU: Que) {
+    this.que = whoAreU;
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
-    this.options = { appId: whoAreU };
-    queList.forEach(async (que) => {
-      await this.channel.assertQueue(que, { durable: true });
-      await this.channel.consume(
-        que,
-        (message) => {
-          const messageFrom: Que = message.properties.appId;
-          console.log(`${whoAreU} MSA catch message from ${messageFrom}`);
+    await this.channel.assertExchange(this.que, 'topic', { durable: true });
 
-          if (messageFrom === 'upload') {
-            handleMetadata(message);
-          }
-        },
-        { noAck: true },
-      );
+    const { anonQue } = this.channel.assertQueue('', {
+      exclusive: true,
     });
+    await this.bindUpload(anonQue);
+
+    await this.channel.consume(anonQue, (msg) => {
+      //console.log(msg);
+      //exchange 출처 체크후 해당 핸들러로 전달
+      if (msg.fields.exchange === 'upload') {
+        uploadHandler(msg);
+      }
+    });
+
     console.log('RabbitMQ connected');
   }
 
-  sendMsg(targetQue: Que, msgForm: object): void {
-    this.channel.sendToQueue(
-      targetQue,
-      Buffer.from(JSON.stringify(msgForm)),
-      this.options,
-    );
+  async bindUpload(que) {
+    await this.channel.bindQueue(que, 'upload', 'upload');
+  }
+
+  publishMsg(key, msgForm) {
+    this.channel.publish(this.que, key, Buffer.from(JSON.stringify(msgForm)));
   }
 }
 

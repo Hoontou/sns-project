@@ -45,12 +45,12 @@ export class PostController {
   //pgdb에 삽입.
   //이것은 업로드로부터 온 요청이니까 hoc 필요없음.
   //res: {success: boolean}
-  @Post('/posting')
-  posting(
-    @Body(ValidationPipe) postDto: PostDto,
-  ): Promise<{ success: boolean }> {
-    return this.postService.posting(postDto);
-  }
+  // @Post('/posting')
+  // posting(
+  //   @Body(ValidationPipe) postDto: PostDto,
+  // ): Promise<{ success: boolean }> {
+  //   return this.postService.posting(postDto);
+  // }
 
   //req: {
   //  "postId": "640402bdcdb83edbebf41",

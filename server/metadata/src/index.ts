@@ -7,13 +7,6 @@ import { MetadataDto } from 'sns-interfaces';
 import { connectMongo } from './database/initialize.mongo';
 
 const server = fastify();
-// const options = {
-//   keepCase: true,
-//   longs: String,
-//   enums: String,
-//   defaults: true,
-//   oneofs: true,
-// };
 
 //from Client
 server.post(
@@ -35,6 +28,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
     process.exit(1);
   }
   connectMongo();
-  rabbitMQ.initialize('metadata', ['metadata']);
+  rabbitMQ.initialize('metadata');
   console.log(`metadata on 4003:80`);
 });

@@ -1,6 +1,6 @@
 import { crypter } from './crypter';
 import { UploadRequest } from '../interface';
-import { AlertDto, MetadataDto, PostDto } from 'sns-interfaces';
+import { UploadMessage } from 'sns-interfaces';
 import { rabbitMQ } from '../amqp';
 
 export const reqParser = (req: UploadRequest): void => {
@@ -14,36 +14,15 @@ export const reqParser = (req: UploadRequest): void => {
   const postId: string = req.postId;
   const postList: string[] = req.postList;
 
-  const postingForm: PostDto = {
-    type: 'PostDto',
-    content: { postId: postId, userId: decId },
-  };
-  const metadataForm: MetadataDto = {
-    _id: postId,
+  const uploadForm: UploadMessage = {
     userId: decId,
+    postId,
+    alertId: alert_id,
     files: postList,
     title,
     createdAt: new Date(),
   };
 
-  const alertForm: AlertDto = {
-    //업로드 완료했다는 알람 보내는것
-    _id: alert_id,
-    userId: decId,
-    content: {
-      type: 'upload',
-      success: true,
-      postId,
-    },
-  };
   console.log('broadcasting to MSA');
-  rabbitMQ.sendMsg('metadata', metadataForm); //메타데이터 저장
-  rabbitMQ.sendMsg('alert', alertForm); //알람 생성, 저장
-  rabbitMQ.sendMsg('post', postingForm);
-  //axios.post('http://post/post/posting', postingForm); //pgdb에 post정보 저장
-  //.then((res) => console.log(res.data))
-  // .catch(() => {
-  //   console.log('cannot send axios request to post MSA');
-  //   throw new Error();
-  // });
+  rabbitMQ.publishMsg('upload', uploadForm);
 };
