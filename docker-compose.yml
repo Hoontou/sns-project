@@ -79,7 +79,7 @@ services:
       dockerfile: Dockerfile
     container_name: upload
     volumes:
-      - ./server/upload/src:/usr/src/app/src:z
+      - ./server/upload/src:/usr/src/app/src
     ports:
       - '4004:80'
     environment:
