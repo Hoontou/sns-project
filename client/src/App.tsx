@@ -5,6 +5,7 @@ import Post from './dev-component/Post';
 import Signin from './component/view/Signin/Signin';
 import Upload from './component/view/Upload/Upload';
 import AlertSock from './component/AlertSocket';
+import MyFeed from './component/view/Myfeed/Myfeed';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path='/signup' element={<Signup />} />
           <Route path='/up' element={<Upload />} />
           <Route path='/post' element={<Post />} />
+          <Route path='/myfeed' element={<MyFeed />} />
         </Routes>
       </Router>
     </>

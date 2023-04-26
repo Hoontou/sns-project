@@ -9,3 +9,12 @@ export const authMicroserviceOptions: ClientProviderOptions = {
     protoPath: join(__dirname, 'proto/auth.proto'),
   },
 };
+export const userMicroserviceOptions: ClientProviderOptions = {
+  name: 'user',
+  transport: Transport.GRPC,
+  options: {
+    url: 'user:81',
+    package: 'user',
+    protoPath: join(__dirname, 'proto/user.proto'),
+  },
+};

@@ -16,6 +16,6 @@ import { UserController } from './user.controller';
   ],
   controllers: [UserController],
   providers: [UserTable, UsernumsTable, UserService, JwtService],
-  exports: [UserTable, UsernumsTable],
+  exports: [UserTable, UsernumsTable, UserService],
 })
 export class UserModule {}

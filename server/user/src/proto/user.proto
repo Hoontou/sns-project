@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package user;
+
+service UserService {
+  rpc GetUsernums(GetUsernumsReq) returns (GetUsernumsRes) {};
+}
+
+
+message GetUsernumsReq {
+  string userId = 1;
+}
+message GetUsernumsRes {
+  int32 follower = 1;
+  int32 following = 2;
+  int32 postcount = 3;
+}

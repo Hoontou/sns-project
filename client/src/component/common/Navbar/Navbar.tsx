@@ -39,9 +39,9 @@ const Navbar = (props: { value: number }) => {
             href='/up'
           />
           <BottomNavigationAction
-            label='내 서랍'
+            label='내 피드'
             icon={<PersonIcon />}
-            href='/myvibe'
+            href='/myfeed'
           />
         </BottomNavigation>
       </Paper>

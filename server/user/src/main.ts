@@ -8,17 +8,23 @@ import { Logger } from '@nestjs/common';
 const logger = new Logger('Main');
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    {
-      transport: Transport.GRPC,
-      options: {
-        url: '0.0.0.0:80',
-        package: 'auth',
-        protoPath: join(__dirname, 'proto/auth.proto'),
-      },
+  const app = await NestFactory.create(AppModule);
+  const authGrpc = await app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      url: '0.0.0.0:80',
+      package: 'auth',
+      protoPath: join(__dirname, 'proto/auth.proto'),
     },
-  );
+  });
+  const userGrpc = await app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      url: '0.0.0.0:81',
+      package: 'user',
+      protoPath: join(__dirname, 'proto/user.proto'),
+    },
+  });
 
   //https://docs.nestjs.com/faq/hybrid-application
   // const microserviceGrp = app.connectMicroservice<MicroserviceOptions>({
@@ -33,8 +39,8 @@ async function bootstrap() {
   //const queryText = `INSERT INTO public.comment(comment, "userId", "postId) VALUES ('${comment}', ${userId}, '${post_id}')`;
   //console.log(queryText);
   //https://node-postgres.com/features/queries
-
-  app.listen().then(() => {
+  await app.startAllMicroservices();
+  app.listen(3000).then(() => {
     logger.log('user on 4001:80 (grpc server)');
     pgClient.connect((err) => {
       if (err) {

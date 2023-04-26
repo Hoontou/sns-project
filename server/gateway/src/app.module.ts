@@ -8,6 +8,7 @@ import { PostController } from './module/post/post.controller';
 import { AuthModule } from './module/auth/auth.module';
 import { AuthMiddleware } from './module/auth/auth.middleware';
 import { UserModule } from './module/user/user.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { UserModule } from './module/user/user.module';
     AuthModule,
     UserModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule implements NestModule {

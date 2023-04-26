@@ -1,21 +1,25 @@
 syntax = "proto3";
-package authPackage;
+package metadataPackage;
 
-service AuthService {
-  rpc login(LoginRequest) returns (LoginResult);
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+service MetadataService {
+  rpc GetPosts(getpostsReq) returns (getpostsRes);
 }
 
-enum LoginCode {
-  SUCCESS = 0;
-  FAIL = 1;
-};
-
-message LoginResult {
-  LoginCode loginCode = 1;
-  optional string token = 2;
+message getpostsReq {
+  string userId = 1;
 }
 
-message LoginRequest {
-  string username = 1;
-  string password = 2;
+message Post {
+  string id = 1;
+  string userId = 2;
+  repeated string files = 3;
+  string title = 4;
+  google.protobuf.Timestamp createdAt = 5;
+}
+
+message getpostsRes {
+  repeated Post posts = 1;
 }

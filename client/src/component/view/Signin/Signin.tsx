@@ -2,24 +2,9 @@ import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import { SignInDto, AuthResultRes } from 'sns-interfaces';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  CssBaseline,
-  FormControlLabel,
-  Grid,
-  TextField,
-  ThemeProvider,
-  Typography,
-} from '@mui/material';
+import { Button, Grid, TextField } from '@mui/material';
 import { authHoc } from '../../../common/auth.hoc';
 import Navbar from '../../common/Navbar/Navbar';
-import { Copyright } from '@mui/icons-material';
-import { theme } from 'antd';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 const Signin = () => {
   const navigate = useNavigate();

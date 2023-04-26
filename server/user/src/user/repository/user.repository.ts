@@ -1,12 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { User } from '../entity/user.entity';
 import { SignUpDto } from '../../auth/dto/sign.dto';
 import { UsernumsTable } from './usernums.repository';
 
 @Injectable()
 export class UserTable {
+  private logger = new Logger('UserTable');
   constructor(
     @InjectRepository(User)
     public db: Repository<User>,
