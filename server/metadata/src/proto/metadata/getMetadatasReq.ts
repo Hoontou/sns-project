@@ -1,10 +1,10 @@
 // Original file: src/proto/metadata.proto
 
 
-export interface getpostsReq {
+export interface getMetadatasReq {
   'userId'?: (string);
 }
 
-export interface getpostsReq__Output {
+export interface getMetadatasReq__Output {
   'userId'?: (string);
 }

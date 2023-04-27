@@ -3,7 +3,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { AuthResultRes, SignInDto, SignUpDto } from 'sns-interfaces';
 import { checkNeedRefresh } from 'src/common/checkneedrefresh';
-import { AuthGrpcService } from 'src/grpc/grpc.interfaces';
+import { AuthGrpcService } from 'src/grpc/grpc.services';
 
 @Injectable()
 export class AuthService implements OnModuleInit {

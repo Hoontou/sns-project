@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { crypter } from 'src/common/crypter';
-import { UserGrpcService } from 'src/grpc/grpc.interfaces';
+import { UserGrpcService } from 'src/grpc/grpc.services';
 
 @Injectable()
 export class UserService {

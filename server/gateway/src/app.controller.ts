@@ -4,6 +4,7 @@ import { UserService } from './module/user/user.service';
 @Controller('')
 export class AppController {
   constructor(private userService: UserService) {}
+
   @Post('/userinfo')
   async getUsernums(@Body() body: { userId: string }): Promise<{
     following: number;

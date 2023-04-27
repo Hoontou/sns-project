@@ -18,3 +18,13 @@ export const userMicroserviceOptions: ClientProviderOptions = {
     protoPath: join(__dirname, 'proto/user.proto'),
   },
 };
+
+export const metadataMicroserviceOptions: ClientProviderOptions = {
+  name: 'metadata',
+  transport: Transport.GRPC,
+  options: {
+    url: 'metadata:80',
+    package: 'metadata',
+    protoPath: join(__dirname, 'proto/metadata.proto'),
+  },
+};

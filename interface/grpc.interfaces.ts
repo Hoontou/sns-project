@@ -1,8 +1,8 @@
 import { MetadataDto } from '.';
 
 //metadata
-export interface GetPostsRes {
-  posts: MetadataDto[];
+export interface GetMetadatasRes {
+  metadatas: MetadataDto[];
 }
 
 //user

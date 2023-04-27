@@ -8,7 +8,7 @@ service UserService {
 
 
 message GetUsernumsReq {
-  int32 userId = 1;
+  string userId = 1;
 }
 message GetUsernumsRes {
   int32 follower = 1;

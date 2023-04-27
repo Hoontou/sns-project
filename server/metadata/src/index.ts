@@ -2,14 +2,12 @@ import { join } from 'path';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { ProtoGrpcType } from './proto/metadata';
-import { MetadataServiceHandlers } from './proto/metadataPackage/MetadataService';
+import { MetadataServiceHandlers } from './proto/metadata/MetadataService';
 import { rabbitMQ } from './common/amqp';
 import { connectMongo } from './database/initialize.mongo';
 import { crypter } from './common/crypter';
-
 import { metaRepository } from './database/metadata.repo';
-
-import { Post } from './proto/metadataPackage/Post';
+import { Metadata } from './proto/metadata/Metadata';
 
 const PORT = 80;
 const packageDef = protoLoader.loadSync(
@@ -18,7 +16,7 @@ const packageDef = protoLoader.loadSync(
 const grpcObj = grpc.loadPackageDefinition(
   packageDef,
 ) as unknown as ProtoGrpcType;
-const metadataPackage = grpcObj.metadataPackage;
+const metadataPackage = grpcObj.metadata;
 
 const main = () => {
   const server = getServer();
@@ -42,15 +40,14 @@ const main = () => {
 const getServer = () => {
   const server = new grpc.Server();
   server.addService(metadataPackage.MetadataService.service, {
-    GetPosts: async (req, res) => {
+    GetMetadatas: async (req, res) => {
       const decId = crypter.decrypt(
         req.request.userId ? req.request.userId : '',
       );
-      const posts: Post[] = await metaRepository.db.find({
+      const metadatas: Metadata[] = await metaRepository.db.find({
         userId: decId,
       });
-      console.log(posts);
-      res(null, { posts });
+      res(null, { metadatas });
     },
   } as MetadataServiceHandlers);
   return server;

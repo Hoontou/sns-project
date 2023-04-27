@@ -1,7 +1,7 @@
 import type * as grpc from '@grpc/grpc-js';
 import type { MessageTypeDefinition } from '@grpc/proto-loader';
 
-import type { MetadataServiceClient as _metadataPackage_MetadataServiceClient, MetadataServiceDefinition as _metadataPackage_MetadataServiceDefinition } from './metadataPackage/MetadataService';
+import type { MetadataServiceClient as _metadata_MetadataServiceClient, MetadataServiceDefinition as _metadata_MetadataServiceDefinition } from './metadata/MetadataService';
 
 type SubtypeConstructor<Constructor extends new (...args: any) => any, Subtype> = {
   new(...args: ConstructorParameters<Constructor>): Subtype;
@@ -17,16 +17,15 @@ export interface ProtoGrpcType {
       Int32Value: MessageTypeDefinition
       Int64Value: MessageTypeDefinition
       StringValue: MessageTypeDefinition
-      Timestamp: MessageTypeDefinition
       UInt32Value: MessageTypeDefinition
       UInt64Value: MessageTypeDefinition
     }
   }
-  metadataPackage: {
-    MetadataService: SubtypeConstructor<typeof grpc.Client, _metadataPackage_MetadataServiceClient> & { service: _metadataPackage_MetadataServiceDefinition }
-    Post: MessageTypeDefinition
-    getpostsReq: MessageTypeDefinition
-    getpostsRes: MessageTypeDefinition
+  metadata: {
+    Metadata: MessageTypeDefinition
+    MetadataService: SubtypeConstructor<typeof grpc.Client, _metadata_MetadataServiceClient> & { service: _metadata_MetadataServiceDefinition }
+    getMetadatasReq: MessageTypeDefinition
+    getMetadatasRes: MessageTypeDefinition
   }
 }
 

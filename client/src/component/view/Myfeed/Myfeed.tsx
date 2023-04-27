@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../common/Navbar/Navbar';
 
 import Userinfo from '../../common/Userinfo';
+import Postlist from '../../common/Postlist';
 
 const MyFeed = () => {
   const navigate = useNavigate();
@@ -28,7 +29,10 @@ const MyFeed = () => {
       {username === '' ? (
         'waiting...'
       ) : (
-        <Userinfo userId={userId} username={username} />
+        <>
+          <Userinfo userId={userId} username={username} />
+          <Postlist userId={userId} />
+        </>
       )}
 
       <Navbar value={4} />
