@@ -14,16 +14,16 @@ export class AmqpService {
   private rabbitUrl = RABBIT;
   private conn;
   private channel;
-  private options: { appId: Que };
+  private que: Que;
 
   constructor() {
     this.initialize('gateway', ['gateway']);
   }
 
   async initialize(whoAreU: Que, queList: Que[]) {
+    this.que = whoAreU;
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
-    this.options = { appId: whoAreU };
     if (queList.length > 0) {
       queList.forEach(async (que) => {
         await this.channel.assertQueue(que, { durable: true });
@@ -50,12 +50,11 @@ export class AmqpService {
     );
   }
 
-  sendMsg(targetQue: Que, msgForm: object): void {
+  sendMsg(targetQue: Que, msgForm: object, methodName: string): void {
     this.logger.log(`send message to ${targetQue}`);
-    this.channel.sendToQueue(
-      targetQue,
-      Buffer.from(JSON.stringify(msgForm)),
-      this.options,
-    );
+    this.channel.sendToQueue(targetQue, Buffer.from(JSON.stringify(msgForm)), {
+      appId: this.que,
+      type: methodName,
+    });
   }
 }

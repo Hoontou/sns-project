@@ -1,4 +1,12 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { FflService } from './ffl.service';
 
 @Controller('ffl')
-export class FflController {}
+export class FflController {
+  constructor(private fflService: FflService) {}
+
+  @Post('/addfollow')
+  async addFollow(@Body() body: { userTo: string; userFrom: string }) {
+    return this.fflService.addFollow(body);
+  }
+}

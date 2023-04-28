@@ -1,5 +1,6 @@
 import * as amqp from 'amqplib';
 import { Que } from 'sns-interfaces';
+import { msgHandler } from './handler/handler';
 
 const RABBIT = process.env.RABBIT;
 if (!RABBIT) {
@@ -16,37 +17,33 @@ if (!RABBIT) {
 class RabbitMQ {
   private conn;
   private channel;
-  private options: { appId: Que };
+  private que;
   constructor(private rabbitUrl) {}
 
-  async initialize(whoAreU: Que, queList: Que[] = []) {
+  async initialize(whoAreU: Que) {
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
-    this.options = { appId: whoAreU };
-    queList.forEach(async (que) => {
-      await this.channel.assertQueue(que, { durable: true });
-      await this.channel.consume(
-        que,
-        (message) => {
-          const messageFrom: Que = message.properties.appId;
-          console.log(`${whoAreU} MSA catch message from ${messageFrom}`);
+    this.que = whoAreU;
 
-          // if (targetQue === 'metadata') {
-          //   handleMetadata(message);
-          // }
-        },
-        { noAck: true },
-      );
-    });
+    await this.channel.assertQueue(this.que, { durable: true });
+    await this.channel.consume(
+      this.que,
+      (message) => {
+        const messageFrom: Que = message.properties.appId;
+        console.log(`${this.que} MSA catch message from ${messageFrom}`);
+        msgHandler(message);
+      },
+      { noAck: true },
+    );
+
     console.log('RabbitMQ connected');
   }
 
-  sendMsg(targetQue: Que, msgForm: object): void {
-    this.channel.sendToQueue(
-      targetQue,
-      Buffer.from(JSON.stringify(msgForm)),
-      this.options,
-    );
+  sendMsg(targetQue: Que, msgForm: object, methodName: string): void {
+    this.channel.sendToQueue(targetQue, Buffer.from(JSON.stringify(msgForm)), {
+      appId: this.que,
+      type: methodName,
+    });
   }
 }
 

@@ -1,0 +1,10 @@
+import { AmqpMessage } from 'sns-interfaces';
+import { followRepository } from '../../database/follow.repo';
+
+export const msgHandler = (message: AmqpMessage) => {
+  const data: unknown = JSON.parse(message.content.toString());
+
+  if (message.properties.type === 'addFollow') {
+    followRepository.addFollow(data as { userTo: string; userFrom: string });
+  }
+};

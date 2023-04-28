@@ -19,7 +19,8 @@
     "amqplib": "^0.10.3",
     "crypto-js": "^4.1.1",
     "fastify": "^4.13.0",
-    "mongoose": "^7.0.1"
+    "mongoose": "^7.0.1",
+    "sns-interfaces": "^1.0.29"
   },
   "devDependencies": {
     "@types/mongoose": "^5.11.97",
@@ -31,7 +32,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.4",
-    "sns-interfaces": "^1.0.22",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",

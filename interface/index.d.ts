@@ -85,6 +85,18 @@ export type Que =
   | 'upload'
   | 'user'
   | 'gateway';
+export interface AmqpMessage {
+  fields: {
+    exchange: string;
+    routingKey: Que;
+  };
+  properties: {
+    appId: Que;
+    type: string;
+  };
+  content: JSON;
+  //원래이거 Buffer인데 패키지가 없어서 안되는듯?
+}
 
 export interface UploadMessage {
   userId: string;

@@ -12,6 +12,13 @@ import { Metadata } from './proto/metadata/Metadata';
 const PORT = 80;
 const packageDef = protoLoader.loadSync(
   join(__dirname, './proto/metadata.proto'),
+  {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
+  },
 );
 const grpcObj = grpc.loadPackageDefinition(
   packageDef,
@@ -54,27 +61,3 @@ const getServer = () => {
 };
 
 main();
-//from Client
-// server.post(
-//   '/getposts',
-//   async (req: MetadataRequest, reply): Promise<{ posts: MetadataDto[] }> => {
-//     const decId = crypter.decrypt(req.body.userId);
-//     const posts: MetadataDto[] = await metaRepository.db.find({
-//       userId: req.body.userId,
-//     });
-//     console.log(posts);
-
-//     return { posts };
-//     //나중에 userId 빼고 보내라. 아니면 암호화해서 보내던지.
-//   },
-// );
-
-// server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
-//   if (err) {
-//     console.error(err);
-//     process.exit(1);
-//   }
-//   connectMongo();
-//   rabbitMQ.initialize('metadata');
-//   console.log(`metadata on 4003:80`);
-// });

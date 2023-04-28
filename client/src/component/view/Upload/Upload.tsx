@@ -46,8 +46,13 @@ const Upload = () => {
   const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (sendingFileList.length === 0 || title === '') {
-      alert('업로드할 내용이 필요함');
+    if (title.length > 40) {
+      alert('글은 40자 이내로 써주세요');
+      setTitle('');
+    }
+
+    if (sendingFileList.length === 0) {
+      alert('업로드할 사진이 필요함');
       return;
     }
 

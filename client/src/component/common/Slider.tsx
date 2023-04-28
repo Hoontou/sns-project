@@ -19,7 +19,8 @@ const Slider = (props: { images: string[] }) => {
         <SwiperSlide key={idx}>
           <img
             style={{
-              width: '380px',
+              width: '100%',
+              maxWidth: '900px',
               aspectRatio: '3 / 4',
               objectFit: 'cover',
             }}

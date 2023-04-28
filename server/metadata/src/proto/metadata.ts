@@ -17,6 +17,7 @@ export interface ProtoGrpcType {
       Int32Value: MessageTypeDefinition
       Int64Value: MessageTypeDefinition
       StringValue: MessageTypeDefinition
+      Timestamp: MessageTypeDefinition
       UInt32Value: MessageTypeDefinition
       UInt64Value: MessageTypeDefinition
     }

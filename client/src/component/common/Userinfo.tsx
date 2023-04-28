@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const Userinfo = (props: { userId: string; username: string }) => {
+  const [spin, setSpin] = useState<boolean>(true);
   const [postcount, setPost] = useState<number>(0);
   const [follower, setFollower] = useState<number>(0);
   const [following, setFolloing] = useState<number>(0);
@@ -13,6 +14,7 @@ const Userinfo = (props: { userId: string; username: string }) => {
 
   useEffect(() => {
     axios.post('/gateway/userinfo', { userId: props.userId }).then((res) => {
+      setSpin(false);
       const data: {
         following: number;
         follower: number;
@@ -25,6 +27,7 @@ const Userinfo = (props: { userId: string; username: string }) => {
   }, [props.userId]);
   return (
     <div>
+      {spin && 'waiting...'}
       <Grid container spacing={1}>
         <Grid item xs={9}>
           <h1>{props.username}</h1>
@@ -37,7 +40,7 @@ const Userinfo = (props: { userId: string; username: string }) => {
         </Grid>
       </Grid>
       <Grid container spacing={1}>
-        <Grid item xs={4}>
+        <Grid item xs={4} className='text-center'>
           <img
             src={sample}
             alt='profile'
@@ -68,7 +71,9 @@ const Userinfo = (props: { userId: string; username: string }) => {
           </div>
         </Grid>
       </Grid>
-      <div>this is my feed</div>
+      <div style={{ marginTop: '0.2rem', marginBottom: '0.2rem' }}>
+        this is my feed
+      </div>
       <Grid container spacing={1}>
         <Grid item xs={6}>
           <Button fullWidth variant='contained'>

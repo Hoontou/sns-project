@@ -8,6 +8,8 @@ import Postlist from '../../common/Postlist';
 
 const MyFeed = () => {
   const navigate = useNavigate();
+
+  const [spin, setSpin] = useState<boolean>(true);
   const [userId, setId] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   useEffect(() => {
@@ -18,6 +20,7 @@ const MyFeed = () => {
         navigate('/signin');
         return;
       }
+      setSpin(false);
       setId(authRes.userId);
       setUsername(authRes.username);
     });
@@ -26,7 +29,7 @@ const MyFeed = () => {
     <div
       style={{ width: '90%', margin: '0.7rem auto', paddingBottom: '3.5rem' }}
     >
-      {username === '' ? (
+      {spin ? (
         'waiting...'
       ) : (
         <>
