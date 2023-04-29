@@ -66,6 +66,7 @@ export class UsernumsTable {
       `follow added userTo:${data.userTo}, userFrom:${data.userFrom}`,
     );
   }
+
   async removeFollow(data: { userTo: string; userFrom: string }) {
     await this.db
       .createQueryBuilder()

@@ -9,7 +9,7 @@ const logger = new Logger('Main');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const authGrpc = await app.connectMicroservice<MicroserviceOptions>({
+  await app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
       url: '0.0.0.0:80',
@@ -17,7 +17,7 @@ async function bootstrap() {
       protoPath: join(__dirname, 'proto/auth.proto'),
     },
   });
-  const userGrpc = await app.connectMicroservice<MicroserviceOptions>({
+  await app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
       url: '0.0.0.0:81',

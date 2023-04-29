@@ -1,6 +1,6 @@
 import { Que } from 'sns-interfaces';
 import * as amqp from 'amqplib';
-import { uploadHandler } from './handler/upload.handler';
+import { exchangeHandler } from './handler/exchange.handler';
 
 const RABBIT = process.env.RABBIT;
 if (!RABBIT) {
@@ -17,30 +17,30 @@ class RabbitMQ {
     this.que = whoAreU;
     this.conn = await amqp.connect(this.rabbitUrl);
     this.channel = await this.conn.createChannel();
-    await this.channel.assertExchange(this.que, 'topic', { durable: true });
 
+    //내가 구독한 exchange를 가져올 익명큐 생성.
     const { anonQue } = this.channel.assertQueue('', {
       exclusive: true,
     });
-    await this.bindUpload(anonQue);
-
-    await this.channel.consume(anonQue, (msg) => {
-      //console.log(msg);
-      //exchange 출처 체크후 해당 핸들러로 전달
-      if (msg.fields.exchange === 'upload') {
-        uploadHandler(msg);
-      }
-    });
+    await this.bindExchanges(anonQue);
 
     console.log('RabbitMQ connected');
   }
 
-  async bindUpload(que) {
-    await this.channel.bindQueue(que, 'upload', 'upload');
-  }
+  async bindExchanges(anonQue) {
+    //MSA 구독 파트
+    await this.channel.bindQueue(anonQue, 'upload', 'upload');
 
-  publishMsg(key, msgForm) {
-    this.channel.publish(this.que, key, Buffer.from(JSON.stringify(msgForm)));
+    //구독한 큐에서 오는 메세지 컨슘 등록 파트
+    await this.channel.consume(anonQue, (msg) => {
+      console.log(
+        `catch msg from ${msg.fields.exchange}:${msg.fields.routingKey}`,
+      );
+
+      //console.log(msg);
+
+      exchangeHandler(msg);
+    });
   }
 }
 

@@ -9,7 +9,7 @@ import { PostController } from './post.controller';
 import { PostService } from './post.service';
 import { Cocomment } from './entity/cocomment.entity';
 import { Commentnums, Cocommentnums } from './entity/count.entity';
-import { AmqpModule } from 'src/common/amqp/amqp.module';
+import { AmqpModule } from 'src/amqp/amqp.module';
 
 @Module({
   imports: [

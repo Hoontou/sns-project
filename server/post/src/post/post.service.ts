@@ -5,7 +5,7 @@ import { CoCommentTable } from './repository/cocomment.repository';
 import { CommentDto, PostDto, CocommentDto } from './dto/post.dto';
 import { UploadMessage } from 'sns-interfaces';
 
-import { AmqpService } from 'src/common/amqp/amqp.service';
+import { AmqpService } from 'src/amqp/amqp.service';
 
 @Injectable()
 export class PostService {
@@ -18,19 +18,7 @@ export class PostService {
 
   //userId를 int로 바꾸고 쿼리빌더로 insert 성공
   async posting(content: UploadMessage): Promise<{ success: boolean }> {
-    //굳이 validation 할 필요가 있나?
-    // const post = new PostDto();
-    // post.postId = postDto.postId;
-    // post.userId = postDto.userId;
-    // validate(post).then((err) => {
-    //   // errors is an array of validation errors
-    //   if (err.length > 0) {
-    //     console.log('post validation failed. errors: ', err);
-    //     return;
-    //   }
-    // });
-
-    //파싱 후 포스트테이블에 내용 삽입
+    //필요한 데이터만 파싱 후 포스트테이블에 내용 삽입
     const postDto: PostDto = {
       postId: content.postId,
       userId: content.userId,
