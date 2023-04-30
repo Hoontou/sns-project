@@ -6,6 +6,7 @@ import Signin from './component/view/Signin/Signin';
 import Upload from './component/view/Upload/Upload';
 import AlertSock from './component/AlertSocket';
 import MyFeed from './component/view/Myfeed/Myfeed';
+import Userfeed from './component/view/Userfeed/Userfeed';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path='/up' element={<Upload />} />
           <Route path='/post' element={<Post />} />
           <Route path='/myfeed' element={<MyFeed />} />
+          <Route path='/userfeed/:userid' element={<Userfeed />} />
         </Routes>
       </Router>
     </>

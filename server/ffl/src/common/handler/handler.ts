@@ -7,4 +7,7 @@ export const msgHandler = (message: AmqpMessage) => {
   if (message.properties.type === 'addFollow') {
     followRepository.addFollow(data as { userTo: string; userFrom: string });
   }
+  if (message.properties.type === 'removeFollow') {
+    followRepository.removeFollow(data as { userTo: string; userFrom: string });
+  }
 };

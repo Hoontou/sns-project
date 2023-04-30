@@ -10,12 +10,11 @@ export const reqParser = (req: UploadRequest): void => {
   //지금 클라이언트가 만들어서 보내주고있음.
   //로직 다 처리하고 알람 삭제해주면 됨
   const { userId } = JSON.parse(req.body.userId); //클라이언트에서 hoc해서 보내준 값이고 암호화 돼있음.
-  const decId: string = crypter.decrypt(userId);
   const postId: string = req.postId;
   const postList: string[] = req.postList;
 
   const uploadForm: UploadMessage = {
-    userId: decId,
+    userId,
     postId,
     alertId: alert_id,
     files: postList,

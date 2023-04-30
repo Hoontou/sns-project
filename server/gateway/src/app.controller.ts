@@ -1,17 +1,26 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { UserService } from './module/user/user.service';
+import { AppService } from './app.service';
 
 @Controller('')
 export class AppController {
-  constructor(private userService: UserService) {}
+  constructor(private appService: AppService) {}
 
   @Post('/userinfo')
-  async getUsernums(@Body() body: { userId: string }): Promise<{
-    following: number;
-    follower: number;
-    postcount: number;
-  }> {
-    return this.userService.getUsernums(body.userId);
+  /**usernums + 해당유저를 팔로우했는지 정보 리턴해야함. */
+  async getUserInfo(@Body() body: { userId: string; myId?: string }): Promise<
+    | {
+        success: true;
+        following: number;
+        follower: number;
+        postcount: number;
+        username: string;
+      }
+    | { success: false }
+  > {
+    return this.appService.getUserInfo({
+      userId: body.userId,
+      myId: body.myId === undefined ? '' : body.myId,
+    });
   }
 
   @Get('/hi')

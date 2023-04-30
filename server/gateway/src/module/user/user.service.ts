@@ -12,15 +12,30 @@ export class UserService {
     this.userGrpcService =
       this.client.getService<UserGrpcService>('UserService');
   }
-  async getUsernums(userId: string): Promise<{
-    following: number;
-    follower: number;
-    postcount: number;
-  }> {
-    return lastValueFrom(
-      this.userGrpcService.getUsernums({
-        userId: crypter.decrypt(userId),
-      }),
-    );
+  async getUsernums(body: { userId: string; myId?: string }): Promise<
+    | {
+        success: true;
+        following: number;
+        follower: number;
+        postcount: number;
+        username: string;
+      }
+    | { success: false }
+  > {
+    //userId는 usernums를 찾아서 올 아이디.
+    //myId는 다른유저의 피드로 접근했을 시 다른유저를 팔로우했는지 찾을 용도.
+    try {
+      const result = await lastValueFrom(
+        this.userGrpcService.getUsernums({
+          userId: crypter.decrypt(body.userId),
+        }),
+      );
+      return {
+        ...result,
+        success: true,
+      };
+    } catch (err) {
+      return { success: false };
+    }
   }
 }

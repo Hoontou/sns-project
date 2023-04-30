@@ -1,9 +1,8 @@
-import { Grid } from '@mui/material';
 import { MetadataDto } from './Postlist';
 import Slider from './Slider';
 import { useState, useEffect } from 'react';
-import { VscHeart, VscHeartFilled, VscComment } from 'react-icons/vsc';
-import sample from '../../asset/sample1.jpg';
+import { VscHeart, VscComment } from 'react-icons/vsc';
+
 const requestUrl =
   process.env.NODE_ENV === 'development' ? '/upload/files' : '';
 //추후 azure url 추가해야함.
@@ -36,16 +35,17 @@ const Post = (props: { metadata: MetadataDto }) => {
         </span>
       </div>
       <div style={{ width: '95%', margin: '0.2rem auto', marginTop: '0.5rem' }}>
-        <span
+        <a
           style={{
             marginRight: '0.5rem',
             fontWeight: '600',
             fontSize: '1.1rem',
           }}
+          href={`/userfeed/${props.metadata.userId}`}
         >
           {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
           hoontou
-        </span>
+        </a>
         {props.metadata.title}
       </div>
     </div>

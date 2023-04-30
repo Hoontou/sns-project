@@ -1,0 +1,15 @@
+syntax = "proto3";
+package ffl;
+
+service FflService {
+  rpc GetFollowed(GetFollowedReq) returns (GetFollowedRes);
+}
+
+message GetFollowedReq {
+  string userId = 1;
+  string myId = 2;
+}
+
+message GetFollowedRes {
+  bool followed = 1;
+}

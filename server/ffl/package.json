@@ -7,15 +7,13 @@
     "build": "tsc",
     "start": "node ./dist/index.js",
     "dev": "nodemon --watch src/ --exec \"ts-node\" src/index.ts",
-    "proto:gen": "npx proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=src/proto/ src/proto/auth.proto"
+    "proto:gen": "npx proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=src/proto/ src/proto/ffl.proto"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@fastify/cookie": "^8.3.0",
     "@fastify/cors": "^8.2.0",
-    "@grpc/grpc-js": "^1.8.13",
-    "@grpc/proto-loader": "^0.7.6",
     "amqplib": "^0.10.3",
     "crypto-js": "^4.1.1",
     "fastify": "^4.13.0",
@@ -23,6 +21,8 @@
     "sns-interfaces": "^1.0.29"
   },
   "devDependencies": {
+    "@grpc/grpc-js": "^1.8.14",
+    "@grpc/proto-loader": "^0.7.6",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^18.14.0",
     "@typescript-eslint/eslint-plugin": "^5.52.0",

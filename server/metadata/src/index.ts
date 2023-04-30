@@ -48,11 +48,8 @@ const getServer = () => {
   const server = new grpc.Server();
   server.addService(metadataPackage.MetadataService.service, {
     GetMetadatas: async (req, res) => {
-      const decId = crypter.decrypt(
-        req.request.userId ? req.request.userId : '',
-      );
       const metadatas: Metadata[] = await metaRepository.db.find({
-        userId: decId,
+        userId: req.request.userId ? req.request.userId : '',
       });
       res(null, { metadatas });
     },

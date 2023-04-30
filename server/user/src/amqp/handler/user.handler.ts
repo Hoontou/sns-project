@@ -20,5 +20,10 @@ export class UserHandler {
         data as { userTo: string; userFrom: string },
       );
     }
+    if (msg.properties.type === 'removeFollow') {
+      this.usernumsTable.removeFollow(
+        data as { userTo: string; userFrom: string },
+      );
+    }
   }
 }

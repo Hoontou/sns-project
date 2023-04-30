@@ -28,3 +28,13 @@ export const metadataMicroserviceOptions: ClientProviderOptions = {
     protoPath: join(__dirname, 'proto/metadata.proto'),
   },
 };
+
+export const fflMicroserviceOptions: ClientProviderOptions = {
+  name: 'ffl',
+  transport: Transport.GRPC,
+  options: {
+    url: 'ffl:80',
+    package: 'ffl',
+    protoPath: join(__dirname, 'proto/ffl.proto'),
+  },
+};

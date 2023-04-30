@@ -9,4 +9,9 @@ export class FflController {
   async addFollow(@Body() body: { userTo: string; userFrom: string }) {
     return this.fflService.addFollow(body);
   }
+
+  @Post('/removefollow')
+  async removeFollow(@Body() body: { userTo: string; userFrom: string }) {
+    return this.fflService.removeFollow(body);
+  }
 }

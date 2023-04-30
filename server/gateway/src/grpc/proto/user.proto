@@ -14,4 +14,5 @@ message GetUsernumsRes {
   int32 follower = 1;
   int32 following = 2;
   int32 postcount = 3;
+  string username = 4;
 }

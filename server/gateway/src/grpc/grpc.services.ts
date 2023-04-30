@@ -14,18 +14,24 @@ export interface AuthGrpcService {
 }
 
 export interface UserGrpcService {
-  getUsernums({
-    userId,
-  }: {
-    userId: string;
-  }): Observable<{ follower: number; following: number; postcount: number }>;
+  getUsernums({ userId }: { userId: string }): Observable<{
+    follower: number;
+    following: number;
+    postcount: number;
+    username: string;
+  }>;
 }
 
 export interface MetadataGrpcService {
   getMetadatas({ userId }: { userId: string }): Observable<MetadataDto[]>;
 }
 
-//이거 npm 업데이트 오류로 잠시만 여기두는거임.
-interface GetMetadatasRes {
-  metadatas: MetadataDto[];
+export interface FflGrpcService {
+  getFollowed({
+    userId,
+    myId,
+  }: {
+    userId: string;
+    myId: string;
+  }): Observable<{ followed: boolean }>;
 }
