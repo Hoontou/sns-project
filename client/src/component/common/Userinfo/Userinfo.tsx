@@ -45,7 +45,7 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
 
         if (data.success === false) {
           //불러오기 실패했으면 다른곳으로 이동시킴.
-          navigate('/myfeed');
+          navigate('/');
           return;
         }
 

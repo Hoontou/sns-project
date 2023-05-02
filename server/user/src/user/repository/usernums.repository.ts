@@ -48,6 +48,7 @@ export class UsernumsTable {
       .innerJoinAndSelect('usernums.user', 'user')
       .where('usernums.userId = :id', { id: userId })
       .getOne();
+
     if (usernums === null) {
       throw new Error();
     }

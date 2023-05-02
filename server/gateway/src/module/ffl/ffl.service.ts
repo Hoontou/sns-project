@@ -32,4 +32,11 @@ export class FflService {
   }): Promise<{ followed: boolean }> {
     return lastValueFrom(this.fflGrpcService.getFollowed(body));
   }
+
+  async checkLiked(body: {
+    userId: string;
+    postId: string;
+  }): Promise<{ liked: boolean }> {
+    return lastValueFrom(this.fflGrpcService.checkLiked(body));
+  }
 }

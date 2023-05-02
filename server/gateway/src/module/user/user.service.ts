@@ -12,7 +12,7 @@ export class UserService {
     this.userGrpcService =
       this.client.getService<UserGrpcService>('UserService');
   }
-  async getUsernums(body: { userId: string; myId?: string }): Promise<
+  async getUsernums(userId: string): Promise<
     | {
         success: true;
         following: number;
@@ -27,7 +27,7 @@ export class UserService {
     try {
       const result = await lastValueFrom(
         this.userGrpcService.getUsernums({
-          userId: crypter.decrypt(body.userId),
+          userId: crypter.decrypt(userId),
         }),
       );
       return {

@@ -60,6 +60,11 @@ const getServer = () => {
       //팔로우 찾은게 없으면 false 있으면 true
       res(null, { followed: followed.length === 0 ? false : true });
     },
+    GetLiked: async (req, res) => {
+      //userId, postId
+      //userId가 postId에 좋아요 눌렀는지 가져와야함.
+      res(null, { liked: false });
+    },
   } as FflServiceHandlers);
   return server;
 };

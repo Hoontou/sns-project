@@ -34,4 +34,12 @@ export interface FflGrpcService {
     userId: string;
     myId: string;
   }): Observable<{ followed: boolean }>;
+
+  checkLiked({
+    userId,
+    postId,
+  }: {
+    userId: string;
+    postId: string;
+  }): Observable<{ liked: boolean }>;
 }

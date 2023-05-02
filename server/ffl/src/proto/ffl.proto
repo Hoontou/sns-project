@@ -3,6 +3,7 @@ package ffl;
 
 service FflService {
   rpc GetFollowed(GetFollowedReq) returns (GetFollowedRes);
+  rpc GetLiked(GetLikedReq) returns (GetLikedRes);
 }
 
 message GetFollowedReq {
@@ -12,4 +13,12 @@ message GetFollowedReq {
 
 message GetFollowedRes {
   bool followed = 1;
+}
+message GetLikedReq {
+  string userId = 1;
+  string postId = 2;
+}
+
+message GetLikedRes {
+  bool liked = 1;
 }

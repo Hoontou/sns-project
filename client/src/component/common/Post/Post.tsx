@@ -1,7 +1,7 @@
-import { MetadataDto } from './Postlist';
-import Slider from './Slider';
 import { useState, useEffect } from 'react';
-import { VscHeart, VscComment } from 'react-icons/vsc';
+import Slider from '../Slider';
+import { MetadataDto } from '../Postlist';
+import PostHeader from './PostHeader';
 
 const requestUrl =
   process.env.NODE_ENV === 'development' ? '/upload/files' : '';
@@ -25,29 +25,11 @@ const Post = (props: { metadata: MetadataDto }) => {
       {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기, 음.. 안해도될듯?*/}
 
       <Slider images={images} />
-      <div
-        style={{ width: '95%', margin: '0.2rem auto', position: 'relative' }}
-      >
-        <VscHeart fontSize='30px' style={{ marginRight: '0.5rem' }} />
-        <VscComment fontSize='30px' style={{ marginRight: '0.5rem' }} />
-        <span style={{ position: 'absolute', bottom: '0', right: '0' }}>
-          z9hoon님 외 좋아요 300개
-        </span>
-      </div>
-      <div style={{ width: '95%', margin: '0.2rem auto', marginTop: '0.5rem' }}>
-        <a
-          style={{
-            marginRight: '0.5rem',
-            fontWeight: '600',
-            fontSize: '1.1rem',
-          }}
-          href={`/userfeed/${props.metadata.userId}`}
-        >
-          {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
-          hoontou
-        </a>
-        {props.metadata.title}
-      </div>
+      <PostHeader
+        title={props.metadata.title}
+        userId={props.metadata.userId}
+        postId={props.metadata.id}
+      />
     </div>
   );
 };
