@@ -19,8 +19,6 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
 
   const addFollower = (num: number) => {
     setFollower(follower + num);
-
-    setFollowed(num === 1 ? true : false);
   };
 
   useEffect(() => {
@@ -34,7 +32,6 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
           : { userId: props.targetId, myId: props.userId }
       )
       .then((res) => {
-        setSpin(false);
         const data:
           | {
               success: true;
@@ -57,6 +54,7 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
         setPost(data.postcount);
         setFollowed(data.followed);
         setUsername(data.username);
+        setSpin(false);
       });
   }, [props.targetId, props.userId, navigate]);
   return (
@@ -109,8 +107,8 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
         this is my feed
       </div>
 
-      {/*내 피드로 들어왔을때는 아래 버튼 표시안함. */}
-      {props.targetId && (
+      {/*내 피드로 들어왔을때는 아래 버튼 표시안함, useEffect axios요청 끝난 후 렌더링 시작. */}
+      {props.targetId && !spin && (
         <UserinfoButton
           addFollower={addFollower}
           followed={followed}
