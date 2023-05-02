@@ -8,6 +8,7 @@ import { crypter } from './common/crypter';
 import { ProtoGrpcType } from './proto/ffl';
 import { FflServiceHandlers } from './proto/ffl/FflService';
 import { followRepository } from './database/follow.repo';
+import { likeRopository } from './database/like.repo';
 
 const PORT = 80;
 const packageDef = protoLoader.loadSync(join(__dirname, './proto/ffl.proto'), {
@@ -47,10 +48,8 @@ const getServer = () => {
     GetFollowed: async (req, res) => {
       //myId가 userId를 팔로우했는지 가져와야함.
       //userFrom: myId, userTo: userId
-      const decUserId = crypter.decrypt(
-        req.request.userId ? req.request.userId : '',
-      );
-      const decMyId = crypter.decrypt(req.request.myId ? req.request.myId : '');
+      const decUserId = crypter.decrypt(req.request.userId);
+      const decMyId = crypter.decrypt(req.request.myId);
 
       const followed: unknown[] = await followRepository.db.find({
         userTo: decUserId,
@@ -63,7 +62,12 @@ const getServer = () => {
     GetLiked: async (req, res) => {
       //userId, postId
       //userId가 postId에 좋아요 눌렀는지 가져와야함.
-      res(null, { liked: false });
+      const decUserId = crypter.decrypt(req.request.userId);
+      const liked: unknown[] = await likeRopository.db.find({
+        userId: decUserId,
+        postId: req.request.postId,
+      });
+      res(null, { liked: liked.length === 0 ? false : true });
     },
   } as FflServiceHandlers);
   return server;

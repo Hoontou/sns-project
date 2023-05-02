@@ -7,7 +7,7 @@ import { rabbitMQ } from './common/amqp';
 import { connectMongo } from './database/initialize.mongo';
 import { crypter } from './common/crypter';
 import { metaRepository } from './database/metadata.repo';
-import { Metadata } from './proto/metadata/Metadata';
+import { MetadataDto } from 'sns-interfaces';
 
 const PORT = 80;
 const packageDef = protoLoader.loadSync(
@@ -48,10 +48,16 @@ const getServer = () => {
   const server = new grpc.Server();
   server.addService(metadataPackage.MetadataService.service, {
     GetMetadatas: async (req, res) => {
-      const metadatas: Metadata[] = await metaRepository.db.find({
-        userId: req.request.userId ? req.request.userId : '',
+      const metadatas: MetadataDto[] = await metaRepository.db.find({
+        userId: req.request.userId ? crypter.decrypt(req.request.userId) : '',
       });
-      res(null, { metadatas });
+
+      res(null, {
+        metadatas: metadatas.map((item) => {
+          item.userId = crypter.encrypt(item.userId);
+          return item;
+        }),
+      });
     },
   } as MetadataServiceHandlers);
   return server;
