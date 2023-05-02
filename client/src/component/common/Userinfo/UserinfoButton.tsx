@@ -15,6 +15,7 @@ const UserinfoButton = (props: {
       });
       props.addFollower(1);
       props.followed = true;
+      //props는 readonly인데 암만 다른방법으로 시도해도 props가 여기서 동기화되지 않는다..
     }
     //팔로우 삭제
     await axios.post('/gateway/ffl/removefollow', {

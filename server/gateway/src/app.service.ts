@@ -33,7 +33,7 @@ export class AppService {
     if (body.myId === '') {
       return { ...usernum, followed: false };
     }
-
+    //팔로우체크후 리턴
     const { followed } = await this.fflService.checkFollowed(body);
     return { ...usernum, followed };
   }
