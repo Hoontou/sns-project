@@ -1,10 +1,10 @@
 // Original file: src/proto/ffl.proto
 
 
-export interface GetLikedRes {
+export interface CheckLikedRes {
   'liked'?: (boolean);
 }
 
-export interface GetLikedRes__Output {
+export interface CheckLikedRes__Output {
   'liked'?: (boolean);
 }

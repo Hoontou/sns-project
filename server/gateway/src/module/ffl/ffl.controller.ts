@@ -14,4 +14,14 @@ export class FflController {
   async removeFollow(@Body() body: { userTo: string; userFrom: string }) {
     return this.fflService.removeFollow(body);
   }
+
+  @Post('/addlike')
+  async addLike(@Body() body: { userId: string; postId: string }) {
+    return this.fflService.addLike(body);
+  }
+
+  @Post('/removelike')
+  async removeLike(@Body() body: { userId: string; postId: string }) {
+    return this.fflService.removeLike(body);
+  }
 }

@@ -24,6 +24,6 @@ import { AmqpModule } from 'src/amqp/amqp.module';
   ],
   providers: [PostTable, CommentTable, CoCommentTable, PostService],
   controllers: [PostController],
-  exports: [PostService],
+  exports: [PostService, PostTable, CommentTable, CoCommentTable],
 })
 export class PostModule {}

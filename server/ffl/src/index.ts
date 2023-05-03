@@ -45,7 +45,7 @@ const main = () => {
 const getServer = () => {
   const server = new grpc.Server();
   server.addService(fflPackage.FflService.service, {
-    GetFollowed: async (req, res) => {
+    CheckFollowed: async (req, res) => {
       //myId가 userId를 팔로우했는지 가져와야함.
       //userFrom: myId, userTo: userId
       const decUserId = crypter.decrypt(req.request.userId);
@@ -59,7 +59,7 @@ const getServer = () => {
       //팔로우 찾은게 없으면 false 있으면 true
       res(null, { followed: followed.length === 0 ? false : true });
     },
-    GetLiked: async (req, res) => {
+    CheckLiked: async (req, res) => {
       //userId, postId
       //userId가 postId에 좋아요 눌렀는지 가져와야함.
       const decUserId = crypter.decrypt(req.request.userId);

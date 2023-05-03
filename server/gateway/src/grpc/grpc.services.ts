@@ -27,7 +27,7 @@ export interface MetadataGrpcService {
 }
 
 export interface FflGrpcService {
-  getFollowed({
+  checkFollowed({
     userId,
     myId,
   }: {

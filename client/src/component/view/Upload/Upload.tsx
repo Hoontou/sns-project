@@ -140,7 +140,7 @@ const Upload = () => {
           style={{ display: 'none' }}
           type='file'
           multiple={true}
-          accept='.mp4, .jpg, .png'
+          accept='.jpg, .png, .webp'
         />
 
         <Button variant='outlined' size='medium' type='submit'>

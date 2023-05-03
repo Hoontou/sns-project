@@ -9,6 +9,7 @@ export const exchangeHandler = (msg: AmqpMessage) => {
   if (msg.fields.exchange === 'upload') {
     if (msg.fields.routingKey == 'upload') {
       handleMetadata(content as UploadMessage);
+      return;
     }
   }
 };

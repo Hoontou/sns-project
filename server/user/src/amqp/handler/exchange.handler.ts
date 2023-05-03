@@ -27,6 +27,7 @@ export class ExchangeHandler {
 
     if (msg.fields.routingKey == 'upload') {
       this.usernumsTable.addPostCount(data as UploadMessage);
+      return;
     }
   }
 }

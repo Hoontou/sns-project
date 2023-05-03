@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import { Post } from '../entity/post.entity';
 import { PostDto } from '../dto/post.dto';
@@ -10,6 +10,7 @@ export class PostTable {
   constructor(
     @InjectRepository(Post)
     public db: Repository<Post>,
+    private dataSource: DataSource,
   ) {}
 
   //새로운 포스트데이터 삽입
@@ -50,6 +51,34 @@ export class PostTable {
       .from(Post)
       .where('id = :id', { id: postId })
       .execute();
+  }
+
+  async addLike(data: { postId: string }) {
+    await this.db
+      .createQueryBuilder()
+      .update(Post)
+      .set({
+        likes: () => `likes + 1`,
+      })
+      .where('id = :id', { id: data.postId })
+      .execute();
+  }
+
+  async removeLike(data: { postId: string }) {
+    await this.db
+      .createQueryBuilder()
+      .update(Post)
+      .set({
+        likes: () => `likes - 1`,
+      })
+      .where('id = :id', { id: data.postId })
+      .execute();
+  }
+
+  async getPostnums(
+    postId: string,
+  ): Promise<{ likes: number; commentCount: number }> {
+    return { likes: 0, commentCount: 0 };
   }
 }
 

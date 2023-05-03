@@ -2,23 +2,23 @@ syntax = "proto3";
 package ffl;
 
 service FflService {
-  rpc GetFollowed(GetFollowedReq) returns (GetFollowedRes);
-  rpc GetLiked(GetLikedReq) returns (GetLikedRes);
+  rpc CheckFollowed(CheckFollowedReq) returns (CheckFollowedRes);
+  rpc CheckLiked(CheckLikedReq) returns (CheckLikedRes);
 }
 
-message GetFollowedReq {
+message CheckFollowedReq {
   string userId = 1;
   string myId = 2;
 }
 
-message GetFollowedRes {
+message CheckFollowedRes {
   bool followed = 1;
 }
-message GetLikedReq {
+message CheckLikedReq {
   string userId = 1;
   string postId = 2;
 }
 
-message GetLikedRes {
+message CheckLikedRes {
   bool liked = 1;
 }

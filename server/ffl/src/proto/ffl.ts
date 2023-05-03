@@ -9,11 +9,11 @@ type SubtypeConstructor<Constructor extends new (...args: any) => any, Subtype> 
 
 export interface ProtoGrpcType {
   ffl: {
+    CheckFollowedReq: MessageTypeDefinition
+    CheckFollowedRes: MessageTypeDefinition
+    CheckLikedReq: MessageTypeDefinition
+    CheckLikedRes: MessageTypeDefinition
     FflService: SubtypeConstructor<typeof grpc.Client, _ffl_FflServiceClient> & { service: _ffl_FflServiceDefinition }
-    GetFollowedReq: MessageTypeDefinition
-    GetFollowedRes: MessageTypeDefinition
-    GetLikedReq: MessageTypeDefinition
-    GetLikedRes: MessageTypeDefinition
   }
 }
 

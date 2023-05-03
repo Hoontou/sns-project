@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from './module/user/user.service';
 import { FflService } from './module/ffl/ffl.service';
+import { PostService } from './module/post/post.service';
 
 @Injectable()
 export class AppService {
   constructor(
     private userService: UserService,
     private fflService: FflService,
+    private postService: PostService,
   ) {}
 
   /**usernums + 해당유저를 팔로우했는지 정보 리턴해야함. */
@@ -52,7 +54,18 @@ export class AppService {
     }): Promise<{ liked: boolean }> => {
       return await this.fflService.checkLiked(body);
     };
-    return { liked: false, likesCount: 0, commentCount: 0 };
+
+    const getPostnums = async (body: {
+      userId: string;
+      postId: string;
+    }): Promise<{ likesCount: number; commentCount: number }> => {
+      return await this.postService.getPostnums(body);
+    };
+    const [{ liked }, { likesCount, commentCount }] = await Promise.all([
+      checkLiked(body),
+      getPostnums(body),
+    ]);
+    return { liked, likesCount, commentCount };
     //post 가서 postId로 count들 가져오기
   }
 }

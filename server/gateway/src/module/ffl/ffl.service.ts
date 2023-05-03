@@ -20,7 +20,6 @@ export class FflService {
     this.amqpService.sendMsg('ffl', body, this.addFollow.name);
     this.amqpService.sendMsg('user', body, this.addFollow.name);
   }
-
   async removeFollow(body: { userTo: string; userFrom: string }) {
     this.amqpService.sendMsg('ffl', body, this.removeFollow.name);
     this.amqpService.sendMsg('user', body, this.removeFollow.name);
@@ -30,7 +29,24 @@ export class FflService {
     userId: string;
     myId: string;
   }): Promise<{ followed: boolean }> {
-    return lastValueFrom(this.fflGrpcService.getFollowed(body));
+    return lastValueFrom(this.fflGrpcService.checkFollowed(body));
+  }
+
+  async addLike(body: { userId: string; postId: string }) {
+    this.amqpService.sendMsg('ffl', body, this.addLike.name);
+    this.amqpService.sendMsg(
+      'post',
+      { postId: body.postId },
+      this.addLike.name,
+    );
+  }
+  async removeLike(body: { userId: string; postId: string }) {
+    this.amqpService.sendMsg('ffl', body, this.removeLike.name);
+    this.amqpService.sendMsg(
+      'post',
+      { postId: body.postId },
+      this.removeLike.name,
+    );
   }
 
   async checkLiked(body: {

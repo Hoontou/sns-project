@@ -1,10 +1,10 @@
 // Original file: src/proto/ffl.proto
 
 
-export interface GetFollowedRes {
+export interface CheckFollowedRes {
   'followed'?: (boolean);
 }
 
-export interface GetFollowedRes__Output {
+export interface CheckFollowedRes__Output {
   'followed'?: (boolean);
 }

@@ -1,11 +1,11 @@
 // Original file: src/proto/ffl.proto
 
-export interface GetFollowedReq {
+export interface CheckFollowedReq {
   userId: string;
   myId: string;
 }
 
-export interface GetFollowedReq__Output {
+export interface CheckFollowedReq__Output {
   userId: string;
   myId: string;
 }
