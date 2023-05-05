@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package post;
+
+service PostService {
+  rpc GetPostnums(GetPostnumsReq) returns (GetPostnumsRes) {};
+}
+
+message GetPostnumsReq {
+  string postId = 1;
+}
+message GetPostnumsRes {
+  int32 likesCount = 1;
+  int32 commentCount = 2;
+}

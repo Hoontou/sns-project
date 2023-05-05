@@ -38,3 +38,12 @@ export const fflMicroserviceOptions: ClientProviderOptions = {
     protoPath: join(__dirname, 'proto/ffl.proto'),
   },
 };
+export const postMicroserviceOptions: ClientProviderOptions = {
+  name: 'post',
+  transport: Transport.GRPC,
+  options: {
+    url: 'post:80',
+    package: 'post',
+    protoPath: join(__dirname, 'proto/post.proto'),
+  },
+};

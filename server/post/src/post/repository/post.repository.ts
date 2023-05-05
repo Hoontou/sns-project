@@ -3,6 +3,7 @@ import { Repository, DataSource } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import { Post } from '../entity/post.entity';
 import { PostDto } from '../dto/post.dto';
+import { crypter } from 'src/common/crypter';
 
 @Injectable()
 export class PostTable {
@@ -22,13 +23,13 @@ export class PostTable {
       .into(Post)
       .values({
         id: postId,
-        user: () => `${userId}`,
+        user: () => `${crypter.decrypt(String(userId))}`,
       })
       .execute()
       .then(() => {
         this.logger.log('post stored in pgdb successfully');
       })
-      .catch(() => this.logger.log('err when storing post in pgdb'));
+      .catch((err) => console.log(err));
   }
 
   //코멘트 작성되서 카운트 증가
@@ -58,7 +59,7 @@ export class PostTable {
       .createQueryBuilder()
       .update(Post)
       .set({
-        likes: () => `likes + 1`,
+        likescount: () => `likescount + 1`,
       })
       .where('id = :id', { id: data.postId })
       .execute();
@@ -69,7 +70,7 @@ export class PostTable {
       .createQueryBuilder()
       .update(Post)
       .set({
-        likes: () => `likes - 1`,
+        likescount: () => `likescount - 1`,
       })
       .where('id = :id', { id: data.postId })
       .execute();
@@ -77,8 +78,16 @@ export class PostTable {
 
   async getPostnums(
     postId: string,
-  ): Promise<{ likes: number; commentCount: number }> {
-    return { likes: 0, commentCount: 0 };
+  ): Promise<{ likesCount: number; commentCount: number }> {
+    const postnums = await this.db.findOneBy({ id: postId });
+    if (postnums === null) {
+      throw new Error('err when getPostnums');
+    }
+
+    return {
+      likesCount: postnums.likescount,
+      commentCount: postnums.commentcount,
+    };
   }
 }
 

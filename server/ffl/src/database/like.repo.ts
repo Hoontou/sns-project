@@ -27,7 +27,7 @@ class LikeRepository {
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
   async addLike(data: { userId: string; postId: string }) {
     const newOne = await new Like({
-      userTo: crypter.decrypt(data.userId),
+      userId: crypter.decrypt(data.userId),
       postId: data.postId,
     });
     newOne
@@ -45,7 +45,7 @@ class LikeRepository {
   async removeLike(data: { userId: string; postId: string }) {
     this.db
       .findOneAndDelete({
-        userTo: crypter.decrypt(data.userId),
+        userId: crypter.decrypt(data.userId),
         postId: data.postId,
       })
       .then(() => {

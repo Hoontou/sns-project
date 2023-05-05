@@ -43,3 +43,11 @@ export interface FflGrpcService {
     postId: string;
   }): Observable<{ liked: boolean }>;
 }
+
+export interface PostGrpcService {
+  getPostnums({
+    postId,
+  }: {
+    postId: string;
+  }): Observable<{ likesCount: number; commentCount: number }>;
+}

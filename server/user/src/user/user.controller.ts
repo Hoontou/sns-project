@@ -9,7 +9,6 @@ export class UserController {
 
   @GrpcMethod('UserService', 'GetUsernums')
   getUsernums(data: { userId: string }) {
-    console.log(data);
     return this.userService.getUsernums(data);
   }
 }

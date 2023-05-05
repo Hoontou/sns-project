@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnModuleInit, Req, Res } from '@nestjs/common';
+import { Inject, Injectable, Req, Res } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { AuthResultRes, SignInDto, SignUpDto } from 'sns-interfaces';
@@ -6,7 +6,7 @@ import { checkNeedRefresh } from 'src/common/checkneedrefresh';
 import { AuthGrpcService } from 'src/grpc/grpc.services';
 
 @Injectable()
-export class AuthService implements OnModuleInit {
+export class AuthService {
   private authGrpcService: AuthGrpcService;
   constructor(@Inject('auth') private client: ClientGrpc) {}
   onModuleInit() {

@@ -48,24 +48,26 @@ export class AppService {
     commentCount: number;
   }> {
     //ffl 가서 postId랑 userId로 liked? 체크
-    const checkLiked = async (body: {
-      userId: string;
-      postId: string;
-    }): Promise<{ liked: boolean }> => {
-      return await this.fflService.checkLiked(body);
-    };
 
-    const getPostnums = async (body: {
-      userId: string;
-      postId: string;
-    }): Promise<{ likesCount: number; commentCount: number }> => {
-      return await this.postService.getPostnums(body);
-    };
     const [{ liked }, { likesCount, commentCount }] = await Promise.all([
-      checkLiked(body),
-      getPostnums(body),
+      this.checkLiked(body),
+      this.getPostnums(body),
     ]);
     return { liked, likesCount, commentCount };
     //post 가서 postId로 count들 가져오기
+  }
+
+  async checkLiked(body: {
+    userId: string;
+    postId: string;
+  }): Promise<{ liked: boolean }> {
+    return this.fflService.checkLiked(body);
+  }
+  //post 가서 카운트 가져오기
+  async getPostnums(body: {
+    userId: string;
+    postId: string;
+  }): Promise<{ likesCount: number; commentCount: number }> {
+    return this.postService.getPostnums(body.postId);
   }
 }
