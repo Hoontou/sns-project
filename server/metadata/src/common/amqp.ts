@@ -32,15 +32,19 @@ class RabbitMQ {
     await this.channel.bindQueue(anonQue, 'upload', 'upload');
 
     //구독한 큐에서 오는 메세지 컨슘 등록 파트
-    await this.channel.consume(anonQue, (msg) => {
-      console.log(
-        `catch msg from ${msg.fields.exchange}:${msg.fields.routingKey}`,
-      );
+    await this.channel.consume(
+      anonQue,
+      (msg) => {
+        console.log(
+          `catch msg from ${msg.fields.exchange}:${msg.fields.routingKey}`,
+        );
 
-      //console.log(msg);
+        //console.log(msg);
 
-      exchangeHandler(msg);
-    });
+        exchangeHandler(msg);
+      },
+      { noAck: true },
+    );
   }
 }
 

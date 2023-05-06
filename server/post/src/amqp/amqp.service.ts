@@ -63,6 +63,8 @@ export class AmqpService {
   async bindExchanges(anonQue) {
     //MSA 구독 파트
     await this.channel.bindQueue(anonQue, 'upload', 'upload');
+    await this.channel.bindQueue(anonQue, 'gateway', 'addLike');
+    await this.channel.bindQueue(anonQue, 'gateway', 'removeLike');
 
     //구독한 큐에서 오는 메세지 컨슘 등록 파트
     await this.channel.consume(

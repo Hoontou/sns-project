@@ -20,6 +20,7 @@ export interface UserGrpcService {
     postcount: number;
     username: string;
   }>;
+  getUsername({ userId }: { userId: string }): Observable<{ username: string }>;
 }
 
 export interface MetadataGrpcService {

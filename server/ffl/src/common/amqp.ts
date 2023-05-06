@@ -1,6 +1,7 @@
 import * as amqp from 'amqplib';
 import { AmqpMessage, Que } from 'sns-interfaces';
 import { msgHandler } from './handler/handler';
+import { exchangeHandler } from './handler/exchange.handler';
 
 const RABBIT = process.env.RABBIT;
 if (!RABBIT) {
@@ -20,8 +21,17 @@ class RabbitMQ {
 
     //내 MSA 이름으로 된 큐 생성
     await this.channel.assertQueue(this.que, { durable: true });
+    //내 MSA이름으로 퍼블리시 할 큐 생성
+    await this.channel.assertExchange(this.que, 'topic', { durable: true });
+    //내가 구독한 exchange를 가져올 익명큐 생성.
+    const { anonQue } = this.channel.assertQueue('', {
+      exclusive: true,
+    });
+
     //내 이름으로 오는 메세지 컨슘 등록
     this.setConsume();
+    //exchange 구독과 익명큐 컨슘 등록
+    await this.bindExchanges(anonQue);
 
     console.log('RabbitMQ connected');
   }
@@ -36,6 +46,27 @@ class RabbitMQ {
         );
         //핸들러로 전달
         msgHandler(msg);
+      },
+      { noAck: true },
+    );
+  }
+
+  async bindExchanges(anonQue) {
+    //MSA 구독 파트
+    await this.channel.bindQueue(anonQue, 'gateway', 'addLike');
+    await this.channel.bindQueue(anonQue, 'gateway', 'removeLike');
+
+    //구독한 큐에서 오는 메세지 컨슘 등록 파트
+    await this.channel.consume(
+      anonQue,
+      (msg) => {
+        console.log(
+          `catch msg from ${msg.fields.exchange}:${msg.fields.routingKey}`,
+        );
+
+        //console.log(msg);
+
+        exchangeHandler(msg);
       },
       { noAck: true },
     );

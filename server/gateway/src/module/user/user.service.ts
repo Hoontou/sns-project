@@ -38,4 +38,10 @@ export class UserService {
       return { success: false };
     }
   }
+
+  async getUsername(userId: string): Promise<{ username: string }> {
+    return lastValueFrom(
+      this.userGrpcService.getUsername({ userId: crypter.decrypt(userId) }),
+    );
+  }
 }

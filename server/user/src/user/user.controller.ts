@@ -1,14 +1,20 @@
 import { Controller, Logger } from '@nestjs/common';
 import { UserService } from './user.service';
 import { GrpcMethod } from '@nestjs/microservices';
+import { UserTable } from './repository/user.repository';
 
 @Controller('user')
 export class UserController {
   private logger = new Logger('UserController');
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private userTable: UserTable) {}
 
   @GrpcMethod('UserService', 'GetUsernums')
   getUsernums(data: { userId: string }) {
     return this.userService.getUsernums(data);
+  }
+
+  @GrpcMethod('UserService', 'GetUsername')
+  getUsername(data: { userId: string }): Promise<{ username: string }> {
+    return this.userTable.getUsername(data);
   }
 }

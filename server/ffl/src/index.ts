@@ -29,12 +29,12 @@ const main = () => {
   server.bindAsync(
     `0.0.0.0:${PORT}`,
     grpc.ServerCredentials.createInsecure(),
-    (err, port) => {
+    async (err, port) => {
       if (err) {
         console.error(err);
         return;
       }
-      console.log(`ffl on 4001:${port}`);
+      console.log(`ffl on 4003:${port}`);
 
       connectMongo();
       rabbitMQ.initialize('ffl');

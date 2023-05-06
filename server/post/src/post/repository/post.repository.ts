@@ -63,6 +63,7 @@ export class PostTable {
       })
       .where('id = :id', { id: data.postId })
       .execute();
+    this.logger.log('like added');
   }
 
   async removeLike(data: { postId: string }) {
@@ -74,6 +75,7 @@ export class PostTable {
       })
       .where('id = :id', { id: data.postId })
       .execute();
+    this.logger.log('like removed');
   }
 
   async getPostnums(
@@ -81,9 +83,8 @@ export class PostTable {
   ): Promise<{ likesCount: number; commentCount: number }> {
     const postnums = await this.db.findOneBy({ id: postId });
     if (postnums === null) {
-      throw new Error('err when getPostnums');
+      throw new Error('err when getPostnums, postnums === null');
     }
-
     return {
       likesCount: postnums.likescount,
       commentCount: postnums.commentcount,

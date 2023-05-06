@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller('')
@@ -26,6 +26,7 @@ export class AppController {
     liked: boolean;
     likesCount: number;
     commentCount: number;
+    username: string;
   }> {
     return this.appService.postHeader(body);
   }

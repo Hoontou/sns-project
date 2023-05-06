@@ -4,6 +4,7 @@ package user;
 
 service UserService {
   rpc GetUsernums(GetUsernumsReq) returns (GetUsernumsRes) {};
+  rpc GetUsername(GetUsernameReq) returns (GetUsernameRes) {};
 }
 
 
@@ -15,4 +16,11 @@ message GetUsernumsRes {
   int32 following = 2;
   int32 postcount = 3;
   string username = 4;
+}
+
+message GetUsernameReq {
+  string userId = 1;
+}
+message GetUsernameRes {
+  string username = 1;
 }

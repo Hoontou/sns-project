@@ -33,20 +33,22 @@ export class FflService {
   }
 
   async addLike(body: { userId: string; postId: string }) {
-    this.amqpService.sendMsg('ffl', body, this.addLike.name);
-    this.amqpService.sendMsg(
-      'post',
-      { postId: body.postId },
-      this.addLike.name,
-    );
+    // this.amqpService.sendMsg('ffl', body, this.addLike.name);
+    // this.amqpService.sendMsg(
+    //   'post',
+    //   { postId: body.postId },
+    //   this.addLike.name,
+    // );
+    this.amqpService.publishMsg('addLike', body);
   }
   async removeLike(body: { userId: string; postId: string }) {
-    this.amqpService.sendMsg('ffl', body, this.removeLike.name);
-    this.amqpService.sendMsg(
-      'post',
-      { postId: body.postId },
-      this.removeLike.name,
-    );
+    // this.amqpService.sendMsg('ffl', body, this.removeLike.name);
+    // this.amqpService.sendMsg(
+    //   'post',
+    //   { postId: body.postId },
+    //   this.removeLike.name,
+    // );
+    this.amqpService.publishMsg('removeLike', body);
   }
 
   async checkLiked(body: {
@@ -55,4 +57,5 @@ export class FflService {
   }): Promise<{ liked: boolean }> {
     return lastValueFrom(this.fflGrpcService.checkLiked(body));
   }
+  async openLikesList(body: { postId: string }) {}
 }

@@ -87,8 +87,8 @@ export type Que =
   | 'gateway';
 export interface AmqpMessage {
   fields: {
-    exchange: string;
-    routingKey: Que;
+    exchange: Que;
+    routingKey: string;
   };
   properties: {
     appId: Que;

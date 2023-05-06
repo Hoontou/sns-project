@@ -50,7 +50,7 @@ export class UsernumsTable {
       .getOne();
 
     if (usernums === null) {
-      throw new Error();
+      throw new Error('usernums are null, at usernums.repo.ts');
     }
 
     return {

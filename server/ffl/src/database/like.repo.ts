@@ -49,11 +49,18 @@ class LikeRepository {
         postId: data.postId,
       })
       .then(() => {
-        console.log('like canceled');
+        console.log('like removed');
       })
       .catch(() => {
         console.log('err when canceling like in mongo');
       });
+  }
+
+  async openLikesList(data: { postId: string }) {
+    const likesList = await this.db.find({ postId: data.postId });
+    return likesList.map((item) => {
+      return item.userId;
+    });
   }
 }
 export const likeRopository = new LikeRepository(Like);

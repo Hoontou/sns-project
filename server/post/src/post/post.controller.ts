@@ -1,14 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Post,
-  Req,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { PostService } from './post.service';
-import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
 import { GrpcMethod } from '@nestjs/microservices';
 import { PostTable } from './repository/post.repository';
 

@@ -38,4 +38,12 @@ export class UserTable {
     }
     return { success: true };
   }
+
+  async getUsername(data: { userId: string }): Promise<{ username: string }> {
+    const result = await this.db.findOneBy({ id: data.userId });
+    if (result === null) {
+      throw new Error('username is null, err at user.repo.ts');
+    }
+    return { username: result.username };
+  }
 }

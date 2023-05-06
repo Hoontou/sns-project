@@ -24,4 +24,9 @@ export class FflController {
   async removeLike(@Body() body: { userId: string; postId: string }) {
     return this.fflService.removeLike(body);
   }
+
+  @Post('/openlikeslist')
+  async openLikesList(@Body() body: { postId: string }) {
+    return this.fflService.openLikesList(body);
+  }
 }
