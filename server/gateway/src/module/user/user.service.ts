@@ -41,9 +41,23 @@ export class UserService {
     }
   }
 
-  async getUsername(userId: string): Promise<{ username: string }> {
+  async getUsernameWithImg(
+    userId: string,
+  ): Promise<{ username: string; img: string }> {
     return lastValueFrom(
-      this.userGrpcService.getUsername({ userId: crypter.decrypt(userId) }),
+      this.userGrpcService.getUsernameWithImg({
+        userId: crypter.decrypt(userId),
+      }),
+    );
+  }
+
+  async getUsernameWithImgList(userIds: string[]): Promise<{
+    userList: { username: string; img: string; userId: number }[];
+  }> {
+    return lastValueFrom(
+      this.userGrpcService.getUsernameWithImgList({
+        userIds,
+      }),
     );
   }
 }

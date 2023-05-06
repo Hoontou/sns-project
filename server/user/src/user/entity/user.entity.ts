@@ -5,10 +5,13 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
+  JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Post } from './post.entity/post.entity';
 import { Cocomment } from './post.entity/cocomment.entity';
 import { Comment } from './post.entity/comment.entity';
+import { Userinfo } from './userinfo.entity';
 
 @Entity()
 export class User extends BaseEntity {

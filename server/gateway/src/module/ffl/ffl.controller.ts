@@ -26,7 +26,9 @@ export class FflController {
   }
 
   @Post('/openlikeslist')
-  async openLikesList(@Body() body: { postId: string }) {
+  async openLikesList(@Body() body: { postId: string }): Promise<{
+    userList: { userId: string; img: string; username: string }[];
+  }> {
     return this.fflService.openLikesList(body);
   }
 }

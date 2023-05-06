@@ -69,6 +69,10 @@ const getServer = () => {
       });
       res(null, { liked: liked.length === 0 ? false : true });
     },
+    GetLikesList: async (req, res) => {
+      const userList = await likeRopository.getLikesList(req.request.postId);
+      res(null, { userList });
+    },
   } as FflServiceHandlers);
   return server;
 };

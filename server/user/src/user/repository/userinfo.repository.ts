@@ -113,4 +113,44 @@ export class UserinfoTable {
 
     this.logger.log(`follow removed userTo:${to}, userFrom:${from}`);
   }
+
+  async GetUsernameWithImg(data: {
+    userId: string;
+  }): Promise<{ username: string; img: string }> {
+    const result = await this.db
+      .createQueryBuilder('userinfo')
+      .innerJoin('userinfo.user', 'user')
+      .select(['userinfo.img', 'user.username'])
+      .where('userinfo.userId = :id', { id: data.userId })
+      .getOne();
+
+    if (result === null) {
+      throw new Error('username is null, err at user.repo.ts');
+    }
+    return { username: result.user.username, img: result.img };
+  }
+
+  async GetUsernameWithImgList(data: { userIds: string[] }): Promise<{
+    userList: { username: string; img: string; userId: number }[];
+  }> {
+    const result = await this.db
+      .createQueryBuilder('userinfo')
+      .innerJoin('userinfo.user', 'user')
+      .select(['userinfo.img', 'user.id', 'user.username'])
+      .where('userinfo.userId IN (:...ids)', { ids: data.userIds })
+      .getMany();
+
+    if (result === null) {
+      throw new Error('username is null, err at user.repo.ts');
+    }
+    return {
+      userList: result.map((item) => {
+        return {
+          img: item.img,
+          username: item.user.username,
+          userId: item.user.id,
+        };
+      }),
+    };
+  }
 }

@@ -18,8 +18,17 @@ export class UserController {
     return this.userinfoTable.getUserinfo(data);
   }
 
-  @GrpcMethod('UserService', 'GetUsername')
-  getUsername(data: { userId: string }): Promise<{ username: string }> {
-    return this.userTable.getUsername(data);
+  @GrpcMethod('UserService', 'GetUsernameWithImg')
+  GetUsernameWithImg(data: {
+    userId: string;
+  }): Promise<{ username: string; img: string }> {
+    return this.userinfoTable.GetUsernameWithImg(data);
+  }
+
+  @GrpcMethod('UserService', 'GetUsernameWithImgList')
+  GetUsernameWithImgList(data: { userIds: string[] }): Promise<{
+    userList: { username: string; img: string; userId: number }[];
+  }> {
+    return this.userinfoTable.GetUsernameWithImgList(data);
   }
 }

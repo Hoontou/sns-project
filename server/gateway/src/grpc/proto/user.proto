@@ -4,9 +4,9 @@ package user;
 
 service UserService {
   rpc GetUserinfo(GetUserinfoReq) returns (GetUserinfoRes) {};
-  rpc GetUsername(GetUsernameReq) returns (GetUsernameRes) {};
+  rpc GetUsernameWithImg(GetUsernameWithImgReq) returns (GetUsernameWithImgRes) {};
+  rpc GetUsernameWithImgList(GetUsernameWithImgListReq) returns (GetUsernameWithImgListRes) {};
 }
-
 
 message GetUserinfoReq {
   string userId = 1;
@@ -20,9 +20,22 @@ message GetUserinfoRes {
   string username = 6;
 }
 
-message GetUsernameReq {
+message GetUsernameWithImgReq {
   string userId = 1;
 }
-message GetUsernameRes {
-  string username = 1;
+message GetUsernameWithImgRes {
+  string img = 1;
+  string username = 2;
+}
+
+message GetUsernameWithImgListReq {
+  repeated string userIds = 1;
+}
+message item {
+  string img = 1;
+  string username = 2;
+  int32 userId = 3;
+}
+message GetUsernameWithImgListRes {
+  repeated item userList = 1;
 }

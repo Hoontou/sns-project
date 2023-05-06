@@ -4,21 +4,28 @@ package ffl;
 service FflService {
   rpc CheckFollowed(CheckFollowedReq) returns (CheckFollowedRes);
   rpc CheckLiked(CheckLikedReq) returns (CheckLikedRes);
+  rpc GetLikesList(GetLikesListReq) returns (GetLikesListRes);
 }
 
 message CheckFollowedReq {
   string userId = 1;
   string myId = 2;
 }
-
 message CheckFollowedRes {
   bool followed = 1;
 }
+
 message CheckLikedReq {
   string userId = 1;
   string postId = 2;
 }
-
 message CheckLikedRes {
   bool liked = 1;
+}
+
+message GetLikesListReq {
+  string postId = 1;
+}
+message GetLikesListRes {
+  repeated string userList = 1;
 }

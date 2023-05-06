@@ -49,16 +49,17 @@ export class AppService {
     likesCount: number;
     commentCount: number;
     username: string;
+    img: string;
   }> {
     //ffl 가서 postId랑 userId로 liked? 체크
 
-    const [{ liked }, { likesCount, commentCount }, { username }] =
+    const [{ liked }, { likesCount, commentCount }, { username, img }] =
       await Promise.all([
         this.checkLiked(body),
         this.getPostinfo(body),
-        this.getUsername(body),
+        this.getUsernameWithImg(body),
       ]);
-    return { liked, likesCount, commentCount, username };
+    return { liked, likesCount, commentCount, username, img };
     //post 가서 postId로 count들 가져오기
   }
 
@@ -75,10 +76,10 @@ export class AppService {
   }): Promise<{ likesCount: number; commentCount: number }> {
     return this.postService.getPostnums(body.postId);
   }
-  async getUsername(body: {
+  async getUsernameWithImg(body: {
     userId: string;
     postId: string;
-  }): Promise<{ username: string }> {
-    return this.userService.getUsername(body.userId);
+  }): Promise<{ username: string; img: string }> {
+    return this.userService.getUsernameWithImg(body.userId);
   }
 }

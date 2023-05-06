@@ -22,7 +22,14 @@ export interface UserGrpcService {
     img: string;
     introduce: string;
   }>;
-  getUsername({ userId }: { userId: string }): Observable<{ username: string }>;
+  getUsernameWithImg({
+    userId,
+  }: {
+    userId: string;
+  }): Observable<{ username: string; img: string }>;
+  getUsernameWithImgList({ userIds }: { userIds: string[] }): Observable<{
+    userList: { username: string; img: string; userId: number }[];
+  }>;
 }
 
 export interface MetadataGrpcService {
@@ -45,6 +52,12 @@ export interface FflGrpcService {
     userId: string;
     postId: string;
   }): Observable<{ liked: boolean }>;
+
+  getLikesList({
+    postId,
+  }: {
+    postId: string;
+  }): Observable<{ userList: string[] }>;
 }
 
 export interface PostGrpcService {

@@ -5,8 +5,14 @@ import { AmqpModule } from 'src/common/amqp/amqp.module';
 import { ClientsModule } from '@nestjs/microservices';
 import { fflMicroserviceOptions } from 'src/grpc/connection.options';
 
+import { UserModule } from '../user/user.module';
+
 @Module({
-  imports: [ClientsModule.register([fflMicroserviceOptions]), AmqpModule],
+  imports: [
+    ClientsModule.register([fflMicroserviceOptions]),
+    AmqpModule,
+    UserModule,
+  ],
   controllers: [FflController],
   providers: [FflService],
   exports: [FflService],

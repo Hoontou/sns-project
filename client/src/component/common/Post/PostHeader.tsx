@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
+import Likeslist from './Likeslist';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
 const PostHeader = (props: {
@@ -13,6 +14,7 @@ const PostHeader = (props: {
   const [likesCount, setLikesCount] = useState<number>(0);
   const [liked, setLiked] = useState<boolean>(true);
   const [commentCount, setCommentCount] = useState<number>(0);
+  const [openLikeslist, setOpenLikeslist] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
 
   const addLike = () => {
@@ -37,7 +39,6 @@ const PostHeader = (props: {
         setLiked(!liked);
       });
   };
-  const openLikesList = () => {};
 
   useEffect(() => {
     axios
@@ -87,7 +88,9 @@ const PostHeader = (props: {
           ) : (
             <span
               style={{ position: 'absolute', bottom: '0', right: '0' }}
-              onClick={openLikesList}
+              onClick={() => {
+                setOpenLikeslist(!openLikeslist);
+              }}
             >
               좋아요 {likesCount}개
             </span>
@@ -110,6 +113,13 @@ const PostHeader = (props: {
         )}
         {props.title}
       </div>
+      {openLikeslist && (
+        <Likeslist
+          open={openLikeslist}
+          setOpenLikeslist={setOpenLikeslist}
+          postId={props.postId}
+        />
+      )}
     </>
   );
 };
