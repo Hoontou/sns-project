@@ -1,7 +1,7 @@
 //메타데이터 DTO 정의
 export interface MetadataDto {
   _id: string;
-  userId: string;
+  userId: string | number;
   files: string[];
   title: string;
   createdAt: Date;
@@ -10,7 +10,7 @@ export interface MetadataDto {
 //알람 DTO 정의
 export interface AlertDto {
   _id: string;
-  userId: string;
+  userId: string | number;
   content: AlertContentUnion;
 } //타입과 content는 계속해서 추가.
 
@@ -43,7 +43,7 @@ export interface AuthDto {
 export type AuthResultRes = AuthSuccess | AuthFail;
 export interface AuthSuccess {
   success: true;
-  userId: string;
+  userId: string | number;
   username: string;
   accessToken?: string;
 }
@@ -57,14 +57,14 @@ export interface PostDto {
   type: 'PostDto';
   content: {
     postId: string;
-    userId: string | number; //작성자 id}
+    userId: string | number | number; //작성자 id}
   };
 }
 export interface CommentDto {
   type: 'CommentDto';
   content: {
     comment: string;
-    userId: string | number; //작성자
+    userId: string | number | number; //작성자
     postId: string; //부모 post id (objectid)
   };
 }
@@ -72,7 +72,7 @@ export interface CocommentDto {
   type: 'CocommentDto';
   content: {
     cocomment: string;
-    userId: string;
+    userId: string | number;
     commentId: number | string; //부모 comment id (int)
   };
 }
@@ -99,7 +99,7 @@ export interface AmqpMessage {
 }
 
 export interface UploadMessage {
-  userId: string;
+  userId: string | number;
   postId: string;
   alertId: string;
   files: string[];

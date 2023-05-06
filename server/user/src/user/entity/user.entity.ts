@@ -13,7 +13,7 @@ import { Comment } from './post.entity/comment.entity';
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ unique: true })
   email: string;

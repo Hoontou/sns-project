@@ -14,11 +14,13 @@ export interface AuthGrpcService {
 }
 
 export interface UserGrpcService {
-  getUsernums({ userId }: { userId: string }): Observable<{
+  getUserinfo({ userId }: { userId: string }): Observable<{
     follower: number;
     following: number;
     postcount: number;
     username: string;
+    img: string;
+    introduce: string;
   }>;
   getUsername({ userId }: { userId: string }): Observable<{ username: string }>;
 }

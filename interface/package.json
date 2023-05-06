@@ -1,6 +1,6 @@
 {
   "name": "sns-interfaces",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "interfaces for sns-project",
   "scripts": {
     "pub": "npm version patch && npm publish"

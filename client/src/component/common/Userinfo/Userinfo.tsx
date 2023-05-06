@@ -7,6 +7,10 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import UserinfoButton from './UserinfoButton';
 
+const requestUrl =
+  process.env.NODE_ENV === 'development' ? '/upload/files' : '';
+//추후 azure url 추가해야함.
+
 //타겟아이디가 없다? 내 피드에서 온 요청이라는 뜻.
 const Userinfo = (props: { userId: string; targetId?: string }) => {
   const navigate = useNavigate();
@@ -16,6 +20,8 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
   const [following, setFolloing] = useState<number>(0);
   const [username, setUsername] = useState<string>('');
   const [followed, setFollowed] = useState<boolean>(false);
+  const [img, setImg] = useState<string>('');
+  const [intro, setIntro] = useState<string>('상처를치료해줄사람어디없나');
 
   const addFollower = (num: number) => {
     setFollower(follower + num);
@@ -40,6 +46,8 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
               postcount: number;
               username: string;
               followed: boolean;
+              img: string;
+              introduce: string;
             }
           | { success: false } = res.data;
 
@@ -54,58 +62,66 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
         setPost(data.postcount);
         setFollowed(data.followed);
         setUsername(data.username);
+        setImg(data.img);
+        setIntro(data.introduce === '' ? '너 납치된거야.' : data.introduce);
         setSpin(false);
       });
   }, [props.targetId, props.userId, navigate]);
   return (
     <div>
-      {spin && 'waiting...'}
-      <Grid container spacing={1}>
-        <Grid item xs={9}>
-          <h1>{username}</h1>
-        </Grid>
-        <Grid item xs={1.5} className='text-end'>
-          <AddIcon />
-        </Grid>
-        <Grid item xs={1.5} className='text-end'>
-          <MenuIcon />
-        </Grid>
-      </Grid>
-      <Grid container spacing={1}>
-        <Grid item xs={4} className='text-center'>
-          <img
-            src={sample}
-            alt='profile'
-            style={{
-              width: '110px',
-              height: '110px',
-              borderRadius: '70%',
-              objectFit: 'cover',
-            }}
-          />
-        </Grid>
-        <Grid item xs={2.6} className='row align-items-center text-center'>
-          <div>
-            <div>{postcount}</div>
-            <div>게시물</div>
+      {spin === true ? (
+        'waiting...'
+      ) : (
+        <>
+          {' '}
+          <Grid container spacing={1}>
+            <Grid item xs={9}>
+              <h1>{username}</h1>
+            </Grid>
+            <Grid item xs={1.5} className='text-end'>
+              <AddIcon />
+            </Grid>
+            <Grid item xs={1.5} className='text-end'>
+              <MenuIcon />
+            </Grid>
+          </Grid>
+          <Grid container spacing={1}>
+            <Grid item xs={4} className='text-center'>
+              <img
+                src={img === '' ? sample : `${requestUrl}/${img}`}
+                alt='profile'
+                style={{
+                  width: '110px',
+                  height: '110px',
+                  borderRadius: '70%',
+                  objectFit: 'cover',
+                }}
+              />
+            </Grid>
+            <Grid item xs={2.6} className='row align-items-center text-center'>
+              <div>
+                <div>{postcount}</div>
+                <div>게시물</div>
+              </div>
+            </Grid>
+            <Grid item xs={2.6} className='row align-items-center text-center'>
+              <div>
+                <div>{follower}</div>
+                <div>팔로워</div>
+              </div>
+            </Grid>
+            <Grid item xs={2.6} className='row align-items-center text-center'>
+              <div>
+                <div>{following}</div>
+                <div>팔로잉</div>
+              </div>
+            </Grid>
+          </Grid>
+          <div style={{ marginTop: '0.2rem', marginBottom: '0.2rem' }}>
+            {intro}
           </div>
-        </Grid>
-        <Grid item xs={2.6} className='row align-items-center text-center'>
-          <div>
-            <div>{follower}</div>
-            <div>팔로워</div>
-          </div>
-        </Grid>
-        <Grid item xs={2.6} className='row align-items-center text-center'>
-          <div>
-            <div>{following}</div>
-            <div>팔로잉</div>
-          </div>
-        </Grid>
-      </Grid>
-      <div style={{ marginTop: '0.2rem', marginBottom: '0.2rem' }}>
-        this is my feed
-      </div>
+        </>
+      )}
 
       {/*내 피드로 들어왔을때는 아래 버튼 표시안함, useEffect axios요청 끝난 후 렌더링 시작. */}
       {props.targetId && !spin && (

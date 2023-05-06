@@ -13,6 +13,8 @@ export class AppController {
         following: number;
         follower: number;
         postcount: number;
+        img: string;
+        introduce: string;
         username: string;
       }
     | { success: false }

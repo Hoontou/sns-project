@@ -3,19 +3,21 @@ syntax = "proto3";
 package user;
 
 service UserService {
-  rpc GetUsernums(GetUsernumsReq) returns (GetUsernumsRes) {};
+  rpc GetUserinfo(GetUserinfoReq) returns (GetUserinfoRes) {};
   rpc GetUsername(GetUsernameReq) returns (GetUsernameRes) {};
 }
 
 
-message GetUsernumsReq {
+message GetUserinfoReq {
   string userId = 1;
 }
-message GetUsernumsRes {
+message GetUserinfoRes {
   int32 follower = 1;
   int32 following = 2;
   int32 postcount = 3;
-  string username = 4;
+  string img = 4;
+  string introduce = 5;
+  string username = 6;
 }
 
 message GetUsernameReq {

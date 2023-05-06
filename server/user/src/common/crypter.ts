@@ -7,17 +7,14 @@ class Crypto {
     this.uuidSecret = CryptoJS.enc.Utf8.parse(uuidSecret);
   }
   public encrypt(value: string | number): string {
-    if (typeof value === 'number') {
-      value = value.toString();
-    }
-    const encrypted = CryptoJS.AES.encrypt(value, this.uuidSecret, {
+    const encrypted = CryptoJS.AES.encrypt(String(value), this.uuidSecret, {
       iv: this.uuidSecret,
     }).toString();
     return encrypted;
   }
 
-  public decrypt(value: string): string {
-    const decryptedData = CryptoJS.AES.decrypt(value, this.uuidSecret, {
+  public decrypt(value: string | number): string {
+    const decryptedData = CryptoJS.AES.decrypt(String(value), this.uuidSecret, {
       iv: this.uuidSecret,
     });
     return decryptedData.toString(CryptoJS.enc.Utf8);

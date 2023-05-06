@@ -29,7 +29,7 @@ export class PostTable {
       .then(() => {
         this.logger.log('post stored in pgdb successfully');
       })
-      .catch((err) => console.log(err));
+      .catch(() => console.log('err when insert post table, at post.repo.ts'));
   }
 
   //코멘트 작성되서 카운트 증가

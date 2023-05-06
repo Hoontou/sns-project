@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import { User } from '../entity/user.entity';
 import { SignUpDto } from '../../auth/dto/sign.dto';
-import { UsernumsTable } from './usernums.repository';
+import { UserinfoTable } from './userinfo.repository';
 
 @Injectable()
 export class UserTable {
@@ -11,7 +11,7 @@ export class UserTable {
   constructor(
     @InjectRepository(User)
     public db: Repository<User>,
-    private userNumsTable: UsernumsTable,
+    private userNumsTable: UserinfoTable,
   ) {}
   async signUp(user: SignUpDto): Promise<{ success: boolean; msg?: string }> {
     //근데 받아오는 user객체의 비밀번호는 암호화 돼 있어서 정확히는 Dto에 부합하지 않음.
@@ -30,17 +30,16 @@ export class UserTable {
         return { success, msg: 'Existing username or eamil' };
       }
       return { success, msg: 'DB insert err' };
-    } finally {
-      //유저생성 성공했으면 usernums테이블에 insert한다.
-      if (success == true) {
-        this.userNumsTable.createUserNums(newUser);
-      }
+    }
+    //유저생성 성공했으면 userinfo테이블에 insert한다.
+    if (success == true) {
+      this.userNumsTable.createUserNums(newUser);
     }
     return { success: true };
   }
 
   async getUsername(data: { userId: string }): Promise<{ username: string }> {
-    const result = await this.db.findOneBy({ id: data.userId });
+    const result = await this.db.findOneBy({ id: Number(data.userId) });
     if (result === null) {
       throw new Error('username is null, err at user.repo.ts');
     }

@@ -36,7 +36,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new NotFoundException();
     }
     this.logger.log(`{ id ${user.id} : ${user.username} } passed Guard`);
-    user.id = crypter.encrypt(user.id);
-    return { userId: user.id, username: user.username, success: true }; //이 값이 req.user에 담긴다.
+    return {
+      userId: crypter.encrypt(user.id),
+      username: user.username,
+      success: true,
+    }; //이 값이 req.user에 담긴다.
   }
 }
