@@ -10,7 +10,7 @@ const UserFeed = () => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [userId, setId] = useState<string>('');
-  const { userid: targetUserId } = useParams();
+  const { targetid: targetUserId } = useParams();
 
   useEffect(() => {
     //다른곳에서는 실패하면 /signin으로 이동하게.
@@ -38,7 +38,7 @@ const UserFeed = () => {
       ) : (
         <>
           <Userinfo userId={userId} targetId={targetUserId} />
-          <Postlist userId={targetUserId === undefined ? '' : targetUserId} />
+          <Postlist userId={userId} targetId={targetUserId} />
         </>
       )}
 

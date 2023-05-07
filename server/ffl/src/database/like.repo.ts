@@ -56,9 +56,9 @@ class LikeRepository {
       });
   }
 
-  async getLikesList(postId: string): Promise<string[]> {
-    const likesList = await this.db.find({ postId });
-    return likesList.map((item) => {
+  async getUserIds(postId: string): Promise<string[]> {
+    const userIds = await this.db.find({ postId });
+    return userIds.map((item) => {
       return item.userId;
     });
   }

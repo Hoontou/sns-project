@@ -59,7 +59,7 @@ export class PostTable {
       .createQueryBuilder()
       .update(Post)
       .set({
-        likescount: () => `likescount + 1`,
+        likes: () => `likes + 1`,
       })
       .where('id = :id', { id: data.postId })
       .execute();
@@ -71,7 +71,7 @@ export class PostTable {
       .createQueryBuilder()
       .update(Post)
       .set({
-        likescount: () => `likescount - 1`,
+        likes: () => `likes - 1`,
       })
       .where('id = :id', { id: data.postId })
       .execute();
@@ -86,7 +86,7 @@ export class PostTable {
       throw new Error('err when getPostnums, postnums === null');
     }
     return {
-      likesCount: postnums.likescount,
+      likesCount: postnums.likes,
       commentCount: postnums.commentcount,
     };
   }

@@ -1,27 +1,25 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
-import Likeslist from './Likeslist';
+import Userlist from './Userlist';
+import { MetadataDto } from '../Postlist';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
-const PostHeader = (props: {
-  title: string;
-  userId: string;
-  postId: string;
-}) => {
+const PostHeader = (props: { metadata: MetadataDto; userId: string }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [likesCount, setLikesCount] = useState<number>(0);
   const [liked, setLiked] = useState<boolean>(true);
+  const [img, setImg] = useState<string>('');
   const [commentCount, setCommentCount] = useState<number>(0);
-  const [openLikeslist, setOpenLikeslist] = useState<boolean>(false);
+  const [openUserList, setOpenUserList] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
 
   const addLike = () => {
     axios
       .post('/gateway/ffl/addLike', {
         userId: props.userId,
-        postId: props.postId,
+        postId: props.metadata.id,
       })
       .then(() => {
         setLikesCount(likesCount + 1);
@@ -32,7 +30,7 @@ const PostHeader = (props: {
     axios
       .post('/gateway/ffl/removelike', {
         userId: props.userId,
-        postId: props.postId,
+        postId: props.metadata.id,
       })
       .then(() => {
         setLikesCount(likesCount - 1);
@@ -44,7 +42,7 @@ const PostHeader = (props: {
     axios
       .post('/gateway/postheader', {
         userId: props.userId,
-        postId: props.postId,
+        postId: props.metadata.id,
       })
       .then((res) => {
         const data: {
@@ -52,16 +50,18 @@ const PostHeader = (props: {
           likesCount: number;
           commentCount: number;
           username: string;
+          img: string;
         } = res.data;
         setLikesCount(data.likesCount);
         setLiked(data.liked);
         setCommentCount(data.commentCount);
         setUsername(data.username);
+        setImg(data.img);
         setLoaded(true);
       });
-  }, [props.postId, props.userId]);
+  }, [props.metadata.id, props.userId]);
   return (
-    <>
+    <div>
       {loaded && (
         <div
           style={{ width: '95%', margin: '0.2rem auto', position: 'relative' }}
@@ -89,7 +89,7 @@ const PostHeader = (props: {
             <span
               style={{ position: 'absolute', bottom: '0', right: '0' }}
               onClick={() => {
-                setOpenLikeslist(!openLikeslist);
+                setOpenUserList(!openUserList);
               }}
             >
               좋아요 {likesCount}개
@@ -111,16 +111,17 @@ const PostHeader = (props: {
             {username}
           </a>
         )}
-        {props.title}
+        {props.metadata.title}
       </div>
-      {openLikeslist && (
-        <Likeslist
-          open={openLikeslist}
-          setOpenLikeslist={setOpenLikeslist}
-          postId={props.postId}
+      {openUserList && (
+        <Userlist
+          open={openUserList}
+          setOpenUserList={setOpenUserList}
+          targetId={props.metadata.id}
+          type={'like'}
         />
       )}
-    </>
+    </div>
   );
 };
 export default PostHeader;

@@ -60,11 +60,15 @@ export class FflService {
   }): Promise<{ liked: boolean }> {
     return lastValueFrom(this.fflGrpcService.checkLiked(body));
   }
-  async openLikesList(body: { postId: string }): Promise<{
+
+  async getUserList(body: {
+    id: string;
+    type: 'like' | 'follower' | 'following';
+  }): Promise<{
     userList: { userId: string; img: string; username: string }[];
   }> {
-    const { userList: userIds } = await lastValueFrom(
-      this.fflGrpcService.getLikesList(body),
+    const { userIds } = await lastValueFrom(
+      this.fflGrpcService.getUserIds(body),
     );
     const { userList } = await this.userService.getUsernameWithImgList(userIds);
 

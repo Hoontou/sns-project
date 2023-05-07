@@ -7,7 +7,7 @@ const requestUrl =
   process.env.NODE_ENV === 'development' ? '/upload/files' : '';
 //추후 azure url 추가해야함.
 
-const Post = (props: { metadata: MetadataDto }) => {
+const Post = (props: { metadata: MetadataDto; userId: string }) => {
   const [images, setImages] = useState<string[]>([]);
 
   //좋아요했는지, props.userid로 username, 좋아요수, 댓글수 gateway로 요청해서
@@ -25,11 +25,7 @@ const Post = (props: { metadata: MetadataDto }) => {
       {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기, 음.. 안해도될듯?*/}
 
       <Slider images={images} />
-      <PostHeader
-        title={props.metadata.title}
-        userId={props.metadata.userId}
-        postId={props.metadata.id}
-      />
+      <PostHeader metadata={props.metadata} userId={props.userId} />
     </div>
   );
 };

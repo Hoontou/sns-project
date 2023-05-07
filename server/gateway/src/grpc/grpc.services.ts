@@ -53,11 +53,13 @@ export interface FflGrpcService {
     postId: string;
   }): Observable<{ liked: boolean }>;
 
-  getLikesList({
-    postId,
+  getUserIds({
+    id,
+    type,
   }: {
-    postId: string;
-  }): Observable<{ userList: string[] }>;
+    id: string;
+    type: 'like' | 'follower' | 'following';
+  }): Observable<{ userIds: string[] }>;
 }
 
 export interface PostGrpcService {

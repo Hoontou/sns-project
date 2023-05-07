@@ -55,5 +55,17 @@ class FollowRepository {
         console.log('err when canceling follow in mongo');
       });
   }
+
+  async getUserIds(
+    userId: string,
+    type: 'follower' | 'following',
+  ): Promise<string[]> {
+    const userIds = await this.db.find(
+      type === 'follower' ? { userTo: userId } : { userFrom: userId },
+    );
+    return userIds.map((item) => {
+      return type === 'follower' ? item.userFrom : item.userTo;
+    });
+  }
 }
 export const followRepository = new FollowRepository(Follow);

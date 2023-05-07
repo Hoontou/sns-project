@@ -19,7 +19,7 @@ export class Post extends BaseEntity {
   // title: string;
 
   @Column({ default: 0 })
-  likescount: number;
+  likes: number;
 
   @Column({ default: 0 })
   commentcount: number;

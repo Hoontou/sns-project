@@ -14,8 +14,8 @@ export interface ProtoGrpcType {
     CheckLikedReq: MessageTypeDefinition
     CheckLikedRes: MessageTypeDefinition
     FflService: SubtypeConstructor<typeof grpc.Client, _ffl_FflServiceClient> & { service: _ffl_FflServiceDefinition }
-    GetLikesListReq: MessageTypeDefinition
-    GetLikesListRes: MessageTypeDefinition
+    GetUserIdsReq: MessageTypeDefinition
+    GetUserIdsRes: MessageTypeDefinition
   }
 }
 

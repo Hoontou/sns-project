@@ -4,7 +4,7 @@ package ffl;
 service FflService {
   rpc CheckFollowed(CheckFollowedReq) returns (CheckFollowedRes);
   rpc CheckLiked(CheckLikedReq) returns (CheckLikedRes);
-  rpc GetLikesList(GetLikesListReq) returns (GetLikesListRes);
+  rpc GetUserIds(GetUserIdsReq) returns (GetUserIdsRes);
 }
 
 message CheckFollowedReq {
@@ -23,9 +23,10 @@ message CheckLikedRes {
   bool liked = 1;
 }
 
-message GetLikesListReq {
-  string postId = 1;
+message GetUserIdsReq {
+  string id = 1;
+  string type = 2;
 }
-message GetLikesListRes {
-  repeated string userList = 1;
+message GetUserIdsRes {
+  repeated string userIds = 1;
 }

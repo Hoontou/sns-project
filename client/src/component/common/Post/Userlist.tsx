@@ -5,7 +5,6 @@ import {
   List,
   ListItem,
   ListItemAvatar,
-  ListItemText,
 } from '@mui/material';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
@@ -16,15 +15,20 @@ const requestUrl =
   process.env.NODE_ENV === 'development' ? '/upload/files' : '';
 //추후 azure url 추가해야함.
 
-const Likeslist = (props: {
+type ListType = 'like' | 'follower' | 'following';
+
+/**좋아요, 팔로워, 팔로잉 한 유저리스트 보는 컴포넌트 */
+const Userlist = (props: {
   open: boolean;
-  postId: string;
-  setOpenLikeslist(open: boolean): void;
+  targetId: string;
+  setOpenUserList(open: boolean): void;
+  type: ListType;
 }) => {
   const navigate = useNavigate();
   const [list, setList] = useState<
     { username: string; img: string; userId: string }[]
   >([]);
+  const [title, setTitle] = useState<string>('');
 
   const onClick = (userId: string) => {
     navigate(`/userfeed/${userId}`);
@@ -32,25 +36,37 @@ const Likeslist = (props: {
   };
 
   useEffect(() => {
+    if (props.type === 'like') {
+      setTitle('좋아요');
+    } else if (props.type === 'follower') {
+      setTitle('팔로워');
+    } else if (props.type === 'following') {
+      setTitle('팔로잉');
+    }
     axios
-      .post('/gateway/ffl/openlikeslist', { postId: props.postId })
+      .post('/gateway/ffl/getuserlist', {
+        id: props.targetId,
+        type: props.type,
+      })
       .then((res) => {
         const data: {
           userList: { userId: string; img: string; username: string }[];
         } = res.data;
         setList(data.userList);
       });
-  }, [props.postId]);
+  }, [props.targetId, props.type]);
   return (
     <Dialog
-      onClose={() => props.setOpenLikeslist(!props.open)}
+      onClose={() => props.setOpenUserList(!props.open)}
       open={props.open}
       className='text-center'
+      fullWidth={true}
+      maxWidth={'xs'}
     >
       <DialogTitle style={{ marginRight: '1rem', marginLeft: '1rem' }}>
-        좋아요 누른 사람
+        {title}
       </DialogTitle>
-      <List sx={{ pt: 0 }}>
+      <List sx={{ pt: 0 }} style={{ maxHeight: '50vh' }}>
         {list.map((item, index) => (
           <ListItem
             key={index}
@@ -60,19 +76,19 @@ const Likeslist = (props: {
           >
             <ListItemAvatar>
               <Avatar
-                style={{ marginLeft: '-0.3rem' }}
+                sx={{ width: 50, height: 50 }}
+                style={{ marginLeft: '0.7rem' }}
                 alt={String(index)}
                 src={item.img === '' ? sample : `${requestUrl}/${item.img}`}
               ></Avatar>
             </ListItemAvatar>
-            <ListItemText
-              style={{ marginLeft: '-0.7rem' }}
-              primary={item.username}
-            />
+            <div style={{ marginLeft: '1rem', fontSize: '1.4rem' }}>
+              {item.username}
+            </div>
           </ListItem>
         ))}
       </List>
     </Dialog>
   );
 };
-export default Likeslist;
+export default Userlist;

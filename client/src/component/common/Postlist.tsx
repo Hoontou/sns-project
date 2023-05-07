@@ -24,7 +24,9 @@ const requestUrl =
   process.env.NODE_ENV === 'development' ? '/upload/files' : '';
 //추후 azure url 추가해야함.
 
-const Postlist = (props: { userId: string }) => {
+//targetId가 없으면 내 피드로 접근했다는 뜻.
+//내 포스트를 가져오면 됨.
+const Postlist = (props: { userId: string; targetId?: string }) => {
   const [spin, setSpin] = useState<boolean>(true);
   const [posts, setPosts] = useState<MetadataDto[]>([]);
   const [open, setOpen] = useState(false);
@@ -39,7 +41,9 @@ const Postlist = (props: { userId: string }) => {
 
   useEffect(() => {
     axios
-      .post('/gateway/metadata/getmetadatas', { userId: props.userId })
+      .post('/gateway/metadata/getmetadatas', {
+        userId: props.targetId === undefined ? props.userId : props.targetId,
+      })
       .then((res) => {
         setSpin(false);
         const metadatas: MetadataDto[] = res.data.metadatas;
@@ -47,7 +51,7 @@ const Postlist = (props: { userId: string }) => {
           setPosts(metadatas);
         }
       });
-  }, [props.userId]);
+  }, [props.userId, props.targetId]);
 
   const renderCard = posts.map((post, index) => {
     //이제 여기에 클릭하면 모달로 띄우는거 만들어야함
@@ -56,7 +60,11 @@ const Postlist = (props: { userId: string }) => {
         <div style={{ position: 'relative' }}>
           <a onClick={() => handleOpen(index)} href='#'>
             <img
-              style={{ width: '100%', objectFit: 'cover', aspectRatio: '3/4' }}
+              style={{
+                width: '100%',
+                objectFit: 'cover',
+                aspectRatio: '3/4.5',
+              }}
               alt={`${index}`}
               src={`${requestUrl}/${post.id}/${post.files[0]}`}
             />
@@ -69,22 +77,38 @@ const Postlist = (props: { userId: string }) => {
   return (
     <div>
       {spin && 'waiting...'}
-      <Grid container spacing={1}>
-        {renderCard}
-      </Grid>
-      <Modal open={open} onClose={handleClose}>
-        <Box
-          sx={{
-            ...postStyle,
-            width: '90%',
-            height: 'auto',
-            maxWidth: '900px',
-            aspectRatio: '3/4',
+      {!spin && posts.length === 0 && (
+        <div
+          style={{
+            textAlign: 'center',
+            fontSize: '1.5rem',
+            color: 'gray',
+            marginTop: '3rem',
           }}
         >
-          <Post metadata={selectedItem} />
-        </Box>
-      </Modal>
+          표시할 게시물이 없습니다.
+        </div>
+      )}
+      {posts.length > 0 && (
+        <>
+          <Grid container spacing={1}>
+            {renderCard}
+          </Grid>
+          <Modal open={open} onClose={handleClose}>
+            <Box
+              sx={{
+                ...postStyle,
+                width: '90%',
+                height: 'auto',
+                maxWidth: '900px',
+                aspectRatio: '3/4',
+              }}
+            >
+              <Post userId={props.userId} metadata={selectedItem} />
+            </Box>
+          </Modal>
+        </>
+      )}
     </div>
   );
 };

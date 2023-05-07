@@ -25,10 +25,12 @@ export class FflController {
     return this.fflService.removeLike(body);
   }
 
-  @Post('/openlikeslist')
-  async openLikesList(@Body() body: { postId: string }): Promise<{
+  @Post('/getuserlist')
+  async getUserList(
+    @Body() body: { id: string; type: 'like' | 'follower' | 'following' },
+  ): Promise<{
     userList: { userId: string; img: string; username: string }[];
   }> {
-    return this.fflService.openLikesList(body);
+    return this.fflService.getUserList(body);
   }
 }

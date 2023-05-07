@@ -1,7 +1,6 @@
 import { join } from 'path';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
-
 import { rabbitMQ } from './common/amqp';
 import { connectMongo } from './database/initialize.mongo';
 import { crypter } from './common/crypter';
@@ -58,6 +57,7 @@ const getServer = () => {
 
       //팔로우 찾은게 없으면 false 있으면 true
       res(null, { followed: followed.length === 0 ? false : true });
+      return;
     },
     CheckLiked: async (req, res) => {
       //userId, postId
@@ -68,10 +68,20 @@ const getServer = () => {
         postId: req.request.postId,
       });
       res(null, { liked: liked.length === 0 ? false : true });
+      return;
     },
-    GetLikesList: async (req, res) => {
-      const userList = await likeRopository.getLikesList(req.request.postId);
-      res(null, { userList });
+    GetUserIds: async (req, res) => {
+      if (req.request.type === 'like') {
+        res(null, { userIds: await likeRopository.getUserIds(req.request.id) });
+        return;
+      }
+      res(null, {
+        userIds: await followRepository.getUserIds(
+          crypter.decrypt(req.request.id),
+          req.request.type as 'follower' | 'following',
+        ),
+      });
+      return;
     },
   } as FflServiceHandlers);
   return server;
