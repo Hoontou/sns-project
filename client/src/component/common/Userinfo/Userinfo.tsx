@@ -6,10 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import UserinfoButton from './UserinfoButton';
 import UserinfoNums from './UserinfoNums';
 import UserinfoMenu from './UserinfoMenu';
-
-const requestUrl =
-  process.env.NODE_ENV === 'development' ? '/upload/files' : '';
-//추후 azure url 추가해야함.
+import { requestUrl } from '../../../common/etc';
 
 //타겟아이디가 없다? 내 피드에서 온 요청이라는 뜻.
 const Userinfo = (props: { userId: string; targetId?: string }) => {

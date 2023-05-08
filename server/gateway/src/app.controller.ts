@@ -24,7 +24,9 @@ export class AppController {
 
   @Post('/postheader')
   /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 댓글수 리턴해야함. */
-  async postHeader(@Body() body: { userId: string; postId: string }): Promise<{
+  async postHeader(
+    @Body() body: { userId: string; postId: string; targetId: string },
+  ): Promise<{
     liked: boolean;
     likesCount: number;
     commentCount: number;

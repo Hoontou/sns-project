@@ -30,6 +30,7 @@ const Upload = () => {
       //네개넘으면 초기화시킴.
       alert('최대 4개까지만 올릴 수 있음');
       input.value = '';
+      return;
     } else {
       setImages([]); //이미 들어있는 url 초기화
       setFileList([]);
@@ -39,6 +40,7 @@ const Upload = () => {
       });
       setFileList(fileList);
       setImages(list); //이미지 리스트에 붙여넣기
+      return;
     }
   };
 
@@ -84,17 +86,17 @@ const Upload = () => {
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     if (process.env.NODE_ENV === 'development') {
       await axios //업로드 서버로 보낸다.
-        .post('/upload/uploadlocal', formData);
+        .post('/upload/uploadtolocal', formData);
     } else {
       await axios //업로드 서버로 보낸다.
-        .post('/upload/uploadfiles', formData);
+        .post('/upload/uploadtoazure', formData);
     }
 
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
     //벗어나도 되면 그냥 알람MSA에 Id 보내고 페이지 벗어나자.
     //then을 안받아도 되게 느슨한 연결로 만들어 보자.
     alert('file sending succeed');
-    navigate('/up');
+    navigate('/myfeed');
   };
 
   useEffect(() => {

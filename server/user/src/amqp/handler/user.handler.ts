@@ -19,11 +19,16 @@ export class UserHandler {
       this.userinfoTable.addFollow(
         data as { userTo: string; userFrom: string },
       );
+      return;
     }
     if (msg.properties.type === 'removeFollow') {
       this.userinfoTable.removeFollow(
         data as { userTo: string; userFrom: string },
       );
+      return;
+    }
+    if (msg.properties.type === 'uploadUserImg') {
+      this.userinfoTable.setImg(data as { userId: string; img: string });
     }
   }
 }

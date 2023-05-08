@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Grid, Modal } from '@mui/material';
 import { postStyle } from '../mui.styled/item';
 import Post from './Post/Post';
+import { requestUrl } from '../../common/etc';
 
 export interface MetadataDto {
   id: string;
@@ -19,10 +20,6 @@ const emptyDto: MetadataDto = {
   title: '',
   createdAt: new Date(),
 };
-
-const requestUrl =
-  process.env.NODE_ENV === 'development' ? '/upload/files' : '';
-//추후 azure url 추가해야함.
 
 //targetId가 없으면 내 피드로 접근했다는 뜻.
 //내 포스트를 가져오면 됨.

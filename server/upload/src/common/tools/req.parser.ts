@@ -1,4 +1,3 @@
-import { crypter } from './crypter';
 import { UploadRequest } from '../interface';
 import { UploadMessage } from 'sns-interfaces';
 import { rabbitMQ } from '../amqp';
@@ -24,4 +23,19 @@ export const reqParser = (req: UploadRequest): void => {
 
   console.log('broadcasting to MSA');
   rabbitMQ.publishMsg('upload', uploadForm);
+};
+
+/**user한테 userId랑 img url 쏴준다. */
+export const reqParserUserImg = (req: UploadRequest): void => {
+  const { userId } = JSON.parse(req.body.userId); //클라이언트에서 hoc해서 보내준 값이고 암호화 돼있음.
+  const postId: string = req.postId;
+  const postList: string[] = req.postList;
+
+  const form = {
+    userId,
+    img: `${postId}/${postList[0]}`,
+  };
+
+  console.log('broadcasting to MSA');
+  rabbitMQ.sendMsg('user', form, 'uploadUserImg');
 };

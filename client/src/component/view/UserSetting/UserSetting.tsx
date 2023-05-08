@@ -2,10 +2,12 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { authHoc } from '../../../common/auth.hoc';
 import axios from 'axios';
-import { requestUrl } from '../../../common/ect';
+import { requestUrl } from '../../../common/etc';
 import sample from '../../../asset/sample1.jpg';
 import { Button, TextField } from '@mui/material';
 import './UserSetting.css';
+import { resizer } from '../../../common/image.resizer';
+import { AuthResultRes } from 'sns-interfaces';
 
 const UserSetting = () => {
   const navigate = useNavigate();
@@ -14,12 +16,83 @@ const UserSetting = () => {
   const [img, setImg] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [intro, setIntro] = useState<string>('');
+  const [selectedImgUrl, setSelectedImgUrl] = useState<string>('');
+  const [file, setFile] = useState<File | null>(null);
+  const [showingImg, setShowingImg] = useState<string>('');
 
   const onUsernameHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.currentTarget.value);
   };
   const onIntroHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setIntro(e.currentTarget.value);
+  };
+
+  const checkFileCount = (e: ChangeEvent<HTMLFormElement>) => {
+    const input = e.target;
+    const fileList: File[] = Object.values(e.target.files);
+
+    if (fileList.length > 1) {
+      //한개넘으면 초기화시킴.
+      alert('사진은 한개만 선택해야 해요.');
+      input.value = '';
+      return;
+    } else {
+      setSelectedImgUrl(''); //이미 들어있는 사진을 초기화
+      setFile(null);
+
+      if (fileList[0] !== undefined) {
+        setFile(fileList[0]);
+        setSelectedImgUrl(URL.createObjectURL(fileList[0])); //이미지 붙여넣기
+      }
+      return;
+    }
+  };
+
+  //upload로 요청보낸다.
+  const onSubmitUserImg = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (file === null) {
+      alert('업로드할 사진이 필요함');
+      return;
+    }
+
+    //보내기전 리사이징, 인증
+    const contents: File[] | false = await resizer([file]); //리사이저로 복사배열보내고 리사이징배열 받는다.
+    if (contents === false) {
+      //리사이징 실패시 샌딩파일리스트 비우고 리턴.
+      setFile(null);
+      alert('Err while image resizing');
+      return;
+    }
+    const authRes: AuthResultRes = await authHoc();
+    if (authRes.success === false) {
+      //인증실패
+      alert('Err while Authentication, need login');
+      navigate('/signin');
+      return;
+    }
+
+    //axios 보내기
+    const formData = new FormData();
+    //인풋에 많이 담아도 네개 까지만 컷한다.
+    contents.map((i) => {
+      return formData.append('file', i);
+    });
+    formData.append('userId', JSON.stringify({ userId: authRes.userId }));
+    if (process.env.NODE_ENV === 'development') {
+      await axios //업로드 서버로 보낸다.
+        .post('/upload/uploaduserimgtoloacl', formData);
+    } else {
+      await axios //업로드 서버로 보낸다.
+        .post('/upload/uploaduserimgtoazure', formData);
+    }
+
+    //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
+    //벗어나도 되면 그냥 알람MSA에 Id 보내고 페이지 벗어나자.
+    //then을 안받아도 되게 느슨한 연결로 만들어 보자.
+    alert('file sending succeed');
+    navigate('/myfeed');
   };
 
   const submitUsername = () => {
@@ -113,6 +186,15 @@ const UserSetting = () => {
       });
   }, [navigate, userId]);
 
+  useEffect(() => {
+    if (selectedImgUrl !== '') {
+      setShowingImg(selectedImgUrl);
+      return;
+    }
+    setShowingImg(img === '' ? sample : `${requestUrl}/${img}`);
+    return;
+  }, [img, selectedImgUrl]);
+
   return (
     <>
       {spin && 'waiting...'}
@@ -127,7 +209,7 @@ const UserSetting = () => {
         >
           <div>
             <img
-              src={img === '' ? sample : `${requestUrl}/${img}`}
+              src={showingImg}
               alt='profile'
               style={{
                 width: '150px',
@@ -136,6 +218,30 @@ const UserSetting = () => {
                 objectFit: 'cover',
               }}
             />
+            <form
+              onSubmit={onSubmitUserImg}
+              encType='multipart/form-data'
+              onChange={checkFileCount}
+            >
+              <label
+                style={{ marginRight: '4rem' }}
+                className='input-file-button'
+                htmlFor='input-file'
+              >
+                사진 찾기
+              </label>
+              <input
+                id='input-file'
+                style={{ display: 'none' }}
+                type='file'
+                multiple={true}
+                accept='.jpg, .png, .webp'
+              />
+
+              <Button variant='outlined' size='medium' type='submit'>
+                Upload
+              </Button>
+            </form>
           </div>
           <div>
             <TextField

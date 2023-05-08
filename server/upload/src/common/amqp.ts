@@ -26,5 +26,19 @@ class RabbitMQ {
   publishMsg(key, msgForm) {
     this.channel.publish(this.que, key, Buffer.from(JSON.stringify(msgForm)));
   }
+  sendMsg(
+    targetQue: Que,
+    msgForm: { [key: string]: any },
+    methodName: string,
+  ): void {
+    console.log(`${methodName} sends message to ${targetQue}`);
+
+    //메세지 보내는 메서드의 이름과 보내는 MSA 이름까지 등록해서 보냄.
+    //메세지의 타입을 보내는 메서드이름으로 해서 받는곳에서 알아먹을수 있게한다.
+    this.channel.sendToQueue(targetQue, Buffer.from(JSON.stringify(msgForm)), {
+      appId: this.que,
+      type: methodName,
+    });
+  }
 }
 export const rabbitMQ = new RabbitMQ(RABBIT);

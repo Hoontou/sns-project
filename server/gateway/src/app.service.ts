@@ -44,7 +44,11 @@ export class AppService {
   }
 
   /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 댓글수 리턴해야함. */
-  async postHeader(body: { userId: string; postId: string }): Promise<{
+  async postHeader(body: {
+    userId: string;
+    postId: string;
+    targetId: string;
+  }): Promise<{
     liked: boolean;
     likesCount: number;
     commentCount: number;
@@ -56,8 +60,8 @@ export class AppService {
     const [{ liked }, { likesCount, commentCount }, { username, img }] =
       await Promise.all([
         this.checkLiked(body),
-        this.getPostinfo(body),
-        this.getUsernameWithImg(body),
+        this.getPostinfo(body.postId),
+        this.getUsernameWithImg(body.targetId),
       ]);
     return { liked, likesCount, commentCount, username, img };
     //post 가서 postId로 count들 가져오기
@@ -66,20 +70,19 @@ export class AppService {
   async checkLiked(body: {
     userId: string;
     postId: string;
+    targetId: string;
   }): Promise<{ liked: boolean }> {
     return this.fflService.checkLiked(body);
   }
   //post 가서 카운트 가져오기
-  async getPostinfo(body: {
-    userId: string;
-    postId: string;
-  }): Promise<{ likesCount: number; commentCount: number }> {
-    return this.postService.getPostnums(body.postId);
+  async getPostinfo(
+    postId: string,
+  ): Promise<{ likesCount: number; commentCount: number }> {
+    return this.postService.getPostnums(postId);
   }
-  async getUsernameWithImg(body: {
-    userId: string;
-    postId: string;
-  }): Promise<{ username: string; img: string }> {
-    return this.userService.getUsernameWithImg(body.userId);
+  async getUsernameWithImg(
+    targetId: string,
+  ): Promise<{ username: string; img: string }> {
+    return this.userService.getUsernameWithImg(targetId);
   }
 }

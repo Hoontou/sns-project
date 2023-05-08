@@ -2,10 +2,7 @@ import { useState, useEffect } from 'react';
 import Slider from '../Slider';
 import { MetadataDto } from '../Postlist';
 import PostHeader from './PostHeader';
-
-const requestUrl =
-  process.env.NODE_ENV === 'development' ? '/upload/files' : '';
-//추후 azure url 추가해야함.
+import { requestUrl } from '../../../common/etc';
 
 const Post = (props: { metadata: MetadataDto; userId: string }) => {
   const [images, setImages] = useState<string[]>([]);

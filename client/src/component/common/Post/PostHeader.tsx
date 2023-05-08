@@ -43,6 +43,7 @@ const PostHeader = (props: { metadata: MetadataDto; userId: string }) => {
       .post('/gateway/postheader', {
         userId: props.userId,
         postId: props.metadata.id,
+        targetId: props.metadata.userId,
       })
       .then((res) => {
         const data: {

@@ -29,6 +29,11 @@ const uploadToLoacl = upload.fields([
   { name: 'userId', maxCount: 1 },
 ]);
 
+const uploadUserImgToLoacl = upload.fields([
+  { name: 'file', maxCount: 1 },
+  { name: 'userId', maxCount: 1 },
+]);
+
 //파일이름 생성을 위한 Id, count 만들어서 req에 끼워넣는 미들웨어.
 const add_idToReq = (req: UploadRequest, reply, next) => {
   req.postId = ObjectId();
@@ -38,5 +43,5 @@ const add_idToReq = (req: UploadRequest, reply, next) => {
   next();
 };
 
-export { uploadToLoacl, add_idToReq };
+export { uploadToLoacl, add_idToReq, uploadUserImgToLoacl };
 //파일저장 미들웨어, req에 필요한 변수들생성해주는 미들웨어

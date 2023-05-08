@@ -17,6 +17,11 @@ const uploadToMemory = upload.fields([
   { name: 'userId', maxCount: 1 },
 ]);
 
+const uploadUserImgToMemory = upload.fields([
+  { name: 'file', maxCount: 1 },
+  { name: 'userId', maxCount: 1 },
+]);
+
 //파일이름 생성을 위한 Id, count 만들어서 req에 끼워넣는 미들웨어.
 const preParser = (req: UploadRequest, reply, next) => {
   req.files = req.files.file;
@@ -39,5 +44,5 @@ const preParser = (req: UploadRequest, reply, next) => {
   next();
 };
 
-export { uploadToMemory, preParser };
+export { uploadToMemory, preParser, uploadUserImgToMemory };
 //파일저장 미들웨어, req에 정보 넣어주는 미들웨어

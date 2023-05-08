@@ -171,4 +171,13 @@ export class UserinfoTable {
       return { success: false };
     }
   }
+
+  async setImg(data: { userId: string; img: string }) {
+    await this.db
+      .createQueryBuilder()
+      .update(Userinfo)
+      .set({ img: data.img })
+      .where('userId = :id', { id: crypter.decrypt(data.userId) })
+      .execute();
+  }
 }
