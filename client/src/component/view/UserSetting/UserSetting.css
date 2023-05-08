@@ -1,0 +1,7 @@
+.input-file-button {
+  padding: 5px 16px 7px;
+  background-color: hwb(213 12% 8%);
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}

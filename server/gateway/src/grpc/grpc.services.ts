@@ -30,6 +30,20 @@ export interface UserGrpcService {
   getUsernameWithImgList({ userIds }: { userIds: string[] }): Observable<{
     userList: { username: string; img: string; userId: number }[];
   }>;
+  changeUsername({
+    userId,
+    username,
+  }: {
+    userId: string;
+    username: string;
+  }): Observable<{ success: boolean; exist?: boolean }>;
+  changeIntro({
+    userId,
+    intro,
+  }: {
+    userId: string;
+    intro: string;
+  }): Observable<{ success: boolean }>;
 }
 
 export interface MetadataGrpcService {

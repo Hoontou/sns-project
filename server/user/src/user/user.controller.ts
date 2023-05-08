@@ -14,21 +14,37 @@ export class UserController {
   ) {}
 
   @GrpcMethod('UserService', 'GetUserinfo')
-  getUserinfo(data: { userId: string }) {
+  async getUserinfo(data: { userId: string }) {
     return this.userinfoTable.getUserinfo(data);
   }
 
   @GrpcMethod('UserService', 'GetUsernameWithImg')
-  GetUsernameWithImg(data: {
+  async getUsernameWithImg(data: {
     userId: string;
   }): Promise<{ username: string; img: string }> {
-    return this.userinfoTable.GetUsernameWithImg(data);
+    return this.userinfoTable.getUsernameWithImg(data);
   }
 
   @GrpcMethod('UserService', 'GetUsernameWithImgList')
-  GetUsernameWithImgList(data: { userIds: string[] }): Promise<{
+  async getUsernameWithImgList(data: { userIds: string[] }): Promise<{
     userList: { username: string; img: string; userId: number }[];
   }> {
-    return this.userinfoTable.GetUsernameWithImgList(data);
+    return this.userinfoTable.getUsernameWithImgList(data);
+  }
+
+  @GrpcMethod('UserService', 'ChangeUsername')
+  async changeUsername(data: {
+    userId: string;
+    username: string;
+  }): Promise<{ success: boolean; exist?: boolean }> {
+    return this.userTable.changeUsername(data);
+  }
+
+  @GrpcMethod('UserService', 'ChangeIntro')
+  async changeIntro(data: {
+    userId: string;
+    intro: string;
+  }): Promise<{ success: boolean }> {
+    return this.userinfoTable.changeIntro(data);
   }
 }

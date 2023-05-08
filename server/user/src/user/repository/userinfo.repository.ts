@@ -114,7 +114,7 @@ export class UserinfoTable {
     this.logger.log(`follow removed userTo:${to}, userFrom:${from}`);
   }
 
-  async GetUsernameWithImg(data: {
+  async getUsernameWithImg(data: {
     userId: string;
   }): Promise<{ username: string; img: string }> {
     const result = await this.db
@@ -130,7 +130,7 @@ export class UserinfoTable {
     return { username: result.user.username, img: result.img };
   }
 
-  async GetUsernameWithImgList(data: { userIds: string[] }): Promise<{
+  async getUsernameWithImgList(data: { userIds: string[] }): Promise<{
     userList: { username: string; img: string; userId: number }[];
   }> {
     const result = await this.db
@@ -152,5 +152,23 @@ export class UserinfoTable {
         };
       }),
     };
+  }
+
+  async changeIntro(data: {
+    userId: string;
+    intro: string;
+  }): Promise<{ success: boolean }> {
+    try {
+      await this.db
+        .createQueryBuilder()
+        .update(Userinfo)
+        .set({ introduce: data.intro })
+        .where('userId = :id', { id: crypter.decrypt(data.userId) })
+        .execute();
+      return { success: true };
+    } catch (error) {
+      console.log(error);
+      return { success: false };
+    }
   }
 }

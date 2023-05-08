@@ -67,6 +67,10 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
         setSpin(false);
       });
   }, [props.targetId, props.userId, navigate]);
+
+  const renderIntro = intro.split('\n').map((item, index) => {
+    return <div key={index}>{item}</div>;
+  });
   return (
     <div>
       {spin === true ? (
@@ -103,8 +107,8 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
               }
             />
           </Grid>
-          <div style={{ marginTop: '0.2rem', marginBottom: '0.2rem' }}>
-            <div>{intro}</div>
+          <div style={{ marginTop: '0.5rem', marginBottom: '0.2rem' }}>
+            <div>{renderIntro}</div>
           </div>
         </>
       )}

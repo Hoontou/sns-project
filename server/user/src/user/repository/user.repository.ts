@@ -4,6 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { User } from '../entity/user.entity';
 import { SignUpDto } from '../../auth/dto/sign.dto';
 import { UserinfoTable } from './userinfo.repository';
+import { crypter } from 'src/common/crypter';
 
 @Injectable()
 export class UserTable {
@@ -36,5 +37,35 @@ export class UserTable {
       this.userNumsTable.createUserNums(newUser);
     }
     return { success: true };
+  }
+
+  async changeUsername(data: {
+    userId: string;
+    username: string;
+  }): Promise<{ success: boolean; exist?: boolean }> {
+    try {
+      const checkedUser = await this.db.findOneBy({ username: data.username });
+      //username이 이미 쓰고있으면
+      if (checkedUser !== null) {
+        return { success: false, exist: true };
+      }
+
+      //userId로 유저 찾아서
+      const user = await this.db.findOneBy({
+        id: Number(crypter.decrypt(data.userId)),
+      });
+      if (!user) {
+        return { success: false }; // user가 없는 경우,
+      }
+      //username바꾸고 저장
+      user.username = data.username;
+      await this.db.save(user);
+
+      //성공 리턴
+      return { success: true };
+    } catch (error) {
+      console.log(error);
+      return { success: false };
+    }
   }
 }

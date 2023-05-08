@@ -60,4 +60,14 @@ export class UserService {
       }),
     );
   }
+
+  async changeUsername(body: {
+    userId: string;
+    username: string;
+  }): Promise<{ success: boolean; exist?: boolean }> {
+    return lastValueFrom(this.userGrpcService.changeUsername(body));
+  }
+  async changeIntro(body: { userId: string; intro: string }) {
+    return await lastValueFrom(this.userGrpcService.changeIntro(body));
+  }
 }

@@ -4,7 +4,8 @@ import { authHoc } from '../../../common/auth.hoc';
 import axios from 'axios';
 import { requestUrl } from '../../../common/ect';
 import sample from '../../../asset/sample1.jpg';
-import { TextField } from '@mui/material';
+import { Button, TextField } from '@mui/material';
+import './UserSetting.css';
 
 const UserSetting = () => {
   const navigate = useNavigate();
@@ -21,7 +22,54 @@ const UserSetting = () => {
     setIntro(e.currentTarget.value);
   };
 
-  //다른곳에서는 실패하면 /signin으로 이동하게.
+  const submitUsername = () => {
+    setSpin(true);
+
+    axios
+      .post('/gateway/user/changeusername', { userId, username })
+      .then((res) => {
+        setSpin(false);
+        const result: { success: boolean; exist?: boolean } = res.data;
+        if (result.success === false) {
+          console.log(result);
+          alert(
+            result.exist === true
+              ? '이미 존재하는 이름이에요. 다른 이름으로 시도해주세요.'
+              : '서버문제로 바꾸기 실패했어요. 나중에 다시 시도해주세요.'
+          );
+          return;
+        }
+        navigate('/myfeed');
+        return;
+      });
+  };
+
+  const submitIntro = () => {
+    setSpin(true);
+    const len = intro.split('\n').length;
+    if (len > 3) {
+      alert('소개글이 세줄이 넘어요.');
+      setSpin(false);
+      return;
+    }
+    if (intro.length - len * 2 > 50) {
+      alert('소개글이 50글자가 넘어요');
+      setSpin(false);
+      return;
+    }
+
+    axios.post('/gateway/user/changeintro', { userId, intro }).then((res) => {
+      setSpin(false);
+      const { success } = res.data;
+      if (success === false) {
+        alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해 주세요.');
+        return;
+      }
+      navigate('/myfeed');
+      return;
+    });
+  };
+
   useEffect(() => {
     authHoc()
       .then((authRes) => {
@@ -32,7 +80,7 @@ const UserSetting = () => {
         }
         setSpin(false);
         if (authRes.userId !== userId) {
-          //쿠키로 인증한아이디랑 url아이디랑 다르면 튕겨낸다.
+          //쿠키로 인증한 아이디랑 url아이디랑 다르면 튕겨낸다.
           alert('invalid access');
           navigate('/myfeed');
           return;
@@ -90,26 +138,54 @@ const UserSetting = () => {
             />
           </div>
           <div>
-            이름. 영어만, 4~10자 입력가능
             <TextField
               sx={{ m: 1, width: '30ch' }}
               label='Username'
               variant='standard'
               onChange={onUsernameHandler}
               value={username}
-            />
+            />{' '}
+            <p>이름. 영어만, 4~10자 입력가능</p>
+            <div>
+              <Button
+                variant='outlined'
+                size='medium'
+                onClick={() => {
+                  setUsername('');
+                }}
+              >
+                칸비우기
+              </Button>
+              <Button variant='outlined' size='medium' onClick={submitUsername}>
+                수정하기
+              </Button>
+            </div>
           </div>
+          <TextField
+            sx={{ m: 1, width: '30ch' }}
+            label='Introduce'
+            variant='standard'
+            multiline
+            rows={4}
+            onChange={onIntroHandler}
+            value={intro}
+          />{' '}
           <div>
-            소개글. 최대 70자, 4줄까지 입력가능
-            <TextField
-              sx={{ m: 1, width: '30ch' }}
-              label='Introduce'
-              variant='standard'
-              multiline
-              rows={4}
-              onChange={onIntroHandler}
-              value={intro}
-            />
+            <p>소개글. 최대 50자, 3줄까지 입력가능</p>
+            <div>
+              <Button
+                variant='outlined'
+                size='medium'
+                onClick={() => {
+                  setIntro('');
+                }}
+              >
+                칸비우기
+              </Button>
+              <Button variant='outlined' size='medium' onClick={submitIntro}>
+                수정하기
+              </Button>
+            </div>
           </div>
         </div>
       )}
