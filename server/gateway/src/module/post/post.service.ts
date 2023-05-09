@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { PostContent } from 'sns-interfaces';
 import { PostGrpcService } from 'src/grpc/grpc.services';
 
 @Injectable()
@@ -11,9 +12,7 @@ export class PostService {
     this.postGrpcService =
       this.client.getService<PostGrpcService>('PostService');
   }
-  async getPostnums(
-    postId: string,
-  ): Promise<{ likesCount: number; commentCount: number }> {
-    return lastValueFrom(this.postGrpcService.getPostnums({ postId }));
+  async getPost(postId: string): Promise<PostContent> {
+    return lastValueFrom(this.postGrpcService.getPost({ postId }));
   }
 }

@@ -15,8 +15,6 @@ message Metadata {
   string id = 1;
   string userId = 2;
   repeated string files = 3;
-  string title = 4;
-  string createdAt = 5;
 }
 
 message getMetadatasRes {

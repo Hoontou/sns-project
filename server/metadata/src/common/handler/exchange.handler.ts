@@ -20,8 +20,6 @@ const handleMetadata = (content: UploadMessage) => {
     _id: content.postId,
     userId: crypter.decrypt(content.userId),
     files: content.files,
-    title: content.title,
-    createdAt: content.createdAt,
   };
 
   metaRepository.saveMeatadata(metadataDto);

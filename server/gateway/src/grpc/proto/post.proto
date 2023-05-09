@@ -3,13 +3,16 @@ syntax = "proto3";
 package post;
 
 service PostService {
-  rpc GetPostnums(GetPostnumsReq) returns (GetPostnumsRes) {};
+  rpc GetPost(GetPostReq) returns (GetPostRes) {};
 }
 
-message GetPostnumsReq {
+message GetPostReq {
   string postId = 1;
 }
-message GetPostnumsRes {
+message GetPostRes {
   int32 likesCount = 1;
   int32 commentCount = 2;
+  string title = 3;
+  string createdAt = 4;
+  string id = 5;
 }

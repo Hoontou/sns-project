@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserService } from './module/user/user.service';
 import { FflService } from './module/ffl/ffl.service';
 import { PostService } from './module/post/post.service';
+import { PostContent } from 'sns-interfaces';
 
 @Injectable()
 export class AppService {
@@ -48,22 +49,34 @@ export class AppService {
     userId: string;
     postId: string;
     targetId: string;
-  }): Promise<{
-    liked: boolean;
-    likesCount: number;
-    commentCount: number;
-    username: string;
-    img: string;
-  }> {
+  }): Promise<
+    PostContent & {
+      liked: boolean;
+      username: string;
+      img: string;
+    }
+  > {
     //ffl 가서 postId랑 userId로 liked? 체크
 
-    const [{ liked }, { likesCount, commentCount }, { username, img }] =
-      await Promise.all([
-        this.checkLiked(body),
-        this.getPostinfo(body.postId),
-        this.getUsernameWithImg(body.targetId),
-      ]);
-    return { liked, likesCount, commentCount, username, img };
+    const [
+      { liked },
+      { likesCount, commentCount, title, createdAt, id },
+      { username, img },
+    ] = await Promise.all([
+      this.checkLiked(body),
+      this.getPost(body.postId),
+      this.getUsernameWithImg(body.targetId),
+    ]);
+    return {
+      liked,
+      likesCount,
+      commentCount,
+      username,
+      img,
+      title,
+      createdAt,
+      id,
+    };
     //post 가서 postId로 count들 가져오기
   }
 
@@ -75,10 +88,8 @@ export class AppService {
     return this.fflService.checkLiked(body);
   }
   //post 가서 카운트 가져오기
-  async getPostinfo(
-    postId: string,
-  ): Promise<{ likesCount: number; commentCount: number }> {
-    return this.postService.getPostnums(postId);
+  async getPost(postId: string): Promise<PostContent> {
+    return this.postService.getPost(postId);
   }
   async getUsernameWithImg(
     targetId: string,

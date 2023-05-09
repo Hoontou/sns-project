@@ -3,6 +3,7 @@ import {
   AuthDto,
   AuthResultRes,
   MetadataDto,
+  PostContent,
   SignInDto,
   SignUpDto,
 } from 'sns-interfaces';
@@ -77,9 +78,5 @@ export interface FflGrpcService {
 }
 
 export interface PostGrpcService {
-  getPostnums({
-    postId,
-  }: {
-    postId: string;
-  }): Observable<{ likesCount: number; commentCount: number }>;
+  getPost({ postId }: { postId: string }): Observable<PostContent>;
 }

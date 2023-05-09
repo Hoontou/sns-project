@@ -6,8 +6,6 @@ const metadataSchema = new mongoose.Schema({
   //받은 objectid로 _id에 바로넣기
   userId: String,
   files: Array,
-  title: String,
-  createdAt: Date,
 });
 metadataSchema.index({
   userId: 1,

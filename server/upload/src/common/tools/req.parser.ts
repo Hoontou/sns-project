@@ -18,7 +18,6 @@ export const reqParser = (req: UploadRequest): void => {
     alertId: alert_id,
     files: postList,
     title,
-    createdAt: new Date(),
   };
 
   console.log('broadcasting to MSA');

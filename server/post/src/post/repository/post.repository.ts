@@ -4,6 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Post } from '../entity/post.entity';
 import { PostDto } from '../dto/post.dto';
 import { crypter } from 'src/common/crypter';
+import { PostContent } from 'sns-interfaces';
 
 @Injectable()
 export class PostTable {
@@ -16,20 +17,23 @@ export class PostTable {
 
   //새로운 포스트데이터 삽입
   async addPost(postDto: PostDto): Promise<void> {
-    const { postId, userId } = postDto;
+    const { postId, userId, title } = postDto;
     await this.db
       .createQueryBuilder()
       .insert()
       .into(Post)
       .values({
         id: postId,
+        title,
         user: () => `${crypter.decrypt(String(userId))}`,
       })
       .execute()
       .then(() => {
         this.logger.log('post stored in pgdb successfully');
       })
-      .catch(() => console.log('err when insert post table, at post.repo.ts'));
+      .catch((err) =>
+        console.log('err when insert post table, at post.repo.ts', err),
+      );
   }
 
   //코멘트 작성되서 카운트 증가
@@ -78,16 +82,18 @@ export class PostTable {
     this.logger.log('like removed');
   }
 
-  async getPostnums(
-    postId: string,
-  ): Promise<{ likesCount: number; commentCount: number }> {
-    const postnums = await this.db.findOneBy({ id: postId });
-    if (postnums === null) {
+  async getPost(postId: string): Promise<PostContent> {
+    const post = await this.db.findOneBy({ id: postId });
+    console.log(postId);
+    if (post === null) {
       throw new Error('err when getPostnums, postnums === null');
     }
     return {
-      likesCount: postnums.likes,
-      commentCount: postnums.commentcount,
+      id: post.id,
+      likesCount: post.likes,
+      commentCount: post.commentcount,
+      title: post.title,
+      createdAt: post.createdAt,
     };
   }
 }

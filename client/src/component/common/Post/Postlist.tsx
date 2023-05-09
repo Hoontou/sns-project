@@ -9,16 +9,12 @@ export interface MetadataDto {
   id: string;
   userId: string;
   files: string[];
-  title: string;
-  createdAt: Date;
 } //sns-interfaces에 있는걸 쓰려고 했는데 리액트에서 자체적으로 _id에서 _를 빼버리고 id로 만들어버림.
 //그래서 그냥 여기다 새로정의
 const emptyDto: MetadataDto = {
   id: '',
   userId: '',
   files: [''],
-  title: '',
-  createdAt: new Date(),
 };
 
 //targetId가 없으면 내 피드로 접근했다는 뜻.

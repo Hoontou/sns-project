@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Slider from '../Slider';
 
-import PostHeader from './PostHeader';
+import PostFooter from './PostFooter';
 import { requestUrl } from '../../../common/etc';
 import { MetadataDto } from './Postlist';
 
@@ -23,7 +23,7 @@ const Post = (props: { metadata: MetadataDto; userId: string }) => {
       {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기, 음.. 안해도될듯?*/}
 
       <Slider images={images} />
-      <PostHeader metadata={props.metadata} userId={props.userId} />
+      <PostFooter metadata={props.metadata} userId={props.userId} />
     </div>
   );
 };

@@ -5,8 +5,8 @@ export class PostDto {
   @IsNotEmpty()
   postId: string;
 
-  // @IsNotEmpty()
-  // title: string;
+  @IsNotEmpty()
+  title: string;
 
   @IsNotEmpty()
   userId: string | number; //작성자 id

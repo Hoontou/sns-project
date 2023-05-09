@@ -22,6 +22,7 @@ export class PostService {
     const postDto: PostDto = {
       postId: content.postId,
       userId: content.userId,
+      title: content.title,
     };
     await this.postTable.addPost(postDto);
 

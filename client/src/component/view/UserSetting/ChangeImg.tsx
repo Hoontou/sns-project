@@ -74,10 +74,10 @@ const ChangeImg = (props: { img: string }) => {
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     if (process.env.NODE_ENV === 'development') {
       await axios //업로드 서버로 보낸다.
-        .post('/upload/uploaduserprops.imgtoloacl', formData);
+        .post('/upload/uploaduserimgtoloacl', formData);
     } else {
       await axios //업로드 서버로 보낸다.
-        .post('/upload/uploaduserprops.imgtoazure', formData);
+        .post('/upload/uploaduserimgtoazure', formData);
     }
 
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.

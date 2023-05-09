@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
-
 import Userlist from '../Userlist';
 import { MetadataDto } from './Postlist';
+import { PostContent } from 'sns-interfaces';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
-const PostHeader = (props: { metadata: MetadataDto; userId: string }) => {
+const PostFooter = (props: { metadata: MetadataDto; userId: string }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [likesCount, setLikesCount] = useState<number>(0);
@@ -15,6 +15,8 @@ const PostHeader = (props: { metadata: MetadataDto; userId: string }) => {
   const [commentCount, setCommentCount] = useState<number>(0);
   const [openUserList, setOpenUserList] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>('');
+  const [createdAt, setCreatedAt] = useState<Date | null>(null);
 
   const addLike = () => {
     axios
@@ -47,10 +49,8 @@ const PostHeader = (props: { metadata: MetadataDto; userId: string }) => {
         targetId: props.metadata.userId,
       })
       .then((res) => {
-        const data: {
+        const data: PostContent & {
           liked: boolean;
-          likesCount: number;
-          commentCount: number;
           username: string;
           img: string;
         } = res.data;
@@ -59,9 +59,11 @@ const PostHeader = (props: { metadata: MetadataDto; userId: string }) => {
         setCommentCount(data.commentCount);
         setUsername(data.username);
         setImg(data.img);
+        setTitle(data.title);
+        setCreatedAt(data.createdAt);
         setLoaded(true);
       });
-  }, [props.metadata.id, props.userId]);
+  }, [props.metadata.id, props.metadata.userId, props.userId]);
   return (
     <div>
       {loaded && (
@@ -113,7 +115,7 @@ const PostHeader = (props: { metadata: MetadataDto; userId: string }) => {
             {username}
           </a>
         )}
-        {props.metadata.title}
+        {title}
       </div>
       {openUserList && (
         <Userlist
@@ -126,4 +128,4 @@ const PostHeader = (props: { metadata: MetadataDto; userId: string }) => {
     </div>
   );
 };
-export default PostHeader;
+export default PostFooter;
