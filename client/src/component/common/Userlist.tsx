@@ -9,7 +9,7 @@ import {
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import sample from '../../../asset/sample1.jpg';
+import sample from '../../asset/sample1.jpg';
 
 const requestUrl =
   process.env.NODE_ENV === 'development' ? '/upload/files' : '';

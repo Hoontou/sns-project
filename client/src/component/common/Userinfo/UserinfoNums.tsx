@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
-import Userlist from '../Post/Userlist';
 import { useState } from 'react';
+import Userlist from '../Userlist';
 
 const UserinfoNums = (props: {
   postcount: number;

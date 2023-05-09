@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Box, Grid, Modal } from '@mui/material';
-import { postStyle } from '../mui.styled/item';
-import Post from './Post/Post';
-import { requestUrl } from '../../common/etc';
+import { requestUrl } from '../../../common/etc';
+import { postStyle } from '../../mui.styled/item';
+import Post from './Post';
 
 export interface MetadataDto {
   id: string;

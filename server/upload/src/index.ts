@@ -33,6 +33,7 @@ server.register(fastifyStatic, {
   prefix: '/files/', // optional: default '/'
 });
 
+//나중에 기존프사 삭제하는 기능 추가해야함.
 //로컬에 업로드
 server.post(
   '/uploadtolocal',
@@ -44,7 +45,7 @@ server.post(
     reqParser(req);
   },
 );
-
+//프사 로컬에 업로드
 server.post(
   '/uploaduserimgtoloacl',
   { preHandler: [add_idToReq, uploadUserImgToLoacl] }, //순서대로 미들웨어 호출됨.
@@ -81,7 +82,7 @@ server.post(
   },
 );
 
-//azure에 업로드
+//프사 azure에 업로드
 server.post(
   '/uploaduserimgtoazure',
   { preHandler: [uploadUserImgToMemory, preParser] }, //순서대로 미들웨어 호출됨.

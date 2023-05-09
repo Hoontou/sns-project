@@ -3,8 +3,8 @@ import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../common/Navbar/Navbar';
 
-import Postlist from '../../common/Postlist';
 import Userinfo from '../../common/Userinfo/Userinfo';
+import Postlist from '../../common/Post/Postlist';
 
 const MyFeed = () => {
   const navigate = useNavigate();

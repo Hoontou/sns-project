@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import Slider from '../Slider';
-import { MetadataDto } from '../Postlist';
+
 import PostHeader from './PostHeader';
 import { requestUrl } from '../../../common/etc';
+import { MetadataDto } from './Postlist';
 
 const Post = (props: { metadata: MetadataDto; userId: string }) => {
   const [images, setImages] = useState<string[]>([]);

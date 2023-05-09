@@ -27,6 +27,7 @@ export class UserHandler {
       );
       return;
     }
+    //유저 프사 수정요청
     if (msg.properties.type === 'uploadUserImg') {
       this.userinfoTable.setImg(data as { userId: string; img: string });
     }

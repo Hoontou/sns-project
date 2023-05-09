@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
-import Userlist from './Userlist';
-import { MetadataDto } from '../Postlist';
+
+import Userlist from '../Userlist';
+import { MetadataDto } from './Postlist';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
 const PostHeader = (props: { metadata: MetadataDto; userId: string }) => {

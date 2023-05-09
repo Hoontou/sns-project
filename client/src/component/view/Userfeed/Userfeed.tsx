@@ -1,10 +1,9 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import Postlist from '../../common/Postlist';
-
 import { useState, useEffect } from 'react';
 import { authHoc } from '../../../common/auth.hoc';
 import Navbar from '../../common/Navbar/Navbar';
 import Userinfo from '../../common/Userinfo/Userinfo';
+import Postlist from '../../common/Post/Postlist';
 
 const UserFeed = () => {
   const navigate = useNavigate();
