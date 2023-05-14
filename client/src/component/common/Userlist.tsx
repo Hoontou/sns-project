@@ -29,6 +29,7 @@ const Userlist = (props: {
     { username: string; img: string; userId: string }[]
   >([]);
   const [title, setTitle] = useState<string>('');
+  const [spin, setSpin] = useState<boolean>(true);
 
   const onClick = (userId: string) => {
     navigate(`/userfeed/${userId}`);
@@ -53,6 +54,7 @@ const Userlist = (props: {
           userList: { userId: string; img: string; username: string }[];
         } = res.data;
         setList(data.userList);
+        setSpin(false);
       });
   }, [props.targetId, props.type]);
   return (
@@ -63,31 +65,37 @@ const Userlist = (props: {
       fullWidth={true}
       maxWidth={'xs'}
     >
-      <DialogTitle style={{ marginRight: '1rem', marginLeft: '1rem' }}>
-        {title}
-      </DialogTitle>
-      <List sx={{ pt: 0 }} style={{ maxHeight: '50vh' }}>
-        {list.map((item, index) => (
-          <ListItem
-            key={index}
-            onClick={() => {
-              onClick(item.userId);
-            }}
-          >
-            <ListItemAvatar>
-              <Avatar
-                sx={{ width: 50, height: 50 }}
-                style={{ marginLeft: '0.7rem' }}
-                alt={String(index)}
-                src={item.img === '' ? sample : `${requestUrl}/${item.img}`}
-              ></Avatar>
-            </ListItemAvatar>
-            <div style={{ marginLeft: '1rem', fontSize: '1.4rem' }}>
-              {item.username}
-            </div>
-          </ListItem>
-        ))}
-      </List>
+      {spin === true ? (
+        'waiting...'
+      ) : (
+        <>
+          <DialogTitle style={{ marginRight: '1rem', marginLeft: '1rem' }}>
+            {title}
+          </DialogTitle>
+          <List sx={{ pt: 0 }} style={{ maxHeight: '50vh' }}>
+            {list.map((item, index) => (
+              <ListItem
+                key={index}
+                onClick={() => {
+                  onClick(item.userId);
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    sx={{ width: 50, height: 50 }}
+                    style={{ marginLeft: '0.7rem' }}
+                    alt={String(index)}
+                    src={item.img === '' ? sample : `${requestUrl}/${item.img}`}
+                  ></Avatar>
+                </ListItemAvatar>
+                <div style={{ marginLeft: '1rem', fontSize: '1.4rem' }}>
+                  {item.username}
+                </div>
+              </ListItem>
+            ))}
+          </List>
+        </>
+      )}
     </Dialog>
   );
 };

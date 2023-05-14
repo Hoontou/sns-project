@@ -84,7 +84,6 @@ export class PostTable {
 
   async getPost(postId: string): Promise<PostContent> {
     const post = await this.db.findOneBy({ id: postId });
-    console.log(postId);
     if (post === null) {
       throw new Error('err when getPostnums, postnums === null');
     }

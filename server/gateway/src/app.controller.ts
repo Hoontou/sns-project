@@ -23,16 +23,17 @@ export class AppController {
     return this.appService.userInfo(body);
   }
 
-  @Post('/postheader')
+  @Post('/postfooter')
   /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 댓글수 리턴해야함. */
-  async postHeader(
+  async postFooter(
     @Body() body: { userId: string; postId: string; targetId: string },
   ): Promise<
     PostContent & {
       liked: boolean;
       username: string;
+      img: string;
     }
   > {
-    return this.appService.postHeader(body);
+    return this.appService.postFooter(body);
   }
 }

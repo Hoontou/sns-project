@@ -6,6 +6,7 @@ import {
   PrimaryColumn,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
 } from 'typeorm';
 import { User } from 'src/user/entity/user.entity';
 import { Comment } from './comment.entity';
@@ -15,8 +16,8 @@ export class Post extends BaseEntity {
   @PrimaryColumn()
   id: string; //post objectId를 내가 넣어줘야함. 자동생성 아님.
 
-  // @Column()
-  // title: string;
+  @Column()
+  title: string;
 
   @Column({ default: 0 })
   likes: number;
@@ -24,8 +25,8 @@ export class Post extends BaseEntity {
   @Column({ default: 0 })
   commentcount: number;
 
-  // @CreateDateColumn()
-  // createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   //@JoinColumn()

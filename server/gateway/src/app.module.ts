@@ -10,6 +10,9 @@ import { AuthMiddleware } from './module/auth/auth.middleware';
 import { UserModule } from './module/user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MetadataController } from './module/metadata/metadata.controller';
+import { FflController } from './module/ffl/ffl.controller';
+import { UserController } from './module/user/user.controller';
 
 @Module({
   imports: [
@@ -31,6 +34,12 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude('auth/(.*)')
-      .forRoutes(PostController);
+      .forRoutes(
+        PostController,
+        AppController,
+        MetadataController,
+        FflController,
+        UserController,
+      );
   }
 }

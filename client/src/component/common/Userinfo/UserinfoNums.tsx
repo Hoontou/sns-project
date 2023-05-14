@@ -10,6 +10,25 @@ const UserinfoNums = (props: {
 }) => {
   const [type, setType] = useState<'follower' | 'following' | ''>('');
   const [openUserList, setOpenUserList] = useState<boolean>(false);
+
+  const onClickFollower = () => {
+    if (props.follower === 0) {
+      return;
+    }
+    setType('follower');
+    setOpenUserList(!openUserList);
+    return;
+  };
+
+  const onClickFollowing = () => {
+    if (props.following === 0) {
+      return;
+    }
+    setType('following');
+    setOpenUserList(!openUserList);
+    return;
+  };
+
   return (
     <>
       <Grid item xs={2.6} className='row align-items-center text-center'>
@@ -19,23 +38,13 @@ const UserinfoNums = (props: {
         </span>
       </Grid>
       <Grid item xs={2.6} className='row align-items-center text-center'>
-        <span
-          onClick={() => {
-            setType('follower');
-            setOpenUserList(!openUserList);
-          }}
-        >
+        <span onClick={onClickFollower}>
           <div>{props.follower}</div>
           <div>팔로워</div>
         </span>
       </Grid>
       <Grid item xs={2.6} className='row align-items-center text-center'>
-        <span
-          onClick={() => {
-            setType('following');
-            setOpenUserList(!openUserList);
-          }}
-        >
+        <span onClick={onClickFollowing}>
           <div>{props.following}</div>
           <div>팔로잉</div>
         </span>

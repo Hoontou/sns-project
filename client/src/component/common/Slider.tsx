@@ -20,7 +20,7 @@ const Slider = (props: { images: string[] }) => {
           <img
             style={{
               width: '100%',
-              maxWidth: '900px',
+              maxWidth: '700px',
               aspectRatio: '3 / 4.5',
               objectFit: 'cover',
             }}

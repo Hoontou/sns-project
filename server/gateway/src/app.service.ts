@@ -45,7 +45,7 @@ export class AppService {
   }
 
   /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 댓글수 리턴해야함. */
-  async postHeader(body: {
+  async postFooter(body: {
     userId: string;
     postId: string;
     targetId: string;
@@ -63,7 +63,7 @@ export class AppService {
       { likesCount, commentCount, title, createdAt, id },
       { username, img },
     ] = await Promise.all([
-      this.checkLiked(body),
+      this.checkLiked({ userId: body.userId, postId: body.postId }),
       this.getPost(body.postId),
       this.getUsernameWithImg(body.targetId),
     ]);
@@ -80,10 +80,10 @@ export class AppService {
     //post 가서 postId로 count들 가져오기
   }
 
+  //ffl가서 좋아요 눌렀는지 체크
   async checkLiked(body: {
     userId: string;
     postId: string;
-    targetId: string;
   }): Promise<{ liked: boolean }> {
     return this.fflService.checkLiked(body);
   }
