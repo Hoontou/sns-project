@@ -9,7 +9,7 @@ export class PostDto {
   title: string;
 
   @IsNotEmpty()
-  userId: string | number; //작성자 id
+  userId: string; //작성자 id
 }
 
 export class CommentDto {
@@ -17,7 +17,7 @@ export class CommentDto {
   comment: string;
 
   @IsNotEmpty()
-  userId: string | number; //작성자
+  userId: string; //작성자
 
   @IsNotEmpty()
   postId: string; //부모 post id (objectid)

@@ -75,8 +75,33 @@ export interface FflGrpcService {
     id: string;
     type: 'like' | 'follower' | 'following';
   }): Observable<{ userIds: string[] }>;
+  getCommentLiked({
+    commentIdList,
+    userId,
+  }: {
+    commentIdList: number[];
+    userId: string;
+  }): Observable<{ commentLikedList: boolean[] }>;
 }
 
 export interface PostGrpcService {
   getPost({ postId }: { postId: string }): Observable<PostContent>;
+  getCommentList({
+    postId,
+    page,
+  }: {
+    postId: string;
+    page: number;
+  }): Observable<{
+    comments: {
+      commentId: number;
+      comment: string;
+      createdAt: string;
+      userId: number | string;
+      likesCount: number;
+      cocommentCount: number;
+      username: string;
+      img: string;
+    }[];
+  }>;
 }

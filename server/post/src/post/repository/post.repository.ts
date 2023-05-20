@@ -95,6 +95,20 @@ export class PostTable {
       createdAt: post.createdAt,
     };
   }
+
+  /** */
+  async getCommentList(postId: string) {
+    console.log(
+      await this.db.findOne({
+        where: { id: postId },
+        relations: ['comments', 'comments.user'],
+      }),
+    );
+    return this.db.findOne({
+      where: { id: postId },
+      relations: ['comments', 'comments.user'],
+    });
+  }
 }
 
 //이미 있는 row에서 userUuid만 바꿔서 리퀘스트 날리면 useruuid가 업데이트된다.

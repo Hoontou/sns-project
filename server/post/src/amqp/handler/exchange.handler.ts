@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { AmqpMessage, UploadMessage } from 'sns-interfaces';
 import { PostService } from 'src/post/post.service';
+import { CommentTable } from 'src/post/repository/comment.repository';
 import { PostTable } from 'src/post/repository/post.repository';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class ExchangeHandler {
   constructor(
     @Inject(forwardRef(() => PostService)) private postService: PostService,
     private postTable: PostTable,
+    private commentTable: CommentTable,
   ) {}
 
   consumeMessage(msg: AmqpMessage) {
@@ -47,6 +49,14 @@ export class ExchangeHandler {
     }
     if (msg.fields.routingKey === 'removeLike') {
       this.postTable.removeLike(data as { postId: string });
+      return;
+    }
+    if (msg.fields.routingKey === 'addCommentLike') {
+      this.commentTable.addLike(data as { commentId: number });
+      return;
+    }
+    if (msg.fields.routingKey === 'removeCommentLike') {
+      this.commentTable.removeLike(data as { commentId: number });
       return;
     }
   }

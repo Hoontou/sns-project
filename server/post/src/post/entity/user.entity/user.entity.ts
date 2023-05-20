@@ -5,10 +5,12 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { Post } from '../post.entity';
 import { Cocomment } from '../cocomment.entity';
 import { Comment } from '../comment.entity';
+import { Userinfo } from './userinfo.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -35,4 +37,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Cocomment, (cocomment) => cocomment.user)
   cocomments: Cocomment[]; //유저는 대댓 여러개 쓸 수 있음.
+
+  @OneToOne(() => Userinfo)
+  userinfo: Userinfo;
 }

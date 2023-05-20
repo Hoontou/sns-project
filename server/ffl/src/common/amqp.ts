@@ -55,6 +55,8 @@ class RabbitMQ {
     //MSA 구독 파트
     await this.channel.bindQueue(anonQue, 'gateway', 'addLike');
     await this.channel.bindQueue(anonQue, 'gateway', 'removeLike');
+    await this.channel.bindQueue(anonQue, 'gateway', 'addCommentLike');
+    await this.channel.bindQueue(anonQue, 'gateway', 'removeCommentLike');
 
     //구독한 큐에서 오는 메세지 컨슘 등록 파트
     await this.channel.consume(

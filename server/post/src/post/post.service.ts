@@ -6,6 +6,7 @@ import { CommentDto, PostDto, CocommentDto } from './dto/post.dto';
 import { UploadMessage } from 'sns-interfaces';
 
 import { AmqpService } from 'src/amqp/amqp.service';
+import { crypter } from 'src/common/crypter';
 
 @Injectable()
 export class PostService {
@@ -32,11 +33,11 @@ export class PostService {
     return { success: true };
   }
 
-  async commenting(commentDto: CommentDto): Promise<{ success: boolean }> {
+  async addComment(commentDto: CommentDto): Promise<{ success: boolean }> {
     //코멘트 테이블에 코멘트 삽입, 포스트테이블에서 포스트 찾아서 코멘트 카운트 올리기
-    await this.commentTable.addComment(commentDto);
+    this.commentTable.addComment(commentDto);
     //코멘트 카운터 증가.
-    await this.postTable.addComment(commentDto.postId);
+    this.postTable.addComment(commentDto.postId);
 
     return { success: true };
   }
@@ -68,5 +69,23 @@ export class PostService {
     //   },
     // };
     // rabbitMQ.sendMsg('alert', delAlertForm);
+  }
+
+  async getCommentList(data: { postId: string; page: number }) {
+    const comments: {
+      commentId: number;
+      comment: string;
+      createdAt: string;
+      userId: number | string;
+      likesCount: number;
+      cocommentCount: number;
+      username: string;
+      img: string;
+    }[] = await this.commentTable.getCommentList(data.postId, data.page);
+    //userId 암호화
+    for (const i of comments) {
+      i.userId = crypter.encrypt(i.userId);
+    }
+    return { comments };
   }
 }

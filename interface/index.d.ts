@@ -104,9 +104,30 @@ export interface AmqpMessage {
 }
 
 export interface UploadMessage {
-  userId: string | number;
+  userId: string;
   postId: string;
   alertId: string;
   files: string[];
   title: string;
+}
+
+export interface GetCommentListReq {
+  id: number;
+  comment: string;
+  likeCount: number;
+  cocommentCount: number;
+  createdAt: string;
+}
+
+export interface CommentItemContent {
+  page: number;
+  liked: boolean;
+  commentId: number;
+  comment: string;
+  createdAt: string;
+  userId: string | number;
+  likesCount: number;
+  cocommentCount: number;
+  username: string;
+  img: string;
 }

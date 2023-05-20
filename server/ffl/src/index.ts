@@ -8,6 +8,7 @@ import { ProtoGrpcType } from './proto/ffl';
 import { FflServiceHandlers } from './proto/ffl/FflService';
 import { followRepository } from './database/follow.repo';
 import { likeRopository } from './database/like.repo';
+import { commentLikeRopository } from './database/comment.like.repo';
 
 const PORT = 80;
 const packageDef = protoLoader.loadSync(join(__dirname, './proto/ffl.proto'), {
@@ -80,6 +81,24 @@ const getServer = () => {
           crypter.decrypt(req.request.id),
           req.request.type as 'follower' | 'following',
         ),
+      });
+      return;
+    },
+    GetCommentLiked: async (req, res) => {
+      const likedList = await commentLikeRopository.db
+        .find({
+          commentId: { $in: req.request.commentIdList },
+          userId: `${crypter.decrypt(req.request.userId)}`,
+        })
+        .exec();
+      const commentLikedList = Array(req.request.commentIdList.length).fill(
+        false,
+      );
+      for (const i of likedList) {
+        commentLikedList[req.request.commentIdList.indexOf(i.commentId)] = true;
+      }
+      res(null, {
+        commentLikedList,
       });
       return;
     },

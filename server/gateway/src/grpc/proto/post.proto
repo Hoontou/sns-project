@@ -4,6 +4,7 @@ package post;
 
 service PostService {
   rpc GetPost(GetPostReq) returns (GetPostRes) {};
+  rpc GetCommentList(GetCommentListReq) returns (GetCommentListRes);
 }
 
 message GetPostReq {
@@ -15,4 +16,24 @@ message GetPostRes {
   string title = 3;
   string createdAt = 4;
   string id = 5;
+}
+
+message Comment {
+  int32 commentId = 1;
+  string comment = 2;
+  string createdAt = 3;
+  string userId = 4;
+  int32 likesCount = 5;
+  int32 cocommentCount = 6;
+  string username = 7;
+  string img = 8;
+}
+
+message GetCommentListReq {
+  string postId = 1;
+  int32 page = 2;
+}
+
+message GetCommentListRes {
+  repeated Comment comments = 1;
 }

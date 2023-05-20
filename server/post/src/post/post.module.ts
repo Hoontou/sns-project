@@ -8,18 +8,11 @@ import { Comment } from './entity/comment.entity';
 import { PostController } from './post.controller';
 import { PostService } from './post.service';
 import { Cocomment } from './entity/cocomment.entity';
-import { Commentnums, Cocommentnums } from './entity/count.entity';
 import { AmqpModule } from 'src/amqp/amqp.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Post,
-      Comment,
-      Cocomment,
-      Commentnums,
-      Cocommentnums,
-    ]),
+    TypeOrmModule.forFeature([Post, Comment, Cocomment]),
     forwardRef(() => AmqpModule),
   ],
   providers: [PostTable, CommentTable, CoCommentTable, PostService],

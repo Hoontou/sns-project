@@ -78,4 +78,28 @@ export class FflService {
       }),
     };
   }
+
+  async addCommentLike(body: { userId: string; commentId: number }) {
+    //ffl msa에서 commentId, userId를 commentLikeSchema에 삽입
+    //post msa에서 comment의 likescount 증가
+    this.amqpService.publishMsg('addCommentLike', body);
+  }
+
+  async removeCommentLike(body: { userId: string; commentId: number }) {
+    //ffl msa에서 commentId, userId를 commentLikeSchema에 삭제
+    //post msa에서 comment의 likescount 감소
+    this.amqpService.publishMsg('removeCommentLike', body);
+  }
+
+  async getCommentLiked({
+    commentIdList,
+    userId,
+  }: {
+    commentIdList: number[];
+    userId: string;
+  }) {
+    return lastValueFrom(
+      this.fflGrpcService.getCommentLiked({ commentIdList, userId }),
+    );
+  }
 }

@@ -92,9 +92,7 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
               sx={{
                 ...postStyle,
                 width: '90%',
-                height: 'auto',
                 maxWidth: '700px',
-                aspectRatio: '3/4.5',
               }}
             >
               <Post userId={props.userId} metadata={selectedItem} />

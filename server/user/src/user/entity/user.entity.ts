@@ -38,4 +38,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Cocomment, (cocomment) => cocomment.user)
   cocomments: Cocomment[]; //유저는 대댓 여러개 쓸 수 있음.
+
+  @OneToOne(() => Userinfo)
+  userinfo: Userinfo;
 }

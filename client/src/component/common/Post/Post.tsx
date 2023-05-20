@@ -12,7 +12,7 @@ import { PostFooterContent } from './post.interfaces';
 const Post = (props: { metadata: MetadataDto; userId: string }) => {
   const [spin, setSpin] = useState<boolean>(true);
   const [images, setImages] = useState<string[]>([]);
-  const [openComment, setOpenComment] = useState<boolean>(true);
+  const [openComment, setOpenComment] = useState<boolean>(false);
   const [postFooterContent, setPostFooterContent] = useState<PostFooterContent>(
     emptyPostFooterContent
   );
@@ -63,6 +63,7 @@ const Post = (props: { metadata: MetadataDto; userId: string }) => {
           metadata={props.metadata}
           postFooterContent={postFooterContent}
           userId={props.userId}
+          setOpenComment={setOpenComment}
         />
       )}
     </div>
