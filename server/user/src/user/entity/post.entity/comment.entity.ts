@@ -20,11 +20,11 @@ export class Comment extends BaseEntity {
   @Column()
   comment: string;
 
-  // @Column({ default: 0 })
-  // likes: number;
+  @Column({ default: 0 })
+  likes: number;
 
-  // @Column({ default: 0 })
-  // cocommentcount: number;
+  @Column({ default: 0 })
+  cocommentcount: number;
 
   @CreateDateColumn()
   createdat: Date;

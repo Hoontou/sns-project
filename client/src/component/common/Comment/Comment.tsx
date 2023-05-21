@@ -11,7 +11,6 @@ import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft } from 'react-icons/vsc';
 
 const defaultCommentItemContent: CommentItemContent = {
-  page: 0,
   liked: false,
   commentId: 0,
   comment: '',
@@ -76,7 +75,7 @@ const Comment = (props: {
     getComments().then(() => {
       setSpin(false);
     });
-  }, []);
+  });
 
   const renderComment = commentItems?.map((content, index) => {
     return (

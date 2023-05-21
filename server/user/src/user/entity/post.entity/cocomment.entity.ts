@@ -18,8 +18,8 @@ export class Cocomment extends BaseEntity {
   @Column()
   cocomment: string;
 
-  // @Column({ default: 0 })
-  // likes: number;
+  @Column({ default: 0 })
+  likes: number;
 
   @CreateDateColumn()
   createdat: Date;
