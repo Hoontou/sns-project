@@ -32,6 +32,8 @@ const CommentInput = (props: {
           value={inputValue}
         />
         <Divider sx={{ height: 10, m: 0.5 }} orientation='vertical' />
+        <span style={{ color: 'RoyalBlue' }}>@{`hoontou2`}</span>
+        <Divider sx={{ height: 10, m: 0.5 }} orientation='vertical' />
         <IconButton
           color='primary'
           aria-label='directions'

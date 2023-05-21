@@ -21,6 +21,9 @@ export class Cocomment extends BaseEntity {
   @Column({ default: 0 })
   likes: number;
 
+  @Column({ default: 0 })
+  taggedid: number;
+
   @CreateDateColumn()
   createdat: Date;
 
