@@ -21,7 +21,7 @@ const Slider = (props: { images: string[] }) => {
             style={{
               width: '100%',
               maxWidth: '700px',
-              aspectRatio: '3 / 4',
+              aspectRatio: '3 / 4.5',
               objectFit: 'cover',
             }}
             alt={`${idx}`}

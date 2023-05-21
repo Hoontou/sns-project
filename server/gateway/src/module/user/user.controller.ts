@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -12,10 +12,15 @@ export class UserController {
     return this.userService.changeUsername(body);
   }
 
-  @Post('changeintro')
+  @Post('/changeintro')
   async changeIntro(
     @Body() body: { userId: string; intro: string },
   ): Promise<{ success: boolean }> {
     return this.userService.changeIntro(body);
+  }
+
+  @Get('/getusernamewithimg')
+  async getUsernameWithImg(@Req() req) {
+    return this.userService.getUsernameWithImg(req.user.userId);
   }
 }

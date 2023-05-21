@@ -15,8 +15,8 @@ export class AuthService {
   }
 
   async auth(@Req() req, @Res() res): Promise<AuthResultRes> {
-    const accessToken: string = req.cookies['Authorization'] || 'foo';
-    if (accessToken === 'foo') {
+    const accessToken: string = req.cookies['Authorization'];
+    if (accessToken === undefined) {
       return { success: false };
     }
     const authInfo: AuthResultRes = await lastValueFrom(

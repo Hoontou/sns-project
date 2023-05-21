@@ -82,6 +82,10 @@ export interface FflGrpcService {
     commentIdList: number[];
     userId: string;
   }): Observable<{ commentLikedList: boolean[] }>;
+  getCocommentLiked(data: {
+    cocommentIdList: number[];
+    userId: string;
+  }): Observable<{ cocommentLikedList: boolean[] }>;
 }
 
 export interface PostGrpcService {
@@ -100,6 +104,17 @@ export interface PostGrpcService {
       userId: number | string;
       likesCount: number;
       cocommentCount: number;
+      username: string;
+      img: string;
+    }[];
+  }>;
+  getCocommentList(data: { commentId: number; page: number }): Observable<{
+    cocomments: {
+      cocommentId: number;
+      cocomment: string;
+      createdAt: string;
+      userId: string | number;
+      likesCount: number;
       username: string;
       img: string;
     }[];

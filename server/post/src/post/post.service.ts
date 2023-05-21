@@ -41,15 +41,12 @@ export class PostService {
 
     return { success: true };
   }
-  async cocommenting(
-    cocommentDto: CocommentDto,
-  ): Promise<{ success: boolean }> {
+  async addCocomment(cocommentDto: CocommentDto) {
     //대댓글 테이블에 내용삽입
-    await this.cocommentTable.addCocomment(cocommentDto);
+    this.cocommentTable.addCocomment(cocommentDto);
     //comment에다가 대댓글 카운터 증가.
-    await this.commentTable.addCocomment(cocommentDto.commentId);
-
-    return { success: true };
+    this.commentTable.addCocomment(cocommentDto.commentId);
+    return;
   }
 
   async delPost(@Req() req): Promise<void> {
@@ -87,5 +84,24 @@ export class PostService {
       i.userId = crypter.encrypt(i.userId);
     }
     return { comments };
+  }
+
+  async getCocommentList(data: { commentId: number; page: number }) {
+    const cocomments: {
+      cocommentId: number;
+      cocomment: string;
+      createdAt: string;
+      userId: number | string;
+      likesCount: number;
+      username: string;
+      img: string;
+    }[] = await this.cocommentTable.getCocommentList(data);
+
+    for (const i of cocomments) {
+      i.userId = crypter.encrypt(i.userId);
+    }
+    console.log(cocomments);
+
+    return { cocomments };
   }
 }

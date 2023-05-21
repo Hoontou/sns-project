@@ -4,6 +4,7 @@ import { GrpcMethod } from '@nestjs/microservices';
 import { PostTable } from './repository/post.repository';
 import { PostContent } from 'sns-interfaces';
 import { CommentTable } from './repository/comment.repository';
+import { CoCommentTable } from './repository/cocomment.repository';
 
 @Controller('post')
 export class PostController {
@@ -11,6 +12,7 @@ export class PostController {
     private postService: PostService,
     private postTable: PostTable,
     private commentTable: CommentTable,
+    private cocommentTable: CoCommentTable,
   ) {}
 
   @GrpcMethod('PostService', 'GetPost')
@@ -23,15 +25,8 @@ export class PostController {
     return this.postService.getCommentList(data);
   }
 
-  // @Post('/getcommentlist')
-  // getCommentList(@Body() body: { postId: string }) {
-  //   return this.postService.getCommentList(body.postId);
-  // }
-
-  @Post('/addcomment')
-  addComment(
-    @Body() body: { postId: string; userId: string; comment: string },
-  ) {
-    return this.commentTable.addComment(body);
+  @GrpcMethod('PostService', 'GetCocommentList')
+  getCocommentList(data: { commentId: number; page: number }) {
+    return this.postService.getCocommentList(data);
   }
 }

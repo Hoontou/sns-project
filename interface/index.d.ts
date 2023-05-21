@@ -9,7 +9,7 @@ export interface PostContent {
   title: string;
   likesCount: number;
   commentCount: number;
-  createdAt: Date;
+  createdAt: string;
 }
 
 //알람 DTO 정의
@@ -120,7 +120,6 @@ export interface GetCommentListReq {
 }
 
 export interface CommentItemContent {
-  page: number;
   liked: boolean;
   commentId: number;
   comment: string;

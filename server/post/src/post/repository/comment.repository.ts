@@ -24,12 +24,9 @@ export class CommentTable {
     await pgClient.query(query);
   }
 
-  async addCocomment(commentId: number | string) {
+  async addCocomment(commentId: number) {
     //commentnums에 카운트 업데이트
-    const queryText = `UPDATE public.commentnums
-    SET cocommentcount=cocommentcount+1
-    WHERE "commentId"=${commentId};`;
-    pgClient.query(queryText);
+    return this.db.increment({ id: commentId }, 'cocommentcount', 1);
   }
 
   async addLike(data: { commentId: number }) {
@@ -56,8 +53,8 @@ export class CommentTable {
     (SELECT Q.id AS id, Q.username AS username, W.img AS img FROM public.user AS Q JOIN public.userinfo AS W ON Q.id = W."userId"
     ) AS A
     ON C."userId" = A.id
-    ORDER BY createdAt DESC`;
-    // LIMIT 8 OFFSET ${page * 5};`;
+    ORDER BY createdAt DESC
+     LIMIT 10 OFFSET ${page * 10};`;
 
     return (await pgClient.query(query)).rows;
   }

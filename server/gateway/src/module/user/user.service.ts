@@ -43,12 +43,15 @@ export class UserService {
 
   async getUsernameWithImg(
     userId: string,
-  ): Promise<{ username: string; img: string }> {
-    return lastValueFrom(
-      this.userGrpcService.getUsernameWithImg({
-        userId: crypter.decrypt(userId),
-      }),
-    );
+  ): Promise<{ username: string; img: string; userId: string }> {
+    return {
+      ...(await lastValueFrom(
+        this.userGrpcService.getUsernameWithImg({
+          userId: crypter.decrypt(userId),
+        }),
+      )),
+      userId,
+    };
   }
 
   async getUsernameWithImgList(userIds: string[]): Promise<{

@@ -91,6 +91,18 @@ export class FflService {
     this.amqpService.publishMsg('removeCommentLike', body);
   }
 
+  async addCocommentLike(body: { userId: string; cocommentId: number }) {
+    //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삽입
+    //post msa에서 cocomment의 likescount 증가
+    this.amqpService.publishMsg('addCocommentLike', body);
+  }
+
+  async removeCocommentLike(body: { userId: string; cocommentId: number }) {
+    //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삭제
+    //post msa에서 cocomment의 likescount 감소
+    this.amqpService.publishMsg('removeCocommentLike', body);
+  }
+
   async getCommentLiked({
     commentIdList,
     userId,
@@ -101,5 +113,9 @@ export class FflService {
     return lastValueFrom(
       this.fflGrpcService.getCommentLiked({ commentIdList, userId }),
     );
+  }
+
+  async getCocommentLiked(data: { cocommentIdList: number[]; userId: string }) {
+    return lastValueFrom(this.fflGrpcService.getCocommentLiked(data));
   }
 }

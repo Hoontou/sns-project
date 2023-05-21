@@ -9,6 +9,7 @@ import { FflServiceHandlers } from './proto/ffl/FflService';
 import { followRepository } from './database/follow.repo';
 import { likeRopository } from './database/like.repo';
 import { commentLikeRopository } from './database/comment.like.repo';
+import { cocommentLikeRopository } from './database/cocomment.like.repo';
 
 const PORT = 80;
 const packageDef = protoLoader.loadSync(join(__dirname, './proto/ffl.proto'), {
@@ -100,6 +101,25 @@ const getServer = () => {
       res(null, {
         commentLikedList,
       });
+      return;
+    },
+    GetCocommentLiked: async (req, res) => {
+      const likedList = await cocommentLikeRopository.db
+        .find({
+          cocommentId: { $in: req.request.cocommentIdList },
+          userId: `${crypter.decrypt(req.request.userId)}`,
+        })
+        .exec();
+
+      const cocommentLikedList = Array(req.request.cocommentIdList.length).fill(
+        false,
+      );
+      for (const i of likedList) {
+        cocommentLikedList[req.request.cocommentIdList.indexOf(i.cocommentId)] =
+          true;
+      }
+
+      res(null, { cocommentLikedList });
       return;
     },
   } as FflServiceHandlers);

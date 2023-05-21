@@ -1,6 +1,7 @@
 import { AmqpMessage } from 'sns-interfaces';
 import { likeRopository } from '../../database/like.repo';
 import { commentLikeRopository } from '../../database/comment.like.repo';
+import { cocommentLikeRopository } from '../../database/cocomment.like.repo';
 
 export const exchangeHandler = (msg: AmqpMessage) => {
   const data: unknown = JSON.parse(msg.content.toString());
@@ -24,6 +25,18 @@ export const exchangeHandler = (msg: AmqpMessage) => {
     if (msg.fields.routingKey === 'removeCommentLike') {
       commentLikeRopository.removeCommentLike(
         data as { commentId: number; userId: string },
+      );
+      return;
+    }
+    if (msg.fields.routingKey === 'addCocommentLike') {
+      cocommentLikeRopository.addCocommentLike(
+        data as { cocommentId: number; userId: string },
+      );
+      return;
+    }
+    if (msg.fields.routingKey === 'removeCocommentLike') {
+      cocommentLikeRopository.removeCocommentLike(
+        data as { cocommentId: number; userId: string },
       );
       return;
     }

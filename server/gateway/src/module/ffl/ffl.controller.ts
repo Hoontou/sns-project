@@ -35,6 +35,20 @@ export class FflController {
     return this.fflService.removeCommentLike(body);
   }
 
+  @Post('/addcocommentlike')
+  async addCocommentLike(
+    @Body() body: { cocommentId: number; userId: string },
+  ) {
+    return this.fflService.addCocommentLike(body);
+  }
+
+  @Post('/removecocommentlike')
+  async removeCocommentLike(
+    @Body() body: { cocommentId: number; userId: string },
+  ) {
+    return this.fflService.removeCocommentLike(body);
+  }
+
   @Post('/getuserlist')
   async getUserList(
     @Body() body: { id: string; type: 'like' | 'follower' | 'following' },

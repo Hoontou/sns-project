@@ -10,10 +10,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sample from '../../asset/sample1.jpg';
-
-const requestUrl =
-  process.env.NODE_ENV === 'development' ? '/upload/files' : '';
-//추후 azure url 추가해야함.
+import { requestUrl } from '../../common/etc';
 
 type ListType = 'like' | 'follower' | 'following';
 
@@ -69,7 +66,12 @@ const Userlist = (props: {
         'waiting...'
       ) : (
         <>
-          <DialogTitle style={{ marginRight: '1rem', marginLeft: '1rem' }}>
+          <DialogTitle
+            style={{
+              marginRight: '1rem',
+              marginLeft: '1rem',
+            }}
+          >
             {title}
           </DialogTitle>
           <List sx={{ pt: 0 }} style={{ maxHeight: '50vh' }}>

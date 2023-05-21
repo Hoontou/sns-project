@@ -14,5 +14,5 @@ export const emptyPostFooterContent: PostFooterContent = {
   title: '',
   likesCount: 0,
   commentCount: 0,
-  createdAt: new Date(),
+  createdAt: String(new Date()),
 };

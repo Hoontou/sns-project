@@ -23,6 +23,7 @@ export class AuthService {
       const authInfo: { email: string; iat: string; exp: string } =
         await this.jwtService.verify(authDto.accessToken);
       //가져온 이메일로 유저정보 요청
+
       const user: AuthSuccess = await this.jwtStrategy.validate(authInfo.email);
 
       //refresh필요하다면? 토큰재발급해서 담아준다.

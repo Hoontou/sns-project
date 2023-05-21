@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Cocomment } from '../entity/cocomment.entity';
 import { CocommentDto } from '../dto/post.dto';
 import { pgClient } from 'src/configs/pg';
+import { crypter } from 'src/common/crypter';
 
 @Injectable()
 export class CoCommentTable {
@@ -13,21 +14,41 @@ export class CoCommentTable {
   ) {}
   async addCocomment(cocommentDto: CocommentDto) {
     const { commentId, userId, cocomment } = cocommentDto;
-    //먼저 코멘트 테이블에 튜플 insert
-    const result = await this.db
-      .createQueryBuilder()
-      .insert()
-      .into(Cocomment)
-      .values({
-        cocomment: () => `'${cocomment}'`,
-        comment: () => `'${commentId}'`,
-        user: () => `${userId}`,
-      })
-      .execute();
+    const query = `INSERT INTO public.cocomment(
+        cocomment, "userId", "commentId")
+        VALUES ('${cocomment}', '${crypter.decrypt(userId)}', ${commentId});`;
 
-    //코멘트의 자식인 코멘트nums insert
-    //result.identifiers[0].id = insert된 튜플의 id임.
-    const queryText = `INSERT INTO public.cocommentnums("cocommentId") VALUES (${result.identifiers[0].id});`;
-    pgClient.query(queryText);
+    await pgClient.query(query);
+  }
+
+  async getCocommentList(data: { commentId: number; page: number }) {
+    const query = `SELECT
+    C.id AS "cocommentId",
+    C.cocomment,
+    C.createdat AS "createdAt",
+    C."userId",
+    C.likes AS "likesCount",
+    A.username,
+    A.img
+    FROM
+    (SELECT * FROM public.cocomment WHERE cocomment."commentId" = ${
+      data.commentId
+    }) AS C
+    JOIN
+    (SELECT Q.id AS id, Q.username AS username, W.img AS img FROM public.user AS Q JOIN public.userinfo AS W ON Q.id = W."userId"
+    ) AS A
+    ON C."userId" = A.id
+    ORDER BY createdAt DESC
+    LIMIT 4 OFFSET ${data.page * 4};`;
+
+    return (await pgClient.query(query)).rows;
+  }
+
+  async addLike(data: { cocommentId: number }) {
+    return this.db.increment({ id: data.cocommentId }, 'likes', 1);
+  }
+
+  async removeLike(data: { cocommentId: number }) {
+    return this.db.decrement({ id: data.cocommentId }, 'likes', 1);
   }
 }

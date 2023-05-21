@@ -48,9 +48,11 @@ const getServer = () => {
   const server = new grpc.Server();
   server.addService(metadataPackage.MetadataService.service, {
     GetMetadatas: async (req, res) => {
-      const metadatas: MetadataDto[] = await metaRepository.db.find({
-        userId: req.request.userId ? crypter.decrypt(req.request.userId) : '',
-      });
+      const metadatas: MetadataDto[] = await metaRepository.db
+        .find({
+          userId: req.request.userId ? crypter.decrypt(req.request.userId) : '',
+        })
+        .sort({ _id: -1 });
 
       res(null, {
         metadatas: metadatas.map((item) => {

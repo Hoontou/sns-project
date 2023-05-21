@@ -6,73 +6,28 @@ import { CommentItemContent } from 'sns-interfaces';
 import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
 import { useState } from 'react';
-import axios from 'axios';
-import Cocomment from './Cocomment';
 
 //유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
 
-const CommentItem = (props: {
-  content: CommentItemContent;
+const Cocomment = (props: {
+  content: {
+    img: string;
+    userId: string;
+    username: string;
+    createdAt: string;
+    cocomment: string;
+    liked: boolean;
+    likesCount: number;
+  };
   key: number;
-  // setCommentItems: Dispatch<SetStateAction<CommentItemContent[]>>;
 }) => {
   const navigate = useNavigate();
-  // const [content, setContent] = useState<CommentItemContent>({
-  //   ...props.content,
-  // });
-
-  const [pending, setPending] = useState<boolean>(false);
-  const [openCocomment, setOpen] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [cocomments, setCocomments] = useState<
-    {
-      img: string;
-      userId: string;
-      username: string;
-      createdAt: string;
-      cocomment: string;
-      liked: boolean;
-      likesCount: number;
-    }[]
-  >([]);
-
-  const getCocomments = async () => {
-    setPending(true);
-    axios
-      .post('/gateway/post/getcocommentlist', {
-        commentId: props.content.commentId,
-        page,
-      })
-      .then((res) => {
-        const {
-          cocommentItem: items,
-        }: {
-          cocommentItem: {
-            cocomment: string;
-            cocommentId: number;
-            createdAt: string;
-            img: string;
-            liked: boolean;
-            likesCount: number;
-            userId: string;
-            username: string;
-          }[];
-        } = res.data;
-
-        setCocomments([...cocomments, ...items]);
-        setPage(page + 1);
-        setPending(false);
-        setOpen(true);
-      });
-  };
-
-  const renderCocomment = cocomments?.map((content, index) => {
-    return <Cocomment content={content} key={index} />;
-  });
-
   return (
     <>
       <Grid container spacing={1} style={{ marginBottom: '1rem' }}>
+        <Grid item xs={1}>
+          {/* 간격조정을 위한 빈칸 */}
+        </Grid>
         <Grid item xs={2.5}>
           <Avatar
             sx={{ width: 45, height: 45 }}
@@ -85,7 +40,7 @@ const CommentItem = (props: {
             }
           ></Avatar>
         </Grid>
-        <Grid item xs={8} style={{ overflowWrap: 'break-word' }}>
+        <Grid item xs={7} style={{ overflowWrap: 'break-word' }}>
           <span
             style={{
               marginRight: '0.5rem',
@@ -109,17 +64,7 @@ const CommentItem = (props: {
             {/* {props.content.createdAt} */}
             {getElapsedTimeString(props.content.createdAt)}
           </span>
-          <div>{props.content.comment}</div>
-
-          {props.content.cocommentCount > 0 && !openCocomment && (
-            <span
-              style={{ color: 'gray', fontSize: '0.8rem' }}
-              onClick={getCocomments}
-            >
-              ---답글 {props.content.cocommentCount}개 보기
-            </span>
-          )}
-
+          <div>{props.content.cocomment}</div>
           <div style={{ color: 'gray', fontSize: '0.8rem' }}>답글 달기</div>
         </Grid>
         <Grid item xs={1.5} className='text-center'>
@@ -137,19 +82,8 @@ const CommentItem = (props: {
           </span>
         </Grid>
       </Grid>
-
-      {openCocomment && renderCocomment}
-      {openCocomment && props.content.cocommentCount > cocomments?.length && (
-        <div
-          className='text-center'
-          style={{ color: 'gray', fontSize: '0.8rem' }}
-          onClick={getCocomments}
-        >
-          {pending ? '가져오는 중...' : '더 불러오기'}
-        </div>
-      )}
     </>
   );
 };
 
-export default CommentItem;
+export default Cocomment;

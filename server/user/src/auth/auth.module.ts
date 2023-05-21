@@ -12,7 +12,7 @@ import { AuthController } from './auth.controller';
     JwtModule.register({
       secret: JwtSecret,
       signOptions: {
-        expiresIn: 3600 * 24 * 30, //30일
+        expiresIn: '30d',
       },
     }),
     PassportModule.register({

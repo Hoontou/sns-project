@@ -6,6 +6,7 @@ service FflService {
   rpc CheckLiked(CheckLikedReq) returns (CheckLikedRes);
   rpc GetUserIds(GetUserIdsReq) returns (GetUserIdsRes);
   rpc GetCommentLiked(GetCommentLikedReq) returns(GetCommentLikedRes);
+  rpc GetCocommentLiked(GetCocommentLikedReq) returns (GetCocommentLikedRes);
 }
 
 message CheckFollowedReq {
@@ -38,4 +39,13 @@ message GetCommentLikedReq {
 }
 message GetCommentLikedRes {
   repeated bool commentLikedList = 1;
+}
+
+message GetCocommentLikedReq {
+  repeated int32 cocommentIdList = 1;
+  string userId = 2;
+}
+
+message GetCocommentLikedRes {
+  repeated bool cocommentLikedList = 1;
 }

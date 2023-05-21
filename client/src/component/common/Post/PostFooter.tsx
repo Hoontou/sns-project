@@ -5,6 +5,7 @@ import Userlist from '../Userlist';
 import { MetadataDto } from './Postlist';
 import { PostFooterContent } from './post.interfaces';
 import { useNavigate } from 'react-router-dom';
+import { getElapsedTimeString } from '../../../common/date.parser';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
 const PostFooter = (props: {
@@ -108,7 +109,11 @@ const PostFooter = (props: {
         </div>
         {props.postFooterContent.commentCount > 0 && (
           <span
-            style={{ color: 'gray', fontSize: '0.8rem' }}
+            style={{
+              color: 'gray',
+              fontSize: '0.8rem',
+              display: 'block',
+            }}
             onClick={() => {
               props.setOpenComment(true);
             }}
@@ -116,7 +121,10 @@ const PostFooter = (props: {
             댓글 {props.postFooterContent.commentCount}개 보기
           </span>
         )}
-        <div></div>
+
+        <span style={{ display: 'block', color: 'gray', fontSize: '0.8rem' }}>
+          {getElapsedTimeString(props.postFooterContent.createdAt)}
+        </span>
       </div>
       {openUserList && (
         <Userlist

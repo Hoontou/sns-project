@@ -22,5 +22,11 @@ export class PostHandler {
       );
       return;
     }
+    if (msg.properties.type === 'addCocomment') {
+      this.postService.addCocomment(
+        data as { userId: string; commentId: number; cocomment: string },
+      );
+      return;
+    }
   }
 }

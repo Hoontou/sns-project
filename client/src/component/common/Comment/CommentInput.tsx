@@ -1,7 +1,11 @@
 import { Paper, InputBase, IconButton, Divider } from '@mui/material';
-import { ChangeEvent, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { CommentItemContent } from 'sns-interfaces';
 
-const CommentInput = (props: { submitNewComment(value: string): void }) => {
+const CommentInput = (props: {
+  submitNewComment(value: string): void;
+  setCommentItems: Dispatch<SetStateAction<CommentItemContent[]>>;
+}) => {
   const [inputValue, setInputValue] = useState<string>('');
 
   return (

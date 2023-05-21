@@ -31,5 +31,5 @@ export class CocommentDto {
   userId: string;
 
   @IsNotEmpty()
-  commentId: number | string; //부모 comment id (int)
+  commentId: number; //부모 comment id (int)
 }

@@ -6,11 +6,32 @@ import { CommentItemContent } from 'sns-interfaces';
 export class PostController {
   constructor(private postService: PostService) {}
 
-  @Post('/getcommentitem')
-  getCommentItem(
+  @Post('/addcomment')
+  addComment(@Body() body: { postId: string; comment: string }, @Req() req) {
+    return this.postService.addComment({ ...body, userId: req.user.userId });
+  }
+
+  @Post('/addcocomment')
+  addCocomment(
+    @Body() body: { commentId: number; cocomment: string },
+    @Req() req,
+  ) {
+    return this.postService.addCocomment({ ...body, userId: req.user.userId });
+  }
+
+  @Post('/getcommentlist')
+  getCommentList(
     @Body() body: { postId: string; page: number },
     @Req() req,
   ): Promise<{ commentItem: CommentItemContent[] }> {
-    return this.postService.getCommentItem(body, req.user.userId);
+    return this.postService.getCommentList(body, req.user.userId);
+  }
+
+  @Post('/getcocommentlist')
+  getCocommentList(
+    @Body() body: { commentId: number; page: number },
+    @Req() req,
+  ) {
+    return this.postService.getCocommentList(body, req.user.userId);
   }
 }
