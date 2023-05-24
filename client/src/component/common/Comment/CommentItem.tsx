@@ -5,16 +5,27 @@ import { requestUrl } from '../../../common/etc';
 import { CommentItemContent } from 'sns-interfaces';
 import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import axios from 'axios';
 import Cocomment from './Cocomment';
+import { SubmitForm } from './Comment';
 
 //유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
-
+export interface CocommentContent {
+  img: string;
+  userId: string;
+  username: string;
+  createdAt: string;
+  cocomment: string;
+  liked: boolean;
+  likesCount: number;
+}
 const CommentItem = (props: {
   content: CommentItemContent;
   key: number;
-  // setCommentItems: Dispatch<SetStateAction<CommentItemContent[]>>;
+  index: number;
+  setSubmitForm: Dispatch<SetStateAction<SubmitForm>>;
+  submittedCocomments: CocommentContent[]; //부모에서 대댓작성되면 여기로 값이 추가됨.
 }) => {
   const navigate = useNavigate();
   // const [content, setContent] = useState<CommentItemContent>({
@@ -24,17 +35,12 @@ const CommentItem = (props: {
   const [pending, setPending] = useState<boolean>(false);
   const [openCocomment, setOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
-  const [cocomments, setCocomments] = useState<
-    {
-      img: string;
-      userId: string;
-      username: string;
-      createdAt: string;
-      cocomment: string;
-      liked: boolean;
-      likesCount: number;
-    }[]
-  >([]);
+  const [cocomments, setCocomments] = useState<CocommentContent[]>([]);
+
+  useEffect(() => {
+    setCocomments([props.submittedCocomments[-1], ...cocomments]);
+    console.log(props.submittedCocomments);
+  }, [props.submittedCocomments]);
 
   const getCocomments = async () => {
     setPending(true);
@@ -120,7 +126,20 @@ const CommentItem = (props: {
             </span>
           )}
 
-          <div style={{ color: 'gray', fontSize: '0.8rem' }}>답글 달기</div>
+          <div style={{ color: 'gray', fontSize: '0.8rem' }}>
+            <span
+              onClick={() => {
+                props.setSubmitForm({
+                  type: 'cocomment',
+                  commentId: props.content.commentId,
+                  targetUsername: props.content.username,
+                  index: props.index,
+                });
+              }}
+            >
+              답글 달기
+            </span>
+          </div>
         </Grid>
         <Grid item xs={1.5} className='text-center'>
           <span>

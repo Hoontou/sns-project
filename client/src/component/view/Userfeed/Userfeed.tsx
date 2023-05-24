@@ -9,6 +9,8 @@ const UserFeed = () => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [userId, setId] = useState<string>('');
+  const [postCount, setPostCount] = useState<number>(0);
+
   const { targetid: targetUserId } = useParams();
 
   useEffect(() => {
@@ -36,8 +38,16 @@ const UserFeed = () => {
         'waiting...'
       ) : (
         <>
-          <Userinfo userId={userId} targetId={targetUserId} />
-          <Postlist userId={userId} targetId={targetUserId} />
+          <Userinfo
+            userId={userId}
+            targetId={targetUserId}
+            setPostCount={setPostCount}
+          />
+          <Postlist
+            userId={userId}
+            targetId={targetUserId}
+            postCount={postCount}
+          />
         </>
       )}
 

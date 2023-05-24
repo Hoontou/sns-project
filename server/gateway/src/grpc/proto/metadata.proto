@@ -9,6 +9,7 @@ service MetadataService {
 
 message getMetadatasReq {
   string userId = 1;
+  int32 page = 2;
 }
 
 message Metadata {

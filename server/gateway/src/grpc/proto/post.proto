@@ -20,6 +20,11 @@ message GetPostRes {
   string id = 5;
 }
 
+message Tag {
+  int32 userId = 1;
+  string username = 2;
+}
+
 
 message Comment {
   int32 commentId = 1;
@@ -30,6 +35,7 @@ message Comment {
   int32 cocommentCount = 6;
   string username = 7;
   string img = 8;
+  optional Tag tag = 9;
 }
 message GetCommentListReq {
   string postId = 1;
@@ -48,6 +54,8 @@ message Cocomment {
   string username = 5;
   string img = 6;
   int32 cocommentId = 7;
+  optional Tag tag = 8;
+
 }
 message GetCocommentListReq {
   int32 commentId = 1;

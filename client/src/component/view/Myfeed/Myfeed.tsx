@@ -11,6 +11,7 @@ const MyFeed = () => {
 
   const [spin, setSpin] = useState<boolean>(true);
   const [userId, setId] = useState<string>('');
+  const [postCount, setPostCount] = useState<number>(0);
   useEffect(() => {
     //다른곳에서는 실패하면 /signin으로 이동하게.
     authHoc().then((authRes) => {
@@ -31,8 +32,8 @@ const MyFeed = () => {
         'waiting...'
       ) : (
         <>
-          <Userinfo userId={userId} />
-          <Postlist userId={userId} />
+          <Userinfo userId={userId} setPostCount={setPostCount} />
+          <Postlist userId={userId} postCount={postCount} />
         </>
       )}
 

@@ -19,6 +19,7 @@ const Post = (props: { metadata: MetadataDto; userId: string }) => {
 
   //좋아요했는지, props.userid로 username, 좋아요수, 댓글수 gateway로 요청해서
   //state 채우고 컴포넌트에 표시
+
   useEffect(() => {
     const modyfiedUrl = props.metadata.files.map((i: string) => {
       return `${requestUrl}/${props.metadata.id}/${i}`;
@@ -64,6 +65,7 @@ const Post = (props: { metadata: MetadataDto; userId: string }) => {
           postFooterContent={postFooterContent}
           userId={props.userId}
           setOpenComment={setOpenComment}
+          setPostFooterContent={setPostFooterContent}
         />
       )}
     </div>

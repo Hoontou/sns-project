@@ -5,7 +5,8 @@ import { requestUrl } from '../../../common/etc';
 import { CommentItemContent } from 'sns-interfaces';
 import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { SubmitForm } from './Comment';
 
 //유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
 
@@ -65,7 +66,7 @@ const Cocomment = (props: {
             {getElapsedTimeString(props.content.createdAt)}
           </span>
           <div>{props.content.cocomment}</div>
-          <div style={{ color: 'gray', fontSize: '0.8rem' }}>답글 달기</div>
+          {/* <div style={{ color: 'gray', fontSize: '0.8rem' }}>답글 달기</div> */}
         </Grid>
         <Grid item xs={1.5} className='text-center'>
           <span>

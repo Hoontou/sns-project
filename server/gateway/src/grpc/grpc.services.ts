@@ -48,7 +48,10 @@ export interface UserGrpcService {
 }
 
 export interface MetadataGrpcService {
-  getMetadatas({ userId }: { userId: string }): Observable<MetadataDto[]>;
+  getMetadatas(data: {
+    userId: string;
+    page: number;
+  }): Observable<MetadataDto[]>;
 }
 
 export interface FflGrpcService {

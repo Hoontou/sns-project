@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import sample from '../../../asset/sample1.jpg';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import UserinfoButton from './UserinfoButton';
@@ -9,7 +9,11 @@ import UserinfoMenu from './UserinfoMenu';
 import { requestUrl } from '../../../common/etc';
 
 //타겟아이디가 없다? 내 피드에서 온 요청이라는 뜻.
-const Userinfo = (props: { userId: string; targetId?: string }) => {
+const Userinfo = (props: {
+  userId: string;
+  targetId?: string;
+  setPostCount: Dispatch<SetStateAction<number>>;
+}) => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [postcount, setPost] = useState<number>(0);
@@ -57,6 +61,7 @@ const Userinfo = (props: { userId: string; targetId?: string }) => {
         setFolloing(data.following);
         setFollower(data.follower);
         setPost(data.postcount);
+        props.setPostCount(data.postcount);
         setFollowed(data.followed);
         setUsername(data.username);
         setImg(data.img);

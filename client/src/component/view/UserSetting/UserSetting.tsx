@@ -127,6 +127,7 @@ const UserSetting = () => {
           style={{
             width: '90%',
             margin: '0.7rem auto',
+            paddingTop: '3rem',
             paddingBottom: '3.5rem',
           }}
         >

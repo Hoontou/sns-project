@@ -11,11 +11,9 @@ export class MetadataService {
     this.metadataGrpcService =
       this.client.getService<MetadataGrpcService>('MetadataService');
   }
-  async getMetadatas(userId: string) {
+  async getMetadatas(body: { userId: string; page: number }) {
     const metadatas = await lastValueFrom(
-      this.metadataGrpcService.getMetadatas({
-        userId,
-      }),
+      this.metadataGrpcService.getMetadatas(body),
     );
     return metadatas;
   }

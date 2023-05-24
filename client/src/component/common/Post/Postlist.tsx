@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Box, Grid, Modal } from '@mui/material';
+import { Box, Button, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
 import { postStyle } from '../../mui.styled/item';
 import Post from './Post';
@@ -19,11 +19,17 @@ const emptyDto: MetadataDto = {
 
 //targetId가 없으면 내 피드로 접근했다는 뜻.
 //내 포스트를 가져오면 됨.
-const Postlist = (props: { userId: string; targetId?: string }) => {
+const Postlist = (props: {
+  userId: string;
+  targetId?: string;
+  postCount: number;
+}) => {
   const [spin, setSpin] = useState<boolean>(true);
   const [posts, setPosts] = useState<MetadataDto[]>([]);
   const [open, setOpen] = useState(false);
   const [selectedItem, setItem] = useState<MetadataDto>(emptyDto);
+  const [page, setPage] = useState<number>(0);
+
   const handleOpen = (index: number) => {
     setItem(posts[index]);
     setOpen(true);
@@ -31,20 +37,26 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  useEffect(() => {
+  const getPost = () => {
+    setSpin(true);
     axios
       .post('/gateway/metadata/getmetadatas', {
         userId: props.targetId === undefined ? props.userId : props.targetId,
+        page,
       })
       .then((res) => {
+        setPage(page + 1);
         setSpin(false);
         const metadatas: MetadataDto[] = res.data.metadatas;
         if (metadatas !== undefined) {
-          setPosts(metadatas);
+          setPosts([...posts, ...metadatas]);
         }
       });
-  }, [props.userId, props.targetId]);
+  };
+
+  useEffect(() => {
+    getPost();
+  }, []);
 
   const renderCard = posts.map((post, index) => {
     //이제 여기에 클릭하면 모달로 띄우는거 만들어야함
@@ -84,9 +96,23 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
       )}
       {posts.length > 0 && (
         <>
-          <Grid container spacing={1}>
+          <Grid container spacing={0.5}>
             {renderCard}
           </Grid>
+          {props.postCount > posts.length && (
+            <div
+              className='text-center'
+              style={{ paddingBottom: '1rem', marginTop: '1rem' }}
+            >
+              {spin ? (
+                '가져오는 중...'
+              ) : (
+                <Button variant='outlined' size='small' onClick={getPost}>
+                  더 불러오기
+                </Button>
+              )}
+            </div>
+          )}
           <Modal open={open} onClose={handleClose}>
             <Box
               sx={{

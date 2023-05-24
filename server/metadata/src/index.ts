@@ -48,11 +48,15 @@ const getServer = () => {
   const server = new grpc.Server();
   server.addService(metadataPackage.MetadataService.service, {
     GetMetadatas: async (req, res) => {
+      console.log(req.request.page);
+      const len = 9; //가져올 갯수
       const metadatas: MetadataDto[] = await metaRepository.db
         .find({
           userId: req.request.userId ? crypter.decrypt(req.request.userId) : '',
         })
-        .sort({ _id: -1 });
+        .sort({ _id: -1 })
+        .limit(len)
+        .skip(req.request.page * len);
 
       res(null, {
         metadatas: metadatas.map((item) => {

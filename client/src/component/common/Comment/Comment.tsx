@@ -4,11 +4,24 @@ import { MetadataDto } from '../Post/Postlist';
 import { PostFooterContent } from '../Post/post.interfaces';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import CommentItem from './CommentItem';
+import CommentItem, { CocommentContent } from './CommentItem';
 import axios from 'axios';
 import CommentInput from './CommentInput';
 import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft } from 'react-icons/vsc';
+import sample1 from '../../../asset/sample1.jpg';
+
+export type SubmitForm = SubmitCocoForm | SubmitCommentForm;
+export interface SubmitCommentForm {
+  type: 'comment';
+  postId: string;
+}
+export interface SubmitCocoForm {
+  type: 'cocomment';
+  commentId: number;
+  targetUsername: string;
+  index: number;
+}
 
 const defaultCommentItemContent: CommentItemContent = {
   liked: false,
@@ -22,39 +35,49 @@ const defaultCommentItemContent: CommentItemContent = {
   img: '',
 };
 
+const defaultCocommentItemContent: CocommentContent = {
+  img: '',
+  username: '',
+  cocomment: '',
+  userId: '',
+  liked: false,
+  createdAt: '',
+  likesCount: 0,
+};
+
 const Comment = (props: {
   metadata: MetadataDto;
-  postFooterContent: PostFooterContent;
+
   userId: string;
   setOpenComment: Dispatch<SetStateAction<boolean>>;
+  postFooterContent: PostFooterContent;
+  setPostFooterContent: Dispatch<SetStateAction<PostFooterContent>>;
 }) => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [commentItems, setCommentItems] = useState<CommentItemContent[]>([]);
+  const [submitForm, setSubmitForm] = useState<SubmitForm>({
+    type: 'comment',
+    postId: props.postFooterContent.id,
+  });
 
-  const submitNewComment = (value: string) => {
-    //게시글 id, 작성자 id, 내용,
-    axios.post('/gateway/post/addcomment', {
-      comment: value,
+  const setSubmitFormToDefault = () => {
+    setSubmitForm({
+      type: 'comment',
       postId: props.postFooterContent.id,
-    });
-    axios.get('/gateway/user/getusernamewithimg').then((res) => {
-      const data: { img: string; username: string; userId: string } = res.data;
-      const newComment = {
-        ...defaultCommentItemContent,
-        img: data.img,
-        username: data.username,
-        comment: value,
-        userId: data.userId,
-      };
-      //맨앞에 푸시
-      setCommentItems([newComment, ...commentItems]);
     });
   };
 
+  useEffect(() => {
+    console.log(submitForm);
+  }, [submitForm]);
+
   const getComments = async () => {
+    if (props.postFooterContent.commentCount === 0) {
+      return;
+    }
     setPending(true);
     axios
       .post('/gateway/post/getcommentlist', {
@@ -75,21 +98,72 @@ const Comment = (props: {
     getComments().then(() => {
       setSpin(false);
     });
-  });
+  }, []);
 
   const renderComment = commentItems?.map((content, index) => {
     return (
       <CommentItem
         content={content}
         key={index}
-        // setCommentItems={setCommentItems}
+        setSubmitForm={setSubmitForm}
+        index={index}
+        submittedCocomments={[]}
       />
     );
   });
 
+  const submitNewComment = async (value: string) => {
+    //1. submitForm의 타입체크 후 post할 url 결정해서 axios
+    //2. 타입에 따라 댓글리스트에 푸시
+    if (submitForm.type === 'cocomment') {
+      //내 username, img 가져온다.
+      const { img, username, userId } = await axios
+        .get('/gateway/user/getusernamewithimg')
+        .then((res) => {
+          const data: { img: string; username: string; userId: string } =
+            res.data;
+          return data;
+        });
+      //cocommentForm 생성
+      const newCocomment: CocommentContent = {
+        ...defaultCocommentItemContent,
+        img,
+        username,
+        userId,
+        cocomment: value,
+      };
+      //해당하는 컴포넌트로 값 전달
+      renderComment[submitForm.index].props.submittedCocomments.push(
+        newCocomment
+      );
+    }
+    //게시글 id, 작성자 id, 내용,
+    // await axios.post('/gateway/post/addcomment', {
+    //   comment: value,
+    //   postId: props.postFooterContent.id,
+    // });
+    // axios.get('/gateway/user/getusernamewithimg').then((res) => {
+    //   const data: { img: string; username: string; userId: string } = res.data;
+    //   const newComment = {
+    //     ...defaultCommentItemContent,
+    //     img: data.img,
+    //     username: data.username,
+    //     comment: value,
+    //     userId: data.userId,
+    //   };
+    //   //맨앞에 푸시
+    //   setCommentItems([newComment, ...commentItems]);
+    //   //댓글갯수 +1, 그냥 props.count+1 해도 되긴한데,
+    //   props.setPostFooterContent({
+    //     ...props.postFooterContent,
+    //     commentCount: props.postFooterContent.commentCount + 1,
+    //   });
+    // });
+  };
   return (
     <>
       {spin && 'waiting...'}
+
       {!spin && (
         <div style={{ height: '80vh', overflowY: 'auto' }}>
           <div
@@ -123,7 +197,11 @@ const Comment = (props: {
                   sx={{ width: 45, height: 45 }}
                   style={{ margin: '0 auto' }}
                   alt={'profile img'}
-                  src={`${requestUrl}/${props.postFooterContent.img}`}
+                  src={
+                    props.postFooterContent.img === ''
+                      ? sample1
+                      : `${requestUrl}/${props.postFooterContent.img}`
+                  }
                 ></Avatar>
               </Grid>
               <Grid item xs={9} style={{ overflowWrap: 'break-word' }}>
@@ -154,10 +232,26 @@ const Comment = (props: {
               <Grid item xs={9.5}></Grid>
             </Grid>
             <hr style={{ marginTop: '-0.2rem' }}></hr>
+            {commentItems.length === 0 && (
+              <div
+                style={{
+                  textAlign: 'center',
+                  fontSize: '1rem',
+                  color: 'gray',
+                  marginTop: '2rem',
+                }}
+              >
+                표시할 댓글이 없습니다.
+              </div>
+            )}
             <div style={{ marginBottom: '4rem' }}>
-              <div>{renderComment}</div>
+              <div>{commentItems.length > 0 && renderComment}</div>
               {props.postFooterContent.commentCount > commentItems?.length && (
-                <div className='text-center' onClick={getComments}>
+                <div
+                  className='text-center'
+                  onClick={getComments}
+                  style={{ color: 'RoyalBlue' }}
+                >
                   {pending ? '가져오는 중...' : '더 불러오기'}
                 </div>
               )}
@@ -165,7 +259,9 @@ const Comment = (props: {
             <div>
               <CommentInput
                 submitNewComment={submitNewComment}
-                setCommentItems={setCommentItems}
+                setSubmitForm={setSubmitForm}
+                submitForm={submitForm}
+                setSubmitFormToDefault={setSubmitFormToDefault}
               />
             </div>
           </div>
