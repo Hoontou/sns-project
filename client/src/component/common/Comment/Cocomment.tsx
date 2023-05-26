@@ -25,14 +25,18 @@ const Cocomment = (props: {
   const navigate = useNavigate();
   return (
     <>
-      <Grid container spacing={1} style={{ marginBottom: '1rem' }}>
-        <Grid item xs={1}>
+      <Grid container spacing={0} style={{ marginBottom: '1rem' }}>
+        <Grid item xs={1.5}>
           {/* 간격조정을 위한 빈칸 */}
         </Grid>
-        <Grid item xs={2.5}>
+        <Grid item xs={1}>
           <Avatar
-            sx={{ width: 45, height: 45 }}
-            style={{ margin: '0 auto', marginTop: '0.1rem' }}
+            sx={{ width: 40, height: 40 }}
+            style={{
+              margin: '0 auto',
+              marginTop: '0.1rem',
+              float: 'left',
+            }}
             alt={'profile img'}
             src={
               props.content.img === ''
@@ -41,7 +45,7 @@ const Cocomment = (props: {
             }
           ></Avatar>
         </Grid>
-        <Grid item xs={7} style={{ overflowWrap: 'break-word' }}>
+        <Grid item xs={8.5} style={{ overflowWrap: 'break-word' }}>
           <span
             style={{
               marginRight: '0.5rem',
@@ -68,7 +72,7 @@ const Cocomment = (props: {
           <div>{props.content.cocomment}</div>
           {/* <div style={{ color: 'gray', fontSize: '0.8rem' }}>답글 달기</div> */}
         </Grid>
-        <Grid item xs={1.5} className='text-center'>
+        <Grid item xs={1} className='text-center'>
           <span>
             {!props.content.liked ? (
               <VscHeart fontSize='20px' onClick={() => {}} />

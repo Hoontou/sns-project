@@ -85,6 +85,7 @@ const CommentInput = (props: {
           onClick={(e) => {
             props.submitNewComment(inputValue);
             setInputValue('');
+            setOpenSnackbar(false);
           }}
         >
           <span style={{ fontSize: '1.2rem' }}>게시</span>

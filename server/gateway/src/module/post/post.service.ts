@@ -33,14 +33,14 @@ export class PostService {
 
     //가져온 코멘트 id로 좋아요눌렀나 체크
     const { commentLikedList } = await this.fflService.getCommentLiked({
-      commentIdList: comments.map((i) => {
+      commentIdList: comments?.map((i) => {
         return i.commentId;
       }),
       userId,
     });
 
     //리턴할 코멘트들에 좋아요체크결과 붙여넣기
-    const commentItem: CommentItemContent[] = comments.map((item, index) => {
+    const commentItem: CommentItemContent[] = comments?.map((item, index) => {
       return { ...item, liked: commentLikedList[index] };
     });
     return { commentItem };

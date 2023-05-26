@@ -43,11 +43,15 @@ const defaultCocommentItemContent: CocommentContent = {
   liked: false,
   createdAt: '',
   likesCount: 0,
+  index: 0,
 };
+
+export interface CommentItems extends CommentItemContent {
+  cocomments: CocommentContent[];
+}
 
 const Comment = (props: {
   metadata: MetadataDto;
-
   userId: string;
   setOpenComment: Dispatch<SetStateAction<boolean>>;
   postFooterContent: PostFooterContent;
@@ -57,11 +61,12 @@ const Comment = (props: {
   const [spin, setSpin] = useState<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
-  const [commentItems, setCommentItems] = useState<CommentItemContent[]>([]);
+  const [commentItems, setCommentItems] = useState<CommentItems[]>([]);
   const [submitForm, setSubmitForm] = useState<SubmitForm>({
     type: 'comment',
     postId: props.postFooterContent.id,
   });
+  const [submittedCoco, setSubmittedCoco] = useState<CocommentContent[]>([]);
 
   const setSubmitFormToDefault = () => {
     setSubmitForm({
@@ -74,6 +79,7 @@ const Comment = (props: {
     console.log(submitForm);
   }, [submitForm]);
 
+  /**코멘트 가져오기 */
   const getComments = async () => {
     if (props.postFooterContent.commentCount === 0) {
       return;
@@ -85,9 +91,12 @@ const Comment = (props: {
         page,
       })
       .then((res) => {
-        const {
-          commentItem: newComments,
-        }: { commentItem: CommentItemContent[] } = res.data;
+        const { commentItem: comments }: { commentItem: CommentItemContent[] } =
+          res.data;
+        const newComments: CommentItems[] = comments?.map((i) => {
+          //대댓 넣을 리스트 추가
+          return { ...i, cocomments: [] };
+        });
         setPage(page + 1);
         setCommentItems([...commentItems, ...newComments]);
         setPending(false);
@@ -100,17 +109,27 @@ const Comment = (props: {
     });
   }, []);
 
-  const renderComment = commentItems?.map((content, index) => {
-    return (
-      <CommentItem
-        content={content}
-        key={index}
-        setSubmitForm={setSubmitForm}
-        index={index}
-        submittedCocomments={[]}
-      />
-    );
-  });
+  const getCocomments = (commentId: number, page: number, index: number) => {
+    return axios
+      .post('/gateway/post/getcocommentlist', {
+        commentId,
+        page,
+      })
+      .then((res) => {
+        const {
+          cocommentItem: items,
+        }: {
+          cocommentItem: CocommentContent[];
+        } = res.data;
+
+        //원본 리스트 복사후 가져온 대댓을 해당 index 아이템에 붙여넣기
+        const tmpItems = [...commentItems];
+        tmpItems[index].cocomments = [...tmpItems[index].cocomments, ...items];
+
+        //tmp로 commentItems 갈아끼우기
+        setCommentItems(tmpItems);
+      });
+  };
 
   const submitNewComment = async (value: string) => {
     //1. submitForm의 타입체크 후 post할 url 결정해서 axios
@@ -131,11 +150,52 @@ const Comment = (props: {
         username,
         userId,
         cocomment: value,
+        index: submitForm.index,
       };
-      //해당하는 컴포넌트로 값 전달
-      renderComment[submitForm.index].props.submittedCocomments.push(
-        newCocomment
-      );
+
+      //해당하는 댓글의 대댓에 추가후
+      const tmpItems = [...commentItems];
+      tmpItems[submitForm.index].cocomments = [
+        newCocomment,
+        ...tmpItems[submitForm.index].cocomments,
+      ];
+      //tmp로 갈아끼우기
+      setCommentItems(tmpItems);
+
+      //섭밋폼 디폴트로 세팅
+      setSubmitFormToDefault();
+      return;
+    }
+    if (submitForm.type === 'comment') {
+      //내 username, img 가져온다.
+      const { img, username, userId } = await axios
+        .get('/gateway/user/getusernamewithimg')
+        .then((res) => {
+          const data: { img: string; username: string; userId: string } =
+            res.data;
+          return data;
+        });
+
+      const newComment = {
+        ...defaultCommentItemContent,
+        img,
+        username,
+        comment: value,
+        userId,
+        cocomments: [],
+      };
+      //맨앞에 푸시
+      setCommentItems([newComment, ...commentItems]);
+      //댓글갯수 +1, 그냥 props.count+1 해도 되긴한데,
+      props.setPostFooterContent({
+        ...props.postFooterContent,
+        commentCount: props.postFooterContent.commentCount + 1,
+      });
+
+      //섭밋폼 디폴트로 세팅
+
+      setSubmitFormToDefault();
+      return;
     }
     //게시글 id, 작성자 id, 내용,
     // await axios.post('/gateway/post/addcomment', {
@@ -160,6 +220,18 @@ const Comment = (props: {
     //   });
     // });
   };
+
+  const renderComment = commentItems?.map((content, index) => {
+    return (
+      <CommentItem
+        content={content}
+        key={index}
+        setSubmitForm={setSubmitForm}
+        index={index}
+        getCocomments={getCocomments}
+      />
+    );
+  });
   return (
     <>
       {spin && 'waiting...'}
@@ -191,8 +263,12 @@ const Comment = (props: {
             <span>댓글</span>
           </div>
           <div style={{ paddingTop: '2.2rem' }}>
-            <Grid container spacing={1} style={{ marginTop: '0.2rem' }}>
-              <Grid item xs={2.5}>
+            <Grid
+              container
+              spacing={0}
+              style={{ marginTop: '1.5rem', marginBottom: '1rem' }}
+            >
+              <Grid item xs={1.5}>
                 <Avatar
                   sx={{ width: 45, height: 45 }}
                   style={{ margin: '0 auto' }}

@@ -8,7 +8,7 @@ import { getElapsedTimeString } from '../../../common/date.parser';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import axios from 'axios';
 import Cocomment from './Cocomment';
-import { SubmitForm } from './Comment';
+import { CommentItems, SubmitForm } from './Comment';
 
 //유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
 export interface CocommentContent {
@@ -19,13 +19,14 @@ export interface CocommentContent {
   cocomment: string;
   liked: boolean;
   likesCount: number;
+  index?: number;
 }
 const CommentItem = (props: {
-  content: CommentItemContent;
+  content: CommentItems;
   key: number;
   index: number;
   setSubmitForm: Dispatch<SetStateAction<SubmitForm>>;
-  submittedCocomments: CocommentContent[]; //부모에서 대댓작성되면 여기로 값이 추가됨.
+  getCocomments(commentId: number, page: number, index: number): Promise<void>;
 }) => {
   const navigate = useNavigate();
   // const [content, setContent] = useState<CommentItemContent>({
@@ -35,51 +36,24 @@ const CommentItem = (props: {
   const [pending, setPending] = useState<boolean>(false);
   const [openCocomment, setOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
-  const [cocomments, setCocomments] = useState<CocommentContent[]>([]);
-
-  useEffect(() => {
-    setCocomments([props.submittedCocomments[-1], ...cocomments]);
-    console.log(props.submittedCocomments);
-  }, [props.submittedCocomments]);
 
   const getCocomments = async () => {
     setPending(true);
-    axios
-      .post('/gateway/post/getcocommentlist', {
-        commentId: props.content.commentId,
-        page,
-      })
-      .then((res) => {
-        const {
-          cocommentItem: items,
-        }: {
-          cocommentItem: {
-            cocomment: string;
-            cocommentId: number;
-            createdAt: string;
-            img: string;
-            liked: boolean;
-            likesCount: number;
-            userId: string;
-            username: string;
-          }[];
-        } = res.data;
-
-        setCocomments([...cocomments, ...items]);
-        setPage(page + 1);
-        setPending(false);
-        setOpen(true);
-      });
+    await props.getCocomments(props.content.commentId, page, props.index);
+    setPage(page + 1);
+    setPending(false);
+    setOpen(true);
   };
 
-  const renderCocomment = cocomments?.map((content, index) => {
+  const renderCocomment = props.content.cocomments?.map((content, index) => {
+    console.log(content);
     return <Cocomment content={content} key={index} />;
   });
 
   return (
     <>
-      <Grid container spacing={1} style={{ marginBottom: '1rem' }}>
-        <Grid item xs={2.5}>
+      <Grid container spacing={0} style={{ marginBottom: '1rem' }}>
+        <Grid item xs={1.5}>
           <Avatar
             sx={{ width: 45, height: 45 }}
             style={{ margin: '0 auto', marginTop: '0.1rem' }}
@@ -91,7 +65,7 @@ const CommentItem = (props: {
             }
           ></Avatar>
         </Grid>
-        <Grid item xs={8} style={{ overflowWrap: 'break-word' }}>
+        <Grid item xs={9.5} style={{ overflowWrap: 'break-word' }}>
           <span
             style={{
               marginRight: '0.5rem',
@@ -141,7 +115,7 @@ const CommentItem = (props: {
             </span>
           </div>
         </Grid>
-        <Grid item xs={1.5} className='text-center'>
+        <Grid item xs={1} className='text-center'>
           <span>
             {!props.content.liked ? (
               <VscHeart fontSize='20px' onClick={() => {}} />
@@ -157,16 +131,17 @@ const CommentItem = (props: {
         </Grid>
       </Grid>
 
-      {openCocomment && renderCocomment}
-      {openCocomment && props.content.cocommentCount > cocomments?.length && (
-        <div
-          className='text-center'
-          style={{ color: 'gray', fontSize: '0.8rem' }}
-          onClick={getCocomments}
-        >
-          {pending ? '가져오는 중...' : '더 불러오기'}
-        </div>
-      )}
+      {props.content.cocomments.length > 0 && renderCocomment}
+      {props.content.cocomments.length > 0 &&
+        props.content.cocommentCount > props.content.cocomments.length && (
+          <div
+            className='text-center'
+            style={{ color: 'gray', fontSize: '0.8rem' }}
+            onClick={getCocomments}
+          >
+            {pending ? '가져오는 중...' : '더 불러오기'}
+          </div>
+        )}
     </>
   );
 };
