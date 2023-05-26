@@ -27,32 +27,37 @@ const Cocomment = (props: {
     <>
       <Grid container spacing={0} style={{ marginBottom: '1rem' }}>
         <Grid item xs={10.5} style={{ overflowWrap: 'break-word' }}>
-          <div style={{ left: '3.7rem', position: 'relative' }}>
-            <div
-              style={{
-                width: '2.3rem',
-                height: '2.3rem',
-                borderRadius: '70%',
-                overflow: 'hidden',
-                marginTop: '0.4rem',
-                marginRight: '0.5rem',
-              }}
-            >
-              <img
+          <div style={{ marginLeft: '3.4rem' }}>
+            <div style={{ width: '2.8rem', height: '100%', float: 'left' }}>
+              <div
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
+                  width: '2.3rem',
+                  height: '2.3rem',
+                  borderRadius: '70%',
+                  overflow: 'hidden',
+                  marginTop: '0.4rem',
+                  marginRight: '0.5rem',
                 }}
-                src={
-                  props.content.img === ''
-                    ? sample1
-                    : `${requestUrl}/${props.content.img}`
-                }
-                alt='profile'
-              />
+              >
+                <img
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                  src={
+                    props.content.img === ''
+                      ? sample1
+                      : `${requestUrl}/${props.content.img}`
+                  }
+                  alt='profile'
+                />
+              </div>
             </div>
-            <div>
+
+            {/* <div style={{ color: 'gray', fontSize: '0.8rem' }}>답글 달기</div> */}
+
+            <div style={{ marginLeft: '2.8rem' }}>
               <span
                 style={{
                   marginRight: '0.5rem',
@@ -76,14 +81,8 @@ const Cocomment = (props: {
                 {/* {props.content.createdAt} */}
                 {getElapsedTimeString(props.content.createdAt)}
               </span>
-              <div>
-                {props.content.cocomment}
-                {props.content.cocomment}
-                {props.content.cocomment}
-                {props.content.cocomment}
-              </div>
+              <div>{props.content.cocomment}</div>
             </div>
-            {/* <div style={{ color: 'gray', fontSize: '0.8rem' }}>답글 달기</div> */}
           </div>
         </Grid>
         <Grid item xs={1.5} className='text-center'>

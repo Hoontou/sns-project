@@ -54,31 +54,37 @@ const CommentItem = (props: {
         <Grid item xs={10.5} style={{ overflowWrap: 'break-word' }}>
           <div
             style={{
-              width: '2.7rem',
-              height: '2.7rem',
-              borderRadius: '70%',
-              overflow: 'hidden',
-              marginTop: '0.4rem',
-              marginLeft: '0.5rem',
-              marginRight: '0.5rem',
               float: 'left',
             }}
           >
-            <img
+            <div
               style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
+                width: '2.7rem',
+                height: '2.7rem',
+                borderRadius: '70%',
+                overflow: 'hidden',
+                marginTop: '0.4rem',
+                marginLeft: '0.5rem',
+                marginRight: '0.5rem',
               }}
-              src={
-                props.content.img === ''
-                  ? sample1
-                  : `${requestUrl}/${props.content.img}`
-              }
-              alt='profile'
-            />
+            >
+              <img
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+                src={
+                  props.content.img === ''
+                    ? sample1
+                    : `${requestUrl}/${props.content.img}`
+                }
+                alt='profile'
+              />
+            </div>
           </div>
-          <div>
+
+          <div style={{ marginLeft: '3.7rem' }}>
             <span
               style={{
                 marginRight: '0.5rem',
@@ -109,8 +115,6 @@ const CommentItem = (props: {
                 style={{
                   color: 'gray',
                   fontSize: '0.8rem',
-                  left: '3.7rem',
-                  position: 'relative',
                 }}
                 onClick={getCocomments}
               >
@@ -124,8 +128,6 @@ const CommentItem = (props: {
                 style={{
                   color: 'gray',
                   fontSize: '0.8rem',
-                  left: '3.7rem',
-                  position: 'relative',
                 }}
               >
                 <span

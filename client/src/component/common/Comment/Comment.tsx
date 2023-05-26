@@ -10,6 +10,7 @@ import CommentInput from './CommentInput';
 import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft } from 'react-icons/vsc';
 import sample1 from '../../../asset/sample1.jpg';
+import { getElapsedTimeString } from '../../../common/date.parser';
 
 export type SubmitForm = SubmitCocoForm | SubmitCommentForm;
 export interface SubmitCommentForm {
@@ -289,7 +290,7 @@ const Comment = (props: {
             <Grid
               container
               spacing={0}
-              style={{ marginTop: '1.5rem', marginBottom: '1rem' }}
+              style={{ marginTop: '1rem', marginBottom: '1rem' }}
             >
               <Grid item xs={10.5} style={{ overflowWrap: 'break-word' }}>
                 <div
@@ -339,7 +340,7 @@ const Comment = (props: {
                       fontSize: '0.8rem',
                     }}
                   >
-                    {'3일전'}
+                    {getElapsedTimeString(props.postFooterContent.createdAt)}
                   </span>
                   <div>{props.postFooterContent.title}</div>
                 </div>
