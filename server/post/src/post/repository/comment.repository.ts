@@ -54,7 +54,7 @@ export class CommentTable {
     ) AS A
     ON C."userId" = A.id
     ORDER BY createdAt DESC
-     LIMIT 10 OFFSET ${page * 10};`;
+     LIMIT 5 OFFSET ${page * 5};`;
 
     return (await pgClient.query(query)).rows;
   }

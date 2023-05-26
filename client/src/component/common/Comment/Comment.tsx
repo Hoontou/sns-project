@@ -43,7 +43,6 @@ const defaultCocommentItemContent: CocommentContent = {
   liked: false,
   createdAt: '',
   likesCount: 0,
-  index: 0,
 };
 
 export interface CommentItems extends CommentItemContent {
@@ -68,16 +67,14 @@ const Comment = (props: {
   });
   const [submittedCoco, setSubmittedCoco] = useState<CocommentContent[]>([]);
 
+  // const checkCreatedAtIsNull = ()
+
   const setSubmitFormToDefault = () => {
     setSubmitForm({
       type: 'comment',
       postId: props.postFooterContent.id,
     });
   };
-
-  useEffect(() => {
-    console.log(submitForm);
-  }, [submitForm]);
 
   /**코멘트 가져오기 */
   const getComments = async () => {
@@ -97,6 +94,11 @@ const Comment = (props: {
           //대댓 넣을 리스트 추가
           return { ...i, cocomments: [] };
         });
+        if (newComments === undefined) {
+          alert('댓글 가져오기를 실패했어요. 나중에 다시 시도해주세요.');
+          setPending(false);
+          return;
+        }
         setPage(page + 1);
         setCommentItems([...commentItems, ...newComments]);
         setPending(false);
@@ -109,6 +111,7 @@ const Comment = (props: {
     });
   }, []);
 
+  /**대댓 가져오기 */
   const getCocomments = (commentId: number, page: number, index: number) => {
     return axios
       .post('/gateway/post/getcocommentlist', {
@@ -131,10 +134,18 @@ const Comment = (props: {
       });
   };
 
+  /**CommentInput에서 호출, 이거 호출이전에 submitForm의 수정먼저 수행. */
   const submitNewComment = async (value: string) => {
     //1. submitForm의 타입체크 후 post할 url 결정해서 axios
-    //2. 타입에 따라 댓글리스트에 푸시
+    //2. img, username 가져와서 댓, 대댓 컴포넌트 생성
+    //3. 타입에 따라 댓글리스트에 푸시
     if (submitForm.type === 'cocomment') {
+      //대댓작성 request
+      axios.post('/gateway/post/addcocomment', {
+        cocomment: value,
+        commentId: submitForm.commentId,
+      });
+
       //내 username, img 가져온다.
       const { img, username, userId } = await axios
         .get('/gateway/user/getusernamewithimg')
@@ -150,23 +161,32 @@ const Comment = (props: {
         username,
         userId,
         cocomment: value,
-        index: submitForm.index,
       };
 
       //해당하는 댓글의 대댓에 추가후
-      const tmpItems = [...commentItems];
-      tmpItems[submitForm.index].cocomments = [
-        newCocomment,
-        ...tmpItems[submitForm.index].cocomments,
-      ];
-      //tmp로 갈아끼우기
-      setCommentItems(tmpItems);
+      // const tmpItems = [...commentItems];
+      // tmpItems[submitForm.index].cocomments = [
+      //   newCocomment,
+      //   ...tmpItems[submitForm.index].cocomments,
+      // ];
+      // //tmp로 갈아끼우기
+      // setCommentItems(tmpItems);
+
+      //위는 원본을 복사 후 갈아끼워서 setState하는 코드.
+      //위가 안전할듯. 근데 그냥 아래가 simple할텐데ㄴ
+      commentItems[submitForm.index].cocomments.unshift(newCocomment);
 
       //섭밋폼 디폴트로 세팅
       setSubmitFormToDefault();
       return;
     }
     if (submitForm.type === 'comment') {
+      //댓 작성 request
+      axios.post('/gateway/post/addcomment', {
+        comment: value,
+        postId: props.postFooterContent.id,
+      });
+
       //내 username, img 가져온다.
       const { img, username, userId } = await axios
         .get('/gateway/user/getusernamewithimg')
@@ -185,15 +205,18 @@ const Comment = (props: {
         cocomments: [],
       };
       //맨앞에 푸시
-      setCommentItems([newComment, ...commentItems]);
+      commentItems.unshift(newComment);
+      // setCommentItems([newComment, ...commentItems]);
       //댓글갯수 +1, 그냥 props.count+1 해도 되긴한데,
-      props.setPostFooterContent({
-        ...props.postFooterContent,
-        commentCount: props.postFooterContent.commentCount + 1,
-      });
+      // props.setPostFooterContent({
+      //   ...props.postFooterContent,
+      //   commentCount: props.postFooterContent.commentCount + 1,
+      // });
+      //그냥 props를 수정. 권장하는 방법은 아니라는데 그냥 작동이 simple할듯
+      //이거 count를 하나 증가시킬지 말지 고민이 많이된다...
+      props.postFooterContent.commentCount += 1;
 
       //섭밋폼 디폴트로 세팅
-
       setSubmitFormToDefault();
       return;
     }
@@ -268,42 +291,58 @@ const Comment = (props: {
               spacing={0}
               style={{ marginTop: '1.5rem', marginBottom: '1rem' }}
             >
-              <Grid item xs={1.5}>
-                <Avatar
-                  sx={{ width: 45, height: 45 }}
-                  style={{ margin: '0 auto' }}
-                  alt={'profile img'}
-                  src={
-                    props.postFooterContent.img === ''
-                      ? sample1
-                      : `${requestUrl}/${props.postFooterContent.img}`
-                  }
-                ></Avatar>
-              </Grid>
-              <Grid item xs={9} style={{ overflowWrap: 'break-word' }}>
-                <span
+              <Grid item xs={10.5} style={{ overflowWrap: 'break-word' }}>
+                <div
                   style={{
+                    width: '2.7rem',
+                    height: '2.7rem',
+                    borderRadius: '70%',
+                    overflow: 'hidden',
+                    marginTop: '0.4rem',
+                    marginLeft: '0.5rem',
                     marginRight: '0.5rem',
-                    fontWeight: '600',
-                    fontSize: '1.1rem',
-                  }}
-                  onClick={() => {
-                    navigate(`/userfeed/${props.userId}`);
+                    float: 'left',
                   }}
                 >
-                  {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
-                  {props.postFooterContent.username}
-                </span>
-                <span
-                  style={{
-                    color: 'gray',
-                    marginLeft: '0.2rem',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  {'3일전'}
-                </span>
-                <div>{props.postFooterContent.title}</div>
+                  <img
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                    src={
+                      props.postFooterContent.img === ''
+                        ? sample1
+                        : `${requestUrl}/${props.postFooterContent.img}`
+                    }
+                    alt='profile'
+                  />
+                </div>
+                <div>
+                  <span
+                    style={{
+                      marginRight: '0.5rem',
+                      fontWeight: '600',
+                      fontSize: '1.1rem',
+                    }}
+                    onClick={() => {
+                      navigate(`/userfeed/${props.userId}`);
+                    }}
+                  >
+                    {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
+                    {props.postFooterContent.username}
+                  </span>
+                  <span
+                    style={{
+                      color: 'gray',
+                      marginLeft: '0.2rem',
+                      fontSize: '0.8rem',
+                    }}
+                  >
+                    {'3일전'}
+                  </span>
+                  <div>{props.postFooterContent.title}</div>
+                </div>
               </Grid>
               <Grid item xs={9.5}></Grid>
             </Grid>

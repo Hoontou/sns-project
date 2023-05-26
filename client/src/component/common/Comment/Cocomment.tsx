@@ -26,53 +26,67 @@ const Cocomment = (props: {
   return (
     <>
       <Grid container spacing={0} style={{ marginBottom: '1rem' }}>
-        <Grid item xs={1.5}>
-          {/* 간격조정을 위한 빈칸 */}
+        <Grid item xs={10.5} style={{ overflowWrap: 'break-word' }}>
+          <div style={{ left: '3.7rem', position: 'relative' }}>
+            <div
+              style={{
+                width: '2.3rem',
+                height: '2.3rem',
+                borderRadius: '70%',
+                overflow: 'hidden',
+                marginTop: '0.4rem',
+                marginRight: '0.5rem',
+              }}
+            >
+              <img
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+                src={
+                  props.content.img === ''
+                    ? sample1
+                    : `${requestUrl}/${props.content.img}`
+                }
+                alt='profile'
+              />
+            </div>
+            <div>
+              <span
+                style={{
+                  marginRight: '0.5rem',
+                  fontWeight: '600',
+                  fontSize: '1.1rem',
+                }}
+                onClick={() => {
+                  navigate(`/userfeed/${props.content.userId}`);
+                }}
+              >
+                {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
+                {props.content.username}
+              </span>
+              <span
+                style={{
+                  color: 'gray',
+                  marginLeft: '0.2rem',
+                  fontSize: '0.8rem',
+                }}
+              >
+                {/* {props.content.createdAt} */}
+                {getElapsedTimeString(props.content.createdAt)}
+              </span>
+              <div>
+                {props.content.cocomment}
+                {props.content.cocomment}
+                {props.content.cocomment}
+                {props.content.cocomment}
+              </div>
+            </div>
+            {/* <div style={{ color: 'gray', fontSize: '0.8rem' }}>답글 달기</div> */}
+          </div>
         </Grid>
-        <Grid item xs={1}>
-          <Avatar
-            sx={{ width: 40, height: 40 }}
-            style={{
-              margin: '0 auto',
-              marginTop: '0.1rem',
-              float: 'left',
-            }}
-            alt={'profile img'}
-            src={
-              props.content.img === ''
-                ? sample1
-                : `${requestUrl}/${props.content.img}`
-            }
-          ></Avatar>
-        </Grid>
-        <Grid item xs={8.5} style={{ overflowWrap: 'break-word' }}>
-          <span
-            style={{
-              marginRight: '0.5rem',
-              fontWeight: '600',
-              fontSize: '1.1rem',
-            }}
-            onClick={() => {
-              navigate(`/userfeed/${props.content.userId}`);
-            }}
-          >
-            {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
-            {props.content.username}
-          </span>
-          <span
-            style={{
-              color: 'gray',
-              marginLeft: '0.2rem',
-              fontSize: '0.8rem',
-            }}
-          >
-            {/* {props.content.createdAt} */}
-            {getElapsedTimeString(props.content.createdAt)}
-          </span>
-          <div>{props.content.cocomment}</div>
-          {/* <div style={{ color: 'gray', fontSize: '0.8rem' }}>답글 달기</div> */}
-        </Grid>
-        <Grid item xs={1} className='text-center'>
+        <Grid item xs={1.5} className='text-center'>
           <span>
             {!props.content.liked ? (
               <VscHeart fontSize='20px' onClick={() => {}} />

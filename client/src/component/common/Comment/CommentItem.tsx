@@ -19,7 +19,6 @@ export interface CocommentContent {
   cocomment: string;
   liked: boolean;
   likesCount: number;
-  index?: number;
 }
 const CommentItem = (props: {
   content: CommentItems;
@@ -46,76 +45,106 @@ const CommentItem = (props: {
   };
 
   const renderCocomment = props.content.cocomments?.map((content, index) => {
-    console.log(content);
     return <Cocomment content={content} key={index} />;
   });
 
   return (
     <>
       <Grid container spacing={0} style={{ marginBottom: '1rem' }}>
-        <Grid item xs={1.5}>
-          <Avatar
-            sx={{ width: 45, height: 45 }}
-            style={{ margin: '0 auto', marginTop: '0.1rem' }}
-            alt={'profile img'}
-            src={
-              props.content.img === ''
-                ? sample1
-                : `${requestUrl}/${props.content.img}`
-            }
-          ></Avatar>
-        </Grid>
-        <Grid item xs={9.5} style={{ overflowWrap: 'break-word' }}>
-          <span
+        <Grid item xs={10.5} style={{ overflowWrap: 'break-word' }}>
+          <div
             style={{
+              width: '2.7rem',
+              height: '2.7rem',
+              borderRadius: '70%',
+              overflow: 'hidden',
+              marginTop: '0.4rem',
+              marginLeft: '0.5rem',
               marginRight: '0.5rem',
-              fontWeight: '600',
-              fontSize: '1.1rem',
-            }}
-            onClick={() => {
-              navigate(`/userfeed/${props.content.userId}`);
+              float: 'left',
             }}
           >
-            {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
-            {props.content.username}
-          </span>
-          <span
-            style={{
-              color: 'gray',
-              marginLeft: '0.2rem',
-              fontSize: '0.8rem',
-            }}
-          >
-            {/* {props.content.createdAt} */}
-            {getElapsedTimeString(props.content.createdAt)}
-          </span>
-          <div>{props.content.comment}</div>
-
-          {props.content.cocommentCount > 0 && !openCocomment && (
+            <img
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+              src={
+                props.content.img === ''
+                  ? sample1
+                  : `${requestUrl}/${props.content.img}`
+              }
+              alt='profile'
+            />
+          </div>
+          <div>
             <span
-              style={{ color: 'gray', fontSize: '0.8rem' }}
-              onClick={getCocomments}
-            >
-              ---답글 {props.content.cocommentCount}개 보기
-            </span>
-          )}
-
-          <div style={{ color: 'gray', fontSize: '0.8rem' }}>
-            <span
+              style={{
+                marginRight: '0.5rem',
+                fontWeight: '600',
+                fontSize: '1.1rem',
+              }}
               onClick={() => {
-                props.setSubmitForm({
-                  type: 'cocomment',
-                  commentId: props.content.commentId,
-                  targetUsername: props.content.username,
-                  index: props.index,
-                });
+                navigate(`/userfeed/${props.content.userId}`);
               }}
             >
-              답글 달기
+              {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
+              {props.content.username}
             </span>
+            <span
+              style={{
+                color: 'gray',
+                marginLeft: '0.2rem',
+                fontSize: '0.8rem',
+              }}
+            >
+              {/* {props.content.createdAt} */}
+              {getElapsedTimeString(props.content.createdAt)}
+            </span>
+            <div>{props.content.comment}</div>
+
+            {props.content.cocommentCount > 0 && !openCocomment && (
+              <span
+                style={{
+                  color: 'gray',
+                  fontSize: '0.8rem',
+                  left: '3.7rem',
+                  position: 'relative',
+                }}
+                onClick={getCocomments}
+              >
+                ---답글 {props.content.cocommentCount}개 보기
+              </span>
+            )}
+
+            {/* 방금 요청보낸 댓글에 대댓달기 방지위해 */}
+            {props.content.createdAt !== '' && (
+              <div
+                style={{
+                  color: 'gray',
+                  fontSize: '0.8rem',
+                  left: '3.7rem',
+                  position: 'relative',
+                }}
+              >
+                <span
+                  onClick={() => {
+                    props.setSubmitForm({
+                      type: 'cocomment',
+                      commentId: props.content.commentId,
+                      targetUsername: props.content.username,
+                      index: props.index,
+                    });
+                  }}
+                >
+                  답글 달기
+                </span>
+              </div>
+            )}
           </div>
         </Grid>
-        <Grid item xs={1} className='text-center'>
+        <Grid item xs={1.5} className='text-center'>
           <span>
             {!props.content.liked ? (
               <VscHeart fontSize='20px' onClick={() => {}} />
