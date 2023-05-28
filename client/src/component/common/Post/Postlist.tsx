@@ -30,40 +30,60 @@ const Postlist = (props: {
   const [selectedItem, setItem] = useState<MetadataDto>(emptyDto);
   const [page, setPage] = useState<number>(0);
 
-  const handleOpen = (index: number) => {
-    setItem(posts[index]);
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const getPost = () => {
-    setSpin(true);
-    axios
-      .post('/gateway/metadata/getmetadatas', {
-        userId: props.targetId === undefined ? props.userId : props.targetId,
-        page,
-      })
-      .then((res) => {
-        setPage(page + 1);
-        setSpin(false);
-        const metadatas: MetadataDto[] = res.data.metadatas;
-        if (metadatas !== undefined) {
-          setPosts([...posts, ...metadatas]);
-        }
-      });
-  };
-
   useEffect(() => {
+    //post가져오기
     getPost();
+    //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
+    const handleBack = (event: PopStateEvent) => {
+      setOpen(false);
+    };
+
+    //뒤로가기 event리스너 등록
+    window.addEventListener('popstate', handleBack);
+
+    return () => {
+      //이게 꼭 있어야한단다. 창 나갈때 반환인가?
+      window.removeEventListener('popstate', handleBack);
+    };
   }, []);
+
+  /**post가져오기 */
+  const getPost = async () => {
+    setSpin(true);
+    try {
+      await axios
+        .post('/gateway/metadata/getmetadatas', {
+          userId: props.targetId === undefined ? props.userId : props.targetId,
+          page,
+        })
+        .then((res) => {
+          const metadatas: MetadataDto[] = res.data.metadatas;
+          if (metadatas === undefined) {
+            throw new Error();
+          }
+          setPosts([...posts, ...metadatas]);
+          setPage(page + 1);
+        });
+    } catch (error) {
+      //아직 에러처리 생각안함
+      return;
+    } finally {
+      setSpin(false);
+      return;
+    }
+  };
 
   const renderCard = posts.map((post, index) => {
     //이제 여기에 클릭하면 모달로 띄우는거 만들어야함
     return (
       <Grid item xs={4} key={index}>
         <div style={{ position: 'relative' }}>
-          <a onClick={() => handleOpen(index)} href='#'>
+          <span
+            onClick={() => {
+              setItem(posts[index]);
+              setOpen(true);
+            }}
+          >
             <img
               style={{
                 width: '100%',
@@ -73,7 +93,7 @@ const Postlist = (props: {
               alt={`${index}`}
               src={`${requestUrl}/${post.id}/${post.files[0]}`}
             />
-          </a>
+          </span>
         </div>
       </Grid>
     );
@@ -113,17 +133,24 @@ const Postlist = (props: {
               )}
             </div>
           )}
-          <Modal open={open} onClose={handleClose}>
-            <Box
-              sx={{
-                ...postStyle,
-                width: '90%',
-                maxWidth: '700px',
+          {open && (
+            <Modal
+              open={open}
+              onClose={() => {
+                setOpen(false);
               }}
             >
-              <Post userId={props.userId} metadata={selectedItem} />
-            </Box>
-          </Modal>
+              <Box
+                sx={{
+                  ...postStyle,
+                  width: '90%',
+                  maxWidth: '700px',
+                }}
+              >
+                <Post userId={props.userId} metadata={selectedItem} />
+              </Box>
+            </Modal>
+          )}
         </>
       )}
     </div>

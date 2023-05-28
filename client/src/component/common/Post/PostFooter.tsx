@@ -21,6 +21,11 @@ const PostFooter = (props: {
     ...props.postFooterContent,
   });
   const addLike = () => {
+    setContent({
+      ...postContent,
+      likesCount: postContent.likesCount + 1,
+      liked: !postContent.liked,
+    });
     axios
       .post('/gateway/ffl/addLike', {
         userId: props.userId,

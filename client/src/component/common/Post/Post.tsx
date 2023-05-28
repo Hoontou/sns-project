@@ -28,6 +28,9 @@ const Post = (props: { metadata: MetadataDto; userId: string }) => {
   }, [props.metadata]);
 
   useEffect(() => {
+    //뒤로가기 막기 위해 아래코드 필요.
+    window.history.pushState(null, document.title, window.location.href);
+
     axios
       .post('/gateway/postfooter', {
         userId: props.userId,
@@ -46,7 +49,7 @@ const Post = (props: { metadata: MetadataDto; userId: string }) => {
   }, [props.metadata.id, props.metadata.userId, props.userId]);
 
   return (
-    <div style={{ width: '100%', position: 'relative' }}>
+    <div style={{ width: '100%' }}>
       {/* 이거 상단에 게시글올린 유저정보 표시할건데, 만약 props로 전달안됐으면 표시 안하는걸로. */}
       {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기, 음.. 안해도될듯?*/}
       {!openComment && <Slider images={images} />}

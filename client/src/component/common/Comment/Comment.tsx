@@ -1,4 +1,4 @@
-import { Avatar, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
 import { MetadataDto } from '../Post/Postlist';
 import { PostFooterContent } from '../Post/post.interfaces';
@@ -11,44 +11,12 @@ import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft } from 'react-icons/vsc';
 import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
-
-export type SubmitForm = SubmitCocoForm | SubmitCommentForm;
-export interface SubmitCommentForm {
-  type: 'comment';
-  postId: string;
-}
-export interface SubmitCocoForm {
-  type: 'cocomment';
-  commentId: number;
-  targetUsername: string;
-  index: number;
-}
-
-const defaultCommentItemContent: CommentItemContent = {
-  liked: false,
-  commentId: 0,
-  comment: '',
-  createdAt: '',
-  userId: '',
-  likesCount: 0,
-  cocommentCount: 0,
-  username: '',
-  img: '',
-};
-
-const defaultCocommentItemContent: CocommentContent = {
-  img: '',
-  username: '',
-  cocomment: '',
-  userId: '',
-  liked: false,
-  createdAt: '',
-  likesCount: 0,
-};
-
-export interface CommentItems extends CommentItemContent {
-  cocomments: CocommentContent[];
-}
+import {
+  CommentItems,
+  SubmitForm,
+  defaultCocommentItemContent,
+  defaultCommentItemContent,
+} from './etc';
 
 const Comment = (props: {
   metadata: MetadataDto;
@@ -66,9 +34,6 @@ const Comment = (props: {
     type: 'comment',
     postId: props.postFooterContent.id,
   });
-  const [submittedCoco, setSubmittedCoco] = useState<CocommentContent[]>([]);
-
-  // const checkCreatedAtIsNull = ()
 
   const setSubmitFormToDefault = () => {
     setSubmitForm({
@@ -174,7 +139,7 @@ const Comment = (props: {
       // setCommentItems(tmpItems);
 
       //위는 원본을 복사 후 갈아끼워서 setState하는 코드.
-      //위가 안전할듯. 근데 그냥 아래가 simple할텐데ㄴ
+      //위가 안전할듯. 근데 그냥 아래가 작동이 simple할듯?
       commentItems[submitForm.index].cocomments.unshift(newCocomment);
 
       //섭밋폼 디폴트로 세팅
@@ -214,35 +179,13 @@ const Comment = (props: {
       //   commentCount: props.postFooterContent.commentCount + 1,
       // });
       //그냥 props를 수정. 권장하는 방법은 아니라는데 그냥 작동이 simple할듯
-      //이거 count를 하나 증가시킬지 말지 고민이 많이된다...
+      //이거 count를 하나 증가시킬지 말지 고민이 많이된다..
       props.postFooterContent.commentCount += 1;
 
       //섭밋폼 디폴트로 세팅
       setSubmitFormToDefault();
       return;
     }
-    //게시글 id, 작성자 id, 내용,
-    // await axios.post('/gateway/post/addcomment', {
-    //   comment: value,
-    //   postId: props.postFooterContent.id,
-    // });
-    // axios.get('/gateway/user/getusernamewithimg').then((res) => {
-    //   const data: { img: string; username: string; userId: string } = res.data;
-    //   const newComment = {
-    //     ...defaultCommentItemContent,
-    //     img: data.img,
-    //     username: data.username,
-    //     comment: value,
-    //     userId: data.userId,
-    //   };
-    //   //맨앞에 푸시
-    //   setCommentItems([newComment, ...commentItems]);
-    //   //댓글갯수 +1, 그냥 props.count+1 해도 되긴한데,
-    //   props.setPostFooterContent({
-    //     ...props.postFooterContent,
-    //     commentCount: props.postFooterContent.commentCount + 1,
-    //   });
-    // });
   };
 
   const renderComment = commentItems?.map((content, index) => {

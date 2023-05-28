@@ -1,17 +1,17 @@
-import { Avatar, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import { useNavigate } from 'react-router-dom';
 import { requestUrl } from '../../../common/etc';
-import { CommentItemContent } from 'sns-interfaces';
 import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import axios from 'axios';
 import Cocomment from './Cocomment';
-import { CommentItems, SubmitForm } from './Comment';
+import { CommentItems, SubmitForm } from './etc';
+import axios from 'axios';
 
 //유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
 export interface CocommentContent {
+  cocommentId: number;
   img: string;
   userId: string;
   username: string;
@@ -35,6 +35,8 @@ const CommentItem = (props: {
   const [pending, setPending] = useState<boolean>(false);
   const [openCocomment, setOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
+  const [liked, setLiked] = useState<boolean>(false);
+  const [likesCount, setLikesCount] = useState<number>(0);
 
   const getCocomments = async () => {
     setPending(true);
@@ -43,6 +45,29 @@ const CommentItem = (props: {
     setPending(false);
     setOpen(true);
   };
+
+  const addLike = () => {
+    axios.post('/gateway/ffl/addcommentlike', {
+      commentId: props.content.commentId,
+    });
+    setLiked(!liked);
+    setLikesCount(likesCount + 1);
+    return;
+  };
+
+  const removeLike = () => {
+    axios.post('/gateway/ffl/removecommentlike', {
+      commentId: props.content.commentId,
+    });
+    setLiked(!liked);
+    setLikesCount(likesCount - 1);
+    return;
+  };
+
+  useEffect(() => {
+    setLiked(props.content.liked);
+    setLikesCount(props.content.likesCount);
+  }, []);
 
   const renderCocomment = props.content.cocomments?.map((content, index) => {
     return <Cocomment content={content} key={index} />;
@@ -147,18 +172,27 @@ const CommentItem = (props: {
           </div>
         </Grid>
         <Grid item xs={1.5} className='text-center'>
-          <span>
-            {!props.content.liked ? (
-              <VscHeart fontSize='20px' onClick={() => {}} />
-            ) : (
-              <VscHeartFilled
-                fontSize='20px'
-                style={{ color: 'red' }}
-                onClick={() => {}}
-              />
-            )}
-            <div style={{ fontSize: '0.7rem' }}>{props.content.likesCount}</div>
-          </span>
+          {props.content.createdAt !== '' && (
+            <span>
+              {!liked ? (
+                <VscHeart
+                  fontSize='20px'
+                  onClick={() => {
+                    addLike();
+                  }}
+                />
+              ) : (
+                <VscHeartFilled
+                  fontSize='20px'
+                  style={{ color: 'red' }}
+                  onClick={() => {
+                    removeLike();
+                  }}
+                />
+              )}
+              <div style={{ fontSize: '0.7rem' }}>{likesCount}</div>
+            </span>
+          )}
         </Grid>
       </Grid>
 

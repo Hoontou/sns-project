@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { FflService } from './ffl.service';
 
 @Controller('ffl')
@@ -26,27 +26,38 @@ export class FflController {
   }
 
   @Post('/addcommentlike')
-  async addCommentLike(@Body() body: { commentId: number; userId: string }) {
-    return this.fflService.addCommentLike(body);
+  async addCommentLike(@Body() body: { commentId: number }, @Req() req) {
+    return this.fflService.addCommentLike({
+      commentId: body.commentId,
+      userId: req.user.userId,
+    });
   }
 
   @Post('/removecommentlike')
-  async removeCommentLike(@Body() body: { commentId: number; userId: string }) {
-    return this.fflService.removeCommentLike(body);
+  async removeCommentLike(
+    @Body() body: { commentId: number; userId: string },
+    @Req() req,
+  ) {
+    return this.fflService.removeCommentLike({
+      commentId: body.commentId,
+      userId: req.user.userId,
+    });
   }
 
   @Post('/addcocommentlike')
-  async addCocommentLike(
-    @Body() body: { cocommentId: number; userId: string },
-  ) {
-    return this.fflService.addCocommentLike(body);
+  async addCocommentLike(@Body() body: { cocommentId: number }, @Req() req) {
+    return this.fflService.addCocommentLike({
+      cocommentId: body.cocommentId,
+      userId: req.user.userId,
+    });
   }
 
   @Post('/removecocommentlike')
-  async removeCocommentLike(
-    @Body() body: { cocommentId: number; userId: string },
-  ) {
-    return this.fflService.removeCocommentLike(body);
+  async removeCocommentLike(@Body() body: { cocommentId: number }, @Req() req) {
+    return this.fflService.removeCocommentLike({
+      cocommentId: body.cocommentId,
+      userId: req.user.userId,
+    });
   }
 
   @Post('/getuserlist')

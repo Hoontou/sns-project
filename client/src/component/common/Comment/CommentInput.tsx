@@ -7,7 +7,7 @@ import {
   Button,
 } from '@mui/material';
 import { Dispatch, SetStateAction, useState, useEffect, Fragment } from 'react';
-import { SubmitForm } from './Comment';
+import { SubmitForm } from './etc';
 
 const CommentInput = (props: {
   submitNewComment(value: string): void;

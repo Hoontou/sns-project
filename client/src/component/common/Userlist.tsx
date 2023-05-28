@@ -74,6 +74,7 @@ const Userlist = (props: {
           >
             {title}
           </DialogTitle>
+          {list.length === 0 && <p>아무것도 없습니다.</p>}
           <List sx={{ pt: 0 }} style={{ maxHeight: '50vh' }}>
             {list.map((item, index) => (
               <ListItem

@@ -1,28 +1,43 @@
-import { Avatar, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import { useNavigate } from 'react-router-dom';
 import { requestUrl } from '../../../common/etc';
-import { CommentItemContent } from 'sns-interfaces';
 import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { SubmitForm } from './Comment';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { CocommentContent } from './CommentItem';
 
 //유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
 
-const Cocomment = (props: {
-  content: {
-    img: string;
-    userId: string;
-    username: string;
-    createdAt: string;
-    cocomment: string;
-    liked: boolean;
-    likesCount: number;
-  };
-  key: number;
-}) => {
+const Cocomment = (props: { content: CocommentContent; key: number }) => {
   const navigate = useNavigate();
+  const [liked, setLiked] = useState<boolean>(false);
+  const [likesCount, setLikesCount] = useState<number>(0);
+
+  const addLike = () => {
+    axios.post('/gateway/ffl/addcocommentlike', {
+      cocommentId: props.content.cocommentId,
+    });
+    setLiked(!liked);
+    setLikesCount(likesCount + 1);
+    return;
+  };
+
+  const removeLike = () => {
+    axios.post('/gateway/ffl/removecocommentlike', {
+      cocommentId: props.content.cocommentId,
+    });
+    setLiked(!liked);
+    setLikesCount(likesCount - 1);
+    return;
+  };
+
+  useEffect(() => {
+    setLiked(props.content.liked);
+    setLikesCount(props.content.likesCount);
+  }, []);
+
   return (
     <>
       <Grid container spacing={0} style={{ marginBottom: '1rem' }}>
@@ -86,18 +101,27 @@ const Cocomment = (props: {
           </div>
         </Grid>
         <Grid item xs={1.5} className='text-center'>
-          <span>
-            {!props.content.liked ? (
-              <VscHeart fontSize='20px' onClick={() => {}} />
-            ) : (
-              <VscHeartFilled
-                fontSize='20px'
-                style={{ color: 'red' }}
-                onClick={() => {}}
-              />
-            )}
-            <div style={{ fontSize: '0.7rem' }}>{props.content.likesCount}</div>
-          </span>
+          {props.content.createdAt !== '' && (
+            <span>
+              {!liked ? (
+                <VscHeart
+                  fontSize='20px'
+                  onClick={() => {
+                    addLike();
+                  }}
+                />
+              ) : (
+                <VscHeartFilled
+                  fontSize='20px'
+                  style={{ color: 'red' }}
+                  onClick={() => {
+                    removeLike();
+                  }}
+                />
+              )}
+              <div style={{ fontSize: '0.7rem' }}>{likesCount}</div>
+            </span>
+          )}
         </Grid>
       </Grid>
     </>

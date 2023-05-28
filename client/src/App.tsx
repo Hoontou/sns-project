@@ -6,6 +6,9 @@ import AlertSock from './component/AlertSocket';
 import MyFeed from './component/view/Myfeed/Myfeed';
 import Userfeed from './component/view/Userfeed/Userfeed';
 import UserSetting from './component/view/UserSetting/UserSetting';
+import { createBrowserHistory } from 'history';
+
+export const history = createBrowserHistory();
 
 function App() {
   return (

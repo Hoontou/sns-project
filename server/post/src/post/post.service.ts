@@ -100,7 +100,6 @@ export class PostService {
     for (const i of cocomments) {
       i.userId = crypter.encrypt(i.userId);
     }
-    console.log(cocomments);
 
     return { cocomments };
   }

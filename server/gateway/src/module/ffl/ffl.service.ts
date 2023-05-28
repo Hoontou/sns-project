@@ -70,6 +70,9 @@ export class FflService {
     const { userIds } = await lastValueFrom(
       this.fflGrpcService.getUserIds(body),
     );
+    if (userIds === undefined) {
+      return { userList: [] };
+    }
     const { userList } = await this.userService.getUsernameWithImgList(userIds);
 
     return {
