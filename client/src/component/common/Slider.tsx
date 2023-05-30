@@ -17,12 +17,14 @@ const Slider = (props: { images: string[] }) => {
     return list.map((item, idx) => {
       return (
         <SwiperSlide key={idx}>
+          {/* loadgin='lazy' 하면 넘길때 마다 로딩하는데, 창 내렸다 키면 없어짐.. */}
           <img
             style={{
               width: '100%',
               maxWidth: '700px',
               aspectRatio: '3 / 4.5',
               objectFit: 'cover',
+              background: 'white',
             }}
             alt={`${idx}`}
             src={item}

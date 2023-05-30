@@ -2,14 +2,15 @@ import axios from 'axios';
 import { useState, Dispatch, SetStateAction } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import Userlist from '../Userlist';
-import { MetadataDto } from './Postlist';
+import { Metadata } from './Postlist';
 import { PostFooterContent } from './post.interfaces';
 import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
 const PostFooter = (props: {
-  metadata: MetadataDto;
+  postId: string;
+  createdAt: string;
   userId: string;
   setOpenComment: Dispatch<SetStateAction<boolean>>;
   postFooterContent: PostFooterContent;
@@ -20,6 +21,7 @@ const PostFooter = (props: {
   const [postContent, setContent] = useState<PostFooterContent>({
     ...props.postFooterContent,
   });
+
   const addLike = () => {
     setContent({
       ...postContent,
@@ -29,7 +31,7 @@ const PostFooter = (props: {
     axios
       .post('/gateway/ffl/addLike', {
         userId: props.userId,
-        postId: props.metadata.id,
+        postId: props.postId,
       })
       .then(() => {
         setContent({
@@ -43,7 +45,7 @@ const PostFooter = (props: {
     axios
       .post('/gateway/ffl/removelike', {
         userId: props.userId,
-        postId: props.metadata.id,
+        postId: props.postId,
       })
       .then(() => {
         setContent({
@@ -128,14 +130,14 @@ const PostFooter = (props: {
         )}
 
         <span style={{ display: 'block', color: 'gray', fontSize: '0.8rem' }}>
-          {getElapsedTimeString(props.postFooterContent.createdAt)}
+          {getElapsedTimeString(props.createdAt)}
         </span>
       </div>
       {openUserList && (
         <Userlist
           open={openUserList}
           setOpenUserList={setOpenUserList}
-          targetId={props.metadata.id}
+          targetId={props.postId}
           type={'like'}
         />
       )}

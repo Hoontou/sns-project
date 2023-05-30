@@ -7,6 +7,7 @@ import MyFeed from './component/view/Myfeed/Myfeed';
 import Userfeed from './component/view/Userfeed/Userfeed';
 import UserSetting from './component/view/UserSetting/UserSetting';
 import { createBrowserHistory } from 'history';
+import Landing from './component/view/Landing/Landing';
 
 export const history = createBrowserHistory();
 
@@ -15,6 +16,7 @@ function App() {
     <>
       <Router>
         <Routes>
+          <Route path='/' element={<Landing />} />
           <Route path='/signin' element={<Signin />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/up' element={<Upload />} />

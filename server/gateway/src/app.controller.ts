@@ -1,10 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { PostContent } from 'sns-interfaces';
 
 @Controller('')
 export class AppController {
   constructor(private appService: AppService) {}
+
+  @Post('/landing')
+  async landing(@Req() req, @Body() body: { page: number }) {
+    return this.appService.landing(req.user.userId, body.page);
+  }
 
   @Post('/userinfo')
   /**usernums + 해당유저를 팔로우했는지 정보 리턴해야함. */
@@ -34,6 +39,6 @@ export class AppController {
       img: string;
     }
   > {
-    return this.appService.postFooter(body);
+    return this.appService.postFooter({ ...body, type: 'postFooter' });
   }
 }

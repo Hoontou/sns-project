@@ -6,6 +6,10 @@ const metadataSchema = new mongoose.Schema({
   //받은 objectid로 _id에 바로넣기
   userId: String,
   files: Array,
+  createdAt: {
+    type: Date,
+    default: Date.now, // 현재 날짜 및 시간으로 기본값 설정
+  },
 });
 metadataSchema.index({
   userId: 1,

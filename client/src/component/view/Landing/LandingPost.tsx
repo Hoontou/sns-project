@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
-import Slider from '../Slider';
-import PostFooter from './PostFooter';
-import { requestUrl } from '../../../common/etc';
-import { Metadata } from './Postlist';
-import Comment from '../Comment/Comment';
 import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { PostContent } from 'sns-interfaces';
-import { emptyPostFooterContent } from './post.interfaces';
-import { PostFooterContent } from './post.interfaces';
+import { requestUrl } from '../../../common/etc';
+import PostFooter from '../../common/Post/PostFooter';
+import { Metadata } from '../../common/Post/Postlist';
+import {
+  PostFooterContent,
+  emptyPostFooterContent,
+} from '../../common/Post/post.interfaces';
+import Slider from '../../common/Slider';
 
-// export
 const Post = (props: { metadata: Metadata; userId: string }) => {
   const [spin, setSpin] = useState<boolean>(true);
   const [images, setImages] = useState<string[]>([]);
@@ -30,7 +30,7 @@ const Post = (props: { metadata: Metadata; userId: string }) => {
 
   useEffect(() => {
     //뒤로가기 막기 위해 아래코드 필요.
-    window.history.pushState(null, document.title, window.location.href);
+    // window.history.pushState(null, document.title, window.location.href);
 
     axios
       .post('/gateway/postfooter', {
@@ -53,24 +53,15 @@ const Post = (props: { metadata: Metadata; userId: string }) => {
     <div style={{ width: '100%' }}>
       {/* 이거 상단에 게시글올린 유저정보 표시할건데, 만약 props로 전달안됐으면 표시 안하는걸로. */}
       {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기, 음.. 안해도될듯?*/}
-      {!openComment && <Slider images={images} />}
+      {!spin && <Slider images={images} />}
 
-      {!spin && !openComment && (
+      {!spin && (
         <PostFooter
           postId={props.metadata.id}
           createdAt={props.metadata.createdAt}
           userId={props.userId}
           setOpenComment={setOpenComment}
           postFooterContent={postFooterContent}
-        />
-      )}
-      {!spin && openComment && (
-        <Comment
-          createdAt={props.metadata.createdAt}
-          postFooterContent={postFooterContent}
-          userId={props.userId}
-          setOpenComment={setOpenComment}
-          setPostFooterContent={setPostFooterContent}
         />
       )}
     </div>

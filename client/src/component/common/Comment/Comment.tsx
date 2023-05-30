@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
-import { MetadataDto } from '../Post/Postlist';
+import { Metadata, MetadataDto } from '../Post/Postlist';
 import { PostFooterContent } from '../Post/post.interfaces';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
@@ -19,7 +19,7 @@ import {
 } from './etc';
 
 const Comment = (props: {
-  metadata: MetadataDto;
+  createdAt: string;
   userId: string;
   setOpenComment: Dispatch<SetStateAction<boolean>>;
   postFooterContent: PostFooterContent;
@@ -283,7 +283,7 @@ const Comment = (props: {
                       fontSize: '0.8rem',
                     }}
                   >
-                    {getElapsedTimeString(props.postFooterContent.createdAt)}
+                    {getElapsedTimeString(props.createdAt)}
                   </span>
                   <div>{props.postFooterContent.title}</div>
                 </div>

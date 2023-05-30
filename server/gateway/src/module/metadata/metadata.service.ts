@@ -15,6 +15,14 @@ export class MetadataService {
     const metadatas = await lastValueFrom(
       this.metadataGrpcService.getMetadatas(body),
     );
+    console.log(metadatas);
+    return metadatas;
+  }
+
+  async getMetadatasLast3Day(data: { userIds: string[]; page: number }) {
+    const metadatas = await lastValueFrom(
+      this.metadataGrpcService.getMetadatasLast3Day(data),
+    );
     return metadatas;
   }
 }

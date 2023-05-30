@@ -22,7 +22,10 @@
     "crypto-js": "^4.1.1",
     "fastify": "^4.13.0",
     "fastify-multer": "^2.0.3",
-    "fs-extra": "^11.1.0"
+    "fs-extra": "^11.1.0",
+    "imagemin": "^8.0.1",
+    "imagemin-webp": "^8.0.0",
+    "sharp": "^0.32.1"
   },
   "devDependencies": {
     "@types/node": "^18.14.0",

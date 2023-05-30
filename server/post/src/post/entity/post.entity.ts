@@ -25,8 +25,8 @@ export class Post extends BaseEntity {
   @Column({ default: 0 })
   commentcount: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  // @CreateDateColumn()
+  // createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   //@JoinColumn()

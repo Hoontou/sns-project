@@ -8,5 +8,6 @@ import { metadataMicroserviceOptions } from 'src/grpc/connection.options';
   imports: [ClientsModule.register([metadataMicroserviceOptions])],
   controllers: [MetadataController],
   providers: [MetadataService],
+  exports: [MetadataService],
 })
 export class MetadataModule {}

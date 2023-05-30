@@ -47,7 +47,7 @@ export class UserService {
     return {
       ...(await lastValueFrom(
         this.userGrpcService.getUsernameWithImg({
-          userId: crypter.decrypt(userId),
+          userId,
         }),
       )),
       userId,

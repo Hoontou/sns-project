@@ -56,6 +56,7 @@ const getServer = () => {
         .sort({ _id: -1 })
         .limit(len)
         .skip(req.request.page * len);
+      console.log(metadatas);
 
       res(null, {
         metadatas: metadatas.map((item) => {
@@ -63,6 +64,27 @@ const getServer = () => {
           return item;
         }),
       });
+    },
+    GetMetadatasLast3Day: async (req, res) => {
+      const len = 10; //가져올 갯수
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+      const userIds = req.request.userIds?.map((i) => {
+        return crypter.decrypt(i);
+      });
+      console.log(userIds);
+
+      const metadatas: MetadataDto[] = await metaRepository.db
+        //3일 안으로, 10개씩
+        .find({
+          userId: { $in: userIds },
+          createdAt: { $gte: threeDaysAgo },
+        })
+        .sort({ _id: -1 })
+        .limit(len)
+        .skip(req.request.page * len);
+      res(null, { metadatas });
     },
   } as MetadataServiceHandlers);
   return server;

@@ -51,7 +51,12 @@ export interface MetadataGrpcService {
   getMetadatas(data: {
     userId: string;
     page: number;
-  }): Observable<MetadataDto[]>;
+  }): Observable<MetadataDto & { createdAt: string }[]>;
+
+  getMetadatasLast3Day(data: {
+    userIds: string[];
+    page: number;
+  }): Observable<{ metadatas: MetadataDto[] }>;
 }
 
 export interface FflGrpcService {

@@ -11,10 +11,15 @@ export interface MetadataDto {
   files: string[];
 } //sns-interfaces에 있는걸 쓰려고 했는데 리액트에서 자체적으로 _id에서 _를 빼버리고 id로 만들어버림.
 //그래서 그냥 여기다 새로정의
-const emptyDto: MetadataDto = {
+
+export interface Metadata extends MetadataDto {
+  createdAt: string;
+}
+const emptyDto: Metadata = {
   id: '',
   userId: '',
   files: [''],
+  createdAt: '',
 };
 
 //targetId가 없으면 내 피드로 접근했다는 뜻.
@@ -25,9 +30,9 @@ const Postlist = (props: {
   postCount: number;
 }) => {
   const [spin, setSpin] = useState<boolean>(true);
-  const [posts, setPosts] = useState<MetadataDto[]>([]);
+  const [posts, setPosts] = useState<Metadata[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedItem, setItem] = useState<MetadataDto>(emptyDto);
+  const [selectedItem, setItem] = useState<Metadata>(emptyDto);
   const [page, setPage] = useState<number>(0);
 
   useEffect(() => {
@@ -57,7 +62,7 @@ const Postlist = (props: {
           page,
         })
         .then((res) => {
-          const metadatas: MetadataDto[] = res.data.metadatas;
+          const metadatas: Metadata[] = res.data.metadatas;
           if (metadatas === undefined) {
             throw new Error();
           }

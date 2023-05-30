@@ -22,6 +22,8 @@ export interface ProtoGrpcType {
     }
   }
   metadata: {
+    GetMetadatasLast3DayReq: MessageTypeDefinition
+    GetMetadatasLast3DayRes: MessageTypeDefinition
     Metadata: MessageTypeDefinition
     MetadataService: SubtypeConstructor<typeof grpc.Client, _metadata_MetadataServiceClient> & { service: _metadata_MetadataServiceDefinition }
     getMetadatasReq: MessageTypeDefinition

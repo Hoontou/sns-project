@@ -16,8 +16,7 @@ message GetPostRes {
   int32 likesCount = 1;
   int32 commentCount = 2;
   string title = 3;
-  string createdAt = 4;
-  string id = 5;
+  string id = 4;
 }
 
 message Tag {

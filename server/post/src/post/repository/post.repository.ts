@@ -92,7 +92,6 @@ export class PostTable {
       likesCount: post.likes,
       commentCount: post.commentcount,
       title: post.title,
-      createdAt: post.createdAt,
     };
   }
 
