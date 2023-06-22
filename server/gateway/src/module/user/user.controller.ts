@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { UserService } from './user.service';
+import { crypter } from 'src/common/crypter';
 
 @Controller('user')
 export class UserController {
@@ -21,6 +22,8 @@ export class UserController {
 
   @Get('/getusernamewithimg')
   async getUsernameWithImg(@Req() req) {
-    return this.userService.getUsernameWithImg(req.user.userId);
+    return this.userService.getUsernameWithImg(
+      Number(crypter.decrypt(req.user.userId)),
+    );
   }
 }

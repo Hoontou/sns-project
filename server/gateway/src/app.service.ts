@@ -162,7 +162,7 @@ export class AppService {
   ): Promise<{ username: string; img: string }> {
     //type이 landing일 시 복호화 필요없음.
     return this.userService.getUsernameWithImg(
-      type === 'landing' ? targetId : crypter.decrypt(targetId),
+      type === 'landing' ? Number(targetId) : Number(crypter.decrypt(targetId)),
     );
   }
 }

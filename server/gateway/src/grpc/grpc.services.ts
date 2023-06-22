@@ -26,7 +26,7 @@ export interface UserGrpcService {
   getUsernameWithImg({
     userId,
   }: {
-    userId: string;
+    userId: number;
   }): Observable<{ username: string; img: string }>;
   getUsernameWithImgList({ userIds }: { userIds: string[] }): Observable<{
     userList: { username: string; img: string; userId: number }[];

@@ -2,13 +2,14 @@ export const getElapsedTimeString = (targetTime: string): string => {
   if (targetTime === '') {
     return '요청 보냄';
   }
+
   const targetDate = new Date(targetTime);
   const currentDate = new Date();
-  //postgres 에서 한국시간을 기본으로 잡아준다.
-  //const koreaOffset = 9 * 60; // 한국은 UTC+9:00 시간대이므로 9시간을 분으로 환산
-  const elapsedMilliseconds = currentDate.getTime() - targetDate.getTime(); //+ koreaOffset * 60 * 1000;
+  const elapsedMilliseconds = currentDate.getTime() - targetDate.getTime();
+
   const elapsedMinutes = Math.floor(elapsedMilliseconds / (60 * 1000));
   const elapsedHours = Math.floor(elapsedMilliseconds / (60 * 60 * 1000));
+  const elapsedDays = Math.floor(elapsedMilliseconds / (24 * 60 * 60 * 1000));
 
   if (elapsedMinutes < 60) {
     return `${elapsedMinutes}분 전`;
@@ -16,14 +17,20 @@ export const getElapsedTimeString = (targetTime: string): string => {
   if (elapsedHours < 24) {
     return `${elapsedHours}시간 전`;
   }
+
   if (isSameDay(currentDate, targetDate)) {
     return '어제';
   }
-  if (elapsedHours <= 24 * 7) {
-    return `${Math.floor(elapsedHours / 24)}일 전`;
+
+  if (elapsedDays < 30) {
+    return `${elapsedDays}일 전`;
   }
 
-  return targetDate.toLocaleDateString('ko-KR');
+  if (elapsedDays < 365) {
+    return `${Math.floor(elapsedDays / 30)}달 전`;
+  }
+
+  return `${Math.floor(elapsedDays / 365)}년 전`;
 };
 
 const isSameDay = (date1: Date, date2: Date): boolean => {

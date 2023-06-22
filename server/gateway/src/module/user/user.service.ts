@@ -42,8 +42,8 @@ export class UserService {
   }
 
   async getUsernameWithImg(
-    userId: string,
-  ): Promise<{ username: string; img: string; userId: string }> {
+    userId: number,
+  ): Promise<{ username: string; img: string; userId: number }> {
     return {
       ...(await lastValueFrom(
         this.userGrpcService.getUsernameWithImg({
