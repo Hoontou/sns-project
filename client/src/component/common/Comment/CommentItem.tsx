@@ -112,9 +112,9 @@ const CommentItem = (props: {
           <div style={{ marginLeft: '3.7rem' }}>
             <span
               style={{
+                fontSize: '0.9rem',
                 marginRight: '0.5rem',
                 fontWeight: '600',
-                fontSize: '1.1rem',
               }}
               onClick={() => {
                 navigate(`/userfeed/${props.content.userId}`);
@@ -127,19 +127,19 @@ const CommentItem = (props: {
               style={{
                 color: 'gray',
                 marginLeft: '0.2rem',
-                fontSize: '0.8rem',
+                fontSize: '0.7rem',
               }}
             >
               {/* {props.content.createdAt} */}
               {getElapsedTimeString(props.content.createdAt)}
             </span>
-            <div>{props.content.comment}</div>
+            <div style={{ fontSize: '0.9rem' }}>{props.content.comment}</div>
 
             {props.content.cocommentCount > 0 && !openCocomment && (
               <span
                 style={{
                   color: 'gray',
-                  fontSize: '0.8rem',
+                  fontSize: '0.7rem',
                 }}
                 onClick={getCocomments}
               >
@@ -152,7 +152,7 @@ const CommentItem = (props: {
               <div
                 style={{
                   color: 'gray',
-                  fontSize: '0.8rem',
+                  fontSize: '0.7rem',
                 }}
               >
                 <span

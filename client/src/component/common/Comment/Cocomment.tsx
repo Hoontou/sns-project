@@ -77,7 +77,7 @@ const Cocomment = (props: { content: CocommentContent; key: number }) => {
                 style={{
                   marginRight: '0.5rem',
                   fontWeight: '600',
-                  fontSize: '1.1rem',
+                  fontSize: '0.8rem',
                 }}
                 onClick={() => {
                   navigate(`/userfeed/${props.content.userId}`);
@@ -90,13 +90,15 @@ const Cocomment = (props: { content: CocommentContent; key: number }) => {
                 style={{
                   color: 'gray',
                   marginLeft: '0.2rem',
-                  fontSize: '0.8rem',
+                  fontSize: '0.7rem',
                 }}
               >
                 {/* {props.content.createdAt} */}
                 {getElapsedTimeString(props.content.createdAt)}
               </span>
-              <div>{props.content.cocomment}</div>
+              <div style={{ fontSize: '0.8rem' }}>
+                {props.content.cocomment}
+              </div>
             </div>
           </div>
         </Grid>

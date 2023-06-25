@@ -22,7 +22,7 @@ const Slider = (props: { images: string[] }) => {
             style={{
               width: '100%',
               maxWidth: '700px',
-              aspectRatio: '3 / 4.5',
+              aspectRatio: '3 / 4',
               objectFit: 'cover',
               background: 'white',
             }}
@@ -36,7 +36,7 @@ const Slider = (props: { images: string[] }) => {
 
   //이미지 3:4비율 가로길이 380에 맞춰서, 비율유지 꽉차게 라는 뜻임
   return (
-    <div>
+    <div style={{ paddingTop: '3.7rem' }}>
       <Swiper
         effect={'slide'}
         autoplay={{

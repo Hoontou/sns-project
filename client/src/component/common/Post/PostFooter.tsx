@@ -83,9 +83,11 @@ const PostFooter = (props: {
           }}
         />
         {postContent.likesCount === 0 ? (
-          <span style={{ position: 'absolute', bottom: '0', right: '0' }}>
+          // <span style={{ position: 'absolute', bottom: '0', right: '0' }}>
+          //위 코드는 아이콘의 오른쪽 끝에 붙이는 코드
+          <div style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
             첫번째로 좋아요를 눌러보세요
-          </span>
+          </div>
         ) : (
           <span
             style={{ position: 'absolute', bottom: '0', right: '0' }}
@@ -103,7 +105,6 @@ const PostFooter = (props: {
             style={{
               marginRight: '0.5rem',
               fontWeight: '600',
-              fontSize: '1.1rem',
             }}
             onClick={() => {
               navigate(`/userfeed/${props.userId}`);

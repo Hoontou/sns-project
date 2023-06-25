@@ -8,9 +8,12 @@ import axios from 'axios';
 import { PostContent } from 'sns-interfaces';
 import { emptyPostFooterContent } from './post.interfaces';
 import { PostFooterContent } from './post.interfaces';
+import { useNavigate } from 'react-router-dom';
+import sample1 from '../../../asset/sample1.jpg';
 
 // export
 const Post = (props: { metadata: Metadata; userId: string }) => {
+  const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [images, setImages] = useState<string[]>([]);
   const [openComment, setOpenComment] = useState<boolean>(false);
@@ -50,7 +53,61 @@ const Post = (props: { metadata: Metadata; userId: string }) => {
   }, [props.metadata.id, props.metadata.userId, props.userId]);
 
   return (
-    <div style={{ width: '100%' }}>
+    // <div style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
+    <div>
+      {!openComment && (
+        <div
+          style={{
+            paddingTop: '0.5rem',
+            paddingBottom: '0.5rem',
+            position: 'fixed',
+            zIndex: '999',
+            backgroundColor: 'white',
+            width: '100%',
+          }}
+        >
+          <div
+            style={{
+              width: '2.7rem',
+              height: '2.7rem',
+              borderRadius: '70%',
+              overflow: 'hidden',
+              marginLeft: '0.7rem',
+              marginRight: '0.9rem',
+              float: 'left',
+            }}
+          >
+            <img
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+              src={
+                postFooterContent.img === ''
+                  ? sample1
+                  : `${requestUrl}/${postFooterContent.img}`
+              }
+              alt='profile'
+            />
+          </div>
+          <div style={{ marginTop: '0.6rem' }}>
+            <span
+              style={{
+                marginRight: '0.5rem',
+                fontWeight: '600',
+              }}
+              onClick={() => {
+                navigate(`/userfeed/${props.userId}`);
+              }}
+            >
+              {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
+              {postFooterContent.username}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* 이거 상단에 게시글올린 유저정보 표시할건데, 만약 props로 전달안됐으면 표시 안하는걸로. */}
       {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기, 음.. 안해도될듯?*/}
       {!openComment && <Slider images={images} />}

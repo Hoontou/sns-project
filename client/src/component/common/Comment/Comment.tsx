@@ -207,7 +207,6 @@ const Comment = (props: {
         <div style={{ height: '80vh', overflowY: 'auto' }}>
           <div
             style={{
-              fontSize: '1.5rem',
               paddingTop: '0.5rem',
               position: 'fixed',
               zIndex: '999',
@@ -219,7 +218,6 @@ const Comment = (props: {
             <VscArrowLeft
               style={{
                 marginBottom: '0.3rem',
-                fontSize: '2rem',
                 position: 'fixed',
                 left: '1rem',
               }}
@@ -267,7 +265,7 @@ const Comment = (props: {
                     style={{
                       marginRight: '0.5rem',
                       fontWeight: '600',
-                      fontSize: '1.1rem',
+                      fontSize: '0.9rem',
                     }}
                     onClick={() => {
                       navigate(`/userfeed/${props.userId}`);
@@ -280,12 +278,14 @@ const Comment = (props: {
                     style={{
                       color: 'gray',
                       marginLeft: '0.2rem',
-                      fontSize: '0.8rem',
+                      fontSize: '0.7rem',
                     }}
                   >
                     {getElapsedTimeString(props.createdAt)}
                   </span>
-                  <div>{props.postFooterContent.title}</div>
+                  <div style={{ fontSize: '0.9rem' }}>
+                    {props.postFooterContent.title}
+                  </div>
                 </div>
               </Grid>
               <Grid item xs={9.5}></Grid>

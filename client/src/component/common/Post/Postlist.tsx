@@ -145,13 +145,7 @@ const Postlist = (props: {
                 setOpen(false);
               }}
             >
-              <Box
-                sx={{
-                  ...postStyle,
-                  width: '90%',
-                  maxWidth: '700px',
-                }}
-              >
+              <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
                 <Post userId={props.userId} metadata={selectedItem} />
               </Box>
             </Modal>
