@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { CommentItemContent, PostContent } from 'sns-interfaces';
+import { CommentItemContent } from 'sns-interfaces';
+import { CocommentContent, PostContent } from 'sns-interfaces/client.interface';
 import { PostGrpcService } from 'src/grpc/grpc.services';
 import { FflService } from '../ffl/ffl.service';
 import { AmqpService } from 'src/common/amqp/amqp.service';
@@ -49,7 +50,7 @@ export class PostService {
   async getCocommentList(
     body: { commentId: number; page: number },
     userId: string,
-  ) {
+  ): Promise<{ cocommentItem: CocommentContent[] }> {
     const { cocomments } = await lastValueFrom(
       this.postGrpcService.getCocommentList(body),
     );

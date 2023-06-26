@@ -1,13 +1,10 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { PostContent } from 'sns-interfaces';
 import { requestUrl } from '../../../common/etc';
 import PostFooter from '../../common/Post/PostFooter';
 import { Metadata } from '../../common/Post/Postlist';
-import {
-  PostFooterContent,
-  emptyPostFooterContent,
-} from '../../common/Post/post.interfaces';
+import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
+import { PostFooterContent } from 'sns-interfaces/client.interface';
 import Slider from '../../common/Slider';
 
 const Post = (props: { metadata: Metadata; userId: string }) => {
@@ -39,11 +36,7 @@ const Post = (props: { metadata: Metadata; userId: string }) => {
         targetId: props.metadata.userId,
       })
       .then((res) => {
-        const data: PostContent & {
-          liked: boolean;
-          username: string;
-          img: string;
-        } = res.data;
+        const data: PostFooterContent = res.data;
         setPostFooterContent({ ...data });
         setSpin(false);
       });

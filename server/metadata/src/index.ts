@@ -73,7 +73,7 @@ const getServer = () => {
       const userIds = req.request.userIds?.map((i) => {
         return crypter.decrypt(i);
       });
-      console.log(userIds);
+      // console.log(userIds);
 
       const metadatas: MetadataDto[] = await metaRepository.db
         //3일 안으로, 10개씩
@@ -84,6 +84,7 @@ const getServer = () => {
         .sort({ _id: -1 })
         .limit(len)
         .skip(req.request.page * len);
+      console.log(metadatas);
       res(null, { metadatas });
     },
   } as MetadataServiceHandlers);

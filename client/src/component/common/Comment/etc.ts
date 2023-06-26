@@ -1,5 +1,5 @@
 import { CommentItemContent } from 'sns-interfaces';
-import { CocommentContent } from './CommentItem';
+import { CocommentContent } from 'sns-interfaces/client.interface';
 
 export type SubmitForm = SubmitCocoForm | SubmitCommentForm;
 export interface SubmitCommentForm {

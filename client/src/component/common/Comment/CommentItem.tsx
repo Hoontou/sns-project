@@ -9,17 +9,6 @@ import Cocomment from './Cocomment';
 import { CommentItems, SubmitForm } from './etc';
 import axios from 'axios';
 
-//유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
-export interface CocommentContent {
-  cocommentId: number;
-  img: string;
-  userId: string;
-  username: string;
-  createdAt: string;
-  cocomment: string;
-  liked: boolean;
-  likesCount: number;
-}
 const CommentItem = (props: {
   content: CommentItems;
   key: number;

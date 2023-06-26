@@ -1,10 +1,12 @@
 import { Grid } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
-import { Metadata, MetadataDto } from '../Post/Postlist';
-import { PostFooterContent } from '../Post/post.interfaces';
+import {
+  CocommentContent,
+  PostFooterContent,
+} from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import CommentItem, { CocommentContent } from './CommentItem';
+import CommentItem from './CommentItem';
 import axios from 'axios';
 import CommentInput from './CommentInput';
 import { CommentItemContent } from 'sns-interfaces';

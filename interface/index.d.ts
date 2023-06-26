@@ -1,14 +1,13 @@
 //메타데이터 DTO 정의
 export interface MetadataDto {
-  _id: string;
+  id: string;
   userId: string;
   files: string[];
 }
-export interface PostContent {
-  id: string;
-  title: string;
-  likesCount: number;
-  commentCount: number;
+export interface MetadataDto_id {
+  _id: string;
+  userId: string;
+  files: string[];
 }
 
 //알람 DTO 정의

@@ -32,6 +32,7 @@ export class UserService {
           userId: crypter.decrypt(userId),
         }),
       );
+      console.log(result);
       return {
         ...result,
         success: true,

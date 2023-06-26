@@ -6,7 +6,7 @@ import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { CocommentContent } from './CommentItem';
+import { CocommentContent } from 'sns-interfaces/client.interface';
 
 //유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
 

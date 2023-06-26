@@ -5,11 +5,10 @@ import { requestUrl } from '../../../common/etc';
 import { Metadata } from './Postlist';
 import Comment from '../Comment/Comment';
 import axios from 'axios';
-import { PostContent } from 'sns-interfaces';
 import { emptyPostFooterContent } from './post.interfaces';
-import { PostFooterContent } from './post.interfaces';
 import { useNavigate } from 'react-router-dom';
 import sample1 from '../../../asset/sample1.jpg';
+import { PostFooterContent } from 'sns-interfaces/client.interface';
 
 // export
 const Post = (props: { metadata: Metadata; userId: string }) => {
@@ -42,11 +41,7 @@ const Post = (props: { metadata: Metadata; userId: string }) => {
         targetId: props.metadata.userId,
       })
       .then((res) => {
-        const data: PostContent & {
-          liked: boolean;
-          username: string;
-          img: string;
-        } = res.data;
+        const data: PostFooterContent = res.data;
         setPostFooterContent({ ...data });
         setSpin(false);
       });
@@ -54,6 +49,7 @@ const Post = (props: { metadata: Metadata; userId: string }) => {
 
   return (
     // <div style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
+    //상단 헤더부분
     <div>
       {!openComment && (
         <div

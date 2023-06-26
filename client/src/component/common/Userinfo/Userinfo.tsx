@@ -7,6 +7,7 @@ import UserinfoButton from './UserinfoButton';
 import UserinfoNums from './UserinfoNums';
 import UserinfoMenu from './UserinfoMenu';
 import { requestUrl } from '../../../common/etc';
+import { UserInfo } from 'sns-interfaces/client.interface';
 
 //타겟아이디가 없다? 내 피드에서 온 요청이라는 뜻.
 const Userinfo = (props: {
@@ -39,18 +40,7 @@ const Userinfo = (props: {
           : { userId: props.targetId, myId: props.userId }
       )
       .then((res) => {
-        const data:
-          | {
-              success: true;
-              following: number;
-              follower: number;
-              postcount: number;
-              username: string;
-              followed: boolean;
-              img: string;
-              introduce: string;
-            }
-          | { success: false } = res.data;
+        const data: UserInfo | { success: false } = res.data;
 
         if (data.success === false) {
           //불러오기 실패했으면 다른곳으로 이동시킴.

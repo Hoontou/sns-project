@@ -3,10 +3,10 @@ import {
   AuthDto,
   AuthResultRes,
   MetadataDto,
-  PostContent,
   SignInDto,
   SignUpDto,
 } from 'sns-interfaces';
+import { CocommentContent, PostContent } from 'sns-interfaces/client.interface';
 
 export interface AuthGrpcService {
   signIn(SignInReq: SignInDto): Observable<AuthResultRes>;
@@ -117,14 +117,6 @@ export interface PostGrpcService {
     }[];
   }>;
   getCocommentList(data: { commentId: number; page: number }): Observable<{
-    cocomments: {
-      cocommentId: number;
-      cocomment: string;
-      createdAt: string;
-      userId: string | number;
-      likesCount: number;
-      username: string;
-      img: string;
-    }[];
+    cocomments: CocommentContent[];
   }>;
 }

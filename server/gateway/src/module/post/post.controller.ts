@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CommentItemContent } from 'sns-interfaces';
+import { CocommentContent } from 'sns-interfaces/client.interface';
 
 @Controller('post')
 export class PostController {
@@ -31,7 +32,7 @@ export class PostController {
   getCocommentList(
     @Body() body: { commentId: number; page: number },
     @Req() req,
-  ) {
+  ): Promise<{ cocommentItem: CocommentContent[] }> {
     return this.postService.getCocommentList(body, req.user.userId);
   }
 }

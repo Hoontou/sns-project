@@ -2,9 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { UserService } from './module/user/user.service';
 import { FflService } from './module/ffl/ffl.service';
 import { PostService } from './module/post/post.service';
-import { PostContent } from 'sns-interfaces';
 import { MetadataService } from './module/metadata/metadata.service';
 import { crypter } from './common/crypter';
+import {
+  PostFooterContent,
+  PostContent,
+  UserInfo,
+} from 'sns-interfaces/client.interface';
+import { LandingContent } from './app.controller';
 
 @Injectable()
 export class AppService {
@@ -16,6 +21,8 @@ export class AppService {
   ) {}
 
   async landing(userId: string, page: number) {
+    //가져올게 아무것도 없을 시 metadatas.map 에서 오류남. 추후 수정필요.
+
     //팔로우 목록 가져오기
     const { userList } = await this.fflService.getUserList({
       id: userId,
@@ -31,32 +38,26 @@ export class AppService {
       page,
     });
 
-    const requests: Promise<
-      PostContent & { liked: boolean; username: string; img: string }
-    >[] = [];
-    metadatas.map((i, index) => {
-      //복호화 필요하지 않다는 시그널을 위해 type을 landing으로 보냄
-      requests.push(
-        this.postFooter({
+    //metadata로 PostFooter 가져옴
+    const postFooter: PostFooterContent[] = await Promise.all(
+      metadatas.map((i, index) => {
+        //복호화 필요하지 않다는 시그널을 위해 type을 landing으로 보냄
+        return this.postFooter({
           userId,
-          postId: i._id,
+          postId: i.id,
           targetId: i.userId,
           type: 'landing',
-        }).then((i) => {
-          //무작위로 나온다면 의도대로 성공.
-          console.log(index, 'complete');
-          return i;
-        }),
-      );
-    });
+        });
+      }),
+    );
 
     //테스트 결과 promise.all의 의도대로 로그 잘찍힌다.
     //근데 분명 한번의 req로 가져오는게 아니라서 쿼리여러번, rpc개방 여러번의 오버헤드가 클것임.
     //나중에 이 api의 속도가 느리면 한번에 다 가져오는걸로 교체해야할듯
     //개발 초기단계에는 90ms 찍힌다.
 
-    console.log('promise.all 시작점');
-    const result = await Promise.all(requests);
+    //console.log('promise.all 시작점');
+
     // const result = [{}];
 
     //근데.. 만약 메타데이터만 제대로 몽고에 들어갔고, 다른것들의 삽입이 늦어서
@@ -70,26 +71,17 @@ export class AppService {
     // const combinedResult = result.map((i, index) => {
     //   return { ...i, ...metadatas[index], postId: metadatas[index]._id };
     // });
-    const combinedResult = metadatas.map((i, index) => {
-      return { ...i, ...result[index], postId: i._id };
+    const combinedResult: LandingContent[] = metadatas.map((i, index) => {
+      return { ...i, ...postFooter[index], userId: crypter.encrypt(i.userId) };
     });
     return { last3daysPosts: combinedResult };
   }
 
   /**userinfo + 해당유저를 팔로우했는지 정보 리턴해야함. */
-  async userInfo(body: { userId: string; myId: '' | string }): Promise<
-    | {
-        success: true;
-        following: number;
-        follower: number;
-        postcount: number;
-        username: string;
-        followed: boolean;
-        img: string;
-        introduce: string;
-      }
-    | { success: false }
-  > {
+  async userInfo(body: {
+    userId: string;
+    myId: '' | string;
+  }): Promise<UserInfo | { success: false }> {
     //일단 숫자를 찾는다.
     const userinfo = await this.userService.getUserinfo(body.userId);
 
@@ -114,13 +106,7 @@ export class AppService {
     postId: string;
     targetId: string;
     type: 'landing' | 'postFooter';
-  }): Promise<
-    PostContent & {
-      liked: boolean;
-      username: string;
-      img: string;
-    }
-  > {
+  }): Promise<PostFooterContent> {
     //ffl 가서 postId랑 userId로 liked? 체크
 
     const [

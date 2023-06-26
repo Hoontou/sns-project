@@ -21,7 +21,11 @@ export class UserController {
   }
 
   @Get('/getusernamewithimg')
-  async getUsernameWithImg(@Req() req) {
+  async getUsernameWithImg(@Req() req): Promise<{
+    username: string;
+    img: string;
+    userId: number;
+  }> {
     return this.userService.getUsernameWithImg(
       Number(crypter.decrypt(req.user.userId)),
     );

@@ -3,6 +3,18 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../common/Navbar/Navbar';
 import Post from '../../common/Post/Post';
 
+export interface LandingContent {
+  userId: string;
+  liked: boolean;
+  username: string;
+  img: string;
+  id: string;
+  title: string;
+  likesCount: number;
+  commentCount: number;
+  files: string[];
+}
+
 const Landing = () => {
   // const [posts, setPosts]
   const [page, setPage] = useState<number>(0);
@@ -14,22 +26,9 @@ const Landing = () => {
       const {
         last3daysPosts,
       }: {
-        last3daysPosts: {
-          postId: string;
-          id: string;
-          title: string;
-          likesCount: number;
-          commentCount: number;
-          liked: boolean;
-          username: string;
-          img: string;
-          _id: string;
-          userId: string;
-          files: string[];
-        }[];
+        last3daysPosts: LandingContent[];
       } = res.data;
-
-      console.log(last3daysPosts);
+      setPage(page + 1);
     });
   };
 
