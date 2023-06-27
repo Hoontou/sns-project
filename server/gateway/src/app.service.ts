@@ -74,7 +74,7 @@ export class AppService {
     const combinedResult: LandingContent[] = metadatas.map((i, index) => {
       return { ...i, ...postFooter[index], userId: crypter.encrypt(i.userId) };
     });
-    return { last3daysPosts: combinedResult };
+    return { last3daysPosts: combinedResult, userId };
   }
 
   /**userinfo + 해당유저를 팔로우했는지 정보 리턴해야함. */

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
 import Post from './Post';
+import { emptyPostFooterContent } from './post.interfaces';
 
 export interface MetadataDto {
   id: string;
@@ -145,7 +146,11 @@ const Postlist = (props: {
               }}
             >
               <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
-                <Post userId={props.userId} metadata={selectedItem} />
+                <Post
+                  userId={props.userId}
+                  metadata={selectedItem}
+                  postFooterContent={emptyPostFooterContent}
+                />
               </Box>
             </Modal>
           )}

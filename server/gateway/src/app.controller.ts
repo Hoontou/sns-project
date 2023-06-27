@@ -22,7 +22,7 @@ export class AppController {
   async landing(
     @Req() req,
     @Body() body: { page: number },
-  ): Promise<{ last3daysPosts: LandingContent[] }> {
+  ): Promise<{ last3daysPosts: LandingContent[]; userId: string }> {
     return this.appService.landing(req.user.userId, body.page);
   }
 

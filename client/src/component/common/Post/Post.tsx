@@ -11,13 +11,17 @@ import sample1 from '../../../asset/sample1.jpg';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 
 // export
-const Post = (props: { metadata: Metadata; userId: string }) => {
+const Post = (props: {
+  metadata: Metadata;
+  userId: string;
+  postFooterContent: PostFooterContent;
+}) => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [images, setImages] = useState<string[]>([]);
   const [openComment, setOpenComment] = useState<boolean>(false);
   const [postFooterContent, setPostFooterContent] = useState<PostFooterContent>(
-    emptyPostFooterContent
+    props.postFooterContent
   );
 
   //좋아요했는지, props.userid로 username, 좋아요수, 댓글수 gateway로 요청해서
