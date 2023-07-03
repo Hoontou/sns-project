@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Post } from '../entity/post.entity';
 import { PostDto } from '../dto/post.dto';
 import { crypter } from 'src/common/crypter';
-import { PostContent } from 'sns-interfaces';
+import { PostContent } from 'sns-interfaces/client.interface';
 
 @Injectable()
 export class PostTable {
@@ -16,9 +16,9 @@ export class PostTable {
   ) {}
 
   //새로운 포스트데이터 삽입
-  async addPost(postDto: PostDto): Promise<void> {
+  addPost(postDto: PostDto) {
     const { postId, userId, title } = postDto;
-    await this.db
+    return this.db
       .createQueryBuilder()
       .insert()
       .into(Post)
@@ -31,55 +31,78 @@ export class PostTable {
       .then(() => {
         this.logger.log('post stored in pgdb successfully');
       })
-      .catch((err) =>
-        console.log('err when insert post table, at post.repo.ts', err),
-      );
+      .catch((err) => {
+        console.log('err when insert post table, at post.repo.ts', err);
+        throw new Error(err);
+      });
   }
 
   //코멘트 작성되서 카운트 증가
-  async addComment(postId: string): Promise<void> {
-    await this.db
+  addComment(postId: string) {
+    return this.db
       .createQueryBuilder()
       .update(Post)
       .set({
         commentcount: () => `commentcount + 1`,
       })
       .where('id = :id', { id: postId })
-      .execute();
+      .execute()
+      .then(() => {
+        this.logger.log('comment stored in pgdb successfully');
+      })
+      .catch((err) => {
+        console.log('err when insert post table, at post.repo.ts', err);
+      });
   }
 
   //포스트 삭제
-  async delPost(postId: string): Promise<void> {
-    await this.db
+  delPost(postId: string) {
+    return this.db
       .createQueryBuilder()
       .delete()
       .from(Post)
       .where('id = :id', { id: postId })
-      .execute();
+      .execute()
+      .then(() => {
+        this.logger.log('post deleteed in pgdb successfully');
+      })
+      .catch((err) => {
+        console.log('err when delete post, at post.repo.ts', err);
+      });
   }
 
-  async addLike(data: { postId: string }) {
-    await this.db
+  addLike(data: { postId: string }) {
+    return this.db
       .createQueryBuilder()
       .update(Post)
       .set({
         likes: () => `likes + 1`,
       })
       .where('id = :id', { id: data.postId })
-      .execute();
-    this.logger.log('like added');
+      .execute()
+      .then(() => {
+        this.logger.log('like added');
+      })
+      .catch((err) => {
+        console.log('err when add like, at post.repo.ts', err);
+      });
   }
 
-  async removeLike(data: { postId: string }) {
-    await this.db
+  removeLike(data: { postId: string }) {
+    return this.db
       .createQueryBuilder()
       .update(Post)
       .set({
         likes: () => `likes - 1`,
       })
       .where('id = :id', { id: data.postId })
-      .execute();
-    this.logger.log('like removed');
+      .execute()
+      .then(() => {
+        this.logger.log('like removed');
+      })
+      .catch((err) => {
+        console.log('err when remove like, at post.repo.ts', err);
+      });
   }
 
   async getPost(postId: string): Promise<PostContent> {
@@ -93,20 +116,6 @@ export class PostTable {
       commentCount: post.commentcount,
       title: post.title,
     };
-  }
-
-  /** */
-  async getCommentList(postId: string) {
-    console.log(
-      await this.db.findOne({
-        where: { id: postId },
-        relations: ['comments', 'comments.user'],
-      }),
-    );
-    return this.db.findOne({
-      where: { id: postId },
-      relations: ['comments', 'comments.user'],
-    });
   }
 }
 

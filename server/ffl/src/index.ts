@@ -69,6 +69,7 @@ const getServer = () => {
         userId: decUserId,
         postId: req.request.postId,
       });
+
       res(null, { liked: liked.length === 0 ? false : true });
       return;
     },
@@ -77,6 +78,7 @@ const getServer = () => {
         res(null, { userIds: await likeRopository.getUserIds(req.request.id) });
         return;
       }
+
       res(null, {
         userIds: await followRepository.getUserIds(
           crypter.decrypt(req.request.id),
@@ -86,18 +88,24 @@ const getServer = () => {
       return;
     },
     GetCommentLiked: async (req, res) => {
+      //각각의 댓글에 좋아요 눌렀는지 체크
       const likedList = await commentLikeRopository.db
         .find({
           commentId: { $in: req.request.commentIdList },
           userId: `${crypter.decrypt(req.request.userId)}`,
         })
         .exec();
+
+      //false를 갯수만큼 채우고
       const commentLikedList = Array(req.request.commentIdList.length).fill(
         false,
       );
+
+      //item이 존재한다면 true로 변경
       for (const i of likedList) {
         commentLikedList[req.request.commentIdList.indexOf(i.commentId)] = true;
       }
+
       res(null, {
         commentLikedList,
       });

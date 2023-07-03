@@ -7,12 +7,14 @@ import { UserTable } from '../user/repository/user.repository';
 import { crypter } from '../common/crypter';
 import { AuthDto, AuthResultRes, AuthSuccess } from 'sns-interfaces';
 import { JwtStrategy } from './jwt-strategy';
+import { UserinfoTable } from '../user/repository/userinfo.repository';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   constructor(
     private userTable: UserTable,
+    private userinfoTable: UserinfoTable,
     private jwtService: JwtService,
     private jwtStrategy: JwtStrategy,
   ) {}
@@ -22,8 +24,8 @@ export class AuthService {
       //토큰검사 후 이메일 가져옴
       const authInfo: { email: string; iat: string; exp: string } =
         await this.jwtService.verify(authDto.accessToken);
-      //가져온 이메일로 유저정보 요청
 
+      //가져온 이메일로 유저정보 요청
       const user: AuthSuccess = await this.jwtStrategy.validate(authInfo.email);
 
       //refresh필요하다면? 토큰재발급해서 담아준다.
@@ -69,6 +71,19 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(user.password, salt);
 
-    return this.userTable.signUp(user);
+    try {
+      //userinfo삽입을 트리거로 대체해서 newUser를 가져올 필요가 없다.
+      //트리거 안쓰면 활성화 할 코드들임.
+      // const newUser = await this.userTable.signUp(signupDto);
+      //  await this.userinfoTable.createUserNums(newUser);
+      await this.userTable.signUp(signupDto);
+    } catch (error) {
+      //아래의 23505코드는 postgres의 unique 충돌 코드임.
+      if (error.code === '23505') {
+        return { success: false, msg: 'Existing username or eamil' };
+      }
+      return { success: false, msg: 'DB insert err' };
+    }
+    return { success: true };
   }
 }

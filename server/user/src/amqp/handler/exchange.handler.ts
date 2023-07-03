@@ -14,7 +14,7 @@ export class ExchangeHandler {
 
     //exchange에 따라 각각의 핸들러로 보낸다.
     if (msg.fields.exchange === 'upload') {
-      this.uploadHandler(msg);
+      return this.uploadHandler(msg);
     }
   }
 

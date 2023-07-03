@@ -27,7 +27,7 @@ export class UserController {
     userId: number;
   }> {
     return this.userService.getUsernameWithImg(
-      Number(crypter.decrypt(req.user.userId)),
+      crypter.decrypt(req.user.userId),
     );
   }
 }

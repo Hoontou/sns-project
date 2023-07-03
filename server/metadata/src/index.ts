@@ -68,7 +68,7 @@ const getServer = () => {
     GetMetadatasLast3Day: async (req, res) => {
       const len = 10; //가져올 갯수
       const threeDaysAgo = new Date();
-      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3); //3일전 까지의 게시물
 
       const userIds = req.request.userIds?.map((i) => {
         return crypter.decrypt(i);

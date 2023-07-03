@@ -25,12 +25,12 @@ class LikeRepository {
   //스키마 다중연결을 고려해서 몽고연결은 index.ts에서
 
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
-  async addLike(data: { userId: string; postId: string }) {
-    const newOne = await new Like({
+  addLike(data: { userId: string; postId: string }) {
+    const newOne = new Like({
       userId: crypter.decrypt(data.userId),
       postId: data.postId,
     });
-    newOne
+    return newOne
       .save()
       .then(() => {
         console.log('like stored in mongo successfully');
@@ -38,12 +38,10 @@ class LikeRepository {
       .catch(() => {
         console.log('err when storing like in mongo');
       });
-    //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
-    return newOne;
   }
 
-  async removeLike(data: { userId: string; postId: string }) {
-    this.db
+  removeLike(data: { userId: string; postId: string }) {
+    return this.db
       .findOneAndDelete({
         userId: crypter.decrypt(data.userId),
         postId: data.postId,

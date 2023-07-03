@@ -25,12 +25,12 @@ class FollowRepository {
   //스키마 다중연결을 고려해서 몽고연결은 index.ts에서
 
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
-  async addFollow(data: { userTo: string; userFrom: string }) {
-    const newOne = await new Follow({
+  addFollow(data: { userTo: string; userFrom: string }) {
+    const newOne = new Follow({
       userTo: crypter.decrypt(data.userTo),
       userFrom: crypter.decrypt(data.userFrom),
     });
-    newOne
+    return newOne
       .save()
       .then(() => {
         console.log('follow stored in mongo successfully');
@@ -38,12 +38,10 @@ class FollowRepository {
       .catch(() => {
         console.log('err when storing follow in mongo');
       });
-    //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
-    return newOne;
   }
 
-  async removeFollow(data: { userTo: string; userFrom: string }) {
-    this.db
+  removeFollow(data: { userTo: string; userFrom: string }) {
+    return this.db
       .findOneAndDelete({
         userTo: crypter.decrypt(data.userTo),
         userFrom: crypter.decrypt(data.userFrom),

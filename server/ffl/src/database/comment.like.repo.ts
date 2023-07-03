@@ -25,12 +25,12 @@ class CommentLikeRepository {
   //스키마 다중연결을 고려해서 몽고연결은 index.ts에서
 
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
-  async addCommentLike(data: { userId: string; commentId: number }) {
-    const newOne = await new commentLike({
+  addCommentLike(data: { userId: string; commentId: number }) {
+    const newOne = new commentLike({
       userId: crypter.decrypt(data.userId),
       commentId: data.commentId,
     });
-    newOne
+    return newOne
       .save()
       .then(() => {
         console.log('comment like stored in mongo successfully');
@@ -39,11 +39,10 @@ class CommentLikeRepository {
         console.log('err when storing comment like in mongo');
       });
     //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
-    return newOne;
   }
 
-  async removeCommentLike(data: { userId: string; commentId: number }) {
-    this.db
+  removeCommentLike(data: { userId: string; commentId: number }) {
+    return this.db
       .findOneAndDelete({
         userId: crypter.decrypt(data.userId),
         commentId: data.commentId,

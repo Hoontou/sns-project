@@ -12,6 +12,7 @@ import {
 import { LandingContent } from './app.controller';
 
 @Injectable()
+//AppService의 메서드 이름은 client의 페이지 이름과 매칭
 export class AppService {
   constructor(
     private userService: UserService,
@@ -23,14 +24,14 @@ export class AppService {
   async landing(userId: string, page: number) {
     //가져올게 아무것도 없을 시 metadatas.map 에서 오류남. 추후 수정필요.
 
-    //팔로우 목록 가져오기
+    //1 팔로우 목록 가져오기
     const { userList } = await this.fflService.getUserList({
       id: userId,
       type: 'following',
     });
     userList.push({ userId, username: '', img: '' });
 
-    //유저들의 최근3일 meta 가져오기
+    //2 유저들의 최근3일 meta 가져오기
     const { metadatas } = await this.metadataService.getMetadatasLast3Day({
       userIds: userList.map((i) => {
         return i.userId;
@@ -38,39 +39,19 @@ export class AppService {
       page,
     });
 
-    //metadata로 PostFooter 가져옴
+    //3 metadata로 PostFooter 가져옴,
+    //재귀적 인데 나중에 성능체크해야할듯 list로 보내는것과.
     const postFooter: PostFooterContent[] = await Promise.all(
       metadatas.map((i, index) => {
-        //복호화 필요하지 않다는 시그널을 위해 type을 landing으로 보냄
         return this.postFooter({
           userId,
           postId: i.id,
           targetId: i.userId,
-          type: 'landing',
         });
       }),
     );
 
-    //테스트 결과 promise.all의 의도대로 로그 잘찍힌다.
-    //근데 분명 한번의 req로 가져오는게 아니라서 쿼리여러번, rpc개방 여러번의 오버헤드가 클것임.
-    //나중에 이 api의 속도가 느리면 한번에 다 가져오는걸로 교체해야할듯
-    //개발 초기단계에는 90ms 찍힌다.
-
-    //console.log('promise.all 시작점');
-
-    // const result = [{}];
-
-    //근데.. 만약 메타데이터만 제대로 몽고에 들어갔고, 다른것들의 삽입이 늦어서
-    //metadata만 채워진다면? 의 방어수단은 깊게 생각해보지 않았음...
-    //만약 그런다면 result의 결과가 제대로 안채워질테고, 위 result를 빈칸으로 하는 주석을 해제 후
-    //테스트 했을때에는 그냥 metadata만 넣어서 리턴이 된다.
-    //client에서 api의 응답을 체크해서 postFooter파트가 비었으면 그냥 사진만 보여주는 식으로
-    //해야할듯
-    //메타데이터가 삽입이 안됐다? 는 잘 없을듯. metadata msa에서 하는일의 빈도가 다른애들보다 적음.
-
-    // const combinedResult = result.map((i, index) => {
-    //   return { ...i, ...metadatas[index], postId: metadatas[index]._id };
-    // });
+    //4 정보들을 취합해서 하나의 리스트로 만듦.
     const combinedResult: LandingContent[] = metadatas.map((i, index) => {
       return { ...i, ...postFooter[index], userId: crypter.encrypt(i.userId) };
     });
@@ -82,14 +63,14 @@ export class AppService {
     userId: string;
     myId: '' | string;
   }): Promise<UserInfo | { success: false }> {
-    //일단 숫자를 찾는다.
+    // 일단 숫자를 찾는다.
     const userinfo = await this.userService.getUserinfo(body.userId);
 
     if (userinfo.success === false) {
       //실패했으면 바로 리턴.
       return userinfo;
     }
-    //성공했으면 계속진행
+
     // 팔로우 체크할 필요없으면 그냥 펄스넣어서 리턴.
     if (body.myId === '') {
       return { ...userinfo, followed: false };
@@ -105,50 +86,18 @@ export class AppService {
     userId: string;
     postId: string;
     targetId: string;
-    type: 'landing' | 'postFooter';
   }): Promise<PostFooterContent> {
-    //ffl 가서 postId랑 userId로 liked? 체크
-
-    const [
-      { liked },
-      { likesCount, commentCount, title, id },
-      { username, img },
-    ] = await Promise.all([
-      this.checkLiked({ userId: body.userId, postId: body.postId }),
-      this.getPost(body.postId),
-      this.getUsernameWithImg(body.targetId, body.type),
+    //좋아요 체크, post정보, 작성자 정보 가져오기
+    const [liked, postContent, userInfo] = await Promise.all([
+      this.fflService.checkLiked({ userId: body.userId, postId: body.postId }),
+      this.postService.getPost(body.postId),
+      this.userService.getUsernameWithImg(body.targetId), //작성자 정보
     ]);
-    return {
-      liked,
-      likesCount,
-      commentCount,
-      username,
-      img,
-      title,
-      id,
-    };
-    //post 가서 postId로 count들 가져오기
-  }
 
-  //ffl가서 좋아요 눌렀는지 체크
-  async checkLiked(body: {
-    userId: string;
-    postId: string;
-  }): Promise<{ liked: boolean }> {
-    return this.fflService.checkLiked(body);
-  }
-  //post 가서 카운트 가져오기
-  async getPost(postId: string): Promise<PostContent> {
-    return this.postService.getPost(postId);
-  }
-  /**복호화 필요 여부에 따라 type 결정 필요하면 postFooter */
-  async getUsernameWithImg(
-    targetId: string,
-    type: 'landing' | 'postFooter',
-  ): Promise<{ username: string; img: string }> {
-    //type이 landing일 시 복호화 필요없음.
-    return this.userService.getUsernameWithImg(
-      type === 'landing' ? Number(targetId) : Number(crypter.decrypt(targetId)),
-    );
+    return {
+      ...liked,
+      ...postContent,
+      ...userInfo,
+    };
   }
 }

@@ -5,6 +5,7 @@ import { Comment } from '../entity/comment.entity';
 import { CommentDto } from '../dto/post.dto';
 import { pgClient } from 'src/configs/pg';
 import { crypter } from 'src/common/crypter';
+import { CommentItemContent } from 'sns-interfaces';
 
 @Injectable()
 export class CommentTable {
@@ -13,7 +14,7 @@ export class CommentTable {
     public db: Repository<Comment>,
   ) {}
 
-  async addComment(commentDto: CommentDto): Promise<void> {
+  addComment(commentDto: CommentDto) {
     const { postId, userId, comment } = commentDto;
     //n+1문제가 싫어서 걍 바닐라쿼리로 날렸음.
 
@@ -21,23 +22,25 @@ export class CommentTable {
       comment, "userId", "postId")
       VALUES ('${comment}', '${crypter.decrypt(userId)}', '${postId}');`;
 
-    await pgClient.query(query);
+    return pgClient.query(query);
   }
 
-  async addCocomment(commentId: number) {
-    //commentnums에 카운트 업데이트
+  addCocomment(commentId: number) {
     return this.db.increment({ id: commentId }, 'cocommentcount', 1);
   }
 
-  async addLike(data: { commentId: number }) {
+  addLike(data: { commentId: number }) {
     return this.db.increment({ id: data.commentId }, 'likes', 1);
   }
 
-  async removeLike(data: { commentId: number }) {
+  removeLike(data: { commentId: number }) {
     return this.db.decrement({ id: data.commentId }, 'likes', 1);
   }
 
-  async getCommentList(postId: string, page: number) {
+  async getCommentList(
+    postId: string,
+    page: number,
+  ): Promise<CommentItemContent[]> {
     const query = `SELECT
     C.id AS "commentId",
     C.comment,
@@ -59,14 +62,3 @@ export class CommentTable {
     return (await pgClient.query(query)).rows;
   }
 }
-//코멘트 카운트가 하나의 테이블에 있을때의 코드
-// async addCocomment(commentId: number | string) {
-//   await this.db
-//     .createQueryBuilder()
-//     .update(Comment)
-//     .set({
-//       cocommentcount: () => `cocommentcount + 1`,
-//     })
-//     .where('id = :id', { id: commentId })
-//     .execute();
-// }

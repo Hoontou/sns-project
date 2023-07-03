@@ -5,6 +5,7 @@ import { Cocomment } from '../entity/cocomment.entity';
 import { CocommentDto } from '../dto/post.dto';
 import { pgClient } from 'src/configs/pg';
 import { crypter } from 'src/common/crypter';
+import { CocommentContent } from 'sns-interfaces/client.interface';
 
 @Injectable()
 export class CoCommentTable {
@@ -12,16 +13,19 @@ export class CoCommentTable {
     @InjectRepository(Cocomment)
     public db: Repository<Cocomment>,
   ) {}
-  async addCocomment(cocommentDto: CocommentDto) {
+  addCocomment(cocommentDto: CocommentDto) {
     const { commentId, userId, cocomment } = cocommentDto;
     const query = `INSERT INTO public.cocomment(
         cocomment, "userId", "commentId")
         VALUES ('${cocomment}', '${crypter.decrypt(userId)}', ${commentId});`;
 
-    await pgClient.query(query);
+    return pgClient.query(query);
   }
 
-  async getCocommentList(data: { commentId: number; page: number }) {
+  async getCocommentList(data: {
+    commentId: number;
+    page: number;
+  }): Promise<CocommentContent[]> {
     const query = `SELECT
     C.id AS "cocommentId",
     C.cocomment,
@@ -44,11 +48,11 @@ export class CoCommentTable {
     return (await pgClient.query(query)).rows;
   }
 
-  async addLike(data: { cocommentId: number }) {
+  addLike(data: { cocommentId: number }) {
     return this.db.increment({ id: data.cocommentId }, 'likes', 1);
   }
 
-  async removeLike(data: { cocommentId: number }) {
+  removeLike(data: { cocommentId: number }) {
     return this.db.decrement({ id: data.cocommentId }, 'likes', 1);
   }
 }

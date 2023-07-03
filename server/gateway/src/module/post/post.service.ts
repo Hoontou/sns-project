@@ -5,7 +5,7 @@ import { CommentItemContent } from 'sns-interfaces';
 import { CocommentContent, PostContent } from 'sns-interfaces/client.interface';
 import { PostGrpcService } from 'src/grpc/grpc.services';
 import { FflService } from '../ffl/ffl.service';
-import { AmqpService } from 'src/common/amqp/amqp.service';
+import { AmqpService } from 'src/module/amqp/amqp.service';
 
 @Injectable()
 export class PostService {
@@ -24,7 +24,7 @@ export class PostService {
   }
 
   async getCommentList(body: { postId: string; page: number }, userId: string) {
-    //id로 코멘트 다 가져옴
+    //1 id로 코멘트 다 가져옴
     const { comments } = await lastValueFrom(
       this.postGrpcService.getCommentList({
         postId: body.postId,
@@ -32,7 +32,7 @@ export class PostService {
       }),
     );
 
-    //가져온 코멘트 id로 좋아요눌렀나 체크
+    //2 가져온 코멘트 id로 좋아요눌렀나 체크
     const { commentLikedList } = await this.fflService.getCommentLiked({
       commentIdList: comments?.map((i) => {
         return i.commentId;
@@ -40,10 +40,11 @@ export class PostService {
       userId,
     });
 
-    //리턴할 코멘트들에 좋아요체크결과 붙여넣기
+    //3 리턴할 코멘트들에 좋아요체크결과 붙여넣기
     const commentItem: CommentItemContent[] = comments?.map((item, index) => {
       return { ...item, liked: commentLikedList[index] };
     });
+
     return { commentItem };
   }
 
@@ -51,10 +52,12 @@ export class PostService {
     body: { commentId: number; page: number },
     userId: string,
   ): Promise<{ cocommentItem: CocommentContent[] }> {
+    //1 commentId로 대댓 가져옴
     const { cocomments } = await lastValueFrom(
       this.postGrpcService.getCocommentList(body),
     );
 
+    //2 대댓에 좋아요 눌렀나 체크
     const { cocommentLikedList } = await this.fflService.getCocommentLiked({
       cocommentIdList: cocomments.map((i) => {
         return i.cocommentId;
@@ -62,9 +65,11 @@ export class PostService {
       userId,
     });
 
+    //3 대댓 리스트에 좋아요 달아줌
     const cocommentItem = cocomments.map((item, index) => {
       return { ...item, liked: cocommentLikedList[index] };
     });
+
     return { cocommentItem };
   }
 

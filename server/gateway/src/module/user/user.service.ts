@@ -43,7 +43,7 @@ export class UserService {
   }
 
   async getUsernameWithImg(
-    userId: number,
+    userId: string,
   ): Promise<{ username: string; img: string; userId: number }> {
     return {
       ...(await lastValueFrom(
@@ -51,11 +51,11 @@ export class UserService {
           userId,
         }),
       )),
-      userId,
+      userId: Number(userId),
     };
   }
 
-  async getUsernameWithImgList(userIds: string[]): Promise<{
+  getUsernameWithImgList(userIds: string[]): Promise<{
     userList: { username: string; img: string; userId: number }[];
   }> {
     return lastValueFrom(
@@ -65,13 +65,14 @@ export class UserService {
     );
   }
 
-  async changeUsername(body: {
+  changeUsername(body: {
     userId: string;
     username: string;
   }): Promise<{ success: boolean; exist?: boolean }> {
     return lastValueFrom(this.userGrpcService.changeUsername(body));
   }
-  async changeIntro(body: { userId: string; intro: string }) {
-    return await lastValueFrom(this.userGrpcService.changeIntro(body));
+  /**자기소개 바꾸기 */
+  changeIntro(body: { userId: string; intro: string }) {
+    return lastValueFrom(this.userGrpcService.changeIntro(body));
   }
 }

@@ -8,6 +8,8 @@ import { AuthGrpcService } from 'src/grpc/grpc.services';
 @Injectable()
 export class AuthService {
   private authGrpcService: AuthGrpcService;
+  private month = 30 * 24 * 60 * 60 * 1000;
+
   constructor(@Inject('auth') private client: ClientGrpc) {}
   onModuleInit() {
     this.authGrpcService =
@@ -25,18 +27,18 @@ export class AuthService {
     const authInfo: AuthResultRes = await lastValueFrom(
       this.authGrpcService.auth({
         accessToken,
-        refresh: checkNeedRefresh(req.cookies.createdAt),
+        refresh: checkNeedRefresh(createdAt), //Need refresh?
       }),
     );
     //리프레시 토큰이 담겨왔으면 쿠키 다시세팅
     if (authInfo.success === true && authInfo.accessToken !== undefined) {
       res.cookie('Authorization', authInfo.accessToken, {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000, //30 day
+        maxAge: this.month,
       });
       res.cookie('createdAt', new Date(), {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000, //30 day
+        maxAge: this.month,
       });
       delete authInfo.accessToken; //쿠키에 담았으니까 리턴값에서는 지워준다.
     }
@@ -69,18 +71,21 @@ export class AuthService {
       //로그인 플래그 성공이면 쿠키에 담아서 보낸다.
       res.cookie('Authorization', authInfo.accessToken, {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000, //30 day
+        maxAge: this.month,
       });
       res.cookie('createdAt', new Date(), {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000, //30 day
+        maxAge: this.month,
       });
       delete authInfo.accessToken; //쿠키에 담았으니까 지워준다.
     }
     return authInfo;
   }
 
-  async signUp(signUpDto: SignUpDto) {
+  signUp(signUpDto: SignUpDto): Promise<{
+    success: boolean;
+    msg?: string | undefined;
+  }> {
     return lastValueFrom(this.authGrpcService.signUp(signUpDto));
   }
 }

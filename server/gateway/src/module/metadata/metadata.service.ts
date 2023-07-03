@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { MetadataDto } from 'sns-interfaces';
 import { MetadataGrpcService } from 'src/grpc/grpc.services';
 
 @Injectable()
@@ -11,18 +12,19 @@ export class MetadataService {
     this.metadataGrpcService =
       this.client.getService<MetadataGrpcService>('MetadataService');
   }
-  async getMetadatas(body: { userId: string; page: number }) {
-    const metadatas = await lastValueFrom(
-      this.metadataGrpcService.getMetadatas(body),
-    );
-    console.log(metadatas);
-    return metadatas;
+
+  getMetadatas(body: { userId: string; page: number }): Promise<
+    MetadataDto &
+      {
+        createdAt: string;
+      }[]
+  > {
+    return lastValueFrom(this.metadataGrpcService.getMetadatas(body));
   }
 
-  async getMetadatasLast3Day(data: { userIds: string[]; page: number }) {
-    const metadatas = await lastValueFrom(
-      this.metadataGrpcService.getMetadatasLast3Day(data),
-    );
-    return metadatas;
+  getMetadatasLast3Day(data: { userIds: string[]; page: number }): Promise<{
+    metadatas: MetadataDto[];
+  }> {
+    return lastValueFrom(this.metadataGrpcService.getMetadatasLast3Day(data));
   }
 }

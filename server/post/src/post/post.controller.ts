@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { PostService } from './post.service';
 import { GrpcMethod } from '@nestjs/microservices';
 import { PostTable } from './repository/post.repository';
-import { PostContent } from 'sns-interfaces';
+import { PostContent } from 'sns-interfaces/client.interface';
 import { CommentTable } from './repository/comment.repository';
 import { CoCommentTable } from './repository/cocomment.repository';
 

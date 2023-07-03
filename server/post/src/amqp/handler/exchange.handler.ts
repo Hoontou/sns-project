@@ -22,12 +22,10 @@ export class ExchangeHandler {
 
     //exchange에 따라 각각의 핸들러로 보낸다.
     if (msg.fields.exchange === 'upload') {
-      this.uploadHandler(msg);
-      return;
+      return this.uploadHandler(msg);
     }
     if (msg.fields.exchange === 'gateway') {
-      this.gatewayHandler(msg);
-      return;
+      return this.gatewayHandler(msg);
     }
   }
 
@@ -37,8 +35,7 @@ export class ExchangeHandler {
     const data: unknown = JSON.parse(msg.content.toString());
 
     if (msg.fields.routingKey == 'upload') {
-      this.postService.posting(data as UploadMessage);
-      return;
+      return this.postService.posting(data as UploadMessage);
     }
   }
 
@@ -46,8 +43,7 @@ export class ExchangeHandler {
     const data: unknown = JSON.parse(msg.content.toString());
 
     if (msg.fields.routingKey === 'addLike') {
-      this.postTable.addLike(data as { postId: string });
-      return;
+      return this.postTable.addLike(data as { postId: string });
     }
     if (msg.fields.routingKey === 'removeLike') {
       this.postTable.removeLike(data as { postId: string });

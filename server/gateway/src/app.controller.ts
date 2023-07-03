@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { PostFooterContent, UserInfo } from 'sns-interfaces/client.interface';
+import { crypter } from './common/crypter';
 
 export interface LandingContent {
   userId: string;
@@ -17,7 +18,9 @@ export interface LandingContent {
 @Controller('')
 export class AppController {
   constructor(private appService: AppService) {}
+  //AppService의 메서드 이름은 client의 페이지 이름과 매칭
 
+  /**팔로우목록의 3일간 게시글 가져오기 */
   @Post('/landing')
   async landing(
     @Req() req,
@@ -39,6 +42,9 @@ export class AppController {
   async postFooter(
     @Body() body: { userId: string; postId: string; targetId: string },
   ): Promise<PostFooterContent> {
-    return this.appService.postFooter({ ...body, type: 'postFooter' });
+    return this.appService.postFooter({
+      ...body,
+      targetId: crypter.decrypt(body.targetId),
+    });
   }
 }
