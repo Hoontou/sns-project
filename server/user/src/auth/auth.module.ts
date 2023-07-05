@@ -20,8 +20,8 @@ import { AuthController } from './auth.controller';
     }),
     forwardRef(() => UserModule),
   ],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService, JwtStrategy, PassportModule],
+  providers: [JwtStrategy, AuthService],
+  exports: [JwtStrategy, PassportModule],
   controllers: [AuthController],
 })
 export class AuthModule {}

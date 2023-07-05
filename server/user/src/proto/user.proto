@@ -21,6 +21,7 @@ message GetUserinfoRes {
   string introduce = 5;
   string username = 6;
 }
+
 ///////////////////////////////////
 message GetUsernameWithImgReq {
   string userId = 1;

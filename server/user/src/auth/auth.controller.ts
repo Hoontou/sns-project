@@ -22,7 +22,9 @@ export class AuthController {
 
   @GrpcMethod('AuthService', 'SignUp')
   @UsePipes(ValidationPipe)
-  signUp(signUpDto: SignUpDto): Promise<{ success: boolean; msg?: string }> {
+  signUp(
+    signUpDto: SignUpDto,
+  ): Promise<{ success: boolean; msg?: string; username?: string }> {
     return this.authService.signUp(signUpDto);
   }
 }

@@ -5,7 +5,6 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
-  JoinColumn,
   OneToOne,
 } from 'typeorm';
 import { Post } from './post.entity/post.entity';
@@ -20,9 +19,6 @@ export class User extends BaseEntity {
 
   @Column({ unique: true })
   email: string;
-
-  @Column({ unique: true })
-  username: string;
 
   @Column()
   password: string;

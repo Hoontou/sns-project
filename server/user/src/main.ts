@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { pgClient } from './configs/pg';
+import { pgdb } from './configs/pg';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { Logger } from '@nestjs/common';
@@ -42,7 +42,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
   app.listen(3000).then(() => {
     logger.log('user on 4001:80 (grpc server)');
-    pgClient.connect((err) => {
+    pgdb.client.connect((err) => {
       if (err) {
         logger.error('vanila pgdb connection error', err.stack);
       } else {

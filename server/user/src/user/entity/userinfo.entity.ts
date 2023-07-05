@@ -13,14 +13,8 @@ export class Userinfo extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: 0 })
-  follower: number;
-
-  @Column({ default: 0 })
-  following: number;
-
-  @Column({ default: 0 })
-  postcount: number;
+  @Column({ unique: true })
+  username: string;
 
   @Column({ default: '' })
   introduce: string;

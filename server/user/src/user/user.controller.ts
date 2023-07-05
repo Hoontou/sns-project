@@ -1,20 +1,15 @@
 import { Controller, Logger } from '@nestjs/common';
 import { UserService } from './user.service';
 import { GrpcMethod } from '@nestjs/microservices';
-import { UserTable } from './repository/user.repository';
-import { UserinfoTable } from './repository/userinfo.repository';
+import { UserinfoWithNums } from 'sns-interfaces/grpc.interfaces';
 
 @Controller('user')
 export class UserController {
   private logger = new Logger('UserController');
-  constructor(
-    private userService: UserService,
-    private userTable: UserTable,
-    private userinfoTable: UserinfoTable,
-  ) {}
+  constructor(private userService: UserService) {}
 
   @GrpcMethod('UserService', 'GetUserinfo')
-  async getUserinfo(data: { userId: string }) {
+  async getUserinfo(data: { userId: string }): Promise<UserinfoWithNums> {
     return this.userService.getUserinfo(data);
   }
 
@@ -45,6 +40,6 @@ export class UserController {
     userId: string;
     intro: string;
   }): Promise<{ success: boolean }> {
-    return this.userinfoTable.changeIntro(data);
+    return this.userService.changeIntro(data);
   }
 }

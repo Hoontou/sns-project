@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Cocomment } from '../entity/cocomment.entity';
 import { CocommentDto } from '../dto/post.dto';
-import { pgClient } from 'src/configs/pg';
+import { pgdb } from 'src/configs/pg';
 import { crypter } from 'src/common/crypter';
 import { CocommentContent } from 'sns-interfaces/client.interface';
 
@@ -19,7 +19,7 @@ export class CoCommentTable {
         cocomment, "userId", "commentId")
         VALUES ('${cocomment}', '${crypter.decrypt(userId)}', ${commentId});`;
 
-    return pgClient.query(query);
+    return pgdb.client.query(query);
   }
 
   async getCocommentList(data: {
@@ -45,7 +45,7 @@ export class CoCommentTable {
     ORDER BY createdAt DESC
     LIMIT 4 OFFSET ${data.page * 4};`;
 
-    return (await pgClient.query(query)).rows;
+    return (await pgdb.client.query(query)).rows;
   }
 
   addLike(data: { cocommentId: number }) {

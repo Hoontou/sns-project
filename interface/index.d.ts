@@ -47,7 +47,6 @@ export type AuthResultRes = AuthSuccess | AuthFail;
 export interface AuthSuccess {
   success: true;
   userId: string;
-  username: string;
   accessToken?: string;
 }
 export interface AuthFail {

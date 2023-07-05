@@ -7,21 +7,18 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
-import { Post } from '../post.entity';
-import { Cocomment } from '../cocomment.entity';
-import { Comment } from '../comment.entity';
 import { Userinfo } from './userinfo.entity';
+import { Cocomment } from '../cocomment.entity';
+import { Post } from '../post.entity';
+import { Comment } from '../comment.entity';
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ unique: true })
   email: string;
-
-  @Column({ unique: true })
-  username: string;
 
   @Column()
   password: string;

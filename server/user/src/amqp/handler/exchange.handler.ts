@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AmqpMessage, UploadMessage } from 'sns-interfaces';
-import { UserinfoTable } from 'src/user/repository/userinfo.repository';
+import { UserRepository } from 'src/user/user.repo';
+// import { UserinfoTable } from 'src/user/repository/userinfo.repository';
 
 @Injectable()
 export class ExchangeHandler {
   private logger = new Logger(ExchangeHandler.name);
-  constructor(private userinfoTable: UserinfoTable) {}
+  constructor(private userRepo: UserRepository) {}
 
   consumeMessage(msg: AmqpMessage) {
     this.logger.log(
@@ -26,7 +27,7 @@ export class ExchangeHandler {
     const data: unknown = JSON.parse(msg.content.toString());
 
     if (msg.fields.routingKey == 'upload') {
-      this.userinfoTable.addPostCount(data as UploadMessage);
+      this.userRepo.addPostCount(data as UploadMessage);
       return;
     }
   }

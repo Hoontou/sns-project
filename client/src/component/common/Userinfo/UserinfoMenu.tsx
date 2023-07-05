@@ -2,8 +2,15 @@ import { Grid, IconButton, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const UserinfoMenu = (props: { userId: string }) => {
+  const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies([
+    'createdAt',
+    'Authorization',
+  ]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -11,6 +18,11 @@ const UserinfoMenu = (props: { userId: string }) => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const logoutAction = () => {
+    removeCookie('Authorization', { path: '/' });
+    removeCookie('createdAt', { path: '/' });
+    navigate('/signin');
   };
 
   return (
@@ -46,7 +58,9 @@ const UserinfoMenu = (props: { userId: string }) => {
           </a>
         </MenuItem>
         <MenuItem onClick={handleClose}>팔로우 관리</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem onClick={handleClose}>
+          <span onClick={logoutAction}>로그아웃</span>
+        </MenuItem>
       </Menu>
     </>
   );

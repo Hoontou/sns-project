@@ -3,25 +3,24 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  OneToOne,
   JoinColumn,
-  CreateDateColumn,
+  OneToOne,
 } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
-export class Userinfo extends BaseEntity {
+export class Usernums extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
-  username: string;
+  @Column({ default: 0 })
+  follower: number;
 
-  @Column({ default: '' })
-  introduce: string;
+  @Column({ default: 0 })
+  following: number;
 
-  @Column({ default: '' })
-  img: string;
+  @Column({ default: 0 })
+  postcount: number;
 
   //유저테이블과 포린키 연결하고 cascade 삭제 설정.
   @OneToOne(() => User, {

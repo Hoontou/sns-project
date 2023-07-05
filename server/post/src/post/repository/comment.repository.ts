@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Comment } from '../entity/comment.entity';
 import { CommentDto } from '../dto/post.dto';
-import { pgClient } from 'src/configs/pg';
+import { pgdb } from 'src/configs/pg';
 import { crypter } from 'src/common/crypter';
 import { CommentItemContent } from 'sns-interfaces';
 
@@ -22,7 +22,7 @@ export class CommentTable {
       comment, "userId", "postId")
       VALUES ('${comment}', '${crypter.decrypt(userId)}', '${postId}');`;
 
-    return pgClient.query(query);
+    return pgdb.client.query(query);
   }
 
   addCocomment(commentId: number) {
@@ -59,6 +59,6 @@ export class CommentTable {
     ORDER BY createdAt DESC
      LIMIT 5 OFFSET ${page * 5};`;
 
-    return (await pgClient.query(query)).rows;
+    return (await pgdb.client.query(query)).rows;
   }
 }

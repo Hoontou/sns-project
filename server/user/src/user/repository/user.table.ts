@@ -3,15 +3,13 @@ import { Repository } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import { User } from '../entity/user.entity';
 import { SignUpDto } from '../../auth/dto/sign.dto';
-import { UserinfoTable } from './userinfo.repository';
 
 @Injectable()
 export class UserTable {
   private logger = new Logger('UserTable');
   constructor(
     @InjectRepository(User)
-    public db: Repository<User>,
-    private userNumsTable: UserinfoTable,
+    public readonly db: Repository<User>,
   ) {}
 
   async signUp(user: SignUpDto): Promise<User> {
