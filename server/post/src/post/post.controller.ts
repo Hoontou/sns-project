@@ -1,23 +1,20 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { PostService } from './post.service';
 import { GrpcMethod } from '@nestjs/microservices';
-import { PostTable } from './repository/post.repository';
 import { PostContent } from 'sns-interfaces/client.interface';
-import { CommentTable } from './repository/comment.repository';
-import { CoCommentTable } from './repository/cocomment.repository';
+import { PostTable } from './repository/post.table';
+import { PostRepository } from './post.repo';
 
 @Controller('post')
 export class PostController {
   constructor(
     private postService: PostService,
-    private postTable: PostTable,
-    private commentTable: CommentTable,
-    private cocommentTable: CoCommentTable,
+    private postRepo: PostRepository,
   ) {}
 
   @GrpcMethod('PostService', 'GetPost')
-  getPostnums(data: { postId: string }): Promise<PostContent> {
-    return this.postTable.getPost(data.postId);
+  getPost(data: { postId: string }): Promise<PostContent> {
+    return this.postRepo.getPost(data);
   }
 
   @GrpcMethod('PostService', 'GetCommentList')

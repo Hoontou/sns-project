@@ -20,6 +20,7 @@ const UserinfoMenu = (props: { userId: string }) => {
     setAnchorEl(null);
   };
   const logoutAction = () => {
+    //이거 왜 삭제가 안됨? 뭐지
     removeCookie('Authorization', { path: '/' });
     removeCookie('createdAt', { path: '/' });
     navigate('/signin');

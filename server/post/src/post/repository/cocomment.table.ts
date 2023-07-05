@@ -22,10 +22,11 @@ export class CoCommentTable {
     return pgdb.client.query(query);
   }
 
-  async getCocommentList(data: {
-    commentId: number;
-    page: number;
-  }): Promise<CocommentContent[]> {
+  async getCocommentList(
+    commentId: number,
+    page: number,
+  ): Promise<CocommentContent[]> {
+    const limit = 4;
     const query = `SELECT
     C.id AS "cocommentId",
     C.cocomment,
@@ -35,15 +36,11 @@ export class CoCommentTable {
     A.username,
     A.img
     FROM
-    (SELECT * FROM public.cocomment WHERE cocomment."commentId" = ${
-      data.commentId
-    }) AS C
-    JOIN
-    (SELECT Q.id AS id, Q.username AS username, W.img AS img FROM public.user AS Q JOIN public.userinfo AS W ON Q.id = W."userId"
-    ) AS A
-    ON C."userId" = A.id
+    (SELECT * FROM public.cocomment WHERE cocomment."commentId" = ${commentId}) AS C
+    JOIN public.userinfo AS A
+    ON C."userId" = A."userId"
     ORDER BY createdAt DESC
-    LIMIT 4 OFFSET ${data.page * 4};`;
+    LIMIT ${limit} OFFSET ${page * limit};`;
 
     return (await pgdb.client.query(query)).rows;
   }

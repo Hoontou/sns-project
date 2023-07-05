@@ -104,19 +104,6 @@ export class PostTable {
         console.log('err when remove like, at post.repo.ts', err);
       });
   }
-
-  async getPost(postId: string): Promise<PostContent> {
-    const post = await this.db.findOneBy({ id: postId });
-    if (post === null) {
-      throw new Error('err when getPostnums, postnums === null');
-    }
-    return {
-      id: post.id,
-      likesCount: post.likes,
-      commentCount: post.commentcount,
-      title: post.title,
-    };
-  }
 }
 
 //이미 있는 row에서 userUuid만 바꿔서 리퀘스트 날리면 useruuid가 업데이트된다.

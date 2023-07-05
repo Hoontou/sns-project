@@ -41,7 +41,9 @@ export class CommentTable {
     postId: string,
     page: number,
   ): Promise<CommentItemContent[]> {
-    const query = `SELECT
+    const limit = 5;
+    const query = `
+    SELECT
     C.id AS "commentId",
     C.comment,
     C.createdat AS "createdAt",
@@ -52,12 +54,11 @@ export class CommentTable {
     A.img
     FROM
     (SELECT * FROM public.comment WHERE comment."postId" = '${postId}') AS C
-    JOIN
-    (SELECT Q.id AS id, Q.username AS username, W.img AS img FROM public.user AS Q JOIN public.userinfo AS W ON Q.id = W."userId"
-    ) AS A
-    ON C."userId" = A.id
+    JOIN public.userinfo AS A
+    ON C."userId" = A."userId"
     ORDER BY createdAt DESC
-     LIMIT 5 OFFSET ${page * 5};`;
+    LIMIT ${limit} OFFSET ${page * limit};
+    `;
 
     return (await pgdb.client.query(query)).rows;
   }

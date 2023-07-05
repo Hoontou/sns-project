@@ -1,9 +1,9 @@
 import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { AmqpMessage, UploadMessage } from 'sns-interfaces';
 import { PostService } from 'src/post/post.service';
-import { CoCommentTable } from 'src/post/repository/cocomment.repository';
-import { CommentTable } from 'src/post/repository/comment.repository';
-import { PostTable } from 'src/post/repository/post.repository';
+import { CoCommentTable } from 'src/post/repository/cocomment.table';
+import { CommentTable } from 'src/post/repository/comment.table';
+import { PostTable } from 'src/post/repository/post.table';
 
 @Injectable()
 export class ExchangeHandler {

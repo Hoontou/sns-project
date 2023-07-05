@@ -1,17 +1,19 @@
 import { Inject, Injectable, Req, forwardRef } from '@nestjs/common';
-import { PostTable } from './repository/post.repository';
-import { CommentTable } from './repository/comment.repository';
-import { CoCommentTable } from './repository/cocomment.repository';
 import { CommentDto, PostDto, CocommentDto } from './dto/post.dto';
 import { CommentItemContent, UploadMessage } from 'sns-interfaces';
 
 import { AmqpService } from 'src/amqp/amqp.service';
 import { crypter } from 'src/common/crypter';
 import { CocommentContent } from 'sns-interfaces/client.interface';
+import { PostTable } from './repository/post.table';
+import { CoCommentTable } from './repository/cocomment.table';
+import { CommentTable } from './repository/comment.table';
+import { PostRepository } from './post.repo';
 
 @Injectable()
 export class PostService {
   constructor(
+    private postRepo: PostRepository,
     private postTable: PostTable,
     private commentTable: CommentTable,
     private cocommentTable: CoCommentTable,
@@ -68,8 +70,10 @@ export class PostService {
   }
 
   async getCommentList(data: { postId: string; page: number }) {
-    const comments: CommentItemContent[] =
-      await this.commentTable.getCommentList(data.postId, data.page);
+    const comments: CommentItemContent[] = await this.postRepo.getCommentList(
+      data,
+    );
+
     //userId 암호화
     for (const i of comments) {
       i.userId = crypter.encrypt(i.userId);
@@ -78,9 +82,11 @@ export class PostService {
   }
 
   async getCocommentList(data: { commentId: number; page: number }) {
-    const cocomments: CocommentContent[] =
-      await this.cocommentTable.getCocommentList(data);
+    const cocomments: CocommentContent[] = await this.postRepo.getCocommentList(
+      data,
+    );
 
+    //userId 암호화
     for (const i of cocomments) {
       i.userId = crypter.encrypt(i.userId);
     }
