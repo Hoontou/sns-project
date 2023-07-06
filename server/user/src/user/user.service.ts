@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { crypter } from 'src/common/crypter';
 import { UserRepository } from './user.repo';
 import { UserinfoWithNums } from 'sns-interfaces/grpc.interfaces';
-import { Userinfo } from './entity/userinfo.entity';
 
 @Injectable()
 export class UserService {

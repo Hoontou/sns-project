@@ -6,10 +6,10 @@ import { connectMongo } from './database/initialize.mongo';
 import { crypter } from './common/crypter';
 import { ProtoGrpcType } from './proto/ffl';
 import { FflServiceHandlers } from './proto/ffl/FflService';
-import { followRepository } from './database/follow.repo';
-import { likeRopository } from './database/like.repo';
-import { commentLikeRopository } from './database/comment.like.repo';
-import { cocommentLikeRopository } from './database/cocomment.like.repo';
+import { cocommentLikeRopository } from './database/repository/cocomment.like.repo';
+import { commentLikeRopository } from './database/repository/comment.like.repo';
+import { followRepository } from './database/repository/follow.repo';
+import { likeRopository } from './database/repository/like.repo';
 
 const PORT = 80;
 const packageDef = protoLoader.loadSync(join(__dirname, './proto/ffl.proto'), {
@@ -74,6 +74,7 @@ const getServer = () => {
       return;
     },
     GetUserIds: async (req, res) => {
+      //좋아요 누른 사람들 or 팔로우 한 사람들 or 팔로잉 하는 사람들
       if (req.request.type === 'like') {
         res(null, { userIds: await likeRopository.getUserIds(req.request.id) });
         return;

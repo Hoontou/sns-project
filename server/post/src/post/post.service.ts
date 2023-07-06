@@ -1,22 +1,16 @@
-import { Inject, Injectable, Req, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CommentDto, PostDto, CocommentDto } from './dto/post.dto';
 import { CommentItemContent, UploadMessage } from 'sns-interfaces';
-
 import { AmqpService } from 'src/amqp/amqp.service';
 import { crypter } from 'src/common/crypter';
 import { CocommentContent } from 'sns-interfaces/client.interface';
-import { PostTable } from './repository/post.table';
-import { CoCommentTable } from './repository/cocomment.table';
-import { CommentTable } from './repository/comment.table';
 import { PostRepository } from './post.repo';
+import { AddLikeType } from 'src/amqp/handler/exchange.handler';
 
 @Injectable()
 export class PostService {
   constructor(
     private postRepo: PostRepository,
-    private postTable: PostTable,
-    private commentTable: CommentTable,
-    private cocommentTable: CoCommentTable,
     @Inject(forwardRef(() => AmqpService)) private amqpService: AmqpService,
   ) {}
 
@@ -28,45 +22,14 @@ export class PostService {
       userId: content.userId,
       title: content.title,
     };
-
-    this.postTable.addPost(postDto);
-
-    return;
+    return this.postRepo.addPost(postDto);
   }
 
   addComment(commentDto: CommentDto) {
-    //코멘트 테이블에 코멘트 삽입, 포스트테이블에서 포스트 찾아서 코멘트 카운트 올리기
-    this.commentTable.addComment(commentDto);
-    //코멘트 카운터 증가.
-    this.postTable.addComment(commentDto.postId);
-
-    return;
+    return this.postRepo.addComment(commentDto);
   }
   addCocomment(cocommentDto: CocommentDto) {
-    //대댓글 테이블에 내용삽입
-    this.cocommentTable.addCocomment(cocommentDto);
-    //comment에다가 대댓글 카운터 증가.
-    this.commentTable.addCocomment(cocommentDto.commentId);
-    return;
-  }
-
-  async delPost(@Req() req): Promise<void> {
-    //alertForm 생성을 위해 userId, postId 파싱
-    const postId: string = req.body.postId;
-    await this.postTable.delPost(postId);
-
-    // const userId = crypter.decrypt(req.user.id);
-    // const alert_id = ObjectId();
-    // const delAlertForm: AlertDto = {
-    //   _id: alert_id,
-    //   userId,
-    //   content: {
-    //     type: 'deletePost', // DelPost type임.
-    //     postId,
-    //     success: true,
-    //   },
-    // };
-    // rabbitMQ.sendMsg('alert', delAlertForm);
+    return this.postRepo.addCocomment(cocommentDto);
   }
 
   async getCommentList(data: { postId: string; page: number }) {
@@ -78,6 +41,7 @@ export class PostService {
     for (const i of comments) {
       i.userId = crypter.encrypt(i.userId);
     }
+    console.log(comments);
     return { comments };
   }
 
@@ -90,7 +54,32 @@ export class PostService {
     for (const i of cocomments) {
       i.userId = crypter.encrypt(i.userId);
     }
+    console.log(cocomments);
 
     return { cocomments };
+  }
+
+  async addLike(data: AddLikeType) {
+    if (data.type === 'post') {
+      return this.postRepo.postTable.addLike(data);
+    }
+    if (data.type === 'comment') {
+      return this.postRepo.commentTable.addLike(data);
+    }
+    if (data.type === 'cocomment') {
+      return this.postRepo.cocommentTable.addLike(data);
+    }
+  }
+
+  async removeLike(data: AddLikeType) {
+    if (data.type === 'post') {
+      return this.postRepo.postTable.removeLike(data);
+    }
+    if (data.type === 'comment') {
+      return this.postRepo.commentTable.removeLike(data);
+    }
+    if (data.type === 'cocomment') {
+      return this.postRepo.cocommentTable.removeLike(data);
+    }
   }
 }

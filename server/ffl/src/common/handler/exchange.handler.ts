@@ -1,7 +1,7 @@
 import { AmqpMessage } from 'sns-interfaces';
-import { likeRopository } from '../../database/like.repo';
-import { commentLikeRopository } from '../../database/comment.like.repo';
-import { cocommentLikeRopository } from '../../database/cocomment.like.repo';
+import { likeRopository } from '../../database/repository/like.repo';
+import { commentLikeRopository } from '../../database/repository/comment.like.repo';
+import { cocommentLikeRopository } from '../../database/repository/cocomment.like.repo';
 
 export const exchangeHandler = (msg: AmqpMessage) => {
   const data: unknown = JSON.parse(msg.content.toString());

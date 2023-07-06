@@ -53,11 +53,15 @@ export class CommentTable {
     A.username,
     A.img
     FROM
-    (SELECT * FROM public.comment WHERE comment."postId" = '${postId}') AS C
+    (
+      SELECT * FROM public.comment 
+      WHERE comment."postId" = '${postId}'
+      ORDER BY createdAt DESC
+      LIMIT ${limit} OFFSET ${page * limit}
+      ) AS C
     JOIN public.userinfo AS A
     ON C."userId" = A."userId"
-    ORDER BY createdAt DESC
-    LIMIT ${limit} OFFSET ${page * limit};
+    ORDER BY createdAt DESC;
     `;
 
     return (await pgdb.client.query(query)).rows;

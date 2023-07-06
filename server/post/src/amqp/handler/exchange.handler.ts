@@ -1,18 +1,12 @@
 import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { AmqpMessage, UploadMessage } from 'sns-interfaces';
 import { PostService } from 'src/post/post.service';
-import { CoCommentTable } from 'src/post/repository/cocomment.table';
-import { CommentTable } from 'src/post/repository/comment.table';
-import { PostTable } from 'src/post/repository/post.table';
 
 @Injectable()
 export class ExchangeHandler {
   private logger = new Logger(ExchangeHandler.name);
   constructor(
     @Inject(forwardRef(() => PostService)) private postService: PostService,
-    private postTable: PostTable,
-    private commentTable: CommentTable,
-    private cocommentTable: CoCommentTable,
   ) {}
 
   consumeMessage(msg: AmqpMessage) {
@@ -43,27 +37,53 @@ export class ExchangeHandler {
     const data: unknown = JSON.parse(msg.content.toString());
 
     if (msg.fields.routingKey === 'addLike') {
-      return this.postTable.addLike(data as { postId: string });
-    }
-    if (msg.fields.routingKey === 'removeLike') {
-      this.postTable.removeLike(data as { postId: string });
-      return;
+      return this.postService.addLike({
+        ...(data as { postId: string }),
+        type: 'post',
+      });
     }
     if (msg.fields.routingKey === 'addCommentLike') {
-      this.commentTable.addLike(data as { commentId: number });
-      return;
-    }
-    if (msg.fields.routingKey === 'removeCommentLike') {
-      this.commentTable.removeLike(data as { commentId: number });
-      return;
+      return this.postService.addLike({
+        ...(data as { commentId: number }),
+        type: 'comment',
+      });
     }
     if (msg.fields.routingKey === 'addCocommentLike') {
-      this.cocommentTable.addLike(data as { cocommentId: number });
-      return;
+      return this.postService.addLike({
+        ...(data as { cocommentId: number }),
+        type: 'cocomment',
+      });
+    }
+    if (msg.fields.routingKey === 'removeLike') {
+      return this.postService.removeLike({
+        ...(data as { postId: string }),
+        type: 'post',
+      });
+    }
+    if (msg.fields.routingKey === 'removeCommentLike') {
+      return this.postService.removeLike({
+        ...(data as { commentId: number }),
+        type: 'comment',
+      });
     }
     if (msg.fields.routingKey === 'removeCocommentLike') {
-      this.cocommentTable.removeLike(data as { cocommentId: number });
-      return;
+      return this.postService.removeLike({
+        ...(data as { cocommentId: number }),
+        type: 'cocomment',
+      });
     }
   }
+}
+export type AddLikeType = AddLikePost | AddLikeComment | AddLikeCocomment;
+export interface AddLikePost {
+  postId: string;
+  type: 'post';
+}
+export interface AddLikeComment {
+  commentId: number;
+  type: 'comment';
+}
+export interface AddLikeCocomment {
+  cocommentId: number;
+  type: 'cocomment';
 }

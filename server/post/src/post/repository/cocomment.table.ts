@@ -26,7 +26,7 @@ export class CoCommentTable {
     commentId: number,
     page: number,
   ): Promise<CocommentContent[]> {
-    const limit = 4;
+    const limit = 5;
     const query = `SELECT
     C.id AS "cocommentId",
     C.cocomment,
@@ -36,11 +36,16 @@ export class CoCommentTable {
     A.username,
     A.img
     FROM
-    (SELECT * FROM public.cocomment WHERE cocomment."commentId" = ${commentId}) AS C
+    (
+      SELECT * FROM public.cocomment 
+      WHERE cocomment."commentId" = ${commentId}
+      ORDER BY createdAt DESC
+      LIMIT ${limit} OFFSET ${page * limit}
+      ) AS C
     JOIN public.userinfo AS A
     ON C."userId" = A."userId"
-    ORDER BY createdAt DESC
-    LIMIT ${limit} OFFSET ${page * limit};`;
+    ORDER BY createdAt DESC;
+    `;
 
     return (await pgdb.client.query(query)).rows;
   }

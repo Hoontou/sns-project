@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { crypter } from '../common/crypter';
+import { crypter } from '../../common/crypter';
 
 const likeSchema = new mongoose.Schema({
   postId: String,

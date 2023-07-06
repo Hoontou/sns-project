@@ -1,6 +1,5 @@
 import { AmqpMessage } from 'sns-interfaces';
-import { followRepository } from '../../database/follow.repo';
-
+import { followRepository } from '../../database/repository/follow.repo';
 export const msgHandler = (message: AmqpMessage) => {
   const data: unknown = JSON.parse(message.content.toString());
 

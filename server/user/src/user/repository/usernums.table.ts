@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Usernums } from '../entity/usernums.entity';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { crypter } from 'src/common/crypter';
 import { pgdb } from 'src/configs/pg';
@@ -32,24 +32,6 @@ export class UsernumsTable {
       pgdb.client.query(queryTo),
       pgdb.client.query(queryFrom),
     ]);
-
-    // await this.db
-    // .createQueryBuilder()
-    // .update(Usernums)
-    // .set({
-    // follower: () => 'follower + 1',
-    // })
-    // .where('userId = :id', { id: to })
-    // .execute();
-    //
-    // await this.db
-    // .createQueryBuilder()
-    // .update(Usernums)
-    // .set({
-    // following: () => 'following + 1',
-    // })
-    // .where('userId = :id', { id: from })
-    // .execute();
   }
 
   async removeFollow(data: { userTo: string; userFrom: string }) {

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { crypter } from '../common/crypter';
+import { crypter } from '../../common/crypter';
 
 const cocommentLikeSchema = new mongoose.Schema({
   cocommentId: Number,
