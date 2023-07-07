@@ -84,7 +84,6 @@ const getServer = () => {
         .sort({ _id: -1 })
         .limit(len)
         .skip(req.request.page * len);
-      console.log(metadatas);
       res(null, { metadatas });
     },
   } as MetadataServiceHandlers);

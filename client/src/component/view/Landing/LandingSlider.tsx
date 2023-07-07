@@ -7,8 +7,8 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 // import required modules
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper';
-import sample1 from '../../asset/sample1.jpg';
-import sample2 from '../../asset/sample2.jpg';
+import sample1 from '../../../asset/sample1.jpg';
+import sample2 from '../../../asset/sample2.jpg';
 
 const Slider = (props: { images: string[] }) => {
   const sampleList = [sample1, sample2];

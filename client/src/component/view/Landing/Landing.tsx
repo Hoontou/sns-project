@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import Navbar from '../../common/Navbar/Navbar';
 import Post from '../../common/Post/Post';
+import LandingPost from './LandingPost';
 
 export interface LandingContent {
   userId: string;
@@ -33,6 +34,7 @@ const Landing = () => {
         last3daysPosts: LandingContent[];
         userId: string;
       } = res.data;
+      console.log(last3daysPosts);
       setPage(page + 1);
       setUserId(userId);
       setPosts([...posts, ...last3daysPosts]);
@@ -41,35 +43,21 @@ const Landing = () => {
 
   const renderPosts = posts.map((i, index) => {
     return (
-      <Post
-        key={index}
-        metadata={{
-          id: i.id,
-          userId: i.userId,
-          files: i.files,
-          createdAt: i.createdAt,
-        }}
-        userId={userId}
-        postFooterContent={{
-          id: i.id,
-          title: i.title,
-          likesCount: i.likesCount,
-          commentCount: i.commentCount,
-          liked: i.liked,
-          username: i.username,
-          img: i.img,
-        }}
-      />
+      <>
+        <LandingPost key={index} post={i} userId={userId} />
+      </>
     );
   });
   useEffect(() => {
     getPost();
   }, []);
   return (
-    <div>
-      {renderPosts}
-      <Navbar value={0} />
-    </div>
+    <>
+      <div>{renderPosts}</div>
+      <div style={{ paddingTop: '4rem' }}>
+        <Navbar value={0} />
+      </div>
+    </>
   );
 };
 export default Landing;

@@ -15,7 +15,7 @@ export interface MetadataDto {
 export interface Metadata extends MetadataDto {
   createdAt: string;
 }
-const emptyDto: Metadata = {
+export const emptyMetadata: Metadata = {
   id: '',
   userId: '',
   files: [''],
@@ -32,7 +32,7 @@ const Postlist = (props: {
   const [spin, setSpin] = useState<boolean>(true);
   const [posts, setPosts] = useState<Metadata[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedItem, setItem] = useState<Metadata>(emptyDto);
+  const [selectedItem, setItem] = useState<Metadata>(emptyMetadata);
   const [page, setPage] = useState<number>(0);
 
   useEffect(() => {

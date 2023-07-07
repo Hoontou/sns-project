@@ -9,6 +9,7 @@ import { emptyPostFooterContent } from './post.interfaces';
 import { useNavigate } from 'react-router-dom';
 import sample1 from '../../../asset/sample1.jpg';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
+import { Avatar } from '@mui/material';
 
 // export
 const Post = (props: {
@@ -56,55 +57,37 @@ const Post = (props: {
     //상단 헤더부분
     <div>
       {!openComment && (
-        <div
-          style={{
-            paddingTop: '0.5rem',
-            paddingBottom: '0.5rem',
-            position: 'fixed',
-            zIndex: '999',
-            backgroundColor: 'white',
-            width: '100%',
-          }}
-        >
-          <div
-            style={{
+        <div style={{ height: '3.7rem', position: 'relative' }}>
+          <Avatar
+            alt='profile'
+            src={
+              postFooterContent.img === ''
+                ? sample1
+                : `${requestUrl}/${postFooterContent.img}`
+            }
+            sx={{
+              marginTop: '0.5rem',
               width: '2.7rem',
               height: '2.7rem',
-              borderRadius: '70%',
-              overflow: 'hidden',
               marginLeft: '0.7rem',
               marginRight: '0.9rem',
-              float: 'left',
+              display: 'inline-block',
+            }}
+          />
+
+          <span
+            style={{
+              fontWeight: '600',
+              position: 'absolute',
+              top: '1.2rem',
+            }}
+            onClick={() => {
+              navigate(`/userfeed/${props.userId}`);
             }}
           >
-            <img
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
-              src={
-                postFooterContent.img === ''
-                  ? sample1
-                  : `${requestUrl}/${postFooterContent.img}`
-              }
-              alt='profile'
-            />
-          </div>
-          <div style={{ marginTop: '0.6rem' }}>
-            <span
-              style={{
-                marginRight: '0.5rem',
-                fontWeight: '600',
-              }}
-              onClick={() => {
-                navigate(`/userfeed/${props.userId}`);
-              }}
-            >
-              {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
-              {postFooterContent.username}
-            </span>
-          </div>
+            {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
+            {postFooterContent.username}
+          </span>
         </div>
       )}
 
