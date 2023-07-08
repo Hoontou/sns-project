@@ -10,8 +10,8 @@ service FflService {
 }
 
 message CheckFollowedReq {
-  string userId = 1;
-  string myId = 2;
+  string userFrom = 1;
+  string userTo = 2;
 }
 message CheckFollowedRes {
   bool followed = 1;

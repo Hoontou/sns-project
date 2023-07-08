@@ -110,7 +110,6 @@ const Post = (props: {
           postFooterContent={postFooterContent}
           userId={props.userId}
           setOpenComment={setOpenComment}
-          setPostFooterContent={setPostFooterContent}
         />
       )}
     </div>

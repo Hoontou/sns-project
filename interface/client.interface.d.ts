@@ -9,6 +9,7 @@ export interface PostFooterContent extends PostContent {
   liked: boolean;
   username: string;
   img: string;
+  userId: string;
 }
 
 export interface UserInfo {

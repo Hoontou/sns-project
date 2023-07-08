@@ -6,10 +6,8 @@ import {
 } from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import CommentItem from './CommentItem';
+
 import axios from 'axios';
-import CommentInput from './CommentInput';
-import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft } from 'react-icons/vsc';
 import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
@@ -18,12 +16,16 @@ import {
   SubmitForm,
   defaultCocommentItemContent,
   defaultCommentItemContent,
-} from './etc';
+} from '../../common/Comment/etc';
+import { CommentItemContent } from 'sns-interfaces';
+import CommentItem from '../../common/Comment/CommentItem';
+import CommentInput from '../../common/Comment/CommentInput';
 
-const Comment = (props: {
+const LandingComment = (props: {
+  index: number;
   createdAt: string;
   userId: string;
-  setOpenComment: Dispatch<SetStateAction<boolean>>;
+  openCo(index: number): void;
   postFooterContent: PostFooterContent;
 }) => {
   const navigate = useNavigate();
@@ -35,7 +37,6 @@ const Comment = (props: {
     type: 'comment',
     postId: props.postFooterContent.id,
   });
-
   const setSubmitFormToDefault = () => {
     setSubmitForm({
       type: 'comment',
@@ -73,10 +74,13 @@ const Comment = (props: {
   };
 
   useEffect(() => {
+    //뒤로가기 막기 위해 아래코드 필요.
+    window.history.pushState(null, document.title, window.location.href);
+
     getComments().then(() => {
       setSpin(false);
     });
-  }, []);
+  }, [props.index]);
 
   /**대댓 가져오기 */
   const getCocomments = (commentId: number, page: number, index: number) => {
@@ -103,6 +107,9 @@ const Comment = (props: {
 
   /**CommentInput에서 호출, 이거 호출이전에 submitForm의 수정먼저 수행. */
   const submitNewComment = async (value: string) => {
+    if (value === '') {
+      return;
+    }
     //1. submitForm의 타입체크 후 post할 url 결정해서 axios
     //2. img, username 가져와서 댓, 대댓 컴포넌트 생성
     //3. 타입에 따라 댓글리스트에 푸시
@@ -197,7 +204,7 @@ const Comment = (props: {
       {spin && 'waiting...'}
 
       {!spin && (
-        <div style={{ height: '80vh', overflowY: 'auto' }}>
+        <div style={{ height: '100vh', overflowY: 'auto' }}>
           <div
             style={{
               paddingTop: '0.5rem',
@@ -215,7 +222,7 @@ const Comment = (props: {
                 left: '1rem',
               }}
               onClick={() => {
-                props.setOpenComment(false);
+                props.openCo(-1);
               }}
             />
             <span>댓글</span>
@@ -322,4 +329,4 @@ const Comment = (props: {
     </>
   );
 };
-export default Comment;
+export default LandingComment;

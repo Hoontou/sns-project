@@ -3,21 +3,31 @@ import * as CryptoJS from 'crypto-js';
 export const JwtSecret = 'HowCuteMyCheeze';
 
 class Crypto {
-  constructor(private uuidSecret) {
-    this.uuidSecret = CryptoJS.enc.Utf8.parse(uuidSecret);
+  constructor(private secret) {
+    this.secret = CryptoJS.enc.Utf8.parse(secret);
   }
   public encrypt(value: string | number): string {
-    const encrypted = CryptoJS.AES.encrypt(String(value), this.uuidSecret, {
-      iv: this.uuidSecret,
+    if (Number.isNaN(Number(value))) {
+      console.log('Already encrypted value');
+      return String(value);
+    }
+
+    const encrypted = CryptoJS.AES.encrypt(String(value), this.secret, {
+      iv: this.secret,
     }).toString();
     return encrypted;
   }
 
   public decrypt(value: string | number): string {
-    const decryptedData = CryptoJS.AES.decrypt(String(value), this.uuidSecret, {
-      iv: this.uuidSecret,
+    if (!Number.isNaN(Number(value))) {
+      console.log('Already decrypted value');
+      return String(value);
+    }
+
+    const decrypted = CryptoJS.AES.decrypt(String(value), this.secret, {
+      iv: this.secret,
     });
-    return decryptedData.toString(CryptoJS.enc.Utf8);
+    return decrypted.toString(CryptoJS.enc.Utf8);
   }
 }
 

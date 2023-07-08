@@ -41,6 +41,10 @@ export class AppService {
 
     //3 metadata로 PostFooter 가져옴,
     //재귀적 인데 나중에 성능체크해야할듯 list로 보내는것과.
+    if (metadatas === undefined) {
+      //가져올게 없으면 빈리스트 리턴
+      return { last3daysPosts: [], userId };
+    }
     const postFooter: PostFooterContent[] = await Promise.all(
       metadatas.map((i, index) => {
         return this.postFooter({
@@ -77,7 +81,10 @@ export class AppService {
     }
     //팔로우체크후 리턴, 여기까지왔으면 아래는 진짜 아이디만 들어감.
     //타입추론이 잘 안돼서 가독성좋게 ''로 했음.
-    const { followed } = await this.fflService.checkFollowed(body);
+    const { followed } = await this.fflService.checkFollowed({
+      userTo: body.userId,
+      userFrom: body.myId,
+    });
     return { ...userinfo, followed };
   }
 
@@ -98,6 +105,7 @@ export class AppService {
       ...liked,
       ...postContent,
       ...userInfo,
+      userId: crypter.encrypt(userInfo.userId),
     };
   }
 }

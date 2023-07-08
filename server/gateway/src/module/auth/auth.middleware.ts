@@ -26,7 +26,6 @@ export class AuthMiddleware implements NestMiddleware {
     if (authResult.success == true) {
       //req.user에 담아준다.
       req.user = authResult;
-      this.logger.log(`${authResult.username} passed`);
       next();
     } else {
       this.logger.error(`Blocked unknown user`);

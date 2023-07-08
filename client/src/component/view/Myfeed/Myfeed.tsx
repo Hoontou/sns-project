@@ -24,6 +24,7 @@ const MyFeed = () => {
       setId(authRes.userId);
     });
   }, [navigate]);
+
   return (
     <div
       style={{ width: '90%', margin: '0.7rem auto', paddingBottom: '3.5rem' }}

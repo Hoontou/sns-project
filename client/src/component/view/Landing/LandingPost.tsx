@@ -1,22 +1,26 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction, Dispatch } from 'react';
 import { requestUrl } from '../../../common/etc';
 import PostFooter from '../../common/Post/PostFooter';
 import { LandingContent } from './Landing';
 import { Metadata, emptyMetadata } from '../../common/Post/Postlist';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
-import LandingSlider from './LandingSlider';
 import { useNavigate } from 'react-router-dom';
 import sample1 from '../../../asset/sample1.jpg';
 import { Avatar } from '@mui/material';
 import Slider from '../../common/Slider';
+import LandingPostFooter from './LandingPostFooter';
 
-const Post = (props: { post: LandingContent; userId: string }) => {
+const LandingPost = (props: {
+  index: number;
+  post: LandingContent;
+  userId: string;
+  openCo(index: number): void;
+}) => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [images, setImages] = useState<string[]>([]);
-  const [openComment, setOpenComment] = useState<boolean>(false);
   const [metadata, setMetadata] = useState<Metadata>(emptyMetadata);
   const [postFooterContent, setPostFooterContent] = useState<PostFooterContent>(
     emptyPostFooterContent
@@ -25,26 +29,10 @@ const Post = (props: { post: LandingContent; userId: string }) => {
   //state 채우고 컴포넌트에 표시
 
   useEffect(() => {
-    const post = props.post;
-    const metadata: Metadata = {
-      id: post.id,
-      files: post.files,
-      userId: post.userId,
-      createdAt: post.createdAt,
-    };
-    const postFooterContent: PostFooterContent = {
-      liked: post.liked,
-      username: post.username,
-      img: post.img,
-      id: post.id,
-      title: post.title,
-      likesCount: post.likesCount,
-      commentCount: post.commentCount,
-    };
-    setMetadata(metadata);
-    setPostFooterContent(postFooterContent);
-    const modyfiedUrl = metadata.files.map((i: string) => {
-      return `${requestUrl}/${metadata.id}/${i}`;
+    setMetadata(props.post);
+    setPostFooterContent(props.post);
+    const modyfiedUrl = props.post.files.map((i: string) => {
+      return `${requestUrl}/${props.post.id}/${i}`;
     });
     setImages(modyfiedUrl);
     setSpin(false);
@@ -77,7 +65,7 @@ const Post = (props: { post: LandingContent; userId: string }) => {
             top: '1.2rem',
           }}
           onClick={() => {
-            navigate(`/userfeed/${props.userId}`);
+            navigate(`/userfeed/${postFooterContent.userId}`);
           }}
         >
           {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
@@ -86,11 +74,12 @@ const Post = (props: { post: LandingContent; userId: string }) => {
       </div>
       {!spin && <Slider images={images} />}
       {!spin && (
-        <PostFooter
+        <LandingPostFooter
+          index={props.index}
           postId={metadata.id}
           createdAt={metadata.createdAt}
           userId={props.userId}
-          setOpenComment={setOpenComment}
+          openCo={props.openCo}
           postFooterContent={postFooterContent}
         />
       )}
@@ -98,4 +87,4 @@ const Post = (props: { post: LandingContent; userId: string }) => {
   );
 };
 
-export default Post;
+export default LandingPost;

@@ -18,40 +18,32 @@ export class FflService {
   onModuleInit() {
     this.fflGrpcService = this.client.getService<FflGrpcService>('FflService');
   }
-
-  async addFollow(body: { userTo: string; userFrom: string }) {
-    this.amqpService.sendMsg('ffl', body, this.addFollow.name);
-    this.amqpService.sendMsg('user', body, this.addFollow.name);
-  }
-  async removeFollow(body: { userTo: string; userFrom: string }) {
-    this.amqpService.sendMsg('ffl', body, this.removeFollow.name);
-    this.amqpService.sendMsg('user', body, this.removeFollow.name);
-  }
-
   async checkFollowed(body: {
-    userId: string;
-    myId: string;
+    userTo: string;
+    userFrom: string;
   }): Promise<{ followed: boolean }> {
     return lastValueFrom(this.fflGrpcService.checkFollowed(body));
   }
 
-  async addLike(body: { userId: string; postId: string }) {
-    // this.amqpService.sendMsg('ffl', body, this.addLike.name);
-    // this.amqpService.sendMsg(
-    //   'post',
-    //   { postId: body.postId },
-    //   this.addLike.name,
-    // );
-    this.amqpService.publishMsg('addLike', body);
+  async addFollow(body: { userTo: string; userFrom: string }) {
+    const { followed } = await this.checkFollowed(body);
+    //팔로우 안돼있으면 팔로우함
+    if (followed === false) {
+      this.amqpService.sendMsg('ffl', body, this.addFollow.name);
+      this.amqpService.sendMsg('user', body, this.addFollow.name);
+      return;
+    }
+    return;
   }
-  async removeLike(body: { userId: string; postId: string }) {
-    // this.amqpService.sendMsg('ffl', body, this.removeLike.name);
-    // this.amqpService.sendMsg(
-    //   'post',
-    //   { postId: body.postId },
-    //   this.removeLike.name,
-    // );
-    this.amqpService.publishMsg('removeLike', body);
+  async removeFollow(body: { userTo: string; userFrom: string }) {
+    const { followed } = await this.checkFollowed(body);
+    //팔로우 돼 있으면 팔로우 취소
+    if (followed === true) {
+      this.amqpService.sendMsg('ffl', body, this.removeFollow.name);
+      this.amqpService.sendMsg('user', body, this.removeFollow.name);
+      return;
+    }
+    return;
   }
 
   async checkLiked(body: {
@@ -59,6 +51,24 @@ export class FflService {
     postId: string;
   }): Promise<{ liked: boolean }> {
     return lastValueFrom(this.fflGrpcService.checkLiked(body));
+  }
+
+  async addLike(body: { userId: string; postId: string }) {
+    const { liked } = await this.checkLiked(body);
+    //좋아요 안돼있으면 좋아요 누름
+    if (liked === false) {
+      //ffl에 Doc추가, post에 likesCount증가
+      return this.amqpService.publishMsg('addLike', body);
+    }
+    return;
+  }
+  async removeLike(body: { userId: string; postId: string }) {
+    const { liked } = await this.checkLiked(body);
+    //좋아요 돼 있으면 좋아요 취소
+    if (liked === true) {
+      return this.amqpService.publishMsg('removeLike', body);
+    }
+    return;
   }
 
   async getUserList(body: {

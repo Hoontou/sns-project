@@ -49,12 +49,12 @@ const getServer = () => {
     CheckFollowed: async (req, res) => {
       //myId가 userId를 팔로우했는지 가져와야함.
       //userFrom: myId, userTo: userId
-      const decUserId = crypter.decrypt(req.request.userId);
-      const decMyId = crypter.decrypt(req.request.myId);
+      const decUserTo = crypter.decrypt(req.request.userTo);
+      const decUserFrom = crypter.decrypt(req.request.userFrom);
 
       const followed: unknown[] = await followRepository.db.find({
-        userTo: decUserId,
-        userFrom: decMyId,
+        userTo: decUserTo,
+        userFrom: decUserFrom,
       });
 
       //팔로우 찾은게 없으면 false 있으면 true

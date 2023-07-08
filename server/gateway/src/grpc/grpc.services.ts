@@ -56,16 +56,16 @@ export interface MetadataGrpcService {
   getMetadatasLast3Day(data: {
     userIds: string[];
     page: number;
-  }): Observable<{ metadatas: MetadataDto[] }>;
+  }): Observable<{ metadatas: MetadataDto[] | undefined }>;
 }
 
 export interface FflGrpcService {
   checkFollowed({
-    userId,
-    myId,
+    userTo,
+    userFrom,
   }: {
-    userId: string;
-    myId: string;
+    userTo: string;
+    userFrom: string;
   }): Observable<{ followed: boolean }>;
 
   checkLiked({

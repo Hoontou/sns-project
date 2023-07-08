@@ -1,19 +1,20 @@
 import axios from 'axios';
 import { useState, Dispatch, SetStateAction } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
-import Userlist from '../Userlist';
-import { Metadata } from './Postlist';
+
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';
+import Userlist from '../../common/Userlist';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
-const PostFooter = (props: {
+const LandingPostFooter = (props: {
+  index: number;
   postId: string;
   createdAt: string;
   userId: string;
-  setOpenComment: Dispatch<SetStateAction<boolean>>;
   postFooterContent: PostFooterContent;
+  openCo(index: number): void;
 }) => {
   const navigate = useNavigate();
   const [openUserList, setOpenUserList] = useState<boolean>(false);
@@ -79,7 +80,7 @@ const PostFooter = (props: {
           fontSize='30px'
           style={{ marginRight: '0.5rem' }}
           onClick={() => {
-            props.setOpenComment(true);
+            props.openCo(props.index);
           }}
         />
         {postContent.likesCount === 0 ? (
@@ -122,7 +123,7 @@ const PostFooter = (props: {
               fontSize: '0.8rem',
             }}
             onClick={() => {
-              props.setOpenComment(true);
+              props.openCo(props.index);
             }}
           >
             댓글 {props.postFooterContent.commentCount}개 보기
@@ -131,10 +132,10 @@ const PostFooter = (props: {
 
         <span
           style={{
-            marginTop: '-0.2rem',
             display: 'block',
             color: 'gray',
             fontSize: '0.8rem',
+            marginTop: '-0.2rem',
           }}
         >
           {getElapsedTimeString(props.createdAt)}
@@ -151,4 +152,4 @@ const PostFooter = (props: {
     </div>
   );
 };
-export default PostFooter;
+export default LandingPostFooter;

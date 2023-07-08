@@ -23,7 +23,7 @@ export class MetadataService {
   }
 
   getMetadatasLast3Day(data: { userIds: string[]; page: number }): Promise<{
-    metadatas: MetadataDto[];
+    metadatas: MetadataDto[] | undefined;
   }> {
     return lastValueFrom(this.metadataGrpcService.getMetadatasLast3Day(data));
   }
