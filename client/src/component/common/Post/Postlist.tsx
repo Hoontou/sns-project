@@ -4,6 +4,7 @@ import { Box, Button, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
 import Post from './Post';
 import { emptyPostFooterContent } from './post.interfaces';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 export interface MetadataDto {
   id: string;
@@ -34,6 +35,8 @@ const Postlist = (props: {
   const [open, setOpen] = useState(false);
   const [selectedItem, setItem] = useState<Metadata>(emptyMetadata);
   const [page, setPage] = useState<number>(0);
+  const [enablingGetMoreButton, setEnablingGetMoreButton] =
+    useState<boolean>(true);
 
   useEffect(() => {
     //post가져오기
@@ -62,9 +65,10 @@ const Postlist = (props: {
           page,
         })
         .then((res) => {
-          const metadatas: Metadata[] = res.data.metadatas;
-          if (metadatas === undefined) {
-            throw new Error();
+          const { metadatas }: { metadatas: Metadata[] } = res.data.metadatas;
+          if (metadatas.length < 9) {
+            //gateway에서 9개씩 보내줌.
+            setEnablingGetMoreButton(false);
           }
           setPosts([...posts, ...metadatas]);
           setPage(page + 1);
@@ -121,23 +125,18 @@ const Postlist = (props: {
       )}
       {posts.length > 0 && (
         <>
-          <Grid container spacing={0.5}>
-            {renderCard}
-          </Grid>
-          {props.postCount > posts.length && (
-            <div
-              className='text-center'
-              style={{ paddingBottom: '1rem', marginTop: '1rem' }}
-            >
-              {spin ? (
-                '가져오는 중...'
-              ) : (
-                <Button variant='outlined' size='small' onClick={getPost}>
-                  더 불러오기
-                </Button>
-              )}
-            </div>
-          )}
+          <InfiniteScroll
+            next={getPost}
+            hasMore={enablingGetMoreButton}
+            loader={<div className='spinner'></div>}
+            dataLength={posts.length}
+            scrollThreshold={'100%'}
+          >
+            {/* scrollThreshold={'90%'} 페이지 얼만큼 내려오면 다음거 불러올건지 설정 */}
+            <Grid container spacing={0.5}>
+              {renderCard}
+            </Grid>
+          </InfiniteScroll>
           {open && (
             <Modal
               open={open}

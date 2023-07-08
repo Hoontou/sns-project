@@ -13,13 +13,14 @@ export class MetadataService {
       this.client.getService<MetadataGrpcService>('MetadataService');
   }
 
-  getMetadatas(body: { userId: string; page: number }): Promise<
-    MetadataDto &
-      {
-        createdAt: string;
-      }[]
-  > {
-    return lastValueFrom(this.metadataGrpcService.getMetadatas(body));
+  async getMetadatas(body: { userId: string; page: number }) {
+    const metadatas = await lastValueFrom(
+      this.metadataGrpcService.getMetadatas(body),
+    );
+    if (metadatas === undefined) {
+      return { metadatas: [] };
+    }
+    return { metadatas };
   }
 
   getMetadatasLast3Day(data: { userIds: string[]; page: number }): Promise<{

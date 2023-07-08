@@ -5,8 +5,12 @@ import LandingPost from './LandingPost';
 import LandingComment from './LandingComment';
 import { Box, Modal, Button } from '@mui/material';
 import { LandingContent, defaultLandingContent } from './interface';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useNavigate } from 'react-router-dom';
+import { authHoc } from '../../../common/auth.hoc';
 
 const Landing = () => {
+  const navigate = useNavigate();
   const [page, setPage] = useState<number>(0);
   const [spin, setSpin] = useState<boolean>(false);
   const [openComment, setOpenComment] = useState<boolean>(false);
@@ -17,7 +21,6 @@ const Landing = () => {
   const [postToComment, setPostToComment] = useState<LandingContent>(
     defaultLandingContent
   );
-  const [pendingGettingPost, setPendingGettingPost] = useState<boolean>(false);
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
 
@@ -34,7 +37,7 @@ const Landing = () => {
   };
 
   const getPost = () => {
-    setPendingGettingPost(true);
+    setSpin(true);
     axios.post('gateway/landing', { page }).then((res) => {
       const {
         last3daysPosts,
@@ -43,35 +46,40 @@ const Landing = () => {
         last3daysPosts: LandingContent[];
         userId: string;
       } = res.data;
-      if (page === 0) {
-        setUserId(userId);
-      }
+
       if (last3daysPosts.length < 10) {
         //gateway에서 10개씩 보내줌.
         setEnablingGetMoreButton(false);
       }
+
       setPage(page + 1);
       setPosts([...posts, ...last3daysPosts]);
-      setPendingGettingPost(false);
+      setSpin(false);
       return;
     });
   };
 
   const renderPosts = posts.map((i, index) => {
     return (
-      <>
-        <LandingPost
-          openCo={openCo}
-          key={index}
-          index={index}
-          post={i}
-          userId={userId}
-        />
-      </>
+      <LandingPost
+        openCo={openCo}
+        key={index}
+        index={index}
+        post={i}
+        userId={userId}
+      />
     );
   });
 
   useEffect(() => {
+    authHoc().then((authRes) => {
+      if (authRes.success === false) {
+        alert('Err while Authentication, need login');
+        navigate('/signin');
+        return;
+      }
+      setUserId(authRes.userId);
+    });
     getPost();
 
     //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
@@ -89,16 +97,16 @@ const Landing = () => {
   }, []);
   return (
     <>
-      <div>{renderPosts}</div>
-      {enablingGetMoreButton && (
-        <div
-          className='text-center'
-          onClick={getPost}
-          style={{ color: 'RoyalBlue' }}
-        >
-          {pendingGettingPost ? '가져오는 중...' : '더 불러오기'}
-        </div>
-      )}
+      <InfiniteScroll
+        next={getPost}
+        hasMore={enablingGetMoreButton}
+        loader={<div className='spinner'></div>}
+        dataLength={posts.length}
+        scrollThreshold={'100%'}
+      >
+        {/* scrollThreshold={'90%'} 페이지 얼만큼 내려오면 다음거 불러올건지 설정 */}
+        <div>{renderPosts}</div>
+      </InfiniteScroll>
       {openComment && (
         <Modal
           open={openComment}

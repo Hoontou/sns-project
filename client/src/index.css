@@ -17,3 +17,18 @@
 * {
   font-family: 'Pretendard-Regular' !important;
 }
+.spinner {
+  width: 32px;
+  height: 32px;
+  margin: 10px auto;
+  border: 1.5px #ddd solid;
+  border-top: 1.5px #2e93e6 solid;
+  border-radius: 50%;
+  animation: sp-anime 1s infinite linear;
+}
+
+@keyframes sp-anime {
+  100% {
+    transform: rotate(360deg);
+  }
+}
