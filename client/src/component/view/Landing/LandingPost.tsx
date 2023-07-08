@@ -2,7 +2,6 @@ import axios from 'axios';
 import { useState, useEffect, SetStateAction, Dispatch } from 'react';
 import { requestUrl } from '../../../common/etc';
 import PostFooter from '../../common/Post/PostFooter';
-import { LandingContent } from './Landing';
 import { Metadata, emptyMetadata } from '../../common/Post/Postlist';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
@@ -11,6 +10,7 @@ import sample1 from '../../../asset/sample1.jpg';
 import { Avatar } from '@mui/material';
 import Slider from '../../common/Slider';
 import LandingPostFooter from './LandingPostFooter';
+import { LandingContent } from './interface';
 
 const LandingPost = (props: {
   index: number;

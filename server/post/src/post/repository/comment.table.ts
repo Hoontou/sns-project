@@ -41,7 +41,7 @@ export class CommentTable {
     postId: string,
     page: number,
   ): Promise<CommentItemContent[]> {
-    const limit = 5;
+    const limit = 10;
     const query = `
     SELECT
     C.id AS "commentId",

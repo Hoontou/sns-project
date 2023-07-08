@@ -2,7 +2,6 @@ import axios from 'axios';
 import { useState, Dispatch, SetStateAction } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import Userlist from '../Userlist';
-import { Metadata } from './Postlist';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';

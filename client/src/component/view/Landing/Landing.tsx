@@ -3,32 +3,8 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../common/Navbar/Navbar';
 import LandingPost from './LandingPost';
 import LandingComment from './LandingComment';
-import { Box, Modal } from '@mui/material';
-
-export interface LandingContent {
-  userId: string;
-  liked: boolean;
-  username: string;
-  img: string;
-  id: string;
-  title: string;
-  likesCount: number;
-  commentCount: number;
-  files: string[];
-  createdAt: string;
-}
-const defaultLandingContent: LandingContent = {
-  userId: '',
-  liked: false,
-  username: '',
-  img: '',
-  id: '',
-  title: '',
-  likesCount: 0,
-  commentCount: 0,
-  files: [],
-  createdAt: '',
-};
+import { Box, Modal, Button } from '@mui/material';
+import { LandingContent, defaultLandingContent } from './interface';
 
 const Landing = () => {
   const [page, setPage] = useState<number>(0);
@@ -41,6 +17,9 @@ const Landing = () => {
   const [postToComment, setPostToComment] = useState<LandingContent>(
     defaultLandingContent
   );
+  const [pendingGettingPost, setPendingGettingPost] = useState<boolean>(false);
+  const [enablingGetMoreButton, setEnablingGetMoreButton] =
+    useState<boolean>(true);
 
   const openCo = (index: number) => {
     if (index === -1) {
@@ -55,6 +34,7 @@ const Landing = () => {
   };
 
   const getPost = () => {
+    setPendingGettingPost(true);
     axios.post('gateway/landing', { page }).then((res) => {
       const {
         last3daysPosts,
@@ -63,9 +43,17 @@ const Landing = () => {
         last3daysPosts: LandingContent[];
         userId: string;
       } = res.data;
+      if (page === 0) {
+        setUserId(userId);
+      }
+      if (last3daysPosts.length < 10) {
+        //gateway에서 10개씩 보내줌.
+        setEnablingGetMoreButton(false);
+      }
       setPage(page + 1);
-      setUserId(userId);
       setPosts([...posts, ...last3daysPosts]);
+      setPendingGettingPost(false);
+      return;
     });
   };
 
@@ -102,6 +90,15 @@ const Landing = () => {
   return (
     <>
       <div>{renderPosts}</div>
+      {enablingGetMoreButton && (
+        <div
+          className='text-center'
+          onClick={getPost}
+          style={{ color: 'RoyalBlue' }}
+        >
+          {pendingGettingPost ? '가져오는 중...' : '더 불러오기'}
+        </div>
+      )}
       {openComment && (
         <Modal
           open={openComment}

@@ -14,7 +14,11 @@ const CommentItem = (props: {
   key: number;
   index: number;
   setSubmitForm: Dispatch<SetStateAction<SubmitForm>>;
-  getCocomments(commentId: number, page: number, index: number): Promise<void>;
+  getCocomments(
+    commentId: number,
+    page: number,
+    index: number
+  ): Promise<number>;
 }) => {
   const navigate = useNavigate();
   // const [content, setContent] = useState<CommentItemContent>({
@@ -26,10 +30,19 @@ const CommentItem = (props: {
   const [page, setPage] = useState<number>(0);
   const [liked, setLiked] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
+  const [enablingGetMoreButton, setEnablingGetMoreButton] =
+    useState<boolean>(true);
 
   const getCocomments = async () => {
     setPending(true);
-    await props.getCocomments(props.content.commentId, page, props.index);
+    const length = await props.getCocomments(
+      props.content.commentId,
+      page,
+      props.index
+    );
+    if (length < 10) {
+      setEnablingGetMoreButton(false);
+    }
     setPage(page + 1);
     setPending(false);
     setOpen(true);
@@ -186,16 +199,15 @@ const CommentItem = (props: {
       </Grid>
 
       {props.content.cocomments.length > 0 && renderCocomment}
-      {props.content.cocomments.length > 0 &&
-        props.content.cocommentCount > props.content.cocomments.length && (
-          <div
-            className='text-center'
-            style={{ color: 'gray', fontSize: '0.8rem' }}
-            onClick={getCocomments}
-          >
-            {pending ? '가져오는 중...' : '더 불러오기'}
-          </div>
-        )}
+      {props.content.cocomments.length > 0 && enablingGetMoreButton && (
+        <div
+          className='text-center'
+          style={{ color: 'gray', fontSize: '0.8rem' }}
+          onClick={getCocomments}
+        >
+          {pending ? '가져오는 중...' : '더 불러오기'}
+        </div>
+      )}
     </>
   );
 };

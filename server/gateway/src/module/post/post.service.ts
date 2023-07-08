@@ -31,6 +31,9 @@ export class PostService {
         page: body.page,
       }),
     );
+    if (comments === undefined) {
+      return { commentItem: [] };
+    }
 
     //2 가져온 코멘트 id로 좋아요눌렀나 체크
     const { commentLikedList } = await this.fflService.getCommentLiked({
@@ -56,6 +59,9 @@ export class PostService {
     const { cocomments } = await lastValueFrom(
       this.postGrpcService.getCocommentList(body),
     );
+    if (cocomments === undefined) {
+      return { cocommentItem: [] };
+    }
 
     //2 대댓에 좋아요 눌렀나 체크
     const { cocommentLikedList } = await this.fflService.getCocommentLiked({

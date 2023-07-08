@@ -35,6 +35,8 @@ const Comment = (props: {
     type: 'comment',
     postId: props.postFooterContent.id,
   });
+  const [enablingGetMoreButton, setEnablingGetMoreButton] =
+    useState<boolean>(true);
 
   const setSubmitFormToDefault = () => {
     setSubmitForm({
@@ -46,6 +48,7 @@ const Comment = (props: {
   /**코멘트 가져오기 */
   const getComments = async () => {
     if (props.postFooterContent.commentCount === 0) {
+      setEnablingGetMoreButton(false);
       return;
     }
     setPending(true);
@@ -61,10 +64,17 @@ const Comment = (props: {
           //대댓 넣을 리스트 추가
           return { ...i, cocomments: [] };
         });
+        if (commentItems.length < 10) {
+          setEnablingGetMoreButton(false);
+        }
         if (newComments === undefined) {
           alert('댓글 가져오기를 실패했어요. 나중에 다시 시도해주세요.');
           setPending(false);
           return;
+        }
+
+        if (commentItems.length > 10) {
+          setEnablingGetMoreButton(false);
         }
         setPage(page + 1);
         setCommentItems([...commentItems, ...newComments]);
@@ -79,7 +89,11 @@ const Comment = (props: {
   }, []);
 
   /**대댓 가져오기 */
-  const getCocomments = (commentId: number, page: number, index: number) => {
+  const getCocomments = (
+    commentId: number,
+    page: number,
+    index: number
+  ): Promise<number> => {
     return axios
       .post('/gateway/post/getcocommentlist', {
         commentId,
@@ -98,11 +112,15 @@ const Comment = (props: {
 
         //tmp로 commentItems 갈아끼우기
         setCommentItems(tmpItems);
+        return items.length;
       });
   };
 
   /**CommentInput에서 호출, 이거 호출이전에 submitForm의 수정먼저 수행. */
   const submitNewComment = async (value: string) => {
+    if (value === '') {
+      return;
+    }
     //1. submitForm의 타입체크 후 post할 url 결정해서 axios
     //2. img, username 가져와서 댓, 대댓 컴포넌트 생성
     //3. 타입에 따라 댓글리스트에 푸시
@@ -298,7 +316,7 @@ const Comment = (props: {
             )}
             <div style={{ marginBottom: '4rem' }}>
               <div>{commentItems.length > 0 && renderComment}</div>
-              {props.postFooterContent.commentCount > commentItems?.length && (
+              {enablingGetMoreButton && (
                 <div
                   className='text-center'
                   onClick={getComments}

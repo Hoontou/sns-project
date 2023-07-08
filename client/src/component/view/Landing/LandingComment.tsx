@@ -83,7 +83,11 @@ const LandingComment = (props: {
   }, [props.index]);
 
   /**대댓 가져오기 */
-  const getCocomments = (commentId: number, page: number, index: number) => {
+  const getCocomments = (
+    commentId: number,
+    page: number,
+    index: number
+  ): Promise<number> => {
     return axios
       .post('/gateway/post/getcocommentlist', {
         commentId,
@@ -102,6 +106,7 @@ const LandingComment = (props: {
 
         //tmp로 commentItems 갈아끼우기
         setCommentItems(tmpItems);
+        return items.length;
       });
   };
 

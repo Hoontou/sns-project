@@ -26,7 +26,7 @@ export class CoCommentTable {
     commentId: number,
     page: number,
   ): Promise<CocommentContent[]> {
-    const limit = 5;
+    const limit = 10;
     const query = `SELECT
     C.id AS "cocommentId",
     C.cocomment,
