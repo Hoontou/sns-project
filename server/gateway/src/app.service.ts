@@ -4,11 +4,7 @@ import { FflService } from './module/ffl/ffl.service';
 import { PostService } from './module/post/post.service';
 import { MetadataService } from './module/metadata/metadata.service';
 import { crypter } from './common/crypter';
-import {
-  PostFooterContent,
-  PostContent,
-  UserInfo,
-} from 'sns-interfaces/client.interface';
+import { PostFooterContent, UserInfo } from 'sns-interfaces/client.interface';
 import { LandingContent } from './app.controller';
 
 @Injectable()
@@ -21,6 +17,7 @@ export class AppService {
     private metadataService: MetadataService,
   ) {}
 
+  /**랜딩페이지, 팔로우목록의 최근 3일 포스트를 가져온다. */
   async landing(userId: string, page: number) {
     //가져올게 아무것도 없을 시 metadatas.map 에서 오류남. 추후 수정필요.
 
@@ -41,12 +38,9 @@ export class AppService {
 
     //3 metadata로 PostFooter 가져옴,
     //재귀적 인데 나중에 성능체크해야할듯 list로 보내는것과.
-    if (metadatas === undefined) {
-      //가져올게 없으면 빈리스트 리턴
-      return { last3daysPosts: [], userId };
-    }
+
     const postFooter: PostFooterContent[] = await Promise.all(
-      metadatas.map((i, index) => {
+      metadatas.map((i) => {
         return this.postFooter({
           userId,
           postId: i.id,
@@ -59,10 +53,10 @@ export class AppService {
     const combinedResult: LandingContent[] = metadatas.map((i, index) => {
       return { ...i, ...postFooter[index], userId: crypter.encrypt(i.userId) };
     });
-    return { last3daysPosts: combinedResult, userId };
+    return { last3daysPosts: combinedResult };
   }
 
-  /**userinfo + 해당유저를 팔로우했는지 정보 리턴해야함. */
+  /**userinfo(팔로우수, 팔로잉수, 게시글수, 사진, 소개글, username) + 해당유저를 팔로우했는지 정보 리턴해야함. */
   async userInfo(body: {
     userId: string;
     myId: '' | string;
@@ -88,7 +82,7 @@ export class AppService {
     return { ...userinfo, followed };
   }
 
-  /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 댓글수 리턴해야함. */
+  /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 작정자 정보 */
   async postFooter(body: {
     userId: string;
     postId: string;

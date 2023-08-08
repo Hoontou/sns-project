@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { ObjectId } from '../../../common/genobjectid';
+import { genObjectId } from '../../../common/genobjectid';
 import './Upload.css';
 import Slider from '../../common/Slider';
 import Navbar from '../../common/Navbar/Navbar';
@@ -82,7 +82,7 @@ const Upload = () => {
     });
     //게시글 코멘트와 알람 Id를 담는다.
     formData.append('title', JSON.stringify({ title }));
-    formData.append('alert_id', JSON.stringify({ alert_id: ObjectId() })); //게시물 업로드중 알람을 위한 Id
+    formData.append('alert_id', JSON.stringify({ alert_id: genObjectId() })); //게시물 업로드중 알람을 위한 Id
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     if (process.env.NODE_ENV === 'development') {
       await axios //업로드 서버로 보낸다.

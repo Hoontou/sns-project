@@ -41,10 +41,8 @@ const Landing = () => {
     axios.post('gateway/landing', { page }).then((res) => {
       const {
         last3daysPosts,
-        userId,
       }: {
         last3daysPosts: LandingContent[];
-        userId: string;
       } = res.data;
 
       if (last3daysPosts.length < 10) {
@@ -59,11 +57,23 @@ const Landing = () => {
     });
   };
 
+  useEffect(() => {
+    authHoc().then((authRes) => {
+      if (authRes.success === false) {
+        alert('Err while Authentication, need login');
+        navigate('/signin');
+        return;
+      }
+      setSpin(false);
+      setUserId(authRes.userId);
+    });
+  }, [navigate]);
+
   const renderPosts = posts.map((i, index) => {
     return (
       <LandingPost
         openCo={openCo}
-        key={index}
+        key={`landing-${index}`}
         index={index}
         post={i}
         userId={userId}

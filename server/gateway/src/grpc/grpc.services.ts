@@ -48,10 +48,9 @@ export interface UserGrpcService {
 }
 
 export interface MetadataGrpcService {
-  getMetadatas(data: {
-    userId: string;
-    page: number;
-  }): Observable<MetadataDto & { createdAt: string }[]>;
+  getMetadatas(data: { userId: string; page: number }): Observable<{
+    metadatas: (MetadataDto & { createdAt: string })[] | undefined;
+  }>;
 
   getMetadatasLast3Day(data: {
     userIds: string[];

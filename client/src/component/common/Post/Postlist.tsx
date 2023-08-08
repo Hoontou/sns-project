@@ -65,7 +65,7 @@ const Postlist = (props: {
           page,
         })
         .then((res) => {
-          const { metadatas }: { metadatas: Metadata[] } = res.data.metadatas;
+          const metadatas: Metadata[] = res.data.metadatas;
           if (metadatas.length < 9) {
             //gateway에서 9개씩 보내줌.
             setEnablingGetMoreButton(false);
@@ -85,7 +85,7 @@ const Postlist = (props: {
   const renderCard = posts.map((post, index) => {
     //이제 여기에 클릭하면 모달로 띄우는거 만들어야함
     return (
-      <Grid item xs={4} key={index}>
+      <Grid item xs={4} key={post.id}>
         <div style={{ position: 'relative' }}>
           <span
             onClick={() => {
@@ -130,7 +130,7 @@ const Postlist = (props: {
             hasMore={enablingGetMoreButton}
             loader={<div className='spinner'></div>}
             dataLength={posts.length}
-            scrollThreshold={'100%'}
+            scrollThreshold={'95%'}
           >
             {/* scrollThreshold={'90%'} 페이지 얼만큼 내려오면 다음거 불러올건지 설정 */}
             <Grid container spacing={0.5}>

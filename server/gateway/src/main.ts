@@ -1,8 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { Logger } from '@nestjs/common';
 import { LoggingInterceptor } from './common/middleware/logging.interceptor';
+import { AllExceptionsFilter } from './common/middleware/all-exceptions.filter';
 
 const logger = new Logger('Main');
 

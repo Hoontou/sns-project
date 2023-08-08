@@ -18,7 +18,7 @@ const Post = (props: {
   postFooterContent: PostFooterContent;
 }) => {
   const navigate = useNavigate();
-  const [spin, setSpin] = useState<boolean>(true);
+  const [fulfilled, setFulfilled] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
   const [openComment, setOpenComment] = useState<boolean>(false);
   const [postFooterContent, setPostFooterContent] = useState<PostFooterContent>(
@@ -48,7 +48,7 @@ const Post = (props: {
       .then((res) => {
         const data: PostFooterContent = res.data;
         setPostFooterContent({ ...data });
-        setSpin(false);
+        setFulfilled(true);
       });
   }, [props.metadata.id, props.metadata.userId, props.userId]);
 
@@ -95,16 +95,17 @@ const Post = (props: {
       {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기, 음.. 안해도될듯?*/}
       {!openComment && <Slider images={images} />}
 
-      {!spin && !openComment && (
+      {!openComment && (
         <PostFooter
           postId={props.metadata.id}
           createdAt={props.metadata.createdAt}
           userId={props.userId}
           setOpenComment={setOpenComment}
           postFooterContent={postFooterContent}
+          fulfilled={fulfilled}
         />
       )}
-      {!spin && openComment && (
+      {openComment && (
         <Comment
           createdAt={props.metadata.createdAt}
           postFooterContent={postFooterContent}

@@ -25,7 +25,7 @@ export class AppController {
   async landing(
     @Req() req,
     @Body() body: { page: number },
-  ): Promise<{ last3daysPosts: LandingContent[]; userId: string }> {
+  ): Promise<{ last3daysPosts: LandingContent[] }> {
     return this.appService.landing(req.user.userId, body.page);
   }
 

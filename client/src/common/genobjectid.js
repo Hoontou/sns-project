@@ -1,4 +1,4 @@
-export const ObjectId = () => {
+export const genObjectId = () => {
   const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
   return (
     timestamp +

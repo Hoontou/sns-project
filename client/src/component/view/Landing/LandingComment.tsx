@@ -37,6 +37,9 @@ const LandingComment = (props: {
     type: 'comment',
     postId: props.postFooterContent.id,
   });
+  const [enablingGetMoreButton, setEnablingGetMoreButton] =
+    useState<boolean>(true);
+
   const setSubmitFormToDefault = () => {
     setSubmitForm({
       type: 'comment',
@@ -47,8 +50,10 @@ const LandingComment = (props: {
   /**코멘트 가져오기 */
   const getComments = async () => {
     if (props.postFooterContent.commentCount === 0) {
+      setEnablingGetMoreButton(false);
       return;
     }
+
     setPending(true);
     axios
       .post('/gateway/post/getcommentlist', {
@@ -99,6 +104,9 @@ const LandingComment = (props: {
         }: {
           cocommentItem: CocommentContent[];
         } = res.data;
+        if (items.length !== 10) {
+          setEnablingGetMoreButton(false);
+        }
 
         //원본 리스트 복사후 가져온 대댓을 해당 index 아이템에 붙여넣기
         const tmpItems = [...commentItems];
@@ -310,7 +318,7 @@ const LandingComment = (props: {
             )}
             <div style={{ marginBottom: '4rem' }}>
               <div>{commentItems.length > 0 && renderComment}</div>
-              {props.postFooterContent.commentCount > commentItems?.length && (
+              {enablingGetMoreButton && (
                 <div
                   className='text-center'
                   onClick={getComments}

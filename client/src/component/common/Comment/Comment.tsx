@@ -64,7 +64,7 @@ const Comment = (props: {
           //대댓 넣을 리스트 추가
           return { ...i, cocomments: [] };
         });
-        if (commentItems.length < 10) {
+        if (comments.length !== 10) {
           setEnablingGetMoreButton(false);
         }
         if (newComments === undefined) {
@@ -73,9 +73,6 @@ const Comment = (props: {
           return;
         }
 
-        if (commentItems.length > 10) {
-          setEnablingGetMoreButton(false);
-        }
         setPage(page + 1);
         setCommentItems([...commentItems, ...newComments]);
         setPending(false);
@@ -146,6 +143,7 @@ const Comment = (props: {
         username,
         userId,
         cocomment: value,
+        cocommentId: Date.now(),
       };
 
       //해당하는 댓글의 대댓에 추가후
@@ -188,6 +186,7 @@ const Comment = (props: {
         comment: value,
         userId,
         cocomments: [],
+        commentId: Date.now(),
       };
       //맨앞에 푸시
       commentItems.unshift(newComment);
@@ -203,7 +202,7 @@ const Comment = (props: {
     return (
       <CommentItem
         content={content}
-        key={index}
+        key={content.commentId}
         setSubmitForm={setSubmitForm}
         index={index}
         getCocomments={getCocomments}
@@ -215,7 +214,7 @@ const Comment = (props: {
       {spin && 'waiting...'}
 
       {!spin && (
-        <div style={{ height: '80vh', overflowY: 'auto' }}>
+        <div style={{ height: '100vh', overflowY: 'auto' }}>
           <div
             style={{
               paddingTop: '0.5rem',

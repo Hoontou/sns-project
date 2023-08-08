@@ -11,7 +11,6 @@ import axios from 'axios';
 
 const CommentItem = (props: {
   content: CommentItems;
-  key: number;
   index: number;
   setSubmitForm: Dispatch<SetStateAction<SubmitForm>>;
   getCocomments(
@@ -72,7 +71,7 @@ const CommentItem = (props: {
   }, []);
 
   const renderCocomment = props.content.cocomments?.map((content, index) => {
-    return <Cocomment content={content} key={index} />;
+    return <Cocomment content={content} key={content.cocommentId} />;
   });
 
   return (
