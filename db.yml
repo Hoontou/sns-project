@@ -1,10 +1,28 @@
 version: '3'
 services:
+  #mgdb접속 후 mongosh /usr/src/config/set.js 입력하면 레플리카셋 설정
   mgdb:
     image: mongo:latest
-    restart: always
+    depends_on:
+      - mgdb2
+      - mgdb3
+    volumes:
+      - ./db.setting/mgdb.repl.config:/usr/src/config
+    command: mongod --replSet rs0 --bind_ip_all
     ports:
-      - '27018:27017'
+      - 27018:27017
+
+  mgdb2:
+    image: mongo:latest
+    command: mongod --replSet rs0 --bind_ip_all
+    ports:
+      - 27019:27017
+
+  mgdb3:
+    image: mongo:latest
+    command: mongod --replSet rs0 --bind_ip_all
+    ports:
+      - 27020:27017
 
   pgdb:
     image: postgres:latest
