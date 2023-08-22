@@ -1,13 +1,62 @@
 version: '3'
 services:
+  setup:
+    profiles:
+      - setup
+    build:
+      context: ./db/setup/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    init: true
+    volumes:
+      - ./db/setup/entrypoint.sh:/entrypoint.sh:ro,Z
+      - ./db/setup/lib.sh:/lib.sh:ro,Z
+      - ./db/setup/roles:/roles:ro,Z
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    build:
+      context: ./db/elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./db/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - ./db/elasticsearch:/usr/share/elasticsearch/data:Z
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      node.name: elasticsearch
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      discovery.type: single-node
+    restart: unless-stopped
+
+  kibana:
+    build:
+      context: ./db/kibana/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./db/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+    ports:
+      - 5601:5601
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+
   #mgdb접속 후 mongosh /usr/src/config/set.js 입력하면 레플리카셋 설정
   mgdb:
     image: mongo:latest
-    depends_on:
-      - mgdb2
-      - mgdb3
     volumes:
-      - ./db.setting/mgdb.repl.config:/usr/src/config
+      - ./db/mgdb.repl.config:/usr/src/config
     command: mongod --replSet rs0 --bind_ip_all
     ports:
       - 27018:27017
@@ -17,13 +66,6 @@ services:
     command: mongod --replSet rs0 --bind_ip_all
     ports:
       - 27019:27017
-
-  mgdb3:
-    image: mongo:latest
-    command: mongod --replSet rs0 --bind_ip_all
-    ports:
-      - 27020:27017
-
   pgdb:
     image: postgres:latest
     restart: always

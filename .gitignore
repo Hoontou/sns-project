@@ -74,7 +74,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+#.env
 .env.test
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -110,3 +110,10 @@ dist
 
 # 테스트 사진들 제외
 server/upload/src/files
+
+#ELK 볼륨파일들 제외
+db/elasticserch/_state
+db/elasticserch/indices
+db/elasticserch/snapshot_cache
+db/elasticserch/nodes
+db/elasticserch/node.lock
