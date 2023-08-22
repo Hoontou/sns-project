@@ -112,8 +112,8 @@ dist
 server/upload/src/files
 
 #ELK 볼륨파일들 제외
-db/elasticserch/_state
-db/elasticserch/indices
-db/elasticserch/snapshot_cache
-db/elasticserch/nodes
-db/elasticserch/node.lock
+db/elasticsearch/_state
+db/elasticsearch/indices
+db/elasticsearch/snapshot_cache
+db/elasticsearch/nodes
+db/elasticsearch/node.lock

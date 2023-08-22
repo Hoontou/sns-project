@@ -4,6 +4,12 @@ ELK 깃헙참고
 
 https://github.com/deviantony/docker-elk
 
+logstash 등 지금 불필요한 스택은 다 날렸음, 추가정보 필요하면 깃헙참고 하거나
+
+8.9.1버전에 대한 readme는 db/ELK.README에 있음
+
+아래부터 세팅시작
+
 ```
 docker-compose -f 'db.yml' up setup
 ```
@@ -36,9 +42,6 @@ docker-compose -f 'db.yml' up -d kibana
 ```
 
 키바나 재시작한 후에는 elastic_password로 5601 접속가능
-
-logstash 등 지금 불필요한 스택은 다 날렸음, 추가정보 필요하면 깃헙참고 하거나
-8.9.1버전에 대한 readme는 db/ELK.README에 있음
 
 ## 2. 몽고디비 레플리카셋 설정
 
