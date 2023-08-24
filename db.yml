@@ -1,3 +1,5 @@
+#DB.README.md 참고
+
 version: '3'
 services:
   setup:
@@ -26,7 +28,6 @@ services:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     volumes:
       - ./db/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
-      - ./db/elasticsearch:/usr/share/elasticsearch/data:Z
     ports:
       - 9200:9200
       - 9300:9300
@@ -66,6 +67,22 @@ services:
     command: mongod --replSet rs0 --bind_ip_all
     ports:
       - 27019:27017
+
+  monstache:
+    restart: always
+    image: rwynn/monstache:rel6
+    command: -f /usr/src/mons.config.toml &
+    volumes:
+      - ./db/mons.config.toml:/usr/src/mons.config.toml
+    depends_on:
+      - elasticsearch
+      - mgdb
+      - mgdb2
+    links:
+      - elasticsearch
+    ports:
+      - '8080:8080'
+
   pgdb:
     image: postgres:latest
     restart: always

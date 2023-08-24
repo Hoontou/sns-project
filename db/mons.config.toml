@@ -1,0 +1,23 @@
+# connection settings
+
+# connect to MongoDB using the following URL
+mongo-url = "mongodb://mgdb:27017,mgdb2:27017/tst?replicaSet=rs0"
+
+# connect to the Elasticsearch REST API at the following node URLs
+elasticsearch-urls = ["http://elasticsearch:9200"]
+
+
+#여기에 싱크맞출 컬렉션 나열, "db이름.컬렉션이름"
+change-stream-namespaces = ["tst.tst"]
+
+elasticsearch-max-conns = 4
+
+elasticsearch-max-seconds = 5
+
+elasticsearch-max-bytes = 8000000
+
+
+# use the following user name for Elasticsearch basic auth
+elasticsearch-user = "elastic"
+# use the following password for Elasticsearch basic auth
+elasticsearch-password = "elastic"

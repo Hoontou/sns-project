@@ -12,11 +12,13 @@ postgres(typeorm), mongodb(mongoose), redis, 엘라스틱서치?
 
 ---
 
-앱 실행  
-docker-compose up --build  
 DB 실행, 이거 다운시키면 db 초기화됨.  
-docker-compose -f "db.yml" up  
-nginx 실행 백단 로그체크에 방해돼서 따로 빼놓음.  
+DB.README.md 참고, 디비부터 올리고 앱실행 해야함
+
+앱 실행  
+docker-compose up --build
+
+nginx 실행 로그체크에 방해돼서 따로 빼놓음.  
 docker-compose -f "nginx.yml" up
 
 순서는 db업, 메인 업, nginx 업
@@ -58,7 +60,7 @@ azure 저장소에 업로드.
 
 ## search
 
-프로필 검색 - 엘라스틱?
+프로필 검색 -> 몽고-엘라스틱-monstache
 
 ## cache
 
