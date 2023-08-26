@@ -1,3 +1,6 @@
+// https://www.npmjs.com/package/@elastic/elasticsearch
+//공식문서 참고
+
 import { Client } from '@elastic/elasticsearch';
 
 export interface SnsUsersDocType {
@@ -22,6 +25,7 @@ class Elasticsearch {
   }
 
   async init() {
+    //이미 있는지 체크
     const indexExistCheck: boolean = await this.client.indices.exists({
       index: this.SnsUsersIndex,
     });
@@ -30,6 +34,7 @@ class Elasticsearch {
       return;
     }
 
+    //인덱스 생성
     try {
       await this.client.indices.create({
         index: this.SnsUsersIndex,

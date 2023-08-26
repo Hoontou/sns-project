@@ -4,6 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Userinfo } from '../entity/userinfo.entity';
 import { crypter } from 'src/common/crypter';
 import { pgdb } from 'src/configs/pg';
+import { elastic } from 'src/configs/elasticsearch';
 
 @Injectable()
 export class UserinfoTable {
@@ -15,28 +16,67 @@ export class UserinfoTable {
   ) {}
 
   changeUsername(userId: string, username: string) {
+    const decId = crypter.decrypt(userId);
+
     const query = `
     UPDATE public.userinfo
     SET username = '${username}'
-    WHERE "userId" = ${crypter.decrypt(userId)};
+    WHERE "userId" = ${decId};
     `;
-    return pgdb.client.query(query);
+
+    //유저탐색을 위해 엘라스틱에서도 수정
+    return Promise.all([
+      pgdb.client.query(query),
+      elastic.client.update({
+        index: elastic.SnsUsersIndex,
+        id: decId,
+        doc: {
+          username,
+        },
+      }),
+    ]);
   }
 
   changeIntro(userId: string, intro: string) {
+    const decId = crypter.decrypt(userId);
+
     const query = `
     UPDATE public.userinfo
     SET introduce = '${intro}'
-    WHERE "userId" = ${crypter.decrypt(userId)};
+    WHERE "userId" = ${decId};
     `;
-    return pgdb.client.query(query);
+
+    //유저탐색을 위해 엘라스틱에서도 수정
+    return Promise.all([
+      pgdb.client.query(query),
+      elastic.client.update({
+        index: elastic.SnsUsersIndex,
+        id: decId,
+        doc: {
+          introduce: intro,
+        },
+      }),
+    ]);
   }
   setImg(userId: string, img: string) {
+    const decId = crypter.decrypt(userId);
+
     const query = `
     UPDATE public.userinfo
     SET img = '${img}'
-    WHERE "userId" = ${crypter.decrypt(userId)};
+    WHERE "userId" = ${decId};
     `;
-    return pgdb.client.query(query);
+
+    //유저탐색을 위해 엘라스틱에서도 수정
+    return Promise.all([
+      pgdb.client.query(query),
+      elastic.client.update({
+        index: elastic.SnsUsersIndex,
+        id: decId,
+        doc: {
+          img,
+        },
+      }),
+    ]);
   }
 }

@@ -58,6 +58,7 @@ export class UserRepository {
 
     await elastic.client.index({
       index: elastic.SnsUsersIndex,
+      id: newUserDoc.userId,
       document: newUserDoc,
     });
   }
