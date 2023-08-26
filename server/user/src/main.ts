@@ -4,6 +4,8 @@ import { pgdb } from './configs/pg';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { Logger } from '@nestjs/common';
+import { elastic } from './configs/elasticsearch';
+import { testFunc } from './tst';
 
 const logger = new Logger('Main');
 
@@ -40,7 +42,8 @@ async function bootstrap() {
   //console.log(queryText);
   //https://node-postgres.com/features/queries
   await app.startAllMicroservices();
-  app.listen(3000).then(() => {
+
+  app.listen(3000).then(async () => {
     logger.log('user on 4001:80 (grpc server)');
     pgdb.client.connect((err) => {
       if (err) {
@@ -49,6 +52,8 @@ async function bootstrap() {
         logger.log('vanila pgdb connected');
       }
     });
+    await elastic.init();
+    //testFunc();
   });
 }
 bootstrap();

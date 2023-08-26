@@ -84,6 +84,7 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(user.password, salt);
 
+    //삽입요청
     try {
       await this.userRepo.signUp(user);
       return { success: true, username: signupDto.username };

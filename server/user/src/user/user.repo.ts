@@ -10,6 +10,7 @@ import { SignUpDto } from 'src/auth/dto/sign.dto';
 import { pgdb } from 'src/configs/pg';
 import { UserinfoWithNums } from 'sns-interfaces/grpc.interfaces';
 import { UploadMessage } from 'sns-interfaces';
+import { SnsUsersDocType, elastic } from 'src/configs/elasticsearch';
 
 @Injectable()
 export class UserRepository {
@@ -20,25 +21,45 @@ export class UserRepository {
     public readonly usernumsTable: UsernumsTable,
   ) {}
 
-  signUp(signUpDto: SignUpDto) {
+  /**pg삽입 후 엘라스틱 삽입 */
+  async signUp(signUpDto: SignUpDto) {
     //데이터 파싱
-    const newUser = new User();
+    let newUser = new User();
     newUser.email = signUpDto.email;
     newUser.password = signUpDto.password;
 
-    const newUserinfo = new Userinfo();
+    let newUserinfo = new Userinfo();
     newUserinfo.username = signUpDto.username;
     newUserinfo.user = newUser;
 
-    const newUsernums = new Usernums();
+    let newUsernums = new Usernums();
     newUsernums.user = newUser;
 
+    // const newUserDoc: SnsUsersDocType = {
+    //   username,
+    //   introduce
+    //   u
+    // }
+
     //저장, 트랜잭션 필요없을듯
-    return Promise.all([
+    [newUser, newUserinfo, newUsernums] = await Promise.all([
       newUser.save(),
       newUserinfo.save(),
       newUsernums.save(),
     ]);
+
+    //pgdb삽입 후 엘라스틱에 삽입
+    const newUserDoc: SnsUsersDocType = {
+      username: signUpDto.username,
+      introduce: '',
+      userId: newUser.id,
+      img: '',
+    };
+
+    await elastic.client.index({
+      index: elastic.SnsUsersIndex,
+      document: newUserDoc,
+    });
   }
 
   async getUserinfo(userId: string): Promise<UserinfoWithNums | undefined> {
