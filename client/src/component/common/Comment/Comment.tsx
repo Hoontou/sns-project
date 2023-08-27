@@ -158,6 +158,7 @@ const Comment = (props: {
       //위는 원본을 복사 후 갈아끼워서 setState하는 코드.
       //위가 안전할듯. 근데 그냥 아래가 작동이 simple할듯?
       commentItems[submitForm.index].cocomments.unshift(newCocomment);
+      commentItems[submitForm.index].cocommentCount += 1;
 
       //섭밋폼 디폴트로 세팅
       setSubmitFormToDefault();

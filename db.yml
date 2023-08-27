@@ -59,12 +59,14 @@ services:
     volumes:
       - ./db/mgdb.repl.config:/usr/src/config
     command: mongod --replSet rs0 --bind_ip_all
+    restart: always
     ports:
       - 27018:27017
 
   mgdb2:
     image: mongo:latest
     command: mongod --replSet rs0 --bind_ip_all
+    restart: always
     ports:
       - 27019:27017
 
@@ -80,6 +82,7 @@ services:
       - mgdb2
     links:
       - elasticsearch
+    restart: unless-stopped
     ports:
       - '8080:8080'
 

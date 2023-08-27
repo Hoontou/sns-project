@@ -86,9 +86,11 @@ export class AuthService {
 
     //삽입요청
     try {
+      console.log(user);
       await this.userRepo.signUp(user);
       return { success: true, username: signupDto.username };
     } catch (error) {
+      console.log(error);
       return { success: false, msg: 'DB insert err' };
     }
   }

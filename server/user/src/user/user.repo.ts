@@ -27,6 +27,8 @@ export class UserRepository {
     let newUser = new User();
     newUser.email = signUpDto.email;
     newUser.password = signUpDto.password;
+    //유저 먼저 생성 후
+    newUser = await newUser.save();
 
     let newUserinfo = new Userinfo();
     newUserinfo.username = signUpDto.username;
@@ -35,15 +37,8 @@ export class UserRepository {
     let newUsernums = new Usernums();
     newUsernums.user = newUser;
 
-    // const newUserDoc: SnsUsersDocType = {
-    //   username,
-    //   introduce
-    //   u
-    // }
-
-    //저장, 트랜잭션 필요없을듯
-    [newUser, newUserinfo, newUsernums] = await Promise.all([
-      newUser.save(),
+    //나머지 저장, 트랜잭션 필요없을듯
+    [newUserinfo, newUsernums] = await Promise.all([
       newUserinfo.save(),
       newUsernums.save(),
     ]);
@@ -56,6 +51,7 @@ export class UserRepository {
       img: '',
     };
 
+    //doc id는 pgdb usertable id로.
     await elastic.client.index({
       index: elastic.SnsUsersIndex,
       id: newUserDoc.userId,

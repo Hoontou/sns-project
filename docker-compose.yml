@@ -117,3 +117,17 @@ services:
       - MONGO_URI=mongodb://mgdb:27017/alert
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
+
+  live-search:
+    image: live-search
+    build:
+      context: ./server/live-search
+      dockerfile: Dockerfile
+    container_name: live-search
+    volumes:
+      - ./server/live-search/src:/usr/src/app/src:z
+    ports:
+      - '4008:80'
+    environment:
+      - RABBIT=amqp://guest:guest@rabbit:5672
+      - NODE_ENV=development
