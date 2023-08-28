@@ -1,11 +1,11 @@
 import { Grid, IconButton, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import AddIcon from '@mui/icons-material/Add';
+// import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 
-const UserinfoMenu = (props: { userId: string }) => {
+const UserinfoMenu = () => {
   const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies([
     'createdAt',
@@ -29,7 +29,7 @@ const UserinfoMenu = (props: { userId: string }) => {
   return (
     <>
       <Grid item xs={3} className='text-end'>
-        <AddIcon />
+        {/* <AddIcon href='/up' /> */}
         <IconButton
           id='basic-button'
           aria-controls={open ? 'basic-menu' : undefined}
@@ -52,7 +52,7 @@ const UserinfoMenu = (props: { userId: string }) => {
       >
         <MenuItem>
           <a
-            href={`/usersetting/${props.userId}`}
+            href={'/usersetting'}
             style={{ color: 'black', textDecoration: 'none' }}
           >
             내정보 수정

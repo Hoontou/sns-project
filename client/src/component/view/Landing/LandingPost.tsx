@@ -1,7 +1,5 @@
-import axios from 'axios';
-import { useState, useEffect, SetStateAction, Dispatch } from 'react';
+import { useState, useEffect } from 'react';
 import { requestUrl } from '../../../common/etc';
-import PostFooter from '../../common/Post/PostFooter';
 import { Metadata, emptyMetadata } from '../../common/Post/Postlist';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
@@ -65,7 +63,7 @@ const LandingPost = (props: {
             top: '1.2rem',
           }}
           onClick={() => {
-            navigate(`/userfeed/${postFooterContent.userId}`);
+            navigate(`/feed/${postFooterContent.username}`);
           }}
         >
           {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}

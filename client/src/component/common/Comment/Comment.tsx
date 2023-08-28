@@ -279,7 +279,7 @@ const Comment = (props: {
                       fontSize: '0.9rem',
                     }}
                     onClick={() => {
-                      navigate(`/userfeed/${props.userId}`);
+                      navigate(`/feed/${props.postFooterContent.username}`);
                     }}
                   >
                     {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}

@@ -42,9 +42,7 @@ const Userinfo = (props: {
             <Grid item xs={9}>
               <h1>{props.userinfo.username}</h1>
             </Grid>
-            {props.feedType === 'myInfo' && (
-              <UserinfoMenu userId={authUserId} />
-            )}
+            {props.feedType === 'myInfo' && <UserinfoMenu />}
           </Grid>
           <Grid container spacing={1}>
             <Grid item xs={4} className='text-center'>

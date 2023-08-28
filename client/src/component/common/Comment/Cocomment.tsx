@@ -80,7 +80,7 @@ const Cocomment = (props: { content: CocommentContent; key: number }) => {
                   fontSize: '0.8rem',
                 }}
                 onClick={() => {
-                  navigate(`/userfeed/${props.content.userId}`);
+                  navigate(`/feed/${props.content.username}`);
                 }}
               >
                 {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}

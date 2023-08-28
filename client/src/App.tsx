@@ -3,7 +3,7 @@ import Signup from './component/view/Signup/Signup';
 import Signin from './component/view/Signin/Signin';
 import Upload from './component/view/Upload/Upload';
 import AlertSock from './component/AlertSocket';
-import Userfeed from './component/view/Userfeed/Userfeed';
+import Feed from './component/view/Feed/Feed';
 import UserSetting from './component/view/UserSetting/UserSetting';
 import { createBrowserHistory } from 'history';
 import Landing from './component/view/Landing/Landing';
@@ -19,15 +19,9 @@ function App() {
           <Route path='/signin' element={<Signin />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/up' element={<Upload />} />
-          {/* <Route path='/myfeed' element={<MyFeed />} /> */}
-          {/* <Route path='/userfeed/:targetUsername' element={<Userfeed />} /> */}
-          <Route path='/feed/:targetUsername' element={<Userfeed />} />
-          <Route path='/feed' element={<Userfeed />} />
-
-          <Route
-            path='/usersetting/:targetUsername'
-            element={<UserSetting />}
-          />
+          <Route path='/feed/:targetUsername' element={<Feed />} />
+          <Route path='/feed' element={<Feed />} />
+          <Route path='/usersetting' element={<UserSetting />} />
         </Routes>
       </Router>
     </>

@@ -1,20 +1,20 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { authHoc } from '../../../common/auth.hoc';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button, TextField } from '@mui/material';
 import './UserSetting.css';
 import ChangeImg from './ChangeImg';
 import Navbar from '../../common/Navbar/Navbar';
+import { UserInfo } from 'sns-interfaces/client.interface';
+import { ReqUser } from 'sns-interfaces';
 
 const UserSetting = () => {
   const navigate = useNavigate();
-  const { targetid: userId } = useParams();
   const [spin, setSpin] = useState<boolean>(true);
   const [img, setImg] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [intro, setIntro] = useState<string>('');
-
+  const [userId, setUserId] = useState<string>('');
   const onUsernameHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.currentTarget.value);
   };
@@ -69,54 +69,49 @@ const UserSetting = () => {
         alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해 주세요.');
         return;
       }
-      navigate('/myfeed');
+      navigate('/feed');
       return;
     });
   };
 
   useEffect(() => {
-    //인증먼저 수행
-    authHoc()
-      .then((authRes) => {
-        if (authRes.success === false) {
-          alert('Err while Authentication, need login');
-          navigate('/signin');
-          return;
-        }
-        setSpin(false);
-        if (authRes.userId !== userId) {
-          //쿠키로 인증한 아이디랑 url아이디랑 다르면 튕겨낸다.
-          alert('invalid access');
-          navigate('/myfeed');
-          return;
-        }
-      })
-      .then(() => {
-        //유저인포.tsx에서 쓰던 axios 코드임.
-        //유저 img, username, introduce 가져오기.
-        axios.post('/gateway/userinfo', { userId }).then((res) => {
-          const data:
-            | {
-                success: true;
-                username: string;
-                img: string;
-                introduce: string;
-              }
-            | { success: false } = res.data;
-
-          if (data.success === false) {
-            //불러오기 실패했으면 다른곳으로 이동시킴.
-            navigate('/');
-            return;
+    axios.post('/gateway/userinfo').then((res) => {
+      const data:
+        | {
+            userinfo: UserInfo;
+            type: 'otherInfo' | 'myInfo';
+            reqUser: ReqUser;
+            success: true;
           }
-          setIntro(data.introduce);
-          setUsername(data.username);
-          setImg(data.img);
+        | { success: false } = res.data;
 
-          setSpin(false);
-        });
-      });
-  }, [navigate, userId]);
+      // console.log(data);
+
+      //username 찾기실패
+      if (data.success === false) {
+        alert('not found user');
+        navigate('/');
+        return;
+      }
+      //인증에 실패했거나, 또는 내꺼가 아니거나, 이면 튕긴다.
+      if (
+        data.reqUser.success === false ||
+        data.reqUser.username !== data.userinfo.username
+      ) {
+        alert('auth failed.');
+        //쿠키 다날리는 기능 추가해야함
+        navigate('/signup');
+        return;
+      }
+
+      //이제 가져온 데이터 state에 채워넣기 시작
+      setImg(data.userinfo.img);
+      setIntro(data.userinfo.introduce);
+      setUsername(data.userinfo.username);
+      setUserId(data.reqUser.userId);
+      setSpin(false);
+    });
+  }, []);
 
   return (
     <>

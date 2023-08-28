@@ -21,7 +21,7 @@ export const emptyUserInfo: UserInfo = {
 //url파라미터에 담긴 걸로 그냥 요청날리면
 //쿠키로 auth체크해서나온 이름이랑 같으면
 //내정보 표시라는 뜻이고, 내정보에서의 버튼들 다 표시
-const Userfeed = () => {
+const Feed = () => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const { targetUsername } = useParams(); //url에서 가져온 username
@@ -97,4 +97,4 @@ const Userfeed = () => {
   );
 };
 
-export default Userfeed;
+export default Feed;

@@ -120,7 +120,7 @@ const PostFooter = (props: {
                 fontWeight: '600',
               }}
               onClick={() => {
-                navigate(`/userfeed/${postContent.userId}`);
+                navigate(`/feed/${postContent.username}`);
               }}
             >
               {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
