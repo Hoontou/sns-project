@@ -12,6 +12,7 @@ export interface GetUsernumsRes {
   postcount: number;
 }
 export interface UserinfoWithNums {
+  userId: string;
   follower: number;
   following: number;
   postcount: number;

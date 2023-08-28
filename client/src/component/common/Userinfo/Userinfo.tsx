@@ -1,86 +1,59 @@
 import { Grid } from '@mui/material';
 import sample from '../../../asset/sample1.jpg';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import UserinfoButton from './UserinfoButton';
 import UserinfoNums from './UserinfoNums';
 import UserinfoMenu from './UserinfoMenu';
 import { requestUrl } from '../../../common/etc';
 import { UserInfo } from 'sns-interfaces/client.interface';
+import { ReqUser } from 'sns-interfaces';
+import { useEffect, useState } from 'react';
 
 //타겟아이디가 없다? 내 피드에서 온 요청이라는 뜻.
 const Userinfo = (props: {
-  userId: string;
-  targetId?: string;
-  setPostCount: Dispatch<SetStateAction<number>>;
+  spin: boolean;
+  userinfo: UserInfo;
+  authinfo: ReqUser;
+  feedType: 'otherInfo' | 'myInfo' | null;
 }) => {
-  const navigate = useNavigate();
-  const [spin, setSpin] = useState<boolean>(true);
-  const [postcount, setPost] = useState<number>(0);
   const [follower, setFollower] = useState<number>(0);
-  const [following, setFolloing] = useState<number>(0);
-  const [followed, setFollowed] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>('');
-  const [img, setImg] = useState<string>('');
-  const [intro, setIntro] = useState<string>('상처를치료해줄사람어디없나');
 
+  const authUserId =
+    props.authinfo.success === true ? props.authinfo.userId : '';
   const addFollower = (num: number) => {
     setFollower(follower + num);
   };
 
   useEffect(() => {
-    //userId는 usernums를 찾아서 올 아이디.
-    //myId는 다른유저의 피드로 접근했을 시 다른유저를 팔로우했는지 찾을 용도.
-    axios
-      .post(
-        '/gateway/userinfo',
-        props.targetId === undefined
-          ? { userId: props.userId }
-          : { userId: props.targetId, myId: props.userId }
-      )
-      .then((res) => {
-        const data: UserInfo | { success: false } = res.data;
+    setFollower(props.userinfo.follower);
+  }, [props.userinfo]);
 
-        if (data.success === false) {
-          //불러오기 실패했으면 다른곳으로 이동시킴.
-          navigate('/');
-          return;
-        }
-
-        setFolloing(data.following);
-        setFollower(data.follower);
-        setPost(data.postcount);
-        props.setPostCount(data.postcount);
-        setFollowed(data.followed);
-        setUsername(data.username);
-        setImg(data.img);
-        setIntro(data.introduce === '' ? '너 납치된거야.' : data.introduce);
-        setSpin(false);
-      });
-  }, [props.targetId, props.userId, navigate]);
-
-  const renderIntro = intro.split('\n').map((item, index) => {
-    return <div key={index}>{item}</div>;
-  });
+  const renderIntro = props.userinfo.introduce
+    .split('\n')
+    .map((item, index) => {
+      return <div key={index}>{item}</div>;
+    });
   return (
     <div>
-      {spin === true ? (
+      {props.spin === true ? (
         'waiting...'
       ) : (
         <>
           <Grid container spacing={1}>
             <Grid item xs={9}>
-              <h1>{username}</h1>
+              <h1>{props.userinfo.username}</h1>
             </Grid>
-            {props.targetId === undefined && (
-              <UserinfoMenu userId={props.userId} />
+            {props.feedType === 'myInfo' && (
+              <UserinfoMenu userId={authUserId} />
             )}
           </Grid>
           <Grid container spacing={1}>
             <Grid item xs={4} className='text-center'>
               <img
-                src={img === '' ? sample : `${requestUrl}/${img}`}
+                src={
+                  props.userinfo.img === ''
+                    ? sample
+                    : `${requestUrl}/${props.userinfo.img}`
+                }
                 alt='profile'
                 style={{
                   width: '110px',
@@ -91,11 +64,11 @@ const Userinfo = (props: {
               />
             </Grid>
             <UserinfoNums
-              postcount={postcount}
+              postcount={props.userinfo.postcount}
               follower={follower}
-              following={following}
+              following={props.userinfo.following}
               userId={
-                props.targetId === undefined ? props.userId : props.targetId
+                props.feedType === 'myInfo' ? authUserId : props.userinfo.userId
               }
             />
           </Grid>
@@ -105,12 +78,15 @@ const Userinfo = (props: {
         </>
       )}
 
-      {/*내 피드로 들어왔을때는 아래 버튼 표시안함, useEffect axios요청 끝난 후 렌더링 시작. */}
-      {props.targetId && !spin && (
+      {/*내 피드로 들어왔을때는 아래 버튼 표시안함. 다른사람의 피드이고,  useEffect axios요청 끝난 후,  렌더링 시작. */}
+      {props.feedType === 'otherInfo' && !props.spin && (
         <UserinfoButton
           addFollower={addFollower}
-          followed={followed}
-          users={{ userTo: props.targetId, userFrom: props.userId }}
+          followed={props.userinfo.followed}
+          users={{
+            userTo: props.userinfo.userId,
+            userFrom: authUserId,
+          }}
         />
       )}
 

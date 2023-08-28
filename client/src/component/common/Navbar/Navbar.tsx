@@ -41,7 +41,7 @@ const Navbar = (props: { value: number }) => {
           <BottomNavigationAction
             label='내 피드'
             icon={<PersonIcon />}
-            href='/myfeed'
+            href='/feed'
           />
         </BottomNavigation>
       </Paper>

@@ -13,7 +13,7 @@ export interface PostFooterContent extends PostContent {
 }
 
 export interface UserInfo {
-  success: true;
+  userId: string;
   following: number;
   follower: number;
   postcount: number;

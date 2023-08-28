@@ -1,19 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from './user.repo';
+import { GetUserInfoData, UserRepository } from './user.repo';
 import { UserinfoWithNums } from 'sns-interfaces/grpc.interfaces';
+import { crypter } from 'src/common/crypter';
+
+interface GetUserinfoById {
+  type: 'byId';
+  userId: string;
+}
+interface GetUserinfoByUsername {
+  type: 'byUsername';
+  username: string;
+}
 
 @Injectable()
 export class UserService {
   constructor(private userRepo: UserRepository) {}
 
-  async getUserinfo(data: { userId: string }): Promise<UserinfoWithNums> {
-    const result: UserinfoWithNums | undefined =
-      await this.userRepo.getUserinfo(data.userId);
+  async getUserinfo(
+    data: GetUserinfoById | GetUserinfoByUsername,
+  ): Promise<UserinfoWithNums> {
+    const result: GetUserInfoData | undefined =
+      data.type === 'byId'
+        ? await this.userRepo.getUserinfoById(data.userId)
+        : await this.userRepo.getUserinfoByUsername(data.username);
 
     if (result === undefined) {
       throw new Error('getUserinfo is null, err at user.repo.ts');
     }
-    return { ...result };
+    return { ...result, userId: crypter.encrypt(result.id) };
   }
 
   async getUsernameWithImg(data: {

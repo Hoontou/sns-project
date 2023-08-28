@@ -11,7 +11,14 @@ export class AuthController {
 
   @GrpcMethod('AuthService', 'SignIn')
   @UsePipes(ValidationPipe)
-  signIn(signInDto: SignInDto): Promise<AuthResultRes> {
+  signIn(signInDto: SignInDto): Promise<
+    | {
+        success: true;
+        userId: string;
+        accessToken?: string;
+      }
+    | { success: false }
+  > {
     return this.authService.signIn(signInDto);
   }
 

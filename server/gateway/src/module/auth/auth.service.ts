@@ -60,7 +60,17 @@ export class AuthService {
     return authInfo;
   }
 
-  async signIn(signInDto: SignInDto, @Res() res): Promise<AuthResultRes> {
+  async signIn(
+    signInDto: SignInDto,
+    @Res() res,
+  ): Promise<
+    | {
+        success: true;
+        userId: string;
+        accessToken?: string;
+      }
+    | { success: false }
+  > {
     const authInfo: AuthResultRes = await lastValueFrom(
       this.authGrpcService.signIn(signInDto),
     );

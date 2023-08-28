@@ -1,35 +1,73 @@
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { authHoc } from '../../../common/auth.hoc';
-import Navbar from '../../common/Navbar/Navbar';
+import { ReqUser } from 'sns-interfaces';
+import { UserInfo } from 'sns-interfaces/client.interface';
 import Userinfo from '../../common/Userinfo/Userinfo';
 import Postlist from '../../common/Post/Postlist';
+import Navbar from '../../common/Navbar/Navbar';
 
-const UserFeed = () => {
+export const emptyUserInfo: UserInfo = {
+  userId: '',
+  following: 0,
+  follower: 0,
+  postcount: 0,
+  img: '',
+  introduce: '',
+  username: '',
+  followed: false,
+};
+
+//url파라미터에 담긴 걸로 그냥 요청날리면
+//쿠키로 auth체크해서나온 이름이랑 같으면
+//내정보 표시라는 뜻이고, 내정보에서의 버튼들 다 표시
+const Userfeed = () => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
-  const [userId, setId] = useState<string>('');
-  const [postCount, setPostCount] = useState<number>(0);
-
-  const { targetid: targetUserId } = useParams();
+  const { targetUsername } = useParams(); //url에서 가져온 username
+  const [authinfo, setAuthinfo] = useState<ReqUser>({
+    success: true,
+    userId: '',
+    username: '',
+  });
+  const [userinfo, setUserinfo] = useState<UserInfo>(emptyUserInfo);
+  const [feedType, setFeedType] = useState<'otherInfo' | 'myInfo' | null>(null);
 
   useEffect(() => {
-    //다른곳에서는 실패하면 /signin으로 이동하게.
-    authHoc().then((authRes) => {
-      if (authRes.success === false) {
-        alert('Err while Authentication, need login');
+    //타겟유저네임만 보내면, 가져와야할게 내정보인지 남의정보인지 판단.
+    axios.post('/gateway/userinfo', { targetUsername }).then((res) => {
+      const data:
+        | {
+            userinfo: UserInfo;
+            type: 'otherInfo' | 'myInfo';
+            reqUser: ReqUser;
+            success: true;
+          }
+        | { success: false } = res.data;
+
+      // console.log(data);
+
+      //username 찾기실패
+      if (data.success === false) {
+        alert(`${targetUsername}은 없는 유저임.`);
+        navigate('/');
+        return;
+      }
+      if (data.reqUser.success === false) {
+        alert('auth faild.');
+        //여기 쿠키 다날리는 기능 추가해야함
         navigate('/signin');
         return;
       }
+
+      //이제 가져온 데이터 state에 채워넣기 시작
+      setAuthinfo(data.reqUser);
+      setUserinfo(data.userinfo);
+      setFeedType(data.type);
       setSpin(false);
-      if (authRes.userId === targetUserId) {
-        //내 아이디로 내 피드 접근시 myfeed로 이동
-        navigate('/myfeed');
-        return;
-      }
-      setId(authRes.userId);
     });
-  }, [navigate, targetUserId]);
+  }, []);
+
   return (
     <div
       style={{ width: '90%', margin: '0.7rem auto', paddingBottom: '3.5rem' }}
@@ -39,14 +77,17 @@ const UserFeed = () => {
       ) : (
         <>
           <Userinfo
-            userId={userId}
-            targetId={targetUserId}
-            setPostCount={setPostCount}
+            spin={spin}
+            authinfo={authinfo}
+            userinfo={userinfo}
+            feedType={feedType}
           />
           <Postlist
-            userId={userId}
-            targetId={targetUserId}
-            postCount={postCount}
+            userId={
+              feedType === 'myInfo' && authinfo.success === true //내피드 이면 내아이디 넘김
+                ? authinfo.userId
+                : userinfo.userId
+            }
           />
         </>
       )}
@@ -56,4 +97,4 @@ const UserFeed = () => {
   );
 };
 
-export default UserFeed;
+export default Userfeed;

@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   OneToMany,
   OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Post } from './post.entity/post.entity';
 import { Cocomment } from './post.entity/cocomment.entity';

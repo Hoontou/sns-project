@@ -12,6 +12,16 @@ import { UserinfoWithNums } from 'sns-interfaces/grpc.interfaces';
 import { UploadMessage } from 'sns-interfaces';
 import { SnsUsersDocType, elastic } from 'src/configs/elasticsearch';
 
+export interface GetUserInfoData {
+  id: number;
+  follower: number;
+  following: number;
+  postcount: number;
+  img: string;
+  introduce: string;
+  username: string;
+}
+
 @Injectable()
 export class UserRepository {
   constructor(
@@ -27,23 +37,25 @@ export class UserRepository {
     let newUser = new User();
     newUser.email = signUpDto.email;
     newUser.password = signUpDto.password;
-    //유저 먼저 생성 후
     newUser = await newUser.save();
 
     let newUserinfo = new Userinfo();
     newUserinfo.username = signUpDto.username;
-    newUserinfo.user = newUser;
 
     let newUsernums = new Usernums();
-    newUsernums.user = newUser;
 
+    //포린키 매핑
+    newUsernums.user = newUser;
+    newUserinfo.user = newUser;
+
+    //유저 먼저 생성 후
     //나머지 저장, 트랜잭션 필요없을듯
     [newUserinfo, newUsernums] = await Promise.all([
       newUserinfo.save(),
       newUsernums.save(),
     ]);
 
-    //pgdb삽입 후 엘라스틱에 삽입
+    //pgdb삽입 후 이제 엘라스틱에 삽입
     const newUserDoc: SnsUsersDocType = {
       username: signUpDto.username,
       introduce: '',
@@ -59,7 +71,7 @@ export class UserRepository {
     });
   }
 
-  async getUserinfo(userId: string): Promise<UserinfoWithNums | undefined> {
+  async getUserinfoById(userId: string): Promise<GetUserInfoData | undefined> {
     const query = `
     SELECT *
     FROM public.userinfo AS ui JOIN public.usernums 
@@ -70,6 +82,20 @@ export class UserRepository {
 
     return result.rows[0];
   }
+
+  async getUserinfoByUsername(
+    username: string,
+  ): Promise<GetUserInfoData | undefined> {
+    const query = `
+    SELECT *
+    FROM public.userinfo AS ui JOIN public.usernums 
+    AS un ON ui."userId" = un."userId"
+    WHERE ui.username = '${username}';
+    `;
+    const result = await pgdb.client.query(query);
+    return result.rows[0];
+  }
+
   async getUsernameWithImg(userId: string): Promise<Userinfo | undefined> {
     const query = `
     SELECT ui.username, ui.img

@@ -29,9 +29,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new NotFoundException();
     }
+
+    const userinfo = await this.userRepo.getUsernameWithImg(String(user.id));
+    if (userinfo === undefined) {
+      throw new NotFoundException();
+    }
+
     this.logger.log(`{ id ${user.id} } passed Guard`);
     return {
       userId: crypter.encrypt(user.id),
+      username: userinfo.username,
       success: true,
     }; //이 값이 req.user에 담긴다.
   }

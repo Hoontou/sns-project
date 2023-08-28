@@ -25,11 +25,7 @@ export const emptyMetadata: Metadata = {
 
 //targetId가 없으면 내 피드로 접근했다는 뜻.
 //내 포스트를 가져오면 됨.
-const Postlist = (props: {
-  userId: string;
-  targetId?: string;
-  postCount: number;
-}) => {
+const Postlist = (props: { userId: string; targetId?: string }) => {
   const [spin, setSpin] = useState<boolean>(true);
   const [posts, setPosts] = useState<Metadata[]>([]);
   const [open, setOpen] = useState(false);

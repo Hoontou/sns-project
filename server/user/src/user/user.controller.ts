@@ -8,9 +8,19 @@ export class UserController {
   private logger = new Logger('UserController');
   constructor(private userService: UserService) {}
 
-  @GrpcMethod('UserService', 'GetUserinfo')
-  async getUserinfo(data: { userId: string }): Promise<UserinfoWithNums> {
-    return this.userService.getUserinfo(data);
+  @GrpcMethod('UserService', 'GetUserinfoById')
+  async getUserinfoById(data: { userId: string }): Promise<UserinfoWithNums> {
+    return this.userService.getUserinfo({ type: 'byId', userId: data.userId });
+  }
+
+  @GrpcMethod('UserService', 'GetUserinfoByUsername')
+  async getUserinfoByUsername(data: {
+    username: string;
+  }): Promise<UserinfoWithNums> {
+    return this.userService.getUserinfo({
+      type: 'byUsername',
+      username: data.username,
+    });
   }
 
   @GrpcMethod('UserService', 'GetUsernameWithImg')

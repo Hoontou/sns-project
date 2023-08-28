@@ -3,7 +3,6 @@ import Signup from './component/view/Signup/Signup';
 import Signin from './component/view/Signin/Signin';
 import Upload from './component/view/Upload/Upload';
 import AlertSock from './component/AlertSocket';
-import MyFeed from './component/view/Myfeed/Myfeed';
 import Userfeed from './component/view/Userfeed/Userfeed';
 import UserSetting from './component/view/UserSetting/UserSetting';
 import { createBrowserHistory } from 'history';
@@ -20,9 +19,15 @@ function App() {
           <Route path='/signin' element={<Signin />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/up' element={<Upload />} />
-          <Route path='/myfeed' element={<MyFeed />} />
-          <Route path='/userfeed/:targetid' element={<Userfeed />} />
-          <Route path='/usersetting/:targetid' element={<UserSetting />} />
+          {/* <Route path='/myfeed' element={<MyFeed />} /> */}
+          {/* <Route path='/userfeed/:targetUsername' element={<Userfeed />} /> */}
+          <Route path='/feed/:targetUsername' element={<Userfeed />} />
+          <Route path='/feed' element={<Userfeed />} />
+
+          <Route
+            path='/usersetting/:targetUsername'
+            element={<UserSetting />}
+          />
         </Routes>
       </Router>
     </>

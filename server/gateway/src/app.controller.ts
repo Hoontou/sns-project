@@ -2,6 +2,7 @@ import { Body, Controller, Post, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { PostFooterContent, UserInfo } from 'sns-interfaces/client.interface';
 import { crypter } from './common/crypter';
+import { ReqUser } from 'sns-interfaces';
 
 export interface LandingContent {
   userId: string;
@@ -32,9 +33,26 @@ export class AppController {
   @Post('/userinfo')
   /**usernums + 해당유저를 팔로우했는지 정보 리턴해야함. */
   async userInfo(
-    @Body() body: { userId: string; myId: '' | string },
-  ): Promise<UserInfo | { success: false }> {
-    return this.appService.userInfo(body);
+    @Req() req,
+    @Body()
+    body: {
+      targetUsername: string | undefined;
+    },
+  ): Promise<
+    | {
+        userinfo: UserInfo;
+        type: 'otherInfo' | 'myInfo';
+        reqUser: ReqUser;
+        success: true;
+      }
+    | { success: false }
+  > {
+    return this.appService.userInfo(
+      req,
+      body.targetUsername === undefined
+        ? req.user.username
+        : body.targetUsername,
+    );
   }
 
   @Post('/postfooter')

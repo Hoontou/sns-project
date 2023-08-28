@@ -16,7 +16,8 @@ const Upload = () => {
   const [title, setTitle] = useState<string>('');
   const [images, setImages] = useState<string[]>([]);
   const [sendingFileList, setFileList] = useState<File[]>([]);
-  const [userId, setId] = useState<string>('');
+  // const [userId, setId] = useState<string>('');
+  // const [username, setUsername] = useState<string>('');
 
   const onTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.currentTarget.value);
@@ -96,7 +97,7 @@ const Upload = () => {
     //벗어나도 되면 그냥 알람MSA에 Id 보내고 페이지 벗어나자.
     //then을 안받아도 되게 느슨한 연결로 만들어 보자.
     alert('file sending succeed');
-    navigate('/myfeed');
+    navigate(`/feed`);
   };
 
   useEffect(() => {
@@ -107,7 +108,8 @@ const Upload = () => {
         navigate('/signin');
         return;
       }
-      setId(authRes.userId);
+      // setId(authRes.userId);
+      // setUsername(authRes.username !== undefined ? authRes.username : '');
     });
   }, [navigate]);
 

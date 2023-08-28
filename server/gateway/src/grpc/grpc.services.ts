@@ -15,7 +15,17 @@ export interface AuthGrpcService {
 }
 
 export interface UserGrpcService {
-  getUserinfo({ userId }: { userId: string }): Observable<{
+  getUserinfoById({ userId }: { userId: string }): Observable<{
+    userId: string;
+    follower: number;
+    following: number;
+    postcount: number;
+    username: string;
+    img: string;
+    introduce: string;
+  }>;
+  getUserinfoByUsername({ username }: { username: string }): Observable<{
+    userId: string;
     follower: number;
     following: number;
     postcount: number;

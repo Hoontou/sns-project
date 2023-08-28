@@ -15,7 +15,18 @@ export class AuthService {
     private userRepo: UserRepository,
     private jwtService: JwtService,
     private jwtStrategy: JwtStrategy,
-  ) {}
+  ) {
+    //this.test();
+  }
+
+  async test() {
+    const user = await this.userRepo.userTable.db.findOne({
+      where: { email: 'hoontou@gmail.com' },
+      relations: { userinfo: true },
+    });
+
+    console.log(user);
+  }
 
   async auth(authDto: AuthDto): Promise<AuthResultRes> {
     try {
@@ -41,7 +52,14 @@ export class AuthService {
     }
   }
 
-  async signIn(signinDto: SignInDto): Promise<AuthResultRes> {
+  async signIn(signinDto: SignInDto): Promise<
+    | {
+        success: true;
+        userId: string;
+        accessToken?: string;
+      }
+    | { success: false }
+  > {
     const { email, password } = signinDto;
     const user: User | null = await this.userRepo.userTable.db.findOne({
       where: { email },
@@ -86,7 +104,6 @@ export class AuthService {
 
     //삽입요청
     try {
-      console.log(user);
       await this.userRepo.signUp(user);
       return { success: true, username: signupDto.username };
     } catch (error) {

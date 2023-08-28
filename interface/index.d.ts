@@ -47,6 +47,7 @@ export type AuthResultRes = AuthSuccess | AuthFail;
 export interface AuthSuccess {
   success: true;
   userId: string;
+  username: string;
   accessToken?: string;
 }
 export interface AuthFail {
@@ -127,3 +128,11 @@ export interface CommentItemContent {
   username: string;
   img: string;
 }
+
+export type ReqUser =
+  | {
+      success: true;
+      userId: string;
+      username: string;
+    }
+  | { success: false };

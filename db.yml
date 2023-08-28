@@ -82,7 +82,6 @@ services:
       - mgdb2
     links:
       - elasticsearch
-    restart: unless-stopped
     ports:
       - '8080:8080'
 
@@ -95,11 +94,11 @@ services:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
 
-  redis:
-    image: redis:latest
-    restart: always
-    ports:
-      - 6380:6379
+  #  redis:
+  #    image: redis:latest
+  #    restart: always
+  #    ports:
+  #      - 6380:6379
 
   rabbit:
     image: rabbitmq:3.8.5-management

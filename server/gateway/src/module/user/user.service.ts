@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { UserInfoBody } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import { UserGrpcService } from 'src/grpc/grpc.services';
 
@@ -12,8 +13,10 @@ export class UserService {
     this.userGrpcService =
       this.client.getService<UserGrpcService>('UserService');
   }
-  async getUserinfo(userId: string): Promise<
+
+  async getUserinfo(body: UserInfoBody): Promise<
     | {
+        userId: string;
         success: true;
         following: number;
         follower: number;
@@ -28,9 +31,13 @@ export class UserService {
     //myId는 다른유저의 피드로 접근했을 시 다른유저를 팔로우했는지 찾을 용도.
     try {
       const result = await lastValueFrom(
-        this.userGrpcService.getUserinfo({
-          userId: crypter.decrypt(userId),
-        }),
+        body.type === 'myInfo'
+          ? this.userGrpcService.getUserinfoById({
+              userId: crypter.decrypt(body.userId),
+            })
+          : this.userGrpcService.getUserinfoByUsername({
+              username: body.targetUsername,
+            }),
       );
       console.log(result);
       return {
@@ -38,6 +45,7 @@ export class UserService {
         success: true,
       };
     } catch (err) {
+      console.log(err);
       return { success: false };
     }
   }
