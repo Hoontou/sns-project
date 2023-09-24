@@ -111,21 +111,22 @@ const PostFooter = (props: {
             margin: '0.2rem auto',
             marginTop: '0.5rem',
             marginBottom: '-0.5rem',
+            overflowWrap: 'break-word', //자동줄바꿈
           }}
         >
           <div>
-            <span
+            <a
               style={{
                 marginRight: '0.5rem',
                 fontWeight: '600',
+                textDecoration: 'none',
+                color: 'white',
               }}
-              onClick={() => {
-                navigate(`/feed/${postContent.username}`);
-              }}
+              href={`/feed/${postContent.username}`}
             >
               {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
               {postContent.username}
-            </span>
+            </a>
             {postContent.title}
           </div>
           {props.postFooterContent.commentCount > 0 && (

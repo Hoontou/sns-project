@@ -157,11 +157,12 @@ const UserSetting = () => {
           <hr></hr>
 
           <div>
-            <p>소개글. 최대 50자, 3줄까지 입력가능</p>
+            <p>소개글. 3줄까지 입력가능</p>
 
             <TextField
               sx={{ m: 1, width: '90%', maxWidth: '600px' }}
-              label='Introduce'
+              color={intro.length > 50 ? 'warning' : 'primary'}
+              label={`Introduce ${intro.length}/50`}
               variant='standard'
               multiline
               rows={4}

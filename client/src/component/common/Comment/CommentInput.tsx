@@ -29,6 +29,14 @@ const CommentInput = (props: {
     return;
   }, [props.submitForm]);
 
+  //해시태그 기능 구현중
+  // useEffect(() => {
+  //   if ('@#'.includes(inputValue.charAt(inputValue.length - 1))) {
+  //     console.log(inputValue.charAt(inputValue.length - 1));
+  //     console.log(1);
+  //   }
+  // }, [inputValue]);
+
   const action = (
     <Fragment>
       <Button

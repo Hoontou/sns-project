@@ -10,6 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import { resizer } from '../../../common/image.resizer';
 import { AuthResultRes } from 'sns-interfaces';
 import AlertSock from '../../AlertSocket';
+import TitleInput from './TitleInput';
+
+export const titleLen = 80;
 
 const Upload = () => {
   const navigate = useNavigate();
@@ -18,10 +21,6 @@ const Upload = () => {
   const [sendingFileList, setFileList] = useState<File[]>([]);
   // const [userId, setId] = useState<string>('');
   // const [username, setUsername] = useState<string>('');
-
-  const onTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.currentTarget.value);
-  };
 
   //인풋에 4개이상이면 리셋, 선택한이미지 볼수있게 image리스트에 푸시
   const checkFileCount = (e: ChangeEvent<HTMLFormElement>) => {
@@ -49,9 +48,9 @@ const Upload = () => {
   const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (title.length > 40) {
-      alert('글은 40자 이내로 써주세요');
-      setTitle('');
+    if (title.length > titleLen) {
+      alert(`글은 ${titleLen}자 이내로 써주세요`);
+      return;
     }
 
     if (sendingFileList.length === 0) {
@@ -121,12 +120,10 @@ const Upload = () => {
       <h2>4개보다 많이올려도 네개만 올라감., jpg, mp4, png만 가능</h2>
       <h2>가로3:세로4 비율로 보임. 나중에 반응형 으로 수정해야할듯?</h2>
       <div style={{ marginBottom: '1rem' }}>
-        <label>타이틀</label>
-        <input onChange={onTitleHandler} placeholder='우리집 고양이 귀엽죠' />
-      </div>
-      <div style={{ marginBottom: '1rem' }}>
         <Slider images={images} />
       </div>
+      <TitleInput setTitle={setTitle} title={title} />
+
       <form
         onSubmit={onSubmit}
         encType='multipart/form-data'

@@ -45,20 +45,20 @@ const Feed = () => {
           }
         | { success: false } = res.data;
 
-      // console.log(data);
+      console.log(data);
 
-      //username 찾기실패
+      //username 찾기실패 or auth실패
       if (data.success === false) {
-        alert(`${targetUsername}은 없는 유저임.`);
+        alert(`err`);
         navigate('/');
         return;
       }
-      if (data.reqUser.success === false) {
-        alert('auth faild.');
-        //여기 쿠키 다날리는 기능 추가해야함
-        navigate('/signin');
-        return;
-      }
+      // if (data.reqUser.success === false) {
+      //   alert('auth faild.');
+      //   //여기 쿠키 다날리는 기능 추가해야함
+      //   navigate('/signin');
+      //   return;
+      // }
 
       //이제 가져온 데이터 state에 채워넣기 시작
       setAuthinfo(data.reqUser);

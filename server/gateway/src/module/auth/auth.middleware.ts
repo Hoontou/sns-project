@@ -31,7 +31,7 @@ export class AuthMiddleware implements NestMiddleware {
       this.logger.error(`Blocked unknown user`);
       //적절한 리턴 보내서 예외처리 쉽게하자.
       //지금은 그냥 false 해놓았음
-      res.send({ auth: false });
+      res.send({ success: false });
       return;
     }
   }
