@@ -7,7 +7,6 @@ import { Client } from '@elastic/elasticsearch';
 export interface SnsUsersDocType {
   username: string;
   introduce: string;
-  userId: number;
   img: string;
 }
 
@@ -44,7 +43,7 @@ class Elasticsearch {
             properties: {
               username: { type: 'text' },
               introduce: { type: 'text' },
-              userId: { type: 'integer' },
+              img: { type: 'text' },
             },
           },
         },

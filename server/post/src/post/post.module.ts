@@ -10,6 +10,7 @@ import { PostRepository } from './post.repo';
 import { CoCommentTable } from './repository/cocomment.table';
 import { CommentTable } from './repository/comment.table';
 import { PostTable } from './repository/post.table';
+import { HashtagService } from './hashtag.service';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PostTable } from './repository/post.table';
     CommentTable,
     CoCommentTable,
     PostService,
+    HashtagService,
   ],
   controllers: [PostController],
   exports: [

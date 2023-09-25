@@ -3,17 +3,20 @@
 
 import { Client } from '@elastic/elasticsearch';
 
-/**userId 프로퍼티가 굳이 필요한가 싶은데, 일단 넣어놨음. 지금 docId == userId 상태임. */
 export interface SnsPostsDocType {
-  username: string;
-  introduce: string;
-  userId: number;
-  img: string;
+  title: string;
+  tags?: string;
+}
+/**tag의 중복방지를 위해 _id==tagName으로 저장하고, 검색은 tagName, 태그DOC 가져오는건 _id로 수행 */
+export interface SnsTagsDocType {
+  tagName: string;
+  count: number;
 }
 
 class Elasticsearch {
   public readonly client;
   public readonly SnsPostsIndex = 'sns_posts';
+  public readonly SnsTagsIndex = 'sns_tags';
 
   constructor() {
     this.client = new Client({
@@ -27,11 +30,14 @@ class Elasticsearch {
 
   async init() {
     //이미 있는지 체크
-    const indexExistCheck: boolean = await this.client.indices.exists({
+    const indexExistCheck1: boolean = await this.client.indices.exists({
       index: this.SnsPostsIndex,
     });
+    const indexExistCheck2: boolean = await this.client.indices.exists({
+      index: this.SnsTagsIndex,
+    });
 
-    if (indexExistCheck === true) {
+    if (indexExistCheck1 === true && indexExistCheck2 === true) {
       return;
     }
 
@@ -42,17 +48,30 @@ class Elasticsearch {
         body: {
           mappings: {
             properties: {
-              username: { type: 'text' },
-              introduce: { type: 'text' },
-              userId: { type: 'integer' },
+              //postId: { type: 'text' },
+              title: { type: 'text' },
+              tags: { type: 'text' },
+            },
+          },
+        },
+      });
+      await this.client.indices.create({
+        index: this.SnsTagsIndex,
+        body: {
+          mappings: {
+            properties: {
+              tagName: { type: 'text' },
+              count: { type: 'integer' },
             },
           },
         },
       });
 
-      console.log(`Index created:${this.SnsPostsIndex}`);
+      console.log(`Index created:${this.SnsPostsIndex}, ${this.SnsTagsIndex}`);
     } catch (error) {
-      console.log(`Error creating index:${this.SnsPostsIndex}`);
+      console.log(
+        `Error creating index:${this.SnsPostsIndex} , ${this.SnsTagsIndex}`,
+      );
       console.log(error);
     }
   }

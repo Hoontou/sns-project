@@ -59,14 +59,13 @@ export class UserRepository {
     const newUserDoc: SnsUsersDocType = {
       username: signUpDto.username,
       introduce: '',
-      userId: newUser.id,
       img: '',
     };
 
     //doc id는 pgdb usertable id로.
     await elastic.client.index({
       index: elastic.SnsUsersIndex,
-      id: newUserDoc.userId,
+      id: newUser.id,
       document: newUserDoc,
     });
   }
