@@ -11,6 +11,8 @@ import { resizer } from '../../../common/image.resizer';
 import { AuthResultRes } from 'sns-interfaces';
 import AlertSock from '../../AlertSocket';
 import TitleInput from './TitleInput';
+import TagSearchSock from '../../common/TagSearchSock';
+import { Socket, io } from 'socket.io-client';
 
 export const titleLen = 80;
 
@@ -19,6 +21,9 @@ const Upload = () => {
   const [title, setTitle] = useState<string>('');
   const [images, setImages] = useState<string[]>([]);
   const [sendingFileList, setFileList] = useState<File[]>([]);
+  const [searchSocket, setSearchSocket] = useState<Socket | undefined>(
+    undefined
+  );
   // const [userId, setId] = useState<string>('');
   // const [username, setUsername] = useState<string>('');
 
@@ -148,6 +153,15 @@ const Upload = () => {
           Upload
         </Button>
       </form>
+      <button
+        onClick={() => {
+          if (searchSocket === undefined) {
+            setSearchSocket(io());
+          }
+        }}
+      >
+        소켓연결
+      </button>
       <Navbar value={3} />
     </div>
   );
