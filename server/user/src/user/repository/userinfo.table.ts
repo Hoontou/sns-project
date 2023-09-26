@@ -46,6 +46,8 @@ export class UserinfoTable {
     WHERE "userId" = ${decId};
     `;
 
+    console.log(decId);
+
     //유저탐색을 위해 엘라스틱에서도 수정
     return Promise.all([
       pgdb.client.query(query),
@@ -54,6 +56,27 @@ export class UserinfoTable {
         id: decId,
         doc: {
           introduce: intro,
+        },
+      }),
+    ]);
+  }
+  changeIntroduceName(userId: string, introduceName: string) {
+    const decId = crypter.decrypt(userId);
+
+    const query = `
+    UPDATE public.userinfo
+    SET introduce_name = '${introduceName}'
+    WHERE "userId" = ${decId};
+    `;
+
+    //유저탐색을 위해 엘라스틱에서도 수정
+    return Promise.all([
+      pgdb.client.query(query),
+      elastic.client.update({
+        index: elastic.SnsUsersIndex,
+        id: decId,
+        doc: {
+          introduceName: introduceName,
         },
       }),
     ]);

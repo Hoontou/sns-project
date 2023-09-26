@@ -8,6 +8,7 @@ export interface SnsUsersDocType {
   username: string;
   introduce: string;
   img: string;
+  introduceName: string;
 }
 
 class Elasticsearch {
@@ -44,6 +45,7 @@ class Elasticsearch {
               username: { type: 'text' },
               introduce: { type: 'text' },
               img: { type: 'text' },
+              introduceName: { type: 'text' },
             },
           },
         },

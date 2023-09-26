@@ -20,6 +20,13 @@ export class UserController {
     return this.userService.changeIntro(body);
   }
 
+  @Post('/changeintroducename')
+  async changeIntroduceName(
+    @Body() body: { userId: string; introduceName: string },
+  ): Promise<{ success: boolean }> {
+    return this.userService.changeIntroduceName(body);
+  }
+
   @Get('/getusernamewithimg')
   async getUsernameWithImg(@Req() req): Promise<{
     username: string;

@@ -16,6 +16,7 @@ export const emptyUserInfo: UserInfo = {
   introduce: '',
   username: '',
   followed: false,
+  introduceName: '',
 };
 
 //url파라미터에 담긴 걸로 그냥 요청날리면
@@ -29,6 +30,7 @@ const Feed = () => {
     success: true,
     userId: '',
     username: '',
+    introduceName: '',
   });
   const [userinfo, setUserinfo] = useState<UserInfo>(emptyUserInfo);
   const [feedType, setFeedType] = useState<'otherInfo' | 'myInfo' | null>(null);

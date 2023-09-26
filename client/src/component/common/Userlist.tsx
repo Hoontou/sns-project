@@ -23,7 +23,7 @@ const Userlist = (props: {
 }) => {
   const navigate = useNavigate();
   const [list, setList] = useState<
-    { username: string; img: string; userId: string }[]
+    { username: string; img: string; userId: string; introduceName: string }[]
   >([]);
   const [title, setTitle] = useState<string>('');
   const [spin, setSpin] = useState<boolean>(true);
@@ -48,8 +48,14 @@ const Userlist = (props: {
       })
       .then((res) => {
         const data: {
-          userList: { userId: string; img: string; username: string }[];
+          userList: {
+            userId: string;
+            img: string;
+            username: string;
+            introduceName: string;
+          }[];
         } = res.data;
+        console.log(data);
         setList(data.userList);
         setSpin(false);
       });
@@ -91,8 +97,25 @@ const Userlist = (props: {
                     src={item.img === '' ? sample : `${requestUrl}/${item.img}`}
                   ></Avatar>
                 </ListItemAvatar>
-                <div style={{ marginLeft: '1rem', fontSize: '1.4rem' }}>
-                  {item.username}
+                <div>
+                  <div
+                    style={{
+                      marginLeft: '1rem',
+                      fontSize: '1.4rem',
+                      marginTop: '-0.2rem',
+                    }}
+                  >
+                    {item.username}
+                  </div>
+                  <div
+                    style={{
+                      marginLeft: '1rem',
+                      marginTop: '-0.4rem',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    {item.introduceName}
+                  </div>
                 </div>
               </ListItem>
             ))}

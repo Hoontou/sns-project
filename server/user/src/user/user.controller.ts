@@ -26,13 +26,18 @@ export class UserController {
   @GrpcMethod('UserService', 'GetUsernameWithImg')
   async getUsernameWithImg(data: {
     userId: string;
-  }): Promise<{ username: string; img: string }> {
+  }): Promise<{ username: string; img: string; introduceName: string }> {
     return this.userService.getUsernameWithImg(data);
   }
 
   @GrpcMethod('UserService', 'GetUsernameWithImgList')
   async getUsernameWithImgList(data: { userIds: string[] }): Promise<{
-    userList: { username: string; img: string; userId: number }[];
+    userList: {
+      username: string;
+      img: string;
+      userId: number;
+      introduceName: string;
+    }[];
   }> {
     return this.userService.getUsernameWithImgList(data);
   }
@@ -51,5 +56,13 @@ export class UserController {
     intro: string;
   }): Promise<{ success: boolean }> {
     return this.userService.changeIntro(data);
+  }
+
+  @GrpcMethod('UserService', 'ChangeIntroduceName')
+  async changeIntroduceName(data: {
+    userId: string;
+    introduceName: string;
+  }): Promise<{ success: boolean }> {
+    return this.userService.changeIntroduceName(data);
   }
 }

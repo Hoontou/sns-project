@@ -21,6 +21,7 @@ export interface UserInfo {
   introduce: string;
   username: string;
   followed: boolean;
+  introduceName: string;
 }
 
 export interface CocommentContent {

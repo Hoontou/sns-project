@@ -134,5 +134,6 @@ export type ReqUser =
       success: true;
       userId: string;
       username: string;
+      introduceName?: string;
     }
   | { success: false };

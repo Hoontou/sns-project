@@ -15,11 +15,15 @@ const UserSetting = () => {
   const [username, setUsername] = useState<string>('');
   const [intro, setIntro] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
+  const [introduceName, setIntroduceName] = useState<string>('');
   const onUsernameHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.currentTarget.value);
   };
   const onIntroHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setIntro(e.currentTarget.value);
+  };
+  const onIntroduceNameHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setIntroduceName(e.currentTarget.value);
   };
 
   /**username수정요청 보내는 */
@@ -40,7 +44,28 @@ const UserSetting = () => {
           );
           return;
         }
-        navigate('/myfeed');
+        navigate('/feed');
+        return;
+      });
+  };
+
+  /**introduceName수정요청 보내는 */
+  const submitIntroduceName = () => {
+    setSpin(true);
+
+    axios
+      .post('/gateway/user/changeintroducename', { userId, introduceName })
+      .then((res) => {
+        setSpin(false);
+        const result: { success: boolean; exist?: boolean } = res.data;
+        console.log(res.data);
+        if (result.success === false) {
+          console.log(result);
+          alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해주세요.');
+
+          return;
+        }
+        navigate('/feed');
         return;
       });
   };
@@ -109,6 +134,7 @@ const UserSetting = () => {
       setIntro(data.userinfo.introduce);
       setUsername(data.userinfo.username);
       setUserId(data.reqUser.userId);
+      setIntroduceName(data.userinfo.introduceName);
       setSpin(false);
     });
   }, []);
@@ -129,7 +155,7 @@ const UserSetting = () => {
           <ChangeImg img={img} />
           <hr></hr>
           <div>
-            <p>이름. 영어만, 4~10자 입력가능</p>
+            <p>계정 이름. 영어만, 4~10자 입력가능</p>
 
             <TextField
               sx={{ m: 1, width: '30ch' }}
@@ -150,6 +176,38 @@ const UserSetting = () => {
                 칸비우기
               </Button>
               <Button variant='outlined' size='medium' onClick={submitUsername}>
+                수정하기
+              </Button>
+            </div>
+          </div>
+          <hr></hr>
+
+          <div>
+            <p>소개 이름. 4~10자 입력가능</p>
+
+            <TextField
+              sx={{ m: 1, width: '30ch' }}
+              label='Name'
+              variant='standard'
+              onChange={onIntroduceNameHandler}
+              value={introduceName}
+            />
+            <div>
+              <Button
+                variant='outlined'
+                size='medium'
+                onClick={() => {
+                  setIntroduceName('');
+                }}
+                style={{ marginRight: '3rem' }}
+              >
+                칸비우기
+              </Button>
+              <Button
+                variant='outlined'
+                size='medium'
+                onClick={submitIntroduceName}
+              >
                 수정하기
               </Button>
             </div>

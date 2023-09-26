@@ -24,6 +24,7 @@ export class UserService {
         img: string;
         introduce: string;
         username: string;
+        introduceName: string;
       }
     | { success: false }
   > {
@@ -82,5 +83,12 @@ export class UserService {
   /**자기소개 바꾸기 */
   changeIntro(body: { userId: string; intro: string }) {
     return lastValueFrom(this.userGrpcService.changeIntro(body));
+  }
+
+  changeIntroduceName(body: {
+    introduceName: string;
+    userId: string;
+  }): Promise<{ success: boolean }> {
+    return lastValueFrom(this.userGrpcService.changeIntroduceName(body));
   }
 }

@@ -23,6 +23,7 @@ export interface UserGrpcService {
     username: string;
     img: string;
     introduce: string;
+    introduceName: string;
   }>;
   getUserinfoByUsername({ username }: { username: string }): Observable<{
     userId: string;
@@ -32,6 +33,7 @@ export interface UserGrpcService {
     username: string;
     img: string;
     introduce: string;
+    introduceName: string;
   }>;
   getUsernameWithImg({
     userId,
@@ -54,6 +56,13 @@ export interface UserGrpcService {
   }: {
     userId: string;
     intro: string;
+  }): Observable<{ success: boolean }>;
+  changeIntroduceName({
+    userId,
+    introduceName,
+  }: {
+    userId: string;
+    introduceName: string;
   }): Observable<{ success: boolean }>;
 }
 

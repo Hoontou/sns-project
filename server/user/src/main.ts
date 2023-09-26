@@ -5,7 +5,6 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { Logger } from '@nestjs/common';
 import { elastic } from './configs/elasticsearch';
-import { testFunc } from './tst';
 
 const logger = new Logger('Main');
 

@@ -19,4 +19,5 @@ export interface UserinfoWithNums {
   img: string;
   introduce: string;
   username: string;
+  introduceName: string;
 }

@@ -5,6 +5,7 @@ import { titleLen } from './Upload';
 const TitleInput = (props: {
   title: string;
   setTitle: React.Dispatch<React.SetStateAction<string>>;
+  connectSocket: () => void;
 }) => {
   const [tags, setTags] = useState<string[]>([]);
   const [searchResult, setSearchResult] = useState<string[]>([]);
@@ -37,7 +38,7 @@ const TitleInput = (props: {
     //변경된 태그를 웹소켓에 날려서 결과를 가져온 후 태그서치언더바를 띄워서 디스플레이 한다.
     if (socketConnected === false) {
       //소켓연결 함수호출 후 상태저장
-      //socketIo.conn()
+      props.connectSocket();
       setConnected(true);
     }
 

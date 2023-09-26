@@ -20,6 +20,7 @@ export interface GetUserInfoData {
   img: string;
   introduce: string;
   username: string;
+  introduceName: string;
 }
 
 @Injectable()
@@ -60,6 +61,7 @@ export class UserRepository {
       username: signUpDto.username,
       introduce: '',
       img: '',
+      introduceName: '',
     };
 
     //doc id는 pgdb usertable id로.
@@ -79,7 +81,7 @@ export class UserRepository {
     `;
     const result = await pgdb.client.query(query);
 
-    return result.rows[0];
+    return { ...result.rows[0], introduceName: result.rows[0].introduce_name };
   }
 
   async getUserinfoByUsername(
@@ -92,25 +94,32 @@ export class UserRepository {
     WHERE ui.username = '${username}';
     `;
     const result = await pgdb.client.query(query);
-    return result.rows[0];
+    console.log(result.rows[0]);
+    return { ...result.rows[0], introduceName: result.rows[0].introduce_name };
   }
 
   async getUsernameWithImg(userId: string): Promise<Userinfo | undefined> {
     const query = `
-    SELECT ui.username, ui.img
+    SELECT ui.username, ui.img, ui.introduce_name
     FROM public.userinfo AS ui
     WHERE ui."userId" = ${userId};
     `;
     const result = await pgdb.client.query(query);
 
-    return result.rows[0];
+    return { ...result.rows[0] };
   }
 
-  async getUsernameWithImgList(
-    userIds: string[],
-  ): Promise<{ username: string; img: string; userId: number }[] | undefined> {
+  async getUsernameWithImgList(userIds: string[]): Promise<
+    | {
+        username: string;
+        img: string;
+        userId: number;
+        introduce_name: string;
+      }[]
+    | undefined
+  > {
     const query = `
-    SELECT ui.username, ui.img, ui."userId"
+    SELECT ui.username, ui.img, ui."userId", ui.introduce_name
     FROM public.userinfo AS ui
     WHERE ui."userId" IN (${userIds});
     `;
@@ -124,6 +133,12 @@ export class UserRepository {
   }
   changeIntro(data: { userId: string; intro: string }) {
     return this.userinfoTable.changeIntro(data.userId, data.intro);
+  }
+  changeIntroduceName(data: { userId: string; introduceName: string }) {
+    return this.userinfoTable.changeIntroduceName(
+      data.userId,
+      data.introduceName,
+    );
   }
   setImg(data: { userId: string; img: string }) {
     return this.userinfoTable.setImg(data.userId, data.img);

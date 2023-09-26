@@ -15,6 +15,14 @@ import TagSearchSock from '../../common/TagSearchSock';
 import { Socket, io } from 'socket.io-client';
 
 export const titleLen = 80;
+export interface SearchRequestForm {
+  type: 'user' | 'hash';
+  string: string;
+}
+export interface SearchUserResult {
+  type: 'user';
+  resultList: { username: string; img: string };
+}
 
 const Upload = () => {
   const navigate = useNavigate();
@@ -24,8 +32,17 @@ const Upload = () => {
   const [searchSocket, setSearchSocket] = useState<Socket | undefined>(
     undefined
   );
+  const [searchRequestFrom, setSearchRequestFrom] = useState<
+    SearchRequestForm | undefined
+  >(undefined);
   // const [userId, setId] = useState<string>('');
   // const [username, setUsername] = useState<string>('');
+
+  const connectSocket = () => {
+    if (searchSocket === undefined) {
+      setSearchSocket(io());
+    }
+  };
 
   //인풋에 4개이상이면 리셋, 선택한이미지 볼수있게 image리스트에 푸시
   const checkFileCount = (e: ChangeEvent<HTMLFormElement>) => {
@@ -127,7 +144,11 @@ const Upload = () => {
       <div style={{ marginBottom: '1rem' }}>
         <Slider images={images} />
       </div>
-      <TitleInput setTitle={setTitle} title={title} />
+      <TitleInput
+        setTitle={setTitle}
+        title={title}
+        connectSocket={connectSocket}
+      />
 
       <form
         onSubmit={onSubmit}
@@ -153,15 +174,7 @@ const Upload = () => {
           Upload
         </Button>
       </form>
-      <button
-        onClick={() => {
-          if (searchSocket === undefined) {
-            setSearchSocket(io());
-          }
-        }}
-      >
-        소켓연결
-      </button>
+
       <Navbar value={3} />
     </div>
   );

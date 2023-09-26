@@ -9,6 +9,8 @@ service UserService {
   rpc GetUsernameWithImgList(GetUsernameWithImgListReq) returns (GetUsernameWithImgListRes) {};
   rpc ChangeUsername(ChangeUsernameReq) returns (ChangeUsernameRes);
   rpc ChangeIntro(ChangeIntroReq) returns (ChangeIntroRes);
+  rpc ChangeIntroduceName(ChangeIntroduceNameReq) returns (ChangeIntroRes);
+
 }
 
 message GetUserinfoByIdReq {
@@ -25,6 +27,7 @@ message GetUserinfoByIdRes {
   string img = 5;
   string introduce = 6;
   string username = 7;
+  string introduceName = 8;
 }
 
 ///////////////////////////////////
@@ -34,6 +37,7 @@ message GetUsernameWithImgReq {
 message GetUsernameWithImgRes {
   string img = 1;
   string username = 2;
+  string introduceName = 3;
 }
 ///////////////////////////////////
 message GetUsernameWithImgListReq {
@@ -43,6 +47,7 @@ message item {
   string img = 1;
   string username = 2;
   int32 userId = 3;
+  string introduceName = 4;
 }
 message GetUsernameWithImgListRes {
   repeated item userList = 1;
@@ -64,4 +69,10 @@ message ChangeIntroReq {
 
 message ChangeIntroRes {
   bool success = 1;
+}
+
+///////////////////////////////////
+message ChangeIntroduceNameReq {
+  string userId = 1;
+  string introduceName = 2;
 }

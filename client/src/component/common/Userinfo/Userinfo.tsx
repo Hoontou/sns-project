@@ -71,6 +71,7 @@ const Userinfo = (props: {
             />
           </Grid>
           <div style={{ marginTop: '0.5rem', marginBottom: '0.2rem' }}>
+            <div>{props.userinfo.introduceName}</div>
             <div>{renderIntro}</div>
           </div>
         </>
