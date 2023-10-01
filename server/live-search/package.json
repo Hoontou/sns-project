@@ -11,9 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@elastic/elasticsearch": "^8.9.0",
+    "@elastic/elasticsearch": "^8.10.0",
     "@fastify/cors": "^8.2.0",
-    "@types/elasticsearch": "^5.0.40",
+    "@types/elasticsearch": "^5.0.41",
     "amqplib": "^0.10.3",
     "crypto-js": "^4.1.1",
     "fastify": "^4.13.0",

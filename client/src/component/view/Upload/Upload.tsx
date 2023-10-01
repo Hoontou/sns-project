@@ -11,17 +11,24 @@ import { resizer } from '../../../common/image.resizer';
 import { AuthResultRes } from 'sns-interfaces';
 import AlertSock from '../../AlertSocket';
 import TitleInput from './TitleInput';
-import TagSearchSock from '../../common/TagSearchSock';
 import { Socket, io } from 'socket.io-client';
 
 export const titleLen = 80;
-export interface SearchRequestForm {
-  type: 'user' | 'hash';
-  string: string;
+
+/**검색결과로 가져오는 정보*/
+export interface SearchResult {
+  type: 'user' | 'hashtag';
+  resultList: SearchedUser[] | SearchedHashtag[];
 }
-export interface SearchUserResult {
-  type: 'user';
-  resultList: { username: string; img: string };
+export interface SearchedUser {
+  username: string;
+  img: string;
+  introduceName: string;
+  introduce: string;
+}
+export interface SearchedHashtag {
+  tagName: string;
+  count: number;
 }
 
 const Upload = () => {
@@ -32,15 +39,31 @@ const Upload = () => {
   const [searchSocket, setSearchSocket] = useState<Socket | undefined>(
     undefined
   );
-  const [searchRequestFrom, setSearchRequestFrom] = useState<
-    SearchRequestForm | undefined
-  >(undefined);
-  // const [userId, setId] = useState<string>('');
-  // const [username, setUsername] = useState<string>('');
+  const [searchRequestString, setSearchRequestString] = useState<string | ''>(
+    ''
+  );
+  const [searchResult, setSearchResult] = useState<SearchResult | undefined>(
+    undefined
+  );
 
+  //검색결과창 컨트롤
+  const [searchBarSpin, setSearchBarSpin] = useState<boolean>(false);
+  const [searchBarDisplay, setSearchbarDisplay] = useState<boolean>(false);
+
+  //연속입력에 대한 검색딜레이 설정
+  let timeoutId: NodeJS.Timeout | null = null;
+  const delay = 700; //ms기준임
+
+  //소켓연결 함수, 자식인 titleInput에서 실행함
   const connectSocket = () => {
     if (searchSocket === undefined) {
-      setSearchSocket(io());
+      const socket = io();
+      socket.on('searchUserOrHashtagResult', (data: SearchResult) => {
+        setSearchResult(data);
+        //데이터 가져왔으면 스핀멈춘다
+        setSearchBarSpin(false);
+      });
+      setSearchSocket(socket);
     }
   };
 
@@ -121,6 +144,7 @@ const Upload = () => {
     navigate(`/feed`);
   };
 
+  //인증 effect
   useEffect(() => {
     //다른곳에서는 실패하면 /signin으로 이동하게.
     authHoc().then((authRes) => {
@@ -133,6 +157,35 @@ const Upload = () => {
       // setUsername(authRes.username !== undefined ? authRes.username : '');
     });
   }, [navigate]);
+
+  //웹소켓에 검색날리는 effect, 연속입력 대비해서  타임아웃 걸었음
+  useEffect(() => {
+    if (searchRequestString === '') {
+      return;
+    }
+
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    timeoutId = setTimeout(() => {
+      console.log('send search string :', searchRequestString);
+      //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고
+      if (searchBarDisplay === false) {
+        setSearchbarDisplay(true);
+      }
+      setSearchBarSpin(true);
+      searchSocket?.emit('searchUserOrHashtag', {
+        searchString: searchRequestString,
+      });
+    }, delay);
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [searchRequestString]);
 
   return (
     <div
@@ -147,6 +200,7 @@ const Upload = () => {
       <TitleInput
         setTitle={setTitle}
         title={title}
+        setSearchRequestString={setSearchRequestString}
         connectSocket={connectSocket}
       />
 

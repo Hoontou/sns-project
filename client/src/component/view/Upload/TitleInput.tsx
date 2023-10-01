@@ -5,12 +5,14 @@ import { titleLen } from './Upload';
 const TitleInput = (props: {
   title: string;
   setTitle: React.Dispatch<React.SetStateAction<string>>;
+  setSearchRequestString: React.Dispatch<React.SetStateAction<string>>;
+
   connectSocket: () => void;
 }) => {
   const [tags, setTags] = useState<string[]>([]);
-  const [searchResult, setSearchResult] = useState<string[]>([]);
-  const [tagSearchUnderBarDisplay, TagsearchUnderBarDisplay] =
-    useState<boolean>(false);
+  // const [searchResult, setSearchResult] = useState<string[]>([]);
+  // const [tagSearchUnderBarDisplay, TagsearchUnderBarDisplay] =
+  //   useState<boolean>(false);
   const [socketConnected, setConnected] = useState<boolean>(false);
 
   const onTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +30,7 @@ const TitleInput = (props: {
     const diff = checkHashtagDiff(tags, tmp);
     console.log(diff);
 
-    if (diff === undefined) {
+    if (diff === undefined || diff.changedTag === undefined) {
       //태그수정을 안했거나, 태그를 없앤경우 그냥 상태만 저장 후 리턴
       setTags(tmp);
       return;
@@ -36,11 +38,14 @@ const TitleInput = (props: {
 
     //여기까지 왔으면 태그변경 했다.
     //변경된 태그를 웹소켓에 날려서 결과를 가져온 후 태그서치언더바를 띄워서 디스플레이 한다.
+    //1. 먼저 웹소켓 연결
     if (socketConnected === false) {
       //소켓연결 함수호출 후 상태저장
       props.connectSocket();
       setConnected(true);
     }
+    //2. 검색할 단어 부모에게 전달, 부모에서 useEffect써서 변경감지 시 소켓에 검색날림
+    props.setSearchRequestString(diff.changedTag);
 
     //태그서치언더바의 content를 클릭하면 변경중이었던 태그를 수정해야함.
 

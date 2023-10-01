@@ -1,8 +1,9 @@
 import fastify from 'fastify';
 import fastifyIO from 'fastify-socket.io';
-import { socketManager } from './alert.server/socket.manager';
 import { SocketEx } from './common/interface';
 import { crypter } from './common/crypter';
+import { elastic } from './common/elasticsearch';
+import { searchUserOrHashtag } from './search.functions/user.hash.search';
 
 const server = fastify();
 
@@ -12,6 +13,12 @@ server.ready().then(() => {
   // we need to wait for the server to be ready, else `server.io` is undefined
   server.io.on('connection', (socket: SocketEx) => {
     console.log('connected');
+
+    socket.on('searchUserOrHashtag', (data: { searchString: string }) => {
+      searchUserOrHashtag(data.searchString).then((result) => {
+        return socket.emit('searchUserOrHashtagResult', result);
+      });
+    });
 
     socket.on('disconnecting', (reason) => {
       console.log(reason);
