@@ -12,23 +12,27 @@ import { AuthResultRes } from 'sns-interfaces';
 import AlertSock from '../../AlertSocket';
 import TitleInput from './TitleInput';
 import { Socket, io } from 'socket.io-client';
+import SearchResultModal from '../../common/SearchResultModal';
 
 export const titleLen = 80;
 
 /**검색결과로 가져오는 정보*/
-export interface SearchResult {
-  type: 'user' | 'hashtag';
-  resultList: SearchedUser[] | SearchedHashtag[];
-}
+export type SearchResult = SearchedUser | SearchedHashtag;
 export interface SearchedUser {
-  username: string;
-  img: string;
-  introduceName: string;
-  introduce: string;
+  type: 'user';
+  resultList: {
+    username: string;
+    img: string;
+    introduceName: string;
+    introduce: string;
+  }[];
 }
 export interface SearchedHashtag {
-  tagName: string;
-  count: number;
+  type: 'hashtag';
+  resultList: {
+    tagName: string;
+    count: number;
+  }[];
 }
 
 const Upload = () => {
@@ -49,7 +53,7 @@ const Upload = () => {
   //검색결과창 컨트롤
   const [searchBarSpin, setSearchBarSpin] = useState<boolean>(false);
   const [searchBarDisplay, setSearchbarDisplay] = useState<boolean>(false);
-
+  const [clickedTag, setClickedTag] = useState<string>('');
   //연속입력에 대한 검색딜레이 설정
   let timeoutId: NodeJS.Timeout | null = null;
   const delay = 700; //ms기준임
@@ -170,7 +174,7 @@ const Upload = () => {
 
     timeoutId = setTimeout(() => {
       console.log('send search string :', searchRequestString);
-      //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고
+      //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
       if (searchBarDisplay === false) {
         setSearchbarDisplay(true);
       }
@@ -187,6 +191,12 @@ const Upload = () => {
     };
   }, [searchRequestString]);
 
+  useEffect(() => {
+    if (title === '@' || title === '') {
+      setSearchbarDisplay(false);
+    }
+  }, [title]);
+
   return (
     <div
       className='container text-center'
@@ -202,6 +212,8 @@ const Upload = () => {
         title={title}
         setSearchRequestString={setSearchRequestString}
         connectSocket={connectSocket}
+        clickedTag={clickedTag}
+        setSearchbarDisplay={setSearchbarDisplay}
       />
 
       <form
@@ -229,6 +241,14 @@ const Upload = () => {
         </Button>
       </form>
 
+      {searchBarDisplay && (
+        <SearchResultModal
+          spin={searchBarSpin}
+          searchResult={searchResult}
+          setSearchbarDisplay={setSearchbarDisplay}
+          setClickedTag={setClickedTag}
+        />
+      )}
       <Navbar value={3} />
     </div>
   );

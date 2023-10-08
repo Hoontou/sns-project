@@ -43,6 +43,7 @@ export const searchUserOrHashtag = async (
       return item._source;
     },
   );
+  console.log(resultList);
 
   return { resultList, type: type === '#' ? 'hashtag' : 'user' };
 };
