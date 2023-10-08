@@ -16,7 +16,6 @@ const modalStyle: React.CSSProperties = {
   alignItems: 'center',
   zIndex: '999',
   overflow: 'auto',
-  marginTop: '0.4rem',
 };
 
 const SearchResultModal = (props: {
@@ -31,6 +30,12 @@ const SearchResultModal = (props: {
     }
     console.log(props.searchResult);
   }, [props.searchResult]);
+
+  //창 켜져있을때 뒤로가기 누르면 창꺼짐
+  useEffect(() => {
+    //뒤로가기 막기 위해 아래코드 필요.
+    window.history.pushState(null, document.title, window.location.href);
+  }, []);
 
   const makeCard = (searchResult: SearchResult | undefined) => {
     if (searchResult === undefined) {
@@ -115,7 +120,15 @@ const SearchResultModal = (props: {
 
   const renderItem =
     props.searchResult?.resultList.length === 0 ? (
-      <div style={{ fontSize: '1.5rem', color: 'gray', margin: 'auto' }}>
+      <div
+        style={{
+          fontSize: '1.5rem',
+          color: 'gray',
+          position: 'absolute',
+          top: '40%',
+          left: '15%',
+        }}
+      >
         아무것도 없어요.
       </div>
     ) : (
@@ -124,7 +137,11 @@ const SearchResultModal = (props: {
   return (
     <div>
       <div style={modalStyle}>
-        {props.spin && <Spinner />}
+        {props.spin && (
+          <div style={{ position: 'absolute', top: '40%', left: '45%' }}>
+            <Spinner />
+          </div>
+        )}
         {!props.spin && renderItem}
       </div>
     </div>

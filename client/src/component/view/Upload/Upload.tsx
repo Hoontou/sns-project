@@ -148,6 +148,22 @@ const Upload = () => {
     navigate(`/feed`);
   };
 
+  //뒤로가기로 검색모달 끄는 useEffect
+  useEffect(() => {
+    //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
+    const handleBack = (event: PopStateEvent) => {
+      setSearchbarDisplay(false);
+    };
+
+    //뒤로가기 event리스너 등록
+    window.addEventListener('popstate', handleBack);
+
+    return () => {
+      //이게 꼭 있어야한단다. 창 나갈때 반환인가?
+      window.removeEventListener('popstate', handleBack);
+    };
+  }, []);
+
   //인증 effect
   useEffect(() => {
     //다른곳에서는 실패하면 /signin으로 이동하게.
@@ -191,6 +207,7 @@ const Upload = () => {
     };
   }, [searchRequestString]);
 
+  /**타이틀에 태그만 있을 시 안꺼지는거 fix위해 필요 */
   useEffect(() => {
     if (title === '@' || title === '') {
       setSearchbarDisplay(false);
