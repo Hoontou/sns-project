@@ -15,13 +15,14 @@ export class HashtagService {
       title: postDto.title,
     };
 
-    //title로부터 해시태그 추출
+    //title로부터 해시태그만을 추출
     const tags = postDto.title.match(/#\S+/g)?.map((item) => {
       return item.substring(1);
     });
     if (tags !== undefined) {
       //태그 존재하면 postDoc에 tags필드 추가
-      postDoc.tags = tags.join(' ');
+      const tmp = [...new Set(tags)];
+      postDoc.tags = tmp.join(' ');
     }
 
     //검색기능에 올리는건 후순위 작업이니 await 안함
@@ -33,8 +34,8 @@ export class HashtagService {
       })
       .then(() => {
         //삽입 후 tags가 있다면, 순회하면서 엘라스틱에서 존재하는 태그인지 체크
-        if (tags !== undefined) {
-          tags.forEach((tag) => {
+        if (postDoc.tags !== undefined) {
+          postDoc.tags.split(' ').forEach((tag) => {
             this.checkTagExisted(tag);
           });
         }
