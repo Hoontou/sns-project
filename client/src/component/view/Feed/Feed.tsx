@@ -51,7 +51,7 @@ const Feed = () => {
 
       //username 찾기실패 or auth실패
       if (data.success === false) {
-        alert(`err`);
+        alert(`not exist username or auth err`);
         navigate('/');
         return;
       }

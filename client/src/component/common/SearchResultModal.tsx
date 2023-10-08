@@ -99,7 +99,7 @@ const SearchResultModal = (props: {
                     marginTop: '-0.2rem',
                   }}
                 >
-                  {item.tagName}
+                  #{item.tagName}
                 </div>
                 <div
                   style={{
@@ -108,7 +108,7 @@ const SearchResultModal = (props: {
                     fontSize: '0.9rem',
                   }}
                 >
-                  {item.count}
+                  게시물 {item.count}
                 </div>
               </div>
             </ListItem>

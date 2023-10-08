@@ -6,6 +6,31 @@ import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';
 
+export const renderTitle = (title: string) => {
+  const tmp = title
+    .split(/(#[\w가-힣]+|@[\w가-힣]+)/)
+    .filter((part) => part.trim() !== '');
+
+  return tmp.map((item) => {
+    if (item.at(0) === '@') {
+      return (
+        <>
+          <a href={`/feed/${item.substring(1)}`}>{item}</a>
+          &nbsp;
+        </>
+      );
+    }
+    if (item.at(0) === '#') {
+      return (
+        <>
+          <a href={`/`}>{item}</a>&nbsp;
+        </>
+      );
+    }
+    return item;
+  });
+};
+
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
 const PostFooter = (props: {
   fulfilled: boolean;
@@ -127,7 +152,7 @@ const PostFooter = (props: {
               {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
               {postContent.username}
             </a>
-            {postContent.title}
+            {renderTitle(postContent.title)}
           </div>
           {props.postFooterContent.commentCount > 0 && (
             <span

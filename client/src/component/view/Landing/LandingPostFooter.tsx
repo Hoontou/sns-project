@@ -6,6 +6,7 @@ import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';
 import Userlist from '../../common/Userlist';
+import { renderTitle } from '../../common/Post/PostFooter';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
 const LandingPostFooter = (props: {
@@ -114,7 +115,7 @@ const LandingPostFooter = (props: {
             {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
             {postContent.username}
           </span>
-          {postContent.title}
+          {renderTitle(postContent.title)}
         </div>
         {props.postFooterContent.commentCount > 0 && (
           <span
