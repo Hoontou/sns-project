@@ -5,6 +5,9 @@ import { SnsPostsDocType, elastic } from 'src/configs/elasticsearch';
 //해시태그 처리 서비스
 @Injectable()
 export class HashtagService {
+  constructor() {
+    this.searchHashtag({ hashtag: 'qq' });
+  }
   //업로드 메서드로부터 오는 해시태그 핸들링 요청
   //해시태그 존재여부 체크후 없으면 추가,
   //해시태그가 사용된 횟수 카운트? 필요할까 업데이트가 꽤 많을듯
@@ -79,6 +82,53 @@ export class HashtagService {
         });
         return err.body.found; //못찾아서 에러뜨면 여기로 오고, false 리턴임
       });
+  }
+
+  async searchHashtag(data: {
+    hashtag: string;
+  }): Promise<{ tagName: string; count: number }[]> {
+    const result = await elastic.client.search({
+      index: elastic.SnsTagsIndex,
+      body: {
+        query: {
+          prefix: {
+            tagName: data.hashtag,
+          },
+        },
+      },
+    });
+
+    const tagList = result.hits.hits.map((item) => {
+      return item._source;
+    });
+
+    return tagList;
+  }
+
+  async getPostsIdsByHashtag(data: {
+    hashtag: string;
+    page: number;
+  }): Promise<{ _ids: string[] }> {
+    const pageSize = 9; // 페이지당 수
+
+    const result = await elastic.client.search({
+      index: elastic.SnsPostsIndex,
+      body: {
+        from: data.page * pageSize, // 시작 인덱스 계산
+        size: pageSize,
+        query: {
+          match: {
+            tags: data.hashtag,
+          },
+        },
+      },
+    });
+
+    const postIdList = result.hits.hits.map((item) => {
+      return item._id;
+    });
+
+    return { _ids: postIdList };
   }
 }
 

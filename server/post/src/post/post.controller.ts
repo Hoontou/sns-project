@@ -26,4 +26,9 @@ export class PostController {
   getCocommentList(data: { commentId: number; page: number }) {
     return this.postService.getCocommentList(data);
   }
+
+  @GrpcMethod('PostService', 'GetPostsIdsByHashtag')
+  getPostsIdsByHashtag(data: { hashtag: string; page: number }) {
+    return this.postService.getPostsIdsByHashtag(data);
+  }
 }

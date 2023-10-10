@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  forwardRef,
+} from '@nestjs/common';
 import { AmqpModule } from './module/amqp/amqp.module';
 import { AlertModule } from './module/alert/alert.module';
 import { MetadataModule } from './module/metadata/metadata.module';
@@ -19,13 +24,14 @@ import { UserController } from './module/user/user.controller';
     AmqpModule,
     MetadataModule,
     AlertModule,
-    PostModule,
+    forwardRef(() => PostModule),
     FflModule,
     AuthModule,
     UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

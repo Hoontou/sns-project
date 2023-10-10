@@ -75,6 +75,10 @@ export interface MetadataGrpcService {
     userIds: string[];
     page: number;
   }): Observable<{ metadatas: MetadataDto[] | undefined }>;
+
+  getMetadatasByPostId(data: {
+    _ids: string[];
+  }): Observable<{ metadatas: MetadataDto[] }>;
 }
 
 export interface FflGrpcService {
@@ -137,4 +141,9 @@ export interface PostGrpcService {
   getCocommentList(data: { commentId: number; page: number }): Observable<{
     cocomments: CocommentContent[];
   }>;
+
+  getPostsIdsByHashtag(data: {
+    hashtag: string;
+    page: number;
+  }): Observable<{ _ids: string[] }>;
 }

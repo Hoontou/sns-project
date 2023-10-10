@@ -6,6 +6,7 @@ import "google/protobuf/wrappers.proto";
 service MetadataService {
   rpc GetMetadatas(getMetadatasReq) returns (getMetadatasRes);
   rpc GetMetadatasLast3Day(GetMetadatasLast3DayReq) returns (GetMetadatasLast3DayRes);
+  rpc GetMetadatasByPostId(GetMetadatasByPostIdReq) returns (GetMetadatasByPostIdRes);
 }
 
 message getMetadatasReq {
@@ -29,5 +30,12 @@ message GetMetadatasLast3DayReq {
   int32 page = 2;
 }
 message GetMetadatasLast3DayRes {
+  repeated Metadata metadatas = 1;
+}
+
+message GetMetadatasByPostIdReq {
+  repeated string _ids = 1;
+}
+message GetMetadatasByPostIdRes {
   repeated Metadata metadatas = 1;
 }

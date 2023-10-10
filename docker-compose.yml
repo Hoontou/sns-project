@@ -68,7 +68,7 @@ services:
       - ./server/post/src:/usr/src/app/src:z
     ports:
       - '4004:80'
-      - '40004:3000'
+      #- '40004:3000'
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development

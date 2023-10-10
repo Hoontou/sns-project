@@ -7,6 +7,7 @@ import Feed from './component/view/Feed/Feed';
 import UserSetting from './component/view/UserSetting/UserSetting';
 import { createBrowserHistory } from 'history';
 import Landing from './component/view/Landing/Landing';
+import SearchHashtag from './component/view/Search/SearchHashtag';
 
 export const history = createBrowserHistory();
 
@@ -22,6 +23,10 @@ function App() {
           <Route path='/feed/:targetUsername' element={<Feed />} />
           <Route path='/feed' element={<Feed />} />
           <Route path='/usersetting' element={<UserSetting />} />
+          <Route
+            path='/search/tag/:targetHashtag'
+            element={<SearchHashtag />}
+          />
         </Routes>
       </Router>
     </>

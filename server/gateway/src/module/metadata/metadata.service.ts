@@ -39,4 +39,10 @@ export class MetadataService {
     }
     return { metadatas };
   }
+
+  async getMetadatasByPostId(data: { _ids: string[] }) {
+    return await lastValueFrom(
+      this.metadataGrpcService.getMetadatasByPostId(data),
+    );
+  }
 }

@@ -1,11 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { CommentItemContent } from 'sns-interfaces';
-import { CocommentContent, PostContent } from 'sns-interfaces/client.interface';
+import {
+  CocommentContent,
+  PostContent,
+  PostFooterContent,
+} from 'sns-interfaces/client.interface';
 import { PostGrpcService } from 'src/grpc/grpc.services';
 import { FflService } from '../ffl/ffl.service';
 import { AmqpService } from 'src/module/amqp/amqp.service';
+import { MetadataService } from '../metadata/metadata.service';
+import { AppService } from 'src/app.service';
 
 @Injectable()
 export class PostService {
@@ -14,6 +20,9 @@ export class PostService {
     @Inject('post') private client: ClientGrpc,
     private fflService: FflService,
     private amqpService: AmqpService,
+    private metadataService: MetadataService,
+    @Inject(forwardRef(() => AppService))
+    private appService: AppService,
   ) {}
   onModuleInit() {
     this.postGrpcService =
@@ -90,5 +99,44 @@ export class PostService {
   }) {
     this.amqpService.sendMsg('post', data, 'addCocomment');
     return;
+  }
+
+  async getPostsByHashtag(
+    data: { hashtag: string; page: number },
+    userId: string,
+  ) {
+    //1 post에 해시태그로 게시글id 가져오기
+    const { _ids } = await lastValueFrom(
+      this.postGrpcService.getPostsIdsByHashtag(data),
+    );
+
+    //2 metadata에 _id들로 metadata 가져오기
+    const { metadatas } = await this.metadataService.getMetadatasByPostId({
+      _ids,
+    });
+
+    if (metadatas === undefined) {
+      return { metadatas: [] };
+    }
+    return { metadatas };
+
+    // //3 app.service의 postfooter메서드한테 postfooter요청
+
+    // const postFooter: PostFooterContent[] = await Promise.all(
+    //   metadatas.map((i) => {
+    //     return this.appService.postFooter({
+    //       userId,
+    //       postId: i.id,
+    //       targetId: i.userId,
+    //     });
+    //   }),
+    // );
+    // //4 리턴
+
+    // //4 정보들을 취합해서 하나의 리스트로 만듦.
+    // const combinedResult: LandingContent[] = metadatas.map((i, index) => {
+    //   return { ...i, ...postFooter[index], userId: crypter.encrypt(i.userId) };
+    // });
+    // return { last3daysPosts: combinedResult };
   }
 }

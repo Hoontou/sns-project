@@ -22,6 +22,8 @@ export interface ProtoGrpcType {
     }
   }
   metadata: {
+    GetMetadatasByPostIdReq: MessageTypeDefinition
+    GetMetadatasByPostIdRes: MessageTypeDefinition
     GetMetadatasLast3DayReq: MessageTypeDefinition
     GetMetadatasLast3DayRes: MessageTypeDefinition
     Metadata: MessageTypeDefinition

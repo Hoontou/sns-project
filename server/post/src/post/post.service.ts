@@ -87,4 +87,8 @@ export class PostService {
       return this.postRepo.cocommentTable.removeLike(data);
     }
   }
+
+  getPostsIdsByHashtag(data: { hashtag: string; page: number }) {
+    return this.hashtagService.getPostsIdsByHashtag(data);
+  }
 }

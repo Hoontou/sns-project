@@ -35,4 +35,17 @@ export class PostController {
   ): Promise<{ cocommentItem: CocommentContent[] }> {
     return this.postService.getCocommentList(body, req.user.userId);
   }
+
+  @Post('/searchhashtag')
+  searchHashtag(@Body() body: { hashtag: string }) {
+    return;
+  }
+
+  @Post('/getpostsbyhashtag')
+  getPostsByHashtag(
+    @Body() body: { hashtag: string; page: number },
+    @Req() req,
+  ) {
+    return this.postService.getPostsByHashtag(body, req.user.userId);
+  }
 }

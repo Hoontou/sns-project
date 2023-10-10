@@ -6,6 +6,7 @@ import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';
 
+/**글에서 태그를 a태그로 감싸서 리턴해줌 */
 export const renderTitle = (title: string) => {
   const tmp = title
     .split(/(#[\w가-힣]+|@[\w가-힣]+)/)

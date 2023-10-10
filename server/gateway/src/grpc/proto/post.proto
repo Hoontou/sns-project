@@ -6,6 +6,7 @@ service PostService {
   rpc GetPost(GetPostReq) returns (GetPostRes) {};
   rpc GetCommentList(GetCommentListReq) returns (GetCommentListRes);
   rpc GetCocommentList(GetCocommentListReq) returns (GetCocommentListRes);
+  rpc GetPostsIdsByHashtag(GetPostsIdsByHashtagReq) returns (GetPostsIdsByHashtagRes);
 }
 
 
@@ -19,11 +20,6 @@ message GetPostRes {
   string id = 4;
 }
 
-message Tag {
-  int32 userId = 1;
-  string username = 2;
-}
-
 
 message Comment {
   int32 commentId = 1;
@@ -34,7 +30,6 @@ message Comment {
   int32 cocommentCount = 6;
   string username = 7;
   string img = 8;
-  optional Tag tag = 9;
 }
 message GetCommentListReq {
   string postId = 1;
@@ -53,8 +48,6 @@ message Cocomment {
   string username = 5;
   string img = 6;
   int32 cocommentId = 7;
-  optional Tag tag = 8;
-
 }
 message GetCocommentListReq {
   int32 commentId = 1;
@@ -62,4 +55,12 @@ message GetCocommentListReq {
 }
 message GetCocommentListRes {
   repeated Cocomment cocomments = 1;
+}
+
+message GetPostsIdsByHashtagReq {
+  string hashtag = 1;
+  int32 page = 2;
+}
+message GetPostsIdsByHashtagRes {
+  repeated string _ids = 1;
 }

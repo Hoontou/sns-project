@@ -86,6 +86,21 @@ const getServer = () => {
         .skip(req.request.page * len);
       res(null, { metadatas });
     },
+    GetMetadatasByPostId: async (req, res) => {
+      const _ids = req.request._ids;
+
+      const metadatas: MetadataDto[] = await metaRepository.db
+        //3일 안으로, 10개씩
+        .find({
+          _id: { $in: _ids },
+        });
+      res(null, {
+        metadatas: metadatas.map((item) => {
+          item.userId = crypter.encrypt(item.userId);
+          return item;
+        }),
+      });
+    },
   } as MetadataServiceHandlers);
   return server;
 };

@@ -1,4 +1,4 @@
-import { Injectable, Req } from '@nestjs/common';
+import { Inject, Injectable, Req, forwardRef } from '@nestjs/common';
 import { UserService } from './module/user/user.service';
 import { FflService } from './module/ffl/ffl.service';
 import { PostService } from './module/post/post.service';
@@ -26,6 +26,7 @@ export class AppService {
   constructor(
     private userService: UserService,
     private fflService: FflService,
+    @Inject(forwardRef(() => PostService))
     private postService: PostService,
     private metadataService: MetadataService,
   ) {}
