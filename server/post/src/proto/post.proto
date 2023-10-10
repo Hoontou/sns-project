@@ -62,5 +62,7 @@ message GetPostsIdsByHashtagReq {
   int32 page = 2;
 }
 message GetPostsIdsByHashtagRes {
-  repeated string _ids = 1;
+  bool searchSuccess = 1;
+  int32 count = 2;
+  repeated string _ids = 3;
 }

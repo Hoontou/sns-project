@@ -24,7 +24,7 @@ function App() {
           <Route path='/feed' element={<Feed />} />
           <Route path='/usersetting' element={<UserSetting />} />
           <Route
-            path='/search/tag/:targetHashtag'
+            path='/search/hashtag/:targetHashtag'
             element={<SearchHashtag />}
           />
         </Routes>

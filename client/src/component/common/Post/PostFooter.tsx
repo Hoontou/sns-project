@@ -8,24 +8,27 @@ import { getElapsedTimeString } from '../../../common/date.parser';
 
 /**글에서 태그를 a태그로 감싸서 리턴해줌 */
 export const renderTitle = (title: string) => {
-  const tmp = title
-    .split(/(#[\w가-힣]+|@[\w가-힣]+)/)
-    .filter((part) => part.trim() !== '');
+  const tmp = title.split(/(#\S+|@\S+)/).filter((part) => part.trim() !== '');
 
-  return tmp.map((item) => {
+  //  const tmp = title
+  // .split(/(#[\w가-힣]+|@[\w가-힣]+)/)
+  // .filter((part) => part.trim() !== '');
+  console.log(tmp);
+
+  return tmp.map((item, index) => {
     if (item.at(0) === '@') {
       return (
-        <>
+        <span key={index * 377}>
           <a href={`/feed/${item.substring(1)}`}>{item}</a>
           &nbsp;
-        </>
+        </span>
       );
     }
     if (item.at(0) === '#') {
       return (
-        <>
-          <a href={`/`}>{item}</a>&nbsp;
-        </>
+        <span key={index * 377}>
+          <a href={`/search/hashtag/${item.substring(1)}`}>{item}</a>&nbsp;
+        </span>
       );
     }
     return item;

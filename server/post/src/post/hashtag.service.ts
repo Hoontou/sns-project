@@ -16,6 +16,7 @@ export class HashtagService {
     //post DOC 삽입. 태그일치 검색을 위한 tag문자열, 전문검색을 위한 title 전문
     const postDoc: SnsPostsDocType = {
       title: postDto.title,
+      createdAt: new Date(),
     };
 
     //title로부터 해시태그만을 추출
@@ -108,9 +109,29 @@ export class HashtagService {
   async getPostsIdsByHashtag(data: {
     hashtag: string;
     page: number;
-  }): Promise<{ _ids: string[] }> {
+  }): Promise<{ searchSuccess: boolean; _ids: string[]; count: number }> {
     const pageSize = 9; // 페이지당 수
 
+    const tagInfo: { tagName: string; count: number } | undefined =
+      data.page === 0
+        ? await elastic.client
+            .get({
+              index: elastic.SnsTagsIndex,
+              id: data.hashtag,
+            })
+            .then((res) => {
+              return res._source;
+            })
+            .catch((err) => {
+              //찾기실패
+              return undefined;
+            })
+        : //첫번째 요청인지 페이지 보고 알아낸 후, 두번째 요청부터는 검색안함
+          { tagName: data.hashtag, count: 0 };
+
+    if (tagInfo === undefined) {
+      return { searchSuccess: false, _ids: [], count: 0 };
+    }
     const result = await elastic.client.search({
       index: elastic.SnsPostsIndex,
       body: {
@@ -121,14 +142,23 @@ export class HashtagService {
             tags: data.hashtag,
           },
         },
+        sort: [
+          {
+            // "created_at"은 문서의 생성일자 필드로 가정합니다. 실제 필드 이름에 따라 수정해야 할 수 있습니다.
+            createdAt: {
+              order: 'asc', // 내림차순으로 정렬 (가장 최근 것이 먼저)
+            },
+          },
+        ],
       },
     });
+    console.log(result.hits.hits);
 
-    const postIdList = result.hits.hits.map((item) => {
+    const postIdList: string[] = result.hits.hits.map((item) => {
       return item._id;
     });
 
-    return { _ids: postIdList };
+    return { _ids: postIdList, count: tagInfo.count, searchSuccess: true };
   }
 }
 

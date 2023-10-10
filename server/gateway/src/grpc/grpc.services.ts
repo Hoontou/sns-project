@@ -145,5 +145,5 @@ export interface PostGrpcService {
   getPostsIdsByHashtag(data: {
     hashtag: string;
     page: number;
-  }): Observable<{ _ids: string[] }>;
+  }): Observable<{ _ids: string[]; count: number; searchSuccess: boolean }>;
 }

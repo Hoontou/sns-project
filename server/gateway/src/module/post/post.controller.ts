@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { PostService } from './post.service';
-import { CommentItemContent } from 'sns-interfaces';
+import { CommentItemContent, MetadataDto } from 'sns-interfaces';
 import { CocommentContent } from 'sns-interfaces/client.interface';
 
 @Controller('post')
@@ -45,7 +45,15 @@ export class PostController {
   getPostsByHashtag(
     @Body() body: { hashtag: string; page: number },
     @Req() req,
-  ) {
+  ): Promise<
+    | {
+        metadatas: MetadataDto[];
+        searchSuccess: true;
+        totalPostCount: number;
+        userId: string;
+      }
+    | { searchSuccess: false }
+  > {
     return this.postService.getPostsByHashtag(body, req.user.userId);
   }
 }

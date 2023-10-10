@@ -106,9 +106,12 @@ export class PostService {
     userId: string,
   ) {
     //1 post에 해시태그로 게시글id 가져오기
-    const { _ids } = await lastValueFrom(
+    const { _ids, count, searchSuccess } = await lastValueFrom(
       this.postGrpcService.getPostsIdsByHashtag(data),
     );
+    if (searchSuccess === false) {
+      return { searchSuccess };
+    }
 
     //2 metadata에 _id들로 metadata 가져오기
     const { metadatas } = await this.metadataService.getMetadatasByPostId({
@@ -116,9 +119,9 @@ export class PostService {
     });
 
     if (metadatas === undefined) {
-      return { metadatas: [] };
+      return { metadatas: [], totalPostCount: count, searchSuccess, userId };
     }
-    return { metadatas };
+    return { metadatas, totalPostCount: count, searchSuccess, userId };
 
     // //3 app.service의 postfooter메서드한테 postfooter요청
 
