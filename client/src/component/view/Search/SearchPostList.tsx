@@ -6,6 +6,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
 import Post from '../../common/Post/Post';
 import Spinner from '../../../common/Spinner';
+import { pageItemLen } from '../../common/Post/Postlist';
 
 export interface MetadataDto {
   id: string;
@@ -76,22 +77,20 @@ const SearchPostList = (props: {
             | { searchSuccess: false } = res.data;
           console.log(data);
 
-          props.setSearchSuccess(data.searchSuccess);
-
-          //1. 태그찾기 실패시 실패세팅하고 리턴
+          //1. 태그찾기 실패시 리턴
           if (data.searchSuccess === false) {
-            setEnablingGetMoreButton(false);
             return;
           }
 
           if (page === 0) {
             //첫 요청일때만 초반세팅한다.
+            props.setSearchSuccess(data.searchSuccess);
             props.setTotalPostCount(data.totalPostCount);
             setUserId(data.userId);
           }
 
           //2. 무한스크롤 핸들링
-          if (data.metadatas.length < 9) {
+          if (data.metadatas.length < pageItemLen) {
             //gateway에서 9개씩 보내줌.
             //갯수 부족하면 무한스크롤 끄기
             setEnablingGetMoreButton(false);

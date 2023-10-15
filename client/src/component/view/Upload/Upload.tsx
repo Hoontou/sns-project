@@ -180,7 +180,7 @@ const Upload = () => {
 
   //웹소켓에 검색날리는 effect, 연속입력 대비해서  타임아웃 걸었음
   useEffect(() => {
-    if (searchRequestString === '') {
+    if (searchRequestString.length < 3 || searchRequestString.at(1) === ' ') {
       return;
     }
 

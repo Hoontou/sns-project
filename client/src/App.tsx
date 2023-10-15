@@ -7,7 +7,7 @@ import Feed from './component/view/Feed/Feed';
 import UserSetting from './component/view/UserSetting/UserSetting';
 import { createBrowserHistory } from 'history';
 import Landing from './component/view/Landing/Landing';
-import SearchHashtag from './component/view/Search/SearchHashtag';
+import SearchPostsByHashtagResultPage from './component/view/Search/SearchPostsByHashtagResultPage';
 
 export const history = createBrowserHistory();
 
@@ -25,7 +25,7 @@ function App() {
           <Route path='/usersetting' element={<UserSetting />} />
           <Route
             path='/search/hashtag/:targetHashtag'
-            element={<SearchHashtag />}
+            element={<SearchPostsByHashtagResultPage />}
           />
         </Routes>
       </Router>

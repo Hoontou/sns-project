@@ -48,7 +48,7 @@ const getServer = () => {
   const server = new grpc.Server();
   server.addService(metadataPackage.MetadataService.service, {
     GetMetadatas: async (req, res) => {
-      const len = 9; //가져올 갯수
+      const len = 12; //가져올 갯수
       const metadatas: MetadataDto[] = await metaRepository.db
         .find({
           userId: req.request.userId ? crypter.decrypt(req.request.userId) : '',
@@ -89,11 +89,9 @@ const getServer = () => {
     GetMetadatasByPostId: async (req, res) => {
       const _ids = req.request._ids;
 
-      const metadatas: MetadataDto[] = await metaRepository.db
-        //3일 안으로, 10개씩
-        .find({
-          _id: { $in: _ids },
-        });
+      const metadatas: MetadataDto[] = await metaRepository.db.find({
+        _id: { $in: _ids },
+      });
       res(null, {
         metadatas: metadatas.map((item) => {
           item.userId = crypter.encrypt(item.userId);

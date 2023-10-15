@@ -4,7 +4,7 @@ import { SnsPostsDocType, elastic } from 'src/configs/elasticsearch';
 
 //해시태그 처리 서비스
 @Injectable()
-export class HashtagService {
+export class SearchService {
   constructor() {
     this.searchHashtag({ hashtag: 'qq' });
   }
@@ -110,7 +110,7 @@ export class HashtagService {
     hashtag: string;
     page: number;
   }): Promise<{ searchSuccess: boolean; _ids: string[]; count: number }> {
-    const pageSize = 9; // 페이지당 수
+    const pageSize = 12; // 페이지당 수
 
     const tagInfo: { tagName: string; count: number } | undefined =
       data.page === 0
@@ -128,6 +128,11 @@ export class HashtagService {
             })
         : //첫번째 요청인지 페이지 보고 알아낸 후, 두번째 요청부터는 검색안함
           { tagName: data.hashtag, count: 0 };
+
+    // const tagInfo =
+    //   data.page === 0
+    //     ? await this.searchHashtag({ hashtag: data.hashtag })
+    //     : { tagName: data.hashtag, count: 0 };
 
     if (tagInfo === undefined) {
       return { searchSuccess: false, _ids: [], count: 0 };

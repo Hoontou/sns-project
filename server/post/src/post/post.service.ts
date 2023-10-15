@@ -6,14 +6,14 @@ import { crypter } from 'src/common/crypter';
 import { CocommentContent } from 'sns-interfaces/client.interface';
 import { PostRepository } from './post.repo';
 import { AddLikeType } from 'src/amqp/handler/exchange.handler';
-import { HashtagService } from './hashtag.service';
+import { SearchService } from './search.service';
 
 @Injectable()
 export class PostService {
   constructor(
     private postRepo: PostRepository,
     @Inject(forwardRef(() => AmqpService)) private amqpService: AmqpService,
-    private hashtagService: HashtagService,
+    private searchService: SearchService,
   ) {}
 
   //userId를 int로 바꾸고 쿼리빌더로 insert 성공
@@ -26,7 +26,7 @@ export class PostService {
     };
     //태그 핸들링 요청, 테이블 삽입 요청
     this.postRepo.addPost(postDto);
-    this.hashtagService.handleHashtag(postDto);
+    this.searchService.handleHashtag(postDto);
     return;
   }
 
@@ -89,6 +89,6 @@ export class PostService {
   }
 
   getPostsIdsByHashtag(data: { hashtag: string; page: number }) {
-    return this.hashtagService.getPostsIdsByHashtag(data);
+    return this.searchService.getPostsIdsByHashtag(data);
   }
 }

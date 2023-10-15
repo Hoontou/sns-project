@@ -90,7 +90,13 @@ const SearchResultModal = (props: {
       return (
         <List sx={{ pt: 0 }}>
           {searchResult.resultList.map((item, index) => (
-            <ListItem key={index}>
+            <ListItem
+              key={index}
+              onClick={() => {
+                props.setSearchbarDisplay(false);
+                props.setClickedTag('#' + item.tagName);
+              }}
+            >
               <div>
                 <div
                   style={{

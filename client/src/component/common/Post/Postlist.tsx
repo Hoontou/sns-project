@@ -23,6 +23,8 @@ export const emptyMetadata: Metadata = {
   createdAt: '',
 };
 
+export const pageItemLen = 12;
+
 //targetId가 없으면 내 피드로 접근했다는 뜻.
 //내 포스트를 가져오면 됨.
 const Postlist = (props: { userId: string; targetId?: string }) => {
@@ -62,7 +64,7 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
         })
         .then((res) => {
           const metadatas: Metadata[] = res.data.metadatas;
-          if (metadatas.length < 9) {
+          if (metadatas.length < pageItemLen) {
             //gateway에서 9개씩 보내줌.
             setEnablingGetMoreButton(false);
           }
