@@ -181,6 +181,7 @@ const Upload = () => {
   //웹소켓에 검색날리는 effect, 연속입력 대비해서  타임아웃 걸었음
   useEffect(() => {
     if (searchRequestString.length < 3 || searchRequestString.at(1) === ' ') {
+      setSearchbarDisplay(false);
       return;
     }
 
@@ -209,7 +210,7 @@ const Upload = () => {
 
   /**타이틀에 태그만 있을 시 안꺼지는거 fix위해 필요 */
   useEffect(() => {
-    if (title === '@' || title === '') {
+    if (title === '@' || title === '#' || title === '') {
       setSearchbarDisplay(false);
     }
   }, [title]);

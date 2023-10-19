@@ -26,7 +26,7 @@ const Navbar = (props: { value: number }) => {
           <BottomNavigationAction
             label='검색'
             icon={<SearchIcon />}
-            href='/searchpli'
+            href='/search'
           />
           <BottomNavigationAction
             label='컬렉션'

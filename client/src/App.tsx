@@ -1,13 +1,15 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Signup from './component/view/Signup/Signup';
-import Signin from './component/view/Signin/Signin';
-import Upload from './component/view/Upload/Upload';
+import Signup from './component/page/Signup/Signup';
+import Signin from './component/page/Signin/Signin';
+import Upload from './component/page/Upload/Upload';
 import AlertSock from './component/AlertSocket';
-import Feed from './component/view/Feed/Feed';
-import UserSetting from './component/view/UserSetting/UserSetting';
+import Feed from './component/page/Feed/Feed';
+import UserSetting from './component/page/UserSetting/UserSetting';
 import { createBrowserHistory } from 'history';
-import Landing from './component/view/Landing/Landing';
-import SearchPostsByHashtagResultPage from './component/view/Search/SearchPostsByHashtagResultPage';
+import Landing from './component/page/Landing/Landing';
+import SearchPostsByHashtagResultPage from './component/page/Search/SearchPostsByHashtagResultPage';
+import MainSearchPage from './component/page/Search/MainSearch';
+import SearchAllPage from './component/page/Search/SearchAll/SearchAllPage';
 
 export const history = createBrowserHistory();
 
@@ -23,6 +25,8 @@ function App() {
           <Route path='/feed/:targetUsername' element={<Feed />} />
           <Route path='/feed' element={<Feed />} />
           <Route path='/usersetting' element={<UserSetting />} />
+          <Route path='/search' element={<MainSearchPage />} />
+          <Route path='/search/all/:searchString' element={<SearchAllPage />} />
           <Route
             path='/search/hashtag/:targetHashtag'
             element={<SearchPostsByHashtagResultPage />}

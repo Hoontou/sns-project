@@ -8,6 +8,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Cocomment from './Cocomment';
 import { CommentItems, SubmitForm } from './etc';
 import axios from 'axios';
+import { renderTitle } from '../Post/PostFooter';
 
 const CommentItem = (props: {
   content: CommentItems;
@@ -134,7 +135,9 @@ const CommentItem = (props: {
               {/* {props.content.createdAt} */}
               {getElapsedTimeString(props.content.createdAt)}
             </span>
-            <div style={{ fontSize: '0.9rem' }}>{props.content.comment}</div>
+            <div style={{ fontSize: '0.9rem' }}>
+              {renderTitle(props.content.comment)}
+            </div>
 
             {props.content.cocommentCount > 0 && !openCocomment && (
               <span

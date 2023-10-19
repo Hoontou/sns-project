@@ -1,29 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import Spinner from '../../common/Spinner';
-import { SearchResult } from '../page/Upload/Upload';
 import { Avatar, List, ListItem, ListItemAvatar } from '@mui/material';
-import sample from '../../asset/sample1.jpg';
-import { requestUrl } from '../../common/etc';
+import sample from '../../../asset/sample1.jpg';
+import { requestUrl } from '../../../common/etc';
+import { SearchResult } from '../Upload/Upload';
+import Spinner from '../../../common/Spinner';
+import { useNavigate } from 'react-router-dom';
 
-const modalStyle: React.CSSProperties = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '25%', // 화면 높이의 20%
-  background: 'white',
-  // display: 'flex',
-  alignItems: 'center',
-  zIndex: '999',
-  overflow: 'auto',
-};
-
-const SearchResultModal = (props: {
+const MainSearchResultModal = (props: {
   spin: boolean;
   searchResult: SearchResult | undefined;
-  setSearchbarDisplay: React.Dispatch<React.SetStateAction<boolean>>;
-  setClickedTag: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (props.searchResult === undefined) {
       return;
@@ -43,19 +31,18 @@ const SearchResultModal = (props: {
     }
     if (searchResult.type === 'user') {
       return (
-        <List sx={{ pt: 0 }}>
+        <List sx={{ pt: 0 }} style={{ marginTop: '0.3rem' }}>
           {searchResult.resultList.map((item, index) => (
             <ListItem
               key={index}
               onClick={() => {
-                props.setSearchbarDisplay(false);
-                props.setClickedTag('@' + item.username);
+                navigate(`/feed/${item.username.substring(0)}`);
               }}
             >
               <ListItemAvatar>
                 <Avatar
                   sx={{ width: 50, height: 50 }}
-                  style={{ marginLeft: '1.3rem' }}
+                  style={{ marginLeft: '-0.4rem' }}
                   alt={String(index)}
                   src={item.img === '' ? sample : `${requestUrl}/${item.img}`}
                 ></Avatar>
@@ -63,7 +50,6 @@ const SearchResultModal = (props: {
               <div>
                 <div
                   style={{
-                    marginLeft: '1rem',
                     fontSize: '1.4rem',
                     marginTop: '-0.2rem',
                   }}
@@ -72,7 +58,6 @@ const SearchResultModal = (props: {
                 </div>
                 <div
                   style={{
-                    marginLeft: '1rem',
                     marginTop: '-0.4rem',
                     fontSize: '0.9rem',
                   }}
@@ -88,19 +73,18 @@ const SearchResultModal = (props: {
 
     if (searchResult.type === 'hashtag') {
       return (
-        <List sx={{ pt: 0 }}>
+        <List sx={{ pt: 0 }} style={{ marginTop: '0.3rem' }}>
           {searchResult.resultList.map((item, index) => (
             <ListItem
               key={index}
               onClick={() => {
-                props.setSearchbarDisplay(false);
-                props.setClickedTag('#' + item.tagName);
+                navigate(`/search/hashtag/${item.tagName.substring(0)}`);
               }}
             >
               <div>
                 <div
                   style={{
-                    marginLeft: '1rem',
+                    marginLeft: '-0.4rem',
                     fontSize: '1.4rem',
                     marginTop: '-0.2rem',
                   }}
@@ -109,7 +93,7 @@ const SearchResultModal = (props: {
                 </div>
                 <div
                   style={{
-                    marginLeft: '1rem',
+                    marginLeft: '-0.4rem',
                     marginTop: '-0.4rem',
                     fontSize: '0.9rem',
                   }}
@@ -130,9 +114,9 @@ const SearchResultModal = (props: {
         style={{
           fontSize: '1.5rem',
           color: 'gray',
-          position: 'absolute',
-          top: '40%',
-          left: '15%',
+          justifyContent: 'center',
+          display: 'flex',
+          marginTop: '7rem',
         }}
       >
         아무것도 없어요.
@@ -142,7 +126,7 @@ const SearchResultModal = (props: {
     );
   return (
     <div>
-      <div style={modalStyle}>
+      <div>
         {props.spin && (
           <div style={{ position: 'absolute', top: '40%', left: '45%' }}>
             <Spinner />
@@ -154,4 +138,4 @@ const SearchResultModal = (props: {
   );
 };
 
-export default SearchResultModal;
+export default MainSearchResultModal;

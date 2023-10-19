@@ -7,6 +7,7 @@ import { getElapsedTimeString } from '../../../common/date.parser';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CocommentContent } from 'sns-interfaces/client.interface';
+import { renderTitle } from '../Post/PostFooter';
 
 //유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
 
@@ -97,7 +98,7 @@ const Cocomment = (props: { content: CocommentContent; key: number }) => {
                 {getElapsedTimeString(props.content.createdAt)}
               </span>
               <div style={{ fontSize: '0.8rem' }}>
-                {props.content.cocomment}
+                {renderTitle(props.content.cocomment)}
               </div>
             </div>
           </div>

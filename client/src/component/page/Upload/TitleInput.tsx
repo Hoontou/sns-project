@@ -16,7 +16,6 @@ const TitleInput = (props: {
   // const [tagSearchUnderBarDisplay, TagsearchUnderBarDisplay] =
   //   useState<boolean>(false);
   const [socketConnected, setConnected] = useState<boolean>(false);
-  const [selectedTag, setSelectedTag] = useState<string>('');
   const [targetTagIndex, setTargetTagIndex] = useState<number>(0);
 
   const onTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +44,6 @@ const TitleInput = (props: {
       return;
     }
 
-    setSelectedTag(diff.changedTag);
     //여기까지 왔으면 태그변경 했다.
     //변경된 태그를 웹소켓에 날려서 결과를 가져온 후 태그서치언더바를 띄워서 디스플레이 한다.
     //1. 먼저 웹소켓 연결
@@ -129,12 +127,13 @@ const TitleInput = (props: {
   const replaceTagToTitle = (tag: string) => {
     // const tmpList = [...tags];
     // tmpList[indexOfTargetTag] = tag;
+    console.log(tag);
 
-    // const splitedTitle = props.title
-    //   .split(/(#[\w가-힣]+|@[\w가-힣]+)/)
-    //   .filter((part) => part.trim() !== '');
+    const splitedTitle = props.title
+      .split(/(#[\w가-힣]+|@[\w가-힣]+)/)
+      .filter((part) => part.trim() !== '');
 
-    const splitedTitle = splitTitle(props.title);
+    // const splitedTitle = splitTitle(props.title);
 
     // const tmp = splitedTitle.map((item) => {
     //   if (selectedTag === item) {
@@ -142,10 +141,11 @@ const TitleInput = (props: {
     //   }
     //   return item;
     // });
-    splitedTitle[targetTagIndex] = tag;
 
-    props.setTitle(splitedTitle.join(''));
-    setSelectedTag('');
+    splitedTitle[targetTagIndex] = tag;
+    console.log(splitedTitle);
+
+    props.setTitle(splitedTitle.join(' '));
 
     return;
   };

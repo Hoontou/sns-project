@@ -20,6 +20,9 @@ import {
 import { CommentItemContent } from 'sns-interfaces';
 import CommentItem from '../../common/Comment/CommentItem';
 import CommentInput from '../../common/Comment/CommentInput';
+import { SearchResult } from '../Upload/Upload';
+import { Socket, io } from 'socket.io-client';
+import SearchResultModal from '../../common/SearchResultModal';
 
 const LandingComment = (props: {
   index: number;
@@ -39,6 +42,78 @@ const LandingComment = (props: {
   });
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
+
+  const [submitingComment, setSubmitingComment] = useState<string>('');
+
+  //upload에서 복붙한 코드
+  const [searchSocket, setSearchSocket] = useState<Socket | undefined>(
+    undefined
+  );
+  const [searchRequestString, setSearchRequestString] = useState<string | ''>(
+    ''
+  );
+  const [searchResult, setSearchResult] = useState<SearchResult | undefined>(
+    undefined
+  );
+
+  //검색결과창 컨트롤
+  const [searchBarSpin, setSearchBarSpin] = useState<boolean>(false);
+  const [searchBarDisplay, setSearchbarDisplay] = useState<boolean>(false);
+  const [clickedTag, setClickedTag] = useState<string>('');
+  //연속입력에 대한 검색딜레이 설정
+  let timeoutId: NodeJS.Timeout | null = null;
+  const delay = 700; //ms기준임
+
+  //소켓연결 함수, 자식인 titleInput에서 실행함
+  const connectSocket = () => {
+    if (searchSocket === undefined) {
+      const socket = io();
+      socket.on('searchUserOrHashtagResult', (data: SearchResult) => {
+        setSearchResult(data);
+        //데이터 가져왔으면 스핀멈춘다
+        setSearchBarSpin(false);
+      });
+      setSearchSocket(socket);
+    }
+  };
+
+  //웹소켓에 검색날리는 effect, 연속입력 대비해서  타임아웃 걸었음
+  useEffect(() => {
+    if (searchRequestString.length < 3 || searchRequestString.at(1) === ' ') {
+      return;
+    }
+
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    timeoutId = setTimeout(() => {
+      console.log('send search string :', searchRequestString);
+      //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
+      if (searchBarDisplay === false) {
+        setSearchbarDisplay(true);
+      }
+      setSearchBarSpin(true);
+      searchSocket?.emit('searchUserOrHashtag', {
+        searchString: searchRequestString,
+      });
+    }, delay);
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [searchRequestString]);
+
+  /**타이틀에 태그만 있을 시 안꺼지는거 fix위해 필요 */
+  useEffect(() => {
+    if (submitingComment === '@' || submitingComment === '') {
+      setSearchbarDisplay(false);
+    }
+  }, [submitingComment]);
+
+  //여기까지
 
   const setSubmitFormToDefault = () => {
     setSubmitForm({
@@ -119,8 +194,8 @@ const LandingComment = (props: {
   };
 
   /**CommentInput에서 호출, 이거 호출이전에 submitForm의 수정먼저 수행. */
-  const submitNewComment = async (value: string) => {
-    if (value === '') {
+  const submitNewComment = async () => {
+    if (submitingComment === '') {
       return;
     }
     //1. submitForm의 타입체크 후 post할 url 결정해서 axios
@@ -129,7 +204,7 @@ const LandingComment = (props: {
     if (submitForm.type === 'cocomment') {
       //대댓작성 request
       axios.post('/gateway/post/addcocomment', {
-        cocomment: value,
+        cocomment: submitingComment,
         commentId: submitForm.commentId,
       });
 
@@ -147,7 +222,7 @@ const LandingComment = (props: {
         img,
         username,
         userId,
-        cocomment: value,
+        cocomment: submitingComment,
       };
 
       //해당하는 댓글의 대댓에 추가후
@@ -170,7 +245,7 @@ const LandingComment = (props: {
     if (submitForm.type === 'comment') {
       //댓 작성 request
       axios.post('/gateway/post/addcomment', {
-        comment: value,
+        comment: submitingComment,
         postId: props.postFooterContent.id,
       });
 
@@ -187,7 +262,7 @@ const LandingComment = (props: {
         ...defaultCommentItemContent,
         img,
         username,
-        comment: value,
+        comment: submitingComment,
         userId,
         cocomments: [],
       };
@@ -330,12 +405,26 @@ const LandingComment = (props: {
             </div>
             <div>
               <CommentInput
+                setSubmitingComment={setSubmitingComment}
                 submitNewComment={submitNewComment}
                 setSubmitForm={setSubmitForm}
                 submitForm={submitForm}
                 setSubmitFormToDefault={setSubmitFormToDefault}
+                submitingComment={submitingComment}
+                setSearchbarDisplay={setSearchbarDisplay}
+                connectSocket={connectSocket}
+                setSearchRequestString={setSearchRequestString}
+                clickedTag={clickedTag}
               />
             </div>
+            {searchBarDisplay && (
+              <SearchResultModal
+                spin={searchBarSpin}
+                searchResult={searchResult}
+                setSearchbarDisplay={setSearchbarDisplay}
+                setClickedTag={setClickedTag}
+              />
+            )}
           </div>
         </div>
       )}
