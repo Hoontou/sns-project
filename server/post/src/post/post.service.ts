@@ -26,7 +26,7 @@ export class PostService {
     };
     //태그 핸들링 요청, 테이블 삽입 요청
     this.postRepo.addPost(postDto);
-    this.searchService.handleHashtag(postDto);
+    this.searchService.indexPostDoc(postDto);
     return;
   }
 
@@ -86,9 +86,5 @@ export class PostService {
     if (data.type === 'cocomment') {
       return this.postRepo.cocommentTable.removeLike(data);
     }
-  }
-
-  getPostsIdsByHashtag(data: { hashtag: string; page: number }) {
-    return this.searchService.getPostsIdsByHashtag(data);
   }
 }

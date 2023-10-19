@@ -8,8 +8,8 @@ import UserSetting from './component/page/UserSetting/UserSetting';
 import { createBrowserHistory } from 'history';
 import Landing from './component/page/Landing/Landing';
 import SearchPostsByHashtagResultPage from './component/page/Search/SearchPostsByHashtagResultPage';
-import MainSearchPage from './component/page/Search/MainSearch';
 import SearchAllPage from './component/page/Search/SearchAll/SearchAllPage';
+import MainSearchPage from './component/page/Search/MainSearchPage';
 
 export const history = createBrowserHistory();
 

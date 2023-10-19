@@ -4,12 +4,14 @@ import { GrpcMethod } from '@nestjs/microservices';
 import { PostContent } from 'sns-interfaces/client.interface';
 import { PostTable } from './repository/post.table';
 import { PostRepository } from './post.repo';
+import { SearchService } from './search.service';
 
 @Controller('post')
 export class PostController {
   constructor(
     private postService: PostService,
     private postRepo: PostRepository,
+    private searchService: SearchService,
   ) {}
 
   @GrpcMethod('PostService', 'GetPost')
@@ -29,6 +31,11 @@ export class PostController {
 
   @GrpcMethod('PostService', 'GetPostsIdsByHashtag')
   getPostsIdsByHashtag(data: { hashtag: string; page: number }) {
-    return this.postService.getPostsIdsByHashtag(data);
+    return this.searchService.getPostsIdsByHashtag(data);
+  }
+
+  @GrpcMethod('PostService', 'SearchPostIdsBySearchString')
+  searchPostsIdsByString(data: { searchString: string; page: number }) {
+    return this.searchService.searchPostIdsBySearchString(data);
   }
 }

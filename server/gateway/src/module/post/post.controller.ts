@@ -56,4 +56,9 @@ export class PostController {
   > {
     return this.postService.getPostsByHashtag(body, req.user.userId);
   }
+
+  @Post('/searchpostsbysearchstring')
+  searchPostsByString(@Body() body: { searchString: string; page: number }) {
+    return this.postService.searchPostsBySearchString(body);
+  }
 }

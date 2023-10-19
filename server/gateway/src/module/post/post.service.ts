@@ -142,4 +142,23 @@ export class PostService {
     // });
     // return { last3daysPosts: combinedResult };
   }
+
+  async searchPostsBySearchString(data: {
+    searchString: string;
+    page: number;
+  }) {
+    //1. post에 요청날려서  string으로 매치되는 포스트들의 id를 가져옴
+    const { _ids } = await lastValueFrom(
+      this.postGrpcService.searchPostIdsBySearchString(data),
+    );
+    //2. metadata에 _id들로 metadata 가져오기
+    const { metadatas } = await this.metadataService.getMetadatasByPostId({
+      _ids,
+    });
+
+    if (metadatas === undefined) {
+      return { metadatas: [] };
+    }
+    return { metadatas };
+  }
 }

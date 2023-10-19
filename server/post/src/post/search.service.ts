@@ -12,11 +12,11 @@ export class SearchService {
   //해시태그 존재여부 체크후 없으면 추가,
   //해시태그가 사용된 횟수 카운트? 필요할까 업데이트가 꽤 많을듯
   //해시태그 추출, postId와 해시태그 나열해서 엘라스틱에 저장
-  async handleHashtag(postDto: PostDto) {
+  async indexPostDoc(postDto: PostDto) {
     //post DOC 삽입. 태그일치 검색을 위한 tag문자열, 전문검색을 위한 title 전문
     const postDoc: SnsPostsDocType = {
-      title: postDto.title,
-      createdAt: new Date(),
+      title: postDto.title.replace(/[@#]/g, ''), //검색에 잘 잡히게 태그문자열 삭제
+      createdAt: new Date(), //이거 굳이 필요한지 고민중임.
     };
 
     //title로부터 해시태그만을 추출
@@ -147,14 +147,13 @@ export class SearchService {
             tags: data.hashtag,
           },
         },
-        sort: [
-          {
-            // "created_at"은 문서의 생성일자 필드로 가정합니다. 실제 필드 이름에 따라 수정해야 할 수 있습니다.
-            createdAt: {
-              order: 'asc', // 내림차순으로 정렬 (가장 최근 것이 먼저)
-            },
-          },
-        ],
+        // sort: [
+        //   {
+        //     createdAt: {
+        //       order: 'asc', // 내림차순으로 정렬 (가장 최근 것이 먼저)
+        //     },
+        //   },
+        // ],
       },
     });
     console.log(result.hits.hits);
@@ -164,6 +163,41 @@ export class SearchService {
     });
 
     return { _ids: postIdList, count: tagInfo.count, searchSuccess: true };
+  }
+
+  async searchPostIdsBySearchString(data: {
+    searchString: string;
+    page: number;
+  }) {
+    const pageSize = 12; // 페이지당 수
+
+    const result = await elastic.client.search({
+      index: elastic.SnsPostsIndex,
+      body: {
+        from: data.page * pageSize, // 시작 인덱스 계산
+        size: pageSize,
+        query: {
+          //prefix로 할지 match로 할지 고민된다. 일단 prefix로 해놨음
+          prefix: {
+            title: data.searchString,
+          },
+        },
+        // sort: [
+        //   {
+        //     createdAt: {
+        //       order: 'asc', // 내림차순으로 정렬 (가장 최근 것이 먼저)
+        //     },
+        //   },
+        // ],
+      },
+    });
+    console.log(result.hits.hits);
+
+    const postIdList: string[] = result.hits.hits.map((item) => {
+      return item._id;
+    });
+
+    return { _ids: postIdList };
   }
 }
 

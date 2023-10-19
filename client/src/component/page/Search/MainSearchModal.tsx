@@ -125,15 +125,20 @@ const MainSearchResultModal = (props: {
       makeCard(props.searchResult)
     );
   return (
-    <div>
-      <div>
-        {props.spin && (
-          <div style={{ position: 'absolute', top: '40%', left: '45%' }}>
-            <Spinner />
-          </div>
-        )}
-        {!props.spin && renderItem}
-      </div>
+    <div
+      style={{
+        position: 'absolute',
+        zIndex: 888,
+        backgroundColor: 'white',
+        width: '100%',
+      }}
+    >
+      {props.spin && (
+        <div style={{ position: 'absolute', top: '40%', left: '45%' }}>
+          <Spinner />
+        </div>
+      )}
+      {!props.spin && renderItem}
     </div>
   );
 };

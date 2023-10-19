@@ -35,7 +35,7 @@ const MainSearchPage = () => {
           openSearchModal={openSearchModal}
         />
       </div>
-      <div>{!openSearchModal && <>this is main search page</>}</div>
+      <div>this is main search page</div>
       <div>
         <Navbar value={1} />
       </div>

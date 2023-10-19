@@ -146,4 +146,9 @@ export interface PostGrpcService {
     hashtag: string;
     page: number;
   }): Observable<{ _ids: string[]; count: number; searchSuccess: boolean }>;
+
+  searchPostIdsBySearchString(data: {
+    searchString: string;
+    page: number;
+  }): Observable<{ _ids: string[] }>;
 }
