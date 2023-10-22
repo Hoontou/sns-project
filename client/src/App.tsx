@@ -12,6 +12,7 @@ import SearchAllPage from './component/page/Search/SearchAll/SearchAllPage';
 import MainSearchPage from './component/page/Search/MainSearchPage';
 
 export const history = createBrowserHistory();
+export const primaryColor = '#0d47a1';
 
 function App() {
   return (

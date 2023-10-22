@@ -8,6 +8,7 @@ service PostService {
   rpc GetCocommentList(GetCocommentListReq) returns (GetCocommentListRes);
   rpc GetPostsIdsByHashtag(GetPostsIdsByHashtagReq) returns (GetPostsIdsByHashtagRes);
   rpc SearchPostIdsBySearchString(SearchPostIdsBySearchStringReq) returns (SearchPostIdsBySearchStringRes);
+  rpc SearchHashtagsBySearchString(SearchHashtagsBySearchStringReq) returns (SearchHashtagsBySearchStringRes);
 }
 
 
@@ -74,4 +75,16 @@ message SearchPostIdsBySearchStringReq {
 }
 message SearchPostIdsBySearchStringRes {
   repeated string _ids = 1;
+}
+
+message SearchHashtagsBySearchStringReq {
+  string searchString = 1;
+  int32 page = 0;
+}
+message SearchHashtagsBySearchStringRes {
+  repeated tags searchedTags = 1;
+}
+message tags {
+  string tagName = 1;
+  int32 count = 2;
 }

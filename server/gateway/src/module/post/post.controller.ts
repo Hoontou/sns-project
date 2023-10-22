@@ -61,4 +61,11 @@ export class PostController {
   searchPostsByString(@Body() body: { searchString: string; page: number }) {
     return this.postService.searchPostsBySearchString(body);
   }
+
+  @Post('/searchHashtagsBySearchString')
+  searchHashtagsBySearchString(
+    @Body() body: { searchString: string; page: number },
+  ) {
+    return this.postService.searchHashtagsBySearchString(body);
+  }
 }

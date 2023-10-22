@@ -130,9 +130,7 @@ const SearchResultModal = (props: {
         style={{
           fontSize: '1.5rem',
           color: 'gray',
-          position: 'absolute',
-          top: '40%',
-          left: '15%',
+          marginTop: '6rem',
         }}
       >
         아무것도 없어요.

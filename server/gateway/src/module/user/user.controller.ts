@@ -37,4 +37,11 @@ export class UserController {
       crypter.decrypt(req.user.userId),
     );
   }
+
+  @Post('/searchusersbysearchstring')
+  searchUsersBySearchString(
+    @Body() body: { searchString: string; page: number },
+  ) {
+    return this.userService.searchUsersBySearchString(body);
+  }
 }

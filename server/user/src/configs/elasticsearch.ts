@@ -57,6 +57,56 @@ class Elasticsearch {
       console.log(error);
     }
   }
+
+  async searchUsersBySearchString(data: {
+    searchString: string;
+    page: number;
+  }) {
+    const pageSize = 20; // 페이지당 수
+
+    const string = data.searchString + '*';
+
+    //와일드카드(프리픽스랑 비슷한듯)로 검색을 여러필드에서 수행함
+    const result = await elastic.client.search({
+      index: this.SnsUsersIndex,
+      body: {
+        from: data.page * pageSize, // 시작 인덱스 계산
+        size: pageSize,
+        query: {
+          bool: {
+            should: [
+              {
+                wildcard: {
+                  username: string,
+                },
+              },
+              {
+                wildcard: {
+                  introduceName: string,
+                },
+              },
+              {
+                wildcard: {
+                  introduce: string,
+                },
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    const userInfoList: {
+      username: string;
+      introduce: string;
+      img: string;
+      introduceName: string;
+    }[] = result.hits.hits.map((item) => {
+      return item._source;
+    });
+
+    return { userList: userInfoList };
+  }
 }
 
 export const elastic = new Elasticsearch();

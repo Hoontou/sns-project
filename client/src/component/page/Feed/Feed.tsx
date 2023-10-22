@@ -6,6 +6,7 @@ import { UserInfo } from 'sns-interfaces/client.interface';
 import Userinfo from '../../common/Userinfo/Userinfo';
 import Postlist from '../../common/Post/Postlist';
 import Navbar from '../../common/Navbar/Navbar';
+import Spinner from '../../../common/Spinner';
 
 export const emptyUserInfo: UserInfo = {
   userId: '',
@@ -33,7 +34,7 @@ const Feed = () => {
     introduceName: '',
   });
   const [userinfo, setUserinfo] = useState<UserInfo>(emptyUserInfo);
-  const [feedType, setFeedType] = useState<'otherInfo' | 'myInfo' | null>(null);
+  const [feedType, setFeedType] = useState<'otherInfo' | 'myInfo'>('otherInfo');
 
   useEffect(() => {
     //타겟유저네임만 보내면, 가져와야할게 내정보인지 남의정보인지 판단.
@@ -74,9 +75,12 @@ const Feed = () => {
     <div
       style={{ width: '90%', margin: '0.7rem auto', paddingBottom: '3.5rem' }}
     >
-      {spin ? (
-        'waiting...'
-      ) : (
+      {spin && (
+        <div style={{ position: 'absolute', left: '45%', top: '30%' }}>
+          <Spinner />
+        </div>
+      )}
+      {!spin && (
         <>
           <Userinfo
             spin={spin}
@@ -91,10 +95,12 @@ const Feed = () => {
                 : userinfo.userId
             }
           />
+
+          {/* 내브바 밖으로 빼면 feedType이 나중에 업데이트 돼서 
+          내브바상태 업데이트 안됌 */}
+          <Navbar value={feedType === 'myInfo' ? 4 : 0} />
         </>
       )}
-
-      <Navbar value={0} />
     </div>
   );
 };

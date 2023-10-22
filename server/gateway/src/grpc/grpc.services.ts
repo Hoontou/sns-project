@@ -7,6 +7,7 @@ import {
   SignUpDto,
 } from 'sns-interfaces';
 import { CocommentContent, PostContent } from 'sns-interfaces/client.interface';
+import { SearchedUser } from 'sns-interfaces/grpc.interfaces';
 
 export interface AuthGrpcService {
   signIn(SignInReq: SignInDto): Observable<AuthResultRes>;
@@ -64,6 +65,11 @@ export interface UserGrpcService {
     userId: string;
     introduceName: string;
   }): Observable<{ success: boolean }>;
+
+  searchUsersBySearchString(data: {
+    searchString: string;
+    page: number;
+  }): Observable<{ userList: SearchedUser[] }>;
 }
 
 export interface MetadataGrpcService {
@@ -151,4 +157,9 @@ export interface PostGrpcService {
     searchString: string;
     page: number;
   }): Observable<{ _ids: string[] }>;
+
+  searchHashtagsBySearchString(data: {
+    searchString: string;
+    page: number;
+  }): Observable<{ searchedTags: { tagName: string; count: number }[] }>;
 }

@@ -5,12 +5,14 @@ import { SearchResult } from '../Upload/Upload';
 import { InputAdornment, OutlinedInput } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import MainSearchResultModal from './MainSearchModal';
+import { useNavigate } from 'react-router-dom';
 
 const SearchBar = (props: {
   setOpenSearchModal: Dispatch<React.SetStateAction<boolean>>;
   openSearchModal: boolean;
   defaultValue?: string;
 }) => {
+  const navigate = useNavigate();
   const [searchSocket, setSearchSocket] = useState<Socket | undefined>(
     undefined
   );
@@ -49,10 +51,6 @@ const SearchBar = (props: {
   useEffect(() => {
     connectSocket();
 
-    if (props.openSearchModal === false) {
-      return;
-    }
-
     //글자없어지면 검색결과 삭제
     //해시태그 검색일 때, 두글자부터 검색시작
     if (searchRequestString.at(0) === '#' && searchRequestString.length < 2) {
@@ -65,6 +63,9 @@ const SearchBar = (props: {
       return;
     }
 
+    //스핀돌리고
+    setSearchBarSpin(true);
+
     //검색탭에선 기본이 사람검색이기 때문에, 해시태그 검색이 아니면 @ 붙여줌
     const tmpString =
       searchRequestString.at(0) !== '#'
@@ -76,10 +77,8 @@ const SearchBar = (props: {
     }
 
     timeoutId = setTimeout(() => {
-      console.log('send search string :', tmpString);
-      //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
+      //데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
 
-      setSearchBarSpin(true);
       searchSocket?.emit('searchUserOrHashtag', {
         searchString: tmpString,
       });
@@ -90,7 +89,42 @@ const SearchBar = (props: {
         clearTimeout(timeoutId);
       }
     };
-  }, [searchRequestString, props.openSearchModal]);
+  }, [searchRequestString]);
+
+  useEffect(() => {
+    if (searchRequestString === '') {
+      return;
+    }
+    if (props.openSearchModal === true && searchResult === undefined) {
+      connectSocket();
+
+      //검색탭에선 기본이 사람검색이기 때문에, 해시태그 검색이 아니면 @ 붙여줌
+      const tmpString =
+        searchRequestString.at(0) !== '#'
+          ? '@' + searchRequestString
+          : searchRequestString;
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = setTimeout(() => {
+        console.log('send search string :', tmpString);
+        //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
+
+        setSearchBarSpin(true);
+        searchSocket?.emit('searchUserOrHashtag', {
+          searchString: tmpString,
+        });
+      }, delay);
+
+      return () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      };
+    }
+  }, [props.openSearchModal]);
 
   //뒤로가기로 검색모달 끄는 useEffect
   useEffect(() => {
@@ -142,11 +176,17 @@ const SearchBar = (props: {
         fullWidth
         size='small'
         onChange={onStringHandler}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            window.location.replace(`/search/all/${searchRequestString}`);
+          }
+        }}
       />
       {props.openSearchModal && (
         <MainSearchResultModal
           spin={searchBarSpin}
           searchResult={searchResult}
+          searchString={searchRequestString}
         />
       )}
     </div>

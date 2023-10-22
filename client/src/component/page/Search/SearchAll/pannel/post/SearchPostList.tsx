@@ -1,37 +1,15 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Box, Button, Grid, Modal } from '@mui/material';
-import { requestUrl } from '../../../common/etc';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
-import Post from '../../common/Post/Post';
-import Spinner from '../../../common/Spinner';
-import { pageItemLen } from '../../common/Post/Postlist';
+import { Metadata, emptyMetadata } from '../../../SearchPostList';
+import { emptyPostFooterContent } from '../../../../../common/Post/post.interfaces';
+import Spinner from '../../../../../../common/Spinner';
+import Post from '../../../../../common/Post/Post';
+import { requestUrl } from '../../../../../../common/etc';
+import { pageItemLen } from '../../../../../common/Post/Postlist';
 
-export interface MetadataDto {
-  id: string;
-  userId: string;
-  files: string[];
-} //sns-interfaces에 있는걸 쓰려고 했는데 리액트에서 자체적으로 _id에서 _를 빼버리고 id로 만들어버림.
-//그래서 그냥 여기다 새로정의
-
-export interface Metadata extends MetadataDto {
-  createdAt: string;
-}
-export const emptyMetadata: Metadata = {
-  id: '',
-  userId: '',
-  files: [''],
-  createdAt: '',
-};
-
-//targetId가 없으면 내 피드로 접근했다는 뜻.
-//내 포스트를 가져오면 됨.
-const SearchPostList = (props: {
-  targetHashtag?: string;
-  setSearchSuccess: React.Dispatch<React.SetStateAction<boolean>>;
-  setTotalPostCount: React.Dispatch<React.SetStateAction<number>>;
-}) => {
+const SearchPostList = (props: { searchString?: string; userId: string }) => {
   const [spin, setSpin] = useState<boolean>(true);
   const [posts, setPosts] = useState<Metadata[]>([]);
   const [open, setOpen] = useState(false);
@@ -39,7 +17,6 @@ const SearchPostList = (props: {
   const [page, setPage] = useState<number>(0);
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
-  const [userId, setUserId] = useState<string>('');
   useEffect(() => {
     //post가져오기
     getPost();
@@ -62,32 +39,14 @@ const SearchPostList = (props: {
     setSpin(true);
     try {
       await axios
-        .post('/gateway/post/getpostsbyhashtag', {
-          hashtag: props.targetHashtag,
+        .post('/gateway/post/searchpostsbysearchstring', {
+          searchString: props.searchString,
           page,
         })
         .then((res) => {
-          const data:
-            | {
-                metadatas: Metadata[];
-                searchSuccess: true;
-                totalPostCount: number;
-                userId: string;
-              }
-            | { searchSuccess: false } = res.data;
-          console.log(data);
-
-          //1. 태그찾기 실패시 리턴
-          if (data.searchSuccess === false) {
-            return;
-          }
-
-          if (page === 0) {
-            //첫 요청일때만 초반세팅한다.
-            props.setSearchSuccess(data.searchSuccess);
-            props.setTotalPostCount(data.totalPostCount);
-            setUserId(data.userId);
-          }
+          const data: {
+            metadatas: Metadata[];
+          } = res.data;
 
           //2. 무한스크롤 핸들링
           if (data.metadatas.length < pageItemLen) {
@@ -174,7 +133,7 @@ const SearchPostList = (props: {
             >
               <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
                 <Post
-                  userId={userId}
+                  userId={props.userId}
                   metadata={selectedItem}
                   postFooterContent={emptyPostFooterContent}
                 />

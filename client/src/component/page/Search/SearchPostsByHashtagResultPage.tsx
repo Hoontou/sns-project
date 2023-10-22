@@ -43,7 +43,7 @@ const SearchPostsByHashtagResultPage = () => {
       <hr></hr>
       {/* 아래 feed처럼 postlist 띄우고 */}
       <SearchPostList
-        targetHashtag={targetHashtag === undefined ? '' : targetHashtag}
+        targetHashtag={targetHashtag}
         setSearchSuccess={setSearchSuccess}
         setTotalPostCount={setTotalPostCount}
       />

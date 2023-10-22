@@ -18,6 +18,8 @@ export interface SearchedHashtag {
 export const searchUserOrHashtag = async (
   string: string,
 ): Promise<SearchResult> => {
+  const pageSize = 10;
+
   const type = string.at(0);
   const searchString = string.substring(1);
 
@@ -25,6 +27,7 @@ export const searchUserOrHashtag = async (
   const result = await elastic.client.search({
     index: type === '#' ? elastic.SnsHashtagsIndex : elastic.SnsUsersIndex,
     body: {
+      size: pageSize,
       query: {
         prefix:
           type === '#'

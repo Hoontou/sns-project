@@ -1,14 +1,15 @@
 import { Box, Tab, Tabs } from '@mui/material';
 import { useState } from 'react';
-import { PostPannel } from './pannel/PostPannel';
-import { UserPannel } from './pannel/UserPannel';
-import { TagPannel } from './pannel/TagPannel';
+import { PostPannel } from './pannel/post/PostPannel';
+import { TagPannel } from './pannel/tag/TagPannel';
+import { UserPannel } from './pannel/user/UserPannel';
 
 export interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
   searchString: string | undefined;
+  userId: string;
 }
 export function a11yProps(index: number) {
   return {
@@ -17,8 +18,11 @@ export function a11yProps(index: number) {
   };
 }
 
-export const SearchTap = (props: { searchString: string | undefined }) => {
-  const [value, setValue] = useState<number>(0);
+export const SearchTap = (props: {
+  searchString: string | undefined;
+  userId: string;
+}) => {
+  const [value, setValue] = useState<number>(0); //패널 선택
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -39,9 +43,25 @@ export const SearchTap = (props: { searchString: string | undefined }) => {
         </Tabs>
       </Box>
       <>
-        <PostPannel value={value} index={0} searchString={props.searchString} />
-        <UserPannel value={value} index={1} searchString={props.searchString} />
-        <TagPannel value={value} index={2} searchString={props.searchString} />
+        <PostPannel
+          userId={props.userId}
+          value={value}
+          index={0}
+          searchString={props.searchString}
+        />
+        <UserPannel
+          userId={props.userId}
+          value={value}
+          index={1}
+          searchString={props.searchString}
+        />
+
+        <TagPannel
+          userId={props.userId}
+          value={value}
+          index={2}
+          searchString={props.searchString}
+        />
       </>
     </div>
   );

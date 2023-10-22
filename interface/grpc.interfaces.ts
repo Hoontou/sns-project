@@ -21,3 +21,15 @@ export interface UserinfoWithNums {
   username: string;
   introduceName: string;
 }
+
+export interface SearchedUser {
+  username: string;
+  img: string;
+  introduceName: string;
+  introduce: string;
+}
+
+export interface SearchedTag {
+  tagName: string;
+  count: number;
+}

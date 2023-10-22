@@ -38,4 +38,9 @@ export class PostController {
   searchPostsIdsByString(data: { searchString: string; page: number }) {
     return this.searchService.searchPostIdsBySearchString(data);
   }
+
+  @GrpcMethod('PostService', 'SearchHashtagsBySearchString')
+  searchHashtagsBySearchString(data: { searchString: string; page: number }) {
+    return this.searchService.searchHashtagsBySearchString(data);
+  }
 }

@@ -6,7 +6,7 @@ import { SnsPostsDocType, elastic } from 'src/configs/elasticsearch';
 @Injectable()
 export class SearchService {
   constructor() {
-    this.searchHashtag({ hashtag: 'qq' });
+    this.searchHashtagsBySearchString({ searchString: 'qq', page: 0 });
   }
   //업로드 메서드로부터 오는 해시태그 핸들링 요청
   //해시태그 존재여부 체크후 없으면 추가,
@@ -198,6 +198,39 @@ export class SearchService {
     });
 
     return { _ids: postIdList };
+  }
+
+  async searchHashtagsBySearchString(data: {
+    searchString: string;
+    page: number;
+  }) {
+    const pageSize = 20;
+    const result = await elastic.client.search({
+      index: elastic.SnsTagsIndex,
+      body: {
+        from: data.page * pageSize, // 시작 인덱스 계산
+        size: pageSize,
+        query: {
+          prefix: {
+            tagName: data.searchString,
+          },
+        },
+        // sort: [
+        //   {
+        //     createdAt: {
+        //       order: 'asc', // 내림차순으로 정렬 (가장 최근 것이 먼저)
+        //     },
+        //   },
+        // ],
+      },
+    });
+
+    const searchedTagList: { tagName: string; count: number }[] =
+      result.hits.hits.map((item) => {
+        return item._source;
+      });
+
+    return { searchedTags: searchedTagList };
   }
 }
 

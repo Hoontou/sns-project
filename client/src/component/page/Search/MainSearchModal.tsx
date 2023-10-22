@@ -5,10 +5,12 @@ import { requestUrl } from '../../../common/etc';
 import { SearchResult } from '../Upload/Upload';
 import Spinner from '../../../common/Spinner';
 import { useNavigate } from 'react-router-dom';
+import { primaryColor } from '../../../App';
 
 const MainSearchResultModal = (props: {
   spin: boolean;
   searchResult: SearchResult | undefined;
+  searchString: string;
 }) => {
   const navigate = useNavigate();
 
@@ -117,6 +119,8 @@ const MainSearchResultModal = (props: {
           justifyContent: 'center',
           display: 'flex',
           marginTop: '7rem',
+          paddingBottom: '5rem',
+          marginLeft: '-3rem',
         }}
       >
         아무것도 없어요.
@@ -128,7 +132,7 @@ const MainSearchResultModal = (props: {
     <div
       style={{
         position: 'absolute',
-        zIndex: 888,
+        zIndex: 999,
         backgroundColor: 'white',
         width: '100%',
       }}
@@ -139,6 +143,28 @@ const MainSearchResultModal = (props: {
         </div>
       )}
       {!props.spin && renderItem}
+
+      {props.searchString !== '' && !props.spin && (
+        <div
+          className='text-center'
+          style={{
+            marginLeft: '-3rem',
+            color: primaryColor,
+            marginTop: '1rem',
+            paddingBottom: '2rem',
+          }}
+        >
+          <span
+            onClick={() => {
+              navigate(`/search/all/${props.searchString}`);
+            }}
+          >
+            {props.searchResult?.resultList.length === 0
+              ? '더 찾아보기'
+              : '결과 모두 보기'}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

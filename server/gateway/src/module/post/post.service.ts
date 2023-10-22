@@ -161,4 +161,19 @@ export class PostService {
     }
     return { metadatas };
   }
+
+  async searchHashtagsBySearchString(data: {
+    searchString: string;
+    page: number;
+  }) {
+    const { searchedTags } = await lastValueFrom(
+      this.postGrpcService.searchHashtagsBySearchString(data),
+    );
+    console.log(searchedTags);
+
+    if (searchedTags === undefined) {
+      return { searchedTags: [] };
+    }
+    return { searchedTags };
+  }
 }

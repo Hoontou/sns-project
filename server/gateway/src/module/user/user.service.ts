@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { SearchedUser } from 'sns-interfaces/grpc.interfaces';
 import { UserInfoBody } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import { UserGrpcService } from 'src/grpc/grpc.services';
@@ -90,5 +91,19 @@ export class UserService {
     userId: string;
   }): Promise<{ success: boolean }> {
     return lastValueFrom(this.userGrpcService.changeIntroduceName(body));
+  }
+
+  async searchUsersBySearchString(body: {
+    searchString: string;
+    page: number;
+  }): Promise<{ userList: SearchedUser[] }> {
+    const { userList } = await lastValueFrom(
+      this.userGrpcService.searchUsersBySearchString(body),
+    );
+
+    if (userList === undefined) {
+      return { userList: [] };
+    }
+    return { userList };
   }
 }

@@ -42,7 +42,7 @@ const SearchAllPage = () => {
           defaultValue={searchString}
         />
       </div>
-      <SearchTap searchString={searchString} />
+      <SearchTap searchString={searchString} userId={userId} />
       <div>
         <Navbar value={1} />
       </div>
