@@ -35,13 +35,11 @@ export class Cocomment extends BaseEntity {
   // taggeduser: User;
 
   //유저테이블, 포스트테이블과 포린키 연결하고 cascade 삭제 설정.
-  @ManyToOne(() => User, (user) => user.cocomments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.cocomments)
   //@JoinColumn()
   user: User;
 
-  @ManyToOne(() => Comment, (comment) => comment.cocomments, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => Comment, (comment) => comment.cocomments)
   //@JoinColumn()
   comment: Comment;
 }

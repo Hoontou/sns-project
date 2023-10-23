@@ -28,7 +28,7 @@ export class Post extends BaseEntity {
   // @CreateDateColumn()
   // createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.posts)
   //@JoinColumn()
   user: User; //포린키, 작성자 uuid
 

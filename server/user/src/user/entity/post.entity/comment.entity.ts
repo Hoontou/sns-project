@@ -40,11 +40,11 @@ export class Comment extends BaseEntity {
   // taggeduser: User;
 
   //유저테이블, 포스트테이블과 포린키 연결하고 cascade 삭제 설정.
-  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.comments)
   //@JoinColumn()
   user: User;
 
-  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Post, (post) => post.comments)
   //@JoinColumn()
   post: Post;
 

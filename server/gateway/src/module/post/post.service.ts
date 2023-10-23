@@ -176,4 +176,24 @@ export class PostService {
     }
     return { searchedTags };
   }
+
+  //post서버랑 metadata서버에서 받아야함
+  deletePost(body: { postId: string }, req) {
+    return this.amqpService.publishMsg('deletePost', {
+      ...body,
+      userId: req.user.userId,
+    });
+  }
+  deleteComment(body: { commentId: string }, req) {
+    return this.amqpService.publishMsg('deleteComment', {
+      ...body,
+      userId: req.user.userId,
+    });
+  }
+  deleteCocomment(body: { cocommentId: string }, req) {
+    return this.amqpService.publishMsg('deleteCocomment', {
+      ...body,
+      userId: req.user.userId,
+    });
+  }
 }
