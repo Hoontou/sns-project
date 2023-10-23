@@ -87,4 +87,12 @@ export class PostService {
       return this.postRepo.cocommentTable.removeLike(data);
     }
   }
+
+  async deletePost(data: { postId: string; userId: string }) {
+    //pgdg에서 포스트삭제
+    this.postRepo.postTable.db.delete(data.postId);
+    //엘라스틱에서 포스트삭제, 태그카운트 감소
+    this.searchService.deletePost(data);
+    return;
+  }
 }

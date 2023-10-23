@@ -58,13 +58,14 @@ export class AmqpService {
   }
 
   /**필요한 MSA 구독하고 컨슘 등록 */
-  async bindExchanges(que) {
+  async bindExchanges(anonQue) {
     //MSA 구독 파트
-    await this.channel.bindQueue(que, 'upload', 'upload');
+    await this.channel.bindQueue(anonQue, 'upload', 'upload');
+    await this.channel.bindQueue(anonQue, 'gateway', 'deletePost');
 
     //구독한 큐에서 오는 메세지 컨슘 등록 파트
     await this.channel.consume(
-      que,
+      anonQue,
       (msg: AmqpMessage) => {
         this.exchangeHandler.consumeMessage(msg);
       },

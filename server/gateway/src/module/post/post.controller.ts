@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Req } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CommentItemContent, MetadataDto } from 'sns-interfaces';
 import { CocommentContent } from 'sns-interfaces/client.interface';
@@ -69,7 +69,7 @@ export class PostController {
     return this.postService.searchHashtagsBySearchString(body);
   }
 
-  @Post('/deletePost')
+  @Delete('/deletePost')
   deletePost(@Body() body: { postId: string }, @Req() req) {
     return this.postService.deletePost(body, req);
   }

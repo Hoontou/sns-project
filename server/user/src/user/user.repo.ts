@@ -152,4 +152,7 @@ export class UserRepository {
   addPostCount(data: UploadMessage) {
     return this.usernumsTable.addPostCount(data);
   }
+  decreasePostCount(data: { userId: string }) {
+    return this.usernumsTable.decreasePostCount(data);
+  }
 }

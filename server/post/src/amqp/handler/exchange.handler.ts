@@ -72,6 +72,11 @@ export class ExchangeHandler {
         type: 'cocomment',
       });
     }
+    if (msg.fields.routingKey === 'deletePost') {
+      return this.postService.deletePost({
+        ...(data as { postId: string; userId: string }),
+      });
+    }
   }
 }
 export type AddLikeType = AddLikePost | AddLikeComment | AddLikeCocomment;

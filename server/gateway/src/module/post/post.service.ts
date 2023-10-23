@@ -177,13 +177,16 @@ export class PostService {
     return { searchedTags };
   }
 
-  //post서버랑 metadata서버에서 받아야함
+  //post, meta, user 글삭제 엘라스틱에 남은 정보삭제 메타삭제 카운트감소
+  //게시물에 달린 댓, 대댓, 거기붙은 좋아요 추후 삭제
   deletePost(body: { postId: string }, req) {
     return this.amqpService.publishMsg('deletePost', {
       ...body,
       userId: req.user.userId,
     });
   }
+
+  //post, ㅕ
   deleteComment(body: { commentId: string }, req) {
     return this.amqpService.publishMsg('deleteComment', {
       ...body,

@@ -17,6 +17,9 @@ export class ExchangeHandler {
     if (msg.fields.exchange === 'upload') {
       return this.uploadHandler(msg);
     }
+    if (msg.fields.exchange === 'gateway') {
+      return this.gatewayHandler(msg);
+    }
   }
 
   /**업로드 MSA에서 받아오는 메세지 핸들러 */
@@ -29,6 +32,16 @@ export class ExchangeHandler {
     if (msg.fields.routingKey == 'upload') {
       this.userRepo.addPostCount(data as UploadMessage);
       return;
+    }
+  }
+
+  gatewayHandler(msg: AmqpMessage) {
+    const data: unknown = JSON.parse(msg.content.toString());
+
+    if (msg.fields.routingKey === 'deletePost') {
+      return this.userRepo.decreasePostCount({
+        ...(data as { postId: string; userId: string }),
+      });
     }
   }
 }

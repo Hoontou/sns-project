@@ -12,6 +12,12 @@ export const exchangeHandler = (msg: AmqpMessage) => {
       return;
     }
   }
+  if (msg.fields.exchange === 'gateway') {
+    if (msg.fields.routingKey == 'deletePost') {
+      deleteMetadata(content as { postId: string; userId: string });
+      return;
+    }
+  }
 };
 
 const handleMetadata = (content: UploadMessage) => {
@@ -21,6 +27,15 @@ const handleMetadata = (content: UploadMessage) => {
     userId: crypter.decrypt(content.userId),
     files: content.files,
   };
-
   metaRepository.saveMeatadata(metadataDto);
+};
+const deleteMetadata = (data: { postId: string }) => {
+  return metaRepository.db.deleteOne({ _id: data.postId }, (err) => {
+    if (err) {
+      console.log('메타데이터 삭제 중 에러');
+      console.error(err);
+    } else {
+      console.log('메타데이터 삭제성공.');
+    }
+  });
 };

@@ -123,3 +123,6 @@ post comment cocomment가 casacde 등록돼있는데 이거 풀어야할듯?
 그냥 삭제관리 객체 만들어서 관리시키게 해야할듯 cascade는 안하는게 맞는듯.
 ㅋㅋㅋㅋ 근데 이렇게 하면 애초에 postgres쓴 이유가 cascade삭제 편리함 떄문인데...
 허허
+
+게시물삭제 중 post서버에서 할일은 끝,
+유저에서 구현중

@@ -5,9 +5,6 @@ import { SnsPostsDocType, elastic } from 'src/configs/elasticsearch';
 //해시태그 처리 서비스
 @Injectable()
 export class SearchService {
-  constructor() {
-    this.searchHashtagsBySearchString({ searchString: 'qq', page: 0 });
-  }
   //업로드 메서드로부터 오는 해시태그 핸들링 요청
   //해시태그 존재여부 체크후 없으면 추가,
   //해시태그가 사용된 횟수 카운트? 필요할까 업데이트가 꽤 많을듯
@@ -231,6 +228,45 @@ export class SearchService {
       });
 
     return { searchedTags: searchedTagList };
+  }
+
+  async deletePost(data: { postId: string }) {
+    try {
+      const targetDoc = await elastic.client.get({
+        index: elastic.SnsPostsIndex,
+        id: data.postId,
+      });
+      //get 실패했으면 에러떠서 catch로 간다.
+
+      const tags: string | undefined = targetDoc._source.tags;
+      //1. 검색용 데이터를 postIndex에서 삭제
+      await elastic.client.delete({
+        index: elastic.SnsPostsIndex,
+        id: data.postId,
+      });
+
+      //2. 검색용 데이터에 tag가 있다면 해당 tag의 카운터 decre
+      if (tags === undefined) {
+        //태그없으면 걍 리턴
+        return;
+      }
+      tags.split(' ').forEach((item) => {
+        return elastic.client.update({
+          index: elastic.SnsTagsIndex,
+          id: item,
+          script: {
+            //https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/update_examples.html
+            //integer값을 증가시키는법
+            lang: 'painless',
+            source: 'ctx._source.count--',
+          },
+        });
+      });
+      //이건좀 헤비한 작업같은데..
+    } catch (error) {
+      console.log('elastic에서 post정보 삭제중 에러, 아마 정보가 없을거임');
+      console.log(error);
+    }
   }
 }
 

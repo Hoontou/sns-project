@@ -63,4 +63,12 @@ export class UsernumsTable {
     `;
     return pgdb.client.query(query);
   }
+  async decreasePostCount(data: { userId: string }) {
+    const query = `
+    UPDATE public.usernums
+    SET postcount = postcount - 1
+    WHERE "userId" = ${crypter.decrypt(data.userId)};
+    `;
+    return pgdb.client.query(query);
+  }
 }
