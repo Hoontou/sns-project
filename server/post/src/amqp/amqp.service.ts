@@ -70,6 +70,8 @@ export class AmqpService {
     await this.channel.bindQueue(anonQue, 'gateway', 'addCocommentLike');
     await this.channel.bindQueue(anonQue, 'gateway', 'removeCocommentLike');
     await this.channel.bindQueue(anonQue, 'gateway', 'deletePost');
+    await this.channel.bindQueue(anonQue, 'gateway', 'deleteComment');
+    await this.channel.bindQueue(anonQue, 'gateway', 'deleteCocomment');
 
     //구독한 큐에서 오는 메세지 컨슘 등록 파트
     await this.channel.consume(

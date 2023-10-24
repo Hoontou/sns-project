@@ -95,4 +95,26 @@ export class PostService {
     this.searchService.deletePost(data);
     return;
   }
+
+  async deleteComment(data: { commentId: string; postId: string }) {
+    // comment Id로 삭제, post에서 commentCount감소
+    this.postRepo.commentTable.db.delete(data.commentId);
+    this.postRepo.postTable.db.decrement(
+      { id: data.postId },
+      'commentcount',
+      1,
+    );
+    //결과체크하려면 .then 콘솔찍으면 됨
+    return;
+  }
+  async deleteCocomment(data: { cocommentId: string; commentId: string }) {
+    //cocomment Id로 삭제, comment에서 cocommentCount감소
+    this.postRepo.cocommentTable.db.delete(data.cocommentId);
+    this.postRepo.commentTable.db.decrement(
+      { id: Number(data.commentId) },
+      'cocommentcount',
+      1,
+    );
+    return;
+  }
 }

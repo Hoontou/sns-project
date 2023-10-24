@@ -74,13 +74,19 @@ export class PostController {
     return this.postService.deletePost(body, req);
   }
 
-  @Post('/deleteComment')
-  deleteComment(@Body() body: { commentId: string }, @Req() req) {
+  @Delete('/deleteComment')
+  deleteComment(
+    @Body() body: { commentId: string; postId: string },
+    @Req() req,
+  ) {
     return this.postService.deleteComment(body, req);
   }
 
-  @Post('/deleteCocomment')
-  deleteCocomment(@Body() body: { cocommentId: string }, @Req() req) {
+  @Delete('/deleteCocomment')
+  deleteCocomment(
+    @Body() body: { cocommentId: string; commentId: string },
+    @Req() req,
+  ) {
     return this.postService.deleteCocomment(body, req);
   }
 }

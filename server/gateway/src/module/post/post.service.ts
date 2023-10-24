@@ -177,7 +177,8 @@ export class PostService {
     return { searchedTags };
   }
 
-  //post, meta, user 글삭제 엘라스틱에 남은 정보삭제 메타삭제 카운트감소
+  //post, meta, user 에서 받는다,
+  // 글삭제 엘라스틱에 남은 정보삭제 메타삭제 카운트감소
   //게시물에 달린 댓, 대댓, 거기붙은 좋아요 추후 삭제
   deletePost(body: { postId: string }, req) {
     return this.amqpService.publishMsg('deletePost', {
@@ -186,17 +187,13 @@ export class PostService {
     });
   }
 
-  //post, ㅕ
-  deleteComment(body: { commentId: string }, req) {
-    return this.amqpService.publishMsg('deleteComment', {
-      ...body,
-      userId: req.user.userId,
-    });
+  //post에서 받는다, 게시물의 댓글카운트 감소, 댓글 삭제
+  //댓글에 달린 대댓, 좋아요 추후 삭제
+  deleteComment(body: { commentId: string; postId: string }, req) {
+    return this.amqpService.sendMsg('post', body, 'deleteComment');
   }
-  deleteCocomment(body: { cocommentId: string }, req) {
-    return this.amqpService.publishMsg('deleteCocomment', {
-      ...body,
-      userId: req.user.userId,
-    });
+
+  deleteCocomment(body: { cocommentId: string; commentId }, req) {
+    return this.amqpService.sendMsg('post', body, 'deleteCocomment');
   }
 }
