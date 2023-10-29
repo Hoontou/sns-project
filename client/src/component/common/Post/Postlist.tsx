@@ -142,13 +142,15 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
                 setOpen(false);
               }}
             >
-              <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
-                <Post
-                  userId={props.userId}
-                  metadata={selectedItem}
-                  postFooterContent={emptyPostFooterContent}
-                />
-              </Box>
+              <div id='post-modal'>
+                <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
+                  <Post
+                    userId={props.userId}
+                    metadata={selectedItem}
+                    postFooterContent={emptyPostFooterContent}
+                  />
+                </Box>
+              </div>
             </Modal>
           )}
         </>

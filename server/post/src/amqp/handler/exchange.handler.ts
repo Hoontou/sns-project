@@ -77,16 +77,6 @@ export class ExchangeHandler {
         ...(data as { postId: string; userId: string }),
       });
     }
-    if (msg.fields.routingKey === 'deleteComment') {
-      return this.postService.deleteComment({
-        ...(data as { commentId: string; postId: string }),
-      });
-    }
-    if (msg.fields.routingKey === 'deleteCocomment') {
-      return this.postService.deleteCocomment({
-        ...(data as { cocommentId: string; commentId: string }),
-      });
-    }
   }
 }
 export type AddLikeType = AddLikePost | AddLikeComment | AddLikeCocomment;

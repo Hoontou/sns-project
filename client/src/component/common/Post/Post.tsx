@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import sample1 from '../../../asset/sample1.jpg';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { Avatar } from '@mui/material';
+import PostMenu from './PostMenu';
 
 // export
 const Post = (props: {
@@ -24,6 +25,7 @@ const Post = (props: {
   const [postFooterContent, setPostFooterContent] = useState<PostFooterContent>(
     props.postFooterContent
   );
+  const [displayPostMenu, setDisplayPostMenu] = useState<boolean>(false);
 
   //좋아요했는지, props.userid로 username, 좋아요수, 댓글수 gateway로 요청해서
   //state 채우고 컴포넌트에 표시
@@ -50,12 +52,13 @@ const Post = (props: {
         setPostFooterContent({ ...data });
         setFulfilled(true);
       });
+
+    setDisplayPostMenu(props.userId === props.metadata.userId ? true : false);
   }, [props.metadata.id, props.metadata.userId, props.userId]);
 
   return (
-    // <div style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
-    //상단 헤더부분
-    <div>
+    <div style={{ overflowY: 'scroll', height: '100vh' }}>
+      {/* 상단 헤더 */}
       {!openComment && (
         <div style={{ height: '3.7rem', position: 'relative' }}>
           <Avatar
@@ -88,6 +91,13 @@ const Post = (props: {
             {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
             {postFooterContent.username}
           </span>
+          {displayPostMenu && (
+            <span
+              style={{ position: 'absolute', right: '1rem', top: '0.7rem' }}
+            >
+              <PostMenu postId={props.metadata.id} />
+            </span>
+          )}
         </div>
       )}
 

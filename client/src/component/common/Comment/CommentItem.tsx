@@ -9,8 +9,11 @@ import Cocomment from './Cocomment';
 import { CommentItems, SubmitForm } from './etc';
 import axios from 'axios';
 import { renderTitle } from '../Post/PostFooter';
+import CommentMenu from './CommentMenu';
 
 const CommentItem = (props: {
+  postId: string;
+  userId: string;
   content: CommentItems;
   index: number;
   setSubmitForm: Dispatch<SetStateAction<SubmitForm>>;
@@ -31,7 +34,7 @@ const CommentItem = (props: {
   const [liked, setLiked] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
-    useState<boolean>(true);
+    useState<boolean>(false);
 
   const getCocomments = async () => {
     setPending(true);
@@ -40,9 +43,7 @@ const CommentItem = (props: {
       page,
       props.index
     );
-    if (length < 10) {
-      setEnablingGetMoreButton(false);
-    }
+    setEnablingGetMoreButton(length < 10 ? false : true);
     setPage(page + 1);
     setPending(false);
     setOpen(true);
@@ -72,7 +73,14 @@ const CommentItem = (props: {
   }, []);
 
   const renderCocomment = props.content.cocomments?.map((content, index) => {
-    return <Cocomment content={content} key={content.cocommentId} />;
+    return (
+      <Cocomment
+        content={content}
+        key={content.cocommentId}
+        userId={props.userId}
+        commentId={props.content.commentId}
+      />
+    );
   });
 
   return (
@@ -176,27 +184,36 @@ const CommentItem = (props: {
           </div>
         </Grid>
         <Grid item xs={1.5} className='text-center'>
-          {props.content.createdAt !== '' && (
-            <span>
-              {!liked ? (
-                <VscHeart
-                  fontSize='20px'
-                  onClick={() => {
-                    addLike();
-                  }}
+          {props.content.createdAt !== '' &&
+            (props.userId === props.content.userId ? (
+              <span>
+                <CommentMenu
+                  commentId={props.content.commentId}
+                  postId={props.postId}
+                  type='comment'
                 />
-              ) : (
-                <VscHeartFilled
-                  fontSize='20px'
-                  style={{ color: 'red' }}
-                  onClick={() => {
-                    removeLike();
-                  }}
-                />
-              )}
-              <div style={{ fontSize: '0.7rem' }}>{likesCount}</div>
-            </span>
-          )}
+              </span>
+            ) : (
+              <span>
+                {!liked ? (
+                  <VscHeart
+                    fontSize='20px'
+                    onClick={() => {
+                      addLike();
+                    }}
+                  />
+                ) : (
+                  <VscHeartFilled
+                    fontSize='20px'
+                    style={{ color: 'red' }}
+                    onClick={() => {
+                      removeLike();
+                    }}
+                  />
+                )}
+                <div style={{ fontSize: '0.7rem' }}>{likesCount}</div>
+              </span>
+            ))}
         </Grid>
       </Grid>
 

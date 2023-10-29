@@ -19,7 +19,12 @@ export const renderTitle = (title: string) => {
     if (item.at(0) === '@') {
       return (
         <span key={index * 377}>
-          <a href={`/feed/${item.substring(1)}`}>{item}</a>
+          <a
+            style={{ textDecoration: 'none' }}
+            href={`/feed/${item.substring(1)}`}
+          >
+            {item}
+          </a>
           &nbsp;
         </span>
       );
@@ -27,7 +32,13 @@ export const renderTitle = (title: string) => {
     if (item.at(0) === '#') {
       return (
         <span key={index * 377}>
-          <a href={`/search/hashtag/${item.substring(1)}`}>{item}</a>&nbsp;
+          <a
+            style={{ textDecoration: 'none' }}
+            href={`/search/hashtag/${item.substring(1)}`}
+          >
+            {item}
+          </a>
+          &nbsp;
         </span>
       );
     }
@@ -123,6 +134,7 @@ const PostFooter = (props: {
               첫번째로 좋아요를 눌러보세요
             </div>
           ) : (
+            // <></>
             <span
               style={{ position: 'absolute', bottom: '0', right: '0' }}
               onClick={() => {
@@ -149,7 +161,7 @@ const PostFooter = (props: {
                 marginRight: '0.5rem',
                 fontWeight: '600',
                 textDecoration: 'none',
-                color: 'white',
+                color: 'black',
               }}
               href={`/feed/${postContent.username}`}
             >

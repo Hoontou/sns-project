@@ -33,20 +33,20 @@ const UserinfoNums = (props: {
     <>
       <Grid item xs={2.6} className='row align-items-center text-center'>
         <span>
-          <div>{props.postcount}</div>
-          <div>게시물</div>
+          <div style={{ fontSize: '0.9rem' }}>{props.postcount}</div>
+          <div style={{ fontSize: '0.9rem' }}>게시물</div>
         </span>
       </Grid>
       <Grid item xs={2.6} className='row align-items-center text-center'>
         <span onClick={onClickFollower}>
-          <div>{props.follower}</div>
-          <div>팔로워</div>
+          <div style={{ fontSize: '0.9rem' }}>{props.follower}</div>
+          <div style={{ fontSize: '0.9rem' }}>팔로워</div>
         </span>
       </Grid>
       <Grid item xs={2.6} className='row align-items-center text-center'>
         <span onClick={onClickFollowing}>
-          <div>{props.following}</div>
-          <div>팔로잉</div>
+          <div style={{ fontSize: '0.9rem' }}>{props.following}</div>
+          <div style={{ fontSize: '0.9rem' }}>팔로잉</div>
         </span>
       </Grid>
       {type !== '' && openUserList && (

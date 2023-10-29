@@ -28,5 +28,16 @@ export class PostHandler {
       );
       return;
     }
+
+    if (msg.properties.type === 'deleteComment') {
+      return this.postService.deleteComment({
+        ...(data as { commentId: string; postId: string }),
+      });
+    }
+    if (msg.properties.type === 'deleteCocomment') {
+      return this.postService.deleteCocomment({
+        ...(data as { cocommentId: string; commentId: string }),
+      });
+    }
   }
 }

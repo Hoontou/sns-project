@@ -69,20 +69,17 @@ export class PostController {
     return this.postService.searchHashtagsBySearchString(body);
   }
 
-  @Delete('/deletePost')
+  @Post('/deletePost')
   deletePost(@Body() body: { postId: string }, @Req() req) {
     return this.postService.deletePost(body, req);
   }
 
-  @Delete('/deleteComment')
-  deleteComment(
-    @Body() body: { commentId: string; postId: string },
-    @Req() req,
-  ) {
-    return this.postService.deleteComment(body, req);
+  @Post('/deleteComment')
+  deleteComment(@Body() body: { commentId: string; postId: string }) {
+    return this.postService.deleteComment(body);
   }
 
-  @Delete('/deleteCocomment')
+  @Post('/deleteCocomment')
   deleteCocomment(
     @Body() body: { cocommentId: string; commentId: string },
     @Req() req,

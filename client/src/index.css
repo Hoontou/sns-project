@@ -17,6 +17,10 @@
 * {
   font-family: 'Pretendard-Regular' !important;
 }
+::-webkit-scrollbar {
+  display: none;
+}
+
 .spinner {
   width: 32px;
   height: 32px;

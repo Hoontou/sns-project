@@ -189,7 +189,7 @@ export class PostService {
 
   //post에서 받는다, 게시물의 댓글카운트 감소, 댓글 삭제
   //댓글에 달린 대댓, 좋아요 추후 삭제
-  deleteComment(body: { commentId: string; postId: string }, req) {
+  deleteComment(body: { commentId: string; postId: string }) {
     return this.amqpService.sendMsg('post', body, 'deleteComment');
   }
 

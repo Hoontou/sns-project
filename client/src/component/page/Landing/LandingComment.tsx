@@ -142,6 +142,9 @@ const LandingComment = (props: {
           //대댓 넣을 리스트 추가
           return { ...i, cocomments: [] };
         });
+        if (comments.length !== 10) {
+          setEnablingGetMoreButton(false);
+        }
         if (newComments === undefined) {
           alert('댓글 가져오기를 실패했어요. 나중에 다시 시도해주세요.');
           setPending(false);
@@ -240,6 +243,8 @@ const LandingComment = (props: {
 
       //섭밋폼 디폴트로 세팅
       setSubmitFormToDefault();
+      setSubmitingComment('');
+
       return;
     }
     if (submitForm.type === 'comment') {
@@ -272,6 +277,8 @@ const LandingComment = (props: {
 
       //섭밋폼 디폴트로 세팅
       setSubmitFormToDefault();
+      setSubmitingComment('');
+
       return;
     }
   };
@@ -284,6 +291,8 @@ const LandingComment = (props: {
         setSubmitForm={setSubmitForm}
         index={index}
         getCocomments={getCocomments}
+        userId={props.userId}
+        postId={props.postFooterContent.id}
       />
     );
   });

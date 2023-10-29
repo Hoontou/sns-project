@@ -13,8 +13,17 @@ import {
   useEffect,
   Fragment,
   ChangeEvent,
+  forwardRef,
 } from 'react';
 import { SubmitForm } from './etc';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
+});
 
 const CommentInput = (props: {
   submitNewComment(): void;
@@ -28,6 +37,23 @@ const CommentInput = (props: {
   setSearchRequestString: Dispatch<SetStateAction<string>>;
   clickedTag: string;
 }) => {
+  const [snackOpen, setSnackOpen] = useState(false);
+
+  const handleSnackClick = () => {
+    setSnackOpen(true);
+  };
+
+  const handleSnackClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackOpen(false);
+  };
+
   const [targetComment, setTarget] = useState<string>('');
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
@@ -235,6 +261,7 @@ const CommentInput = (props: {
             props.setSubmitingComment(props.submitingComment);
             props.submitNewComment();
             setOpenSnackbar(false);
+            handleSnackClick();
           }}
         >
           <span style={{ fontSize: '1.2rem' }}>게시</span>
@@ -252,6 +279,20 @@ const CommentInput = (props: {
         action={action}
         style={{ marginBottom: '3rem' }}
       />
+
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={2000}
+        onClose={handleSnackClose}
+      >
+        <Alert
+          onClose={handleSnackClose}
+          severity='success'
+          sx={{ width: '100%', marginBottom: '4rem' }}
+        >
+          Comment request sended.
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
