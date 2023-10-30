@@ -11,10 +11,15 @@ import { UserinfoTable } from './repository/userinfo.table';
 import { UsernumsTable } from './repository/usernums.table';
 import { UserRepository } from './user.repo';
 import { Usernums } from './entity/usernums.entity';
+import { UserSchema } from './schema/user.schema';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserCollection } from './repository/user.collection';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Userinfo, Usernums]),
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    //몽고디비 컬렉션에는 'users' 으로 잡힌다.
     forwardRef(() => AuthModule),
   ],
   controllers: [UserController],
@@ -23,6 +28,7 @@ import { Usernums } from './entity/usernums.entity';
     UserTable,
     UserinfoTable,
     UsernumsTable,
+    UserCollection,
     UserService,
     JwtService,
   ],

@@ -16,8 +16,8 @@ export interface SnsTagsDocType {
 
 class Elasticsearch {
   public readonly client;
-  public readonly SnsPostsIndex = 'sns_posts';
-  public readonly SnsTagsIndex = 'sns_tags';
+  public readonly SnsPostsIndex = 'sns.posts';
+  public readonly SnsTagsIndex = 'sns.tags';
 
   constructor() {
     this.client = new Client({

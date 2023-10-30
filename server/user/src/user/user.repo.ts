@@ -11,6 +11,8 @@ import { pgdb } from 'src/configs/pg';
 import { UserinfoWithNums } from 'sns-interfaces/grpc.interfaces';
 import { UploadMessage } from 'sns-interfaces';
 import { SnsUsersDocType, elastic } from 'src/configs/elasticsearch';
+import { UserCollection } from './repository/user.collection';
+import { crypter } from 'src/common/crypter';
 
 export interface GetUserInfoData {
   id: number;
@@ -30,6 +32,7 @@ export class UserRepository {
     public readonly userTable: UserTable,
     public readonly userinfoTable: UserinfoTable,
     public readonly usernumsTable: UsernumsTable,
+    public readonly userCollection: UserCollection,
   ) {}
 
   /**pg삽입 후 엘라스틱 삽입 */
@@ -40,36 +43,25 @@ export class UserRepository {
     newUser.password = signUpDto.password;
     newUser = await newUser.save();
 
-    let newUserinfo = new Userinfo();
+    const newUserinfo = new Userinfo();
     newUserinfo.username = signUpDto.username;
 
-    let newUsernums = new Usernums();
+    const newUsernums = new Usernums();
 
     //포린키 매핑
     newUsernums.user = newUser;
     newUserinfo.user = newUser;
 
     //유저 먼저 생성 후
-    //나머지 저장, 트랜잭션 필요없을듯
-    [newUserinfo, newUsernums] = await Promise.all([
+    //나머지 저장
+    return Promise.all([
       newUserinfo.save(),
       newUsernums.save(),
+      this.userCollection.createUser({
+        username: signUpDto.username,
+        userId: newUser.id,
+      }),
     ]);
-
-    //pgdb삽입 후 이제 엘라스틱에 삽입
-    const newUserDoc: SnsUsersDocType = {
-      username: signUpDto.username,
-      introduce: '',
-      img: '',
-      introduceName: '',
-    };
-
-    //doc id는 pgdb usertable id로.
-    await elastic.client.index({
-      index: elastic.SnsUsersIndex,
-      id: newUser.id,
-      document: newUserDoc,
-    });
   }
 
   async getUserinfoById(userId: string): Promise<GetUserInfoData | undefined> {
@@ -129,17 +121,33 @@ export class UserRepository {
   }
 
   changeUsername(data: { userId: string; username: string }) {
-    return this.userinfoTable.changeUsername(data.userId, data.username);
+    const decUserId = crypter.decrypt(data.userId);
+    const form = { userId: decUserId, username: data.username };
+
+    this.userinfoTable.changeUsername(form);
+    this.userCollection.changeUsername(form);
+
+    return;
   }
+
   changeIntro(data: { userId: string; intro: string }) {
-    return this.userinfoTable.changeIntro(data.userId, data.intro);
+    const decUserId = crypter.decrypt(data.userId);
+    const form = { userId: decUserId, intro: data.intro };
+
+    this.userinfoTable.changeIntro(form);
+    this.userCollection.changeIntro(form);
+    return;
   }
+
   changeIntroduceName(data: { userId: string; introduceName: string }) {
-    return this.userinfoTable.changeIntroduceName(
-      data.userId,
-      data.introduceName,
-    );
+    const decUserId = crypter.decrypt(data.userId);
+    const form = { userId: decUserId, introduceName: data.introduceName };
+
+    this.userinfoTable.changeIntroduceName(form);
+    this.userCollection.changeIntroduceName(form);
+    return;
   }
+
   setImg(data: { userId: string; img: string }) {
     return this.userinfoTable.setImg(data.userId, data.img);
   }

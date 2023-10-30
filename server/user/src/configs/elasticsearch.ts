@@ -13,7 +13,7 @@ export interface SnsUsersDocType {
 
 class Elasticsearch {
   public readonly client;
-  public readonly SnsUsersIndex = 'sns_users';
+  public readonly SnsUsersIndex = 'sns.users';
 
   constructor() {
     this.client = new Client({
@@ -24,39 +24,39 @@ class Elasticsearch {
       },
     });
   }
+  /**monstache로 동기화 작업 후 삭제된 */
+  // async init() {
+  //   //이미 있는지 체크
+  //   const indexExistCheck: boolean = await this.client.indices.exists({
+  //     index: this.SnsUsersIndex,
+  //   });
 
-  async init() {
-    //이미 있는지 체크
-    const indexExistCheck: boolean = await this.client.indices.exists({
-      index: this.SnsUsersIndex,
-    });
+  //   if (indexExistCheck === true) {
+  //     return;
+  //   }
 
-    if (indexExistCheck === true) {
-      return;
-    }
+  //   //인덱스 생성
+  //   try {
+  //     await this.client.indices.create({
+  //       index: this.SnsUsersIndex,
+  //       body: {
+  //         mappings: {
+  //           properties: {
+  //             username: { type: 'text' },
+  //             introduce: { type: 'text' },
+  //             img: { type: 'text' },
+  //             introduceName: { type: 'text' },
+  //           },
+  //         },
+  //       },
+  //     });
 
-    //인덱스 생성
-    try {
-      await this.client.indices.create({
-        index: this.SnsUsersIndex,
-        body: {
-          mappings: {
-            properties: {
-              username: { type: 'text' },
-              introduce: { type: 'text' },
-              img: { type: 'text' },
-              introduceName: { type: 'text' },
-            },
-          },
-        },
-      });
-
-      console.log(`Index created:${this.SnsUsersIndex}`);
-    } catch (error) {
-      console.log(`Error creating index:${this.SnsUsersIndex}`);
-      console.log(error);
-    }
-  }
+  //     console.log(`Index created:${this.SnsUsersIndex}`);
+  //   } catch (error) {
+  //     console.log(`Error creating index:${this.SnsUsersIndex}`);
+  //     console.log(error);
+  //   }
+  // }
 
   async searchUsersBySearchString(data: {
     searchString: string;

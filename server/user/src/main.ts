@@ -51,7 +51,6 @@ async function bootstrap() {
         logger.log('vanila pgdb connected');
       }
     });
-    await elastic.init();
     //testFunc();
   });
 }

@@ -40,6 +40,7 @@ services:
       - '4001:80'
       - '4002:81'
     environment:
+      - MONGO_URI=mongodb://mgdb:27017/sns
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
 
@@ -56,7 +57,7 @@ services:
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
-      - MONGO_URI=mongodb://mgdb:27017/ffl
+      - MONGO_URI=mongodb://mgdb:27017/sns
 
   post:
     image: post
@@ -99,7 +100,7 @@ services:
     ports:
       - '4006:80'
     environment:
-      - MONGO_URI=mongodb://mgdb:27017/metadata
+      - MONGO_URI=mongodb://mgdb:27017/sns
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
 
@@ -114,7 +115,7 @@ services:
     ports:
       - '4007:80'
     environment:
-      - MONGO_URI=mongodb://mgdb:27017/alert
+      - MONGO_URI=mongodb://mgdb:27017/sns
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
 

@@ -8,7 +8,7 @@ elasticsearch-urls = ["http://elasticsearch:9200"]
 
 
 #여기에 싱크맞출 컬렉션 나열, "db이름.컬렉션이름"
-change-stream-namespaces = ["tst.tst"]
+change-stream-namespaces = ["sns.users"]
 
 elasticsearch-max-conns = 4
 
