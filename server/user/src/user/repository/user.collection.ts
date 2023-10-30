@@ -9,8 +9,8 @@ export class UserCollection {
   constructor(@InjectModel('User') private userModel: Model<User>) {}
 
   createUser(data: { username: string; userId: number }): Promise<User> {
-    const createdCat = new this.userModel(data);
-    return createdCat.save();
+    const createdUser = new this.userModel(data);
+    return createdUser.save();
   }
 
   changeUsername(data: { username: string; userId: string }) {
@@ -19,13 +19,6 @@ export class UserCollection {
         userId: Number(data.userId),
       },
       { $set: { username: data.username } },
-      (err) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        console.log('username 업데이트 성공');
-      },
     );
   }
 
@@ -35,13 +28,6 @@ export class UserCollection {
         userId: Number(data.userId),
       },
       { $set: { introduce: data.intro } },
-      (err) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        console.log('introduce 업데이트 성공');
-      },
     );
   }
   changeIntroduceName(data: { userId: string; introduceName: string }) {
@@ -49,14 +35,16 @@ export class UserCollection {
       {
         userId: Number(data.userId),
       },
-      { $set: { introduce: data.introduceName } },
-      (err) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        console.log('introduceName 업데이트 성공');
+      { $set: { introduceName: data.introduceName } },
+    );
+  }
+
+  changeImg(data: { userId: string; img: string }) {
+    return this.userModel.findOneAndUpdate(
+      {
+        userId: Number(data.userId),
       },
+      { $set: { img: data.img } },
     );
   }
 }

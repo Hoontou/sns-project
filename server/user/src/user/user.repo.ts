@@ -76,6 +76,7 @@ export class UserRepository {
     return { ...result.rows[0], introduceName: result.rows[0].introduce_name };
   }
 
+  /**몽고로 대체 가능 */
   async getUserinfoByUsername(
     username: string,
   ): Promise<GetUserInfoData | undefined> {
@@ -90,6 +91,7 @@ export class UserRepository {
     return { ...result.rows[0], introduceName: result.rows[0].introduce_name };
   }
 
+  /**몽고로 대체 가능 */
   async getUsernameWithImg(userId: string): Promise<Userinfo | undefined> {
     const query = `
     SELECT ui.username, ui.img, ui.introduce_name
@@ -101,6 +103,7 @@ export class UserRepository {
     return { ...result.rows[0] };
   }
 
+  /**몽고로 대체 가능 곧 수정할 예정 */
   async getUsernameWithImgList(userIds: string[]): Promise<
     | {
         username: string;
@@ -124,33 +127,48 @@ export class UserRepository {
     const decUserId = crypter.decrypt(data.userId);
     const form = { userId: decUserId, username: data.username };
 
-    this.userinfoTable.changeUsername(form);
-    this.userCollection.changeUsername(form);
-
-    return;
+    return Promise.all([
+      this.userinfoTable.changeUsername(form),
+      this.userCollection.changeUsername(form),
+    ]);
   }
 
   changeIntro(data: { userId: string; intro: string }) {
     const decUserId = crypter.decrypt(data.userId);
     const form = { userId: decUserId, intro: data.intro };
 
-    this.userinfoTable.changeIntro(form);
-    this.userCollection.changeIntro(form);
-    return;
+    return Promise.all([
+      this.userinfoTable.changeIntro(form),
+      this.userCollection.changeIntro(form),
+    ]);
   }
 
   changeIntroduceName(data: { userId: string; introduceName: string }) {
     const decUserId = crypter.decrypt(data.userId);
     const form = { userId: decUserId, introduceName: data.introduceName };
 
-    this.userinfoTable.changeIntroduceName(form);
-    this.userCollection.changeIntroduceName(form);
-    return;
+    return Promise.all([
+      this.userinfoTable.changeIntroduceName(form),
+      this.userCollection.changeIntroduceName(form),
+    ]);
   }
 
-  setImg(data: { userId: string; img: string }) {
-    return this.userinfoTable.setImg(data.userId, data.img);
+  changeImg(data: { userId: string; img: string }) {
+    const decUserId = crypter.decrypt(data.userId);
+    const form = { userId: decUserId, img: data.img };
+
+    try {
+      return Promise.all([
+        this.userinfoTable.changeImg(form),
+        this.userCollection.changeImg(form),
+      ]);
+    } catch (error) {
+      console.log('user -> user.repo.ts -> changeImg 에서 err');
+      console.log(error);
+      return;
+    }
   }
+
   addFollow(data: { userTo: string; userFrom: string }) {
     return this.usernumsTable.addFollow(data);
   }

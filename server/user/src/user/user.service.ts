@@ -83,10 +83,14 @@ export class UserService {
       await this.userRepo.changeUsername(data);
       return { success: true };
     } catch (error) {
-      if (error.code === 23505) {
-        //유니크 중복 코드
+      console.log('user -> user.service.ts -> changeUsername 에서 err');
+      console.log(error);
+      if (error.code === '23505' || error.codeName === 'DuplicateKey') {
+        //유니크 중복 코드, 앞에껀 postgres, 뒤에껀 mongo 코드임
+        console.log('username 중복, postgres');
         return { success: false, exist: true };
       }
+
       return { success: false };
     }
   }
@@ -96,7 +100,8 @@ export class UserService {
       await this.userRepo.changeIntro(data);
       return { success: true };
     } catch (err) {
-      console.log(err.meta.body.err);
+      console.log('user -> user.service.ts -> changeIntro 에서 err');
+      console.log(err);
       return { success: false };
     }
   }
@@ -105,7 +110,9 @@ export class UserService {
     try {
       await this.userRepo.changeIntroduceName(data);
       return { success: true };
-    } catch {
+    } catch (error) {
+      console.log('user -> user.service.ts -> changeIntroduceName 에서 err');
+      console.log(error);
       return { success: false };
     }
   }

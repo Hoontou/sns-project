@@ -45,25 +45,13 @@ export class UserinfoTable {
     //유저탐색을 위해 엘라스틱에서도 수정
     return pgdb.client.query(query);
   }
-  setImg(userId: string, img: string) {
-    const decId = crypter.decrypt(userId);
-
+  changeImg(data: { userId: string; img: string }) {
     const query = `
     UPDATE public.userinfo
-    SET img = '${img}'
-    WHERE "userId" = ${decId};
+    SET img = '${data.img}'
+    WHERE "userId" = ${data.userId};
     `;
 
-    //유저탐색을 위해 엘라스틱에서도 수정
-    return Promise.all([
-      pgdb.client.query(query),
-      elastic.client.update({
-        index: elastic.SnsUsersIndex,
-        id: decId,
-        doc: {
-          img,
-        },
-      }),
-    ]);
+    return pgdb.client.query(query);
   }
 }

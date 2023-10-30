@@ -25,7 +25,7 @@ export class UserHandler {
     }
     //유저 프사 수정요청
     if (msg.properties.type === 'uploadUserImg') {
-      this.userRepo.setImg(data as { userId: string; img: string });
+      this.userRepo.changeImg(data as { userId: string; img: string });
     }
   }
 }
