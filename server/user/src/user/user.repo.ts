@@ -8,9 +8,7 @@ import { Userinfo } from './entity/userinfo.entity';
 import { Usernums } from './entity/usernums.entity';
 import { SignUpDto } from 'src/auth/dto/sign.dto';
 import { pgdb } from 'src/configs/pg';
-import { UserinfoWithNums } from 'sns-interfaces/grpc.interfaces';
 import { UploadMessage } from 'sns-interfaces';
-import { SnsUsersDocType, elastic } from 'src/configs/elasticsearch';
 import { UserCollection } from './repository/user.collection';
 import { crypter } from 'src/common/crypter';
 
@@ -157,16 +155,13 @@ export class UserRepository {
     const decUserId = crypter.decrypt(data.userId);
     const form = { userId: decUserId, img: data.img };
 
-    try {
-      return Promise.all([
-        this.userinfoTable.changeImg(form),
-        this.userCollection.changeImg(form),
-      ]);
-    } catch (error) {
+    return Promise.all([
+      this.userinfoTable.changeImg(form),
+      this.userCollection.changeImg(form),
+    ]).catch((err) => {
       console.log('user -> user.repo.ts -> changeImg 에서 err');
-      console.log(error);
-      return;
-    }
+      console.log(err);
+    });
   }
 
   addFollow(data: { userTo: string; userFrom: string }) {

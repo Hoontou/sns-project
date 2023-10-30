@@ -87,7 +87,7 @@ export class UserService {
       console.log(error);
       if (error.code === '23505' || error.codeName === 'DuplicateKey') {
         //유니크 중복 코드, 앞에껀 postgres, 뒤에껀 mongo 코드임
-        console.log('username 중복, postgres');
+        console.log('username 중복');
         return { success: false, exist: true };
       }
 

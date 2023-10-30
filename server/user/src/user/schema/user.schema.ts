@@ -1,31 +1,70 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose from 'mongoose';
 
-export type UserDocument = HydratedDocument<User>;
+const userSchema = new mongoose.Schema({
+  userId: {
+    type: Number,
+    required: true,
+    unique: true,
+    index: true,
+  },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    index: true,
+  },
+  introduce: {
+    type: String,
+    default: '',
+  },
+  introduceName: {
+    type: String,
+    default: '',
+  },
+  img: {
+    type: String,
+    default: '',
+  },
+});
 
-@Schema()
-export class User {
-  @Prop({ required: true, unique: true, index: true })
+export interface UserSchemaType {
   userId: number;
-
-  @Prop({ required: true, unique: true, index: true })
   username: string;
-
-  @Prop({ default: '' })
   introduce: string;
-
-  @Prop({ default: '' })
   introduceName: string;
-
-  @Prop({ default: '' })
   img: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserModel = mongoose.model('user', userSchema);
 
-// const newUserDoc: SnsUsersDocType = {
-//   username: signUpDto.username,
-//   introduce: '',
-//   img: '',
-//   introduceName: '',
-// };
+// import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+// import mongoose, { HydratedDocument } from 'mongoose';
+
+// export type UserDocument = HydratedDocument<User>;
+
+// @Schema()
+// export class User {
+//   @Prop({ required: true, unique: true, index: true })
+//   userId: number;
+
+//   @Prop({ required: true, unique: true, index: true })
+//   username: string;
+
+//   @Prop({ default: '' })
+//   introduce: string;
+
+//   @Prop({ default: '' })
+//   introduceName: string;
+
+//   @Prop({ default: '' })
+//   img: string;
+// }
+
+// export const UserSchema = SchemaFactory.createForClass(User);
+
+// // const newUserDoc: SnsUsersDocType = {
+// //   username: signUpDto.username,
+// //   introduce: '',
+// //   img: '',
+// //   introduceName: '',
+// // };
