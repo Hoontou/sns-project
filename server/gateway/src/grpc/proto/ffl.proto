@@ -28,6 +28,8 @@ message CheckLikedRes {
 message GetUserIdsReq {
   string id = 1;
   string type = 2;
+  int32 page = 3;
+
 }
 message GetUserIdsRes {
   repeated string userIds = 1;

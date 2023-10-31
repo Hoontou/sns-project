@@ -74,6 +74,7 @@ export class FflService {
   async getUserList(body: {
     id: string;
     type: 'like' | 'follower' | 'following'; //어떤 유저리스트를 요청하는지
+    page: number;
   }): Promise<{
     userList: { userId: string; img: string; username: string }[];
   }> {

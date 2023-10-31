@@ -76,7 +76,12 @@ const getServer = () => {
     GetUserIds: async (req, res) => {
       //좋아요 누른 사람들 or 팔로우 한 사람들 or 팔로잉 하는 사람들
       if (req.request.type === 'like') {
-        res(null, { userIds: await likeRopository.getUserIds(req.request.id) });
+        res(null, {
+          userIds: await likeRopository.getUserIds(
+            req.request.id,
+            req.request.page,
+          ),
+        });
         return;
       }
 
@@ -84,6 +89,7 @@ const getServer = () => {
         userIds: await followRepository.getUserIds(
           crypter.decrypt(req.request.id),
           req.request.type as 'follower' | 'following',
+          req.request.page,
         ),
       });
       return;

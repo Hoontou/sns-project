@@ -11,8 +11,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sample from '../../asset/sample1.jpg';
 import { requestUrl } from '../../common/etc';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import Spinner from '../../common/Spinner';
+import { primaryColor } from '../../App';
 
 type ListType = 'like' | 'follower' | 'following';
+
+const pageLen = 15;
 
 /**좋아요, 팔로워, 팔로잉 한 유저리스트 보는 컴포넌트 */
 const Userlist = (props: {
@@ -27,13 +32,15 @@ const Userlist = (props: {
   >([]);
   const [title, setTitle] = useState<string>('');
   const [spin, setSpin] = useState<boolean>(true);
+  const [page, setPage] = useState<number>(0);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const onClick = (userId: string) => {
-    navigate(`/userfeed/${userId}`);
-    //window.location.reload(); 이거 용도가 뭐였는지 생각이 안난다. 강제로 url리셋인거 같은데
+  const onClick = (username: string) => {
+    navigate(`/feed/${username}`);
+    window.location.reload();
   };
 
-  useEffect(() => {
+  const getUserList = () => {
     if (props.type === 'like') {
       setTitle('좋아요');
     } else if (props.type === 'follower') {
@@ -45,6 +52,7 @@ const Userlist = (props: {
       .post('/gateway/ffl/getuserlist', {
         id: props.targetId,
         type: props.type,
+        page,
       })
       .then((res) => {
         const data: {
@@ -56,73 +64,105 @@ const Userlist = (props: {
           }[];
         } = res.data;
         console.log(data);
-        setList(data.userList);
+
+        if (data.userList.length < pageLen) {
+          //gateway에서 10개씩 보내줌.
+          setHasMore(false);
+        }
+
+        setList([...list, ...data.userList]);
+        setPage(page + 1);
         setSpin(false);
       });
-  }, [props.targetId, props.type]);
-  return (
-    <Dialog
-      onClose={() => props.setOpenUserList(!props.open)}
-      open={props.open}
-      className='text-center'
-      fullWidth={true}
-      maxWidth={'xs'}
-    >
-      {spin === true ? (
-        'waiting...'
-      ) : (
-        <>
-          <DialogTitle
+  };
+
+  useEffect(() => {
+    getUserList();
+  }, []);
+
+  const renderCard = list.map((item, index) => {
+    return (
+      <ListItem
+        key={index}
+        onClick={() => {
+          onClick(item.username);
+        }}
+      >
+        <ListItemAvatar>
+          <Avatar
+            sx={{ width: 50, height: 50 }}
+            style={{ marginLeft: '0.7rem' }}
+            alt={String(index)}
+            src={item.img === '' ? sample : `${requestUrl}/${item.img}`}
+          ></Avatar>
+        </ListItemAvatar>
+        <div>
+          <div
             style={{
-              marginRight: '1rem',
               marginLeft: '1rem',
+              fontSize: '1.4rem',
+              marginTop: '-0.2rem',
             }}
           >
-            {title}
-          </DialogTitle>
-          {list.length === 0 && <p>아무것도 없습니다.</p>}
-          <List sx={{ pt: 0 }} style={{ maxHeight: '50vh' }}>
-            {list.map((item, index) => (
-              <ListItem
-                key={index}
-                onClick={() => {
-                  onClick(item.userId);
-                }}
-              >
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{ width: 50, height: 50 }}
-                    style={{ marginLeft: '0.7rem' }}
-                    alt={String(index)}
-                    src={item.img === '' ? sample : `${requestUrl}/${item.img}`}
-                  ></Avatar>
-                </ListItemAvatar>
-                <div>
-                  <div
-                    style={{
-                      marginLeft: '1rem',
-                      fontSize: '1.4rem',
-                      marginTop: '-0.2rem',
-                    }}
-                  >
-                    {item.username}
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: '1rem',
-                      marginTop: '-0.4rem',
-                      fontSize: '0.9rem',
-                    }}
-                  >
-                    {item.introduceName}
-                  </div>
-                </div>
-              </ListItem>
-            ))}
-          </List>
-        </>
-      )}
-    </Dialog>
+            {item.username}
+          </div>
+          <div
+            style={{
+              marginLeft: '1rem',
+              marginTop: '-0.4rem',
+              fontSize: '0.9rem',
+            }}
+          >
+            {item.introduceName}
+          </div>
+        </div>
+      </ListItem>
+    );
+  });
+  return (
+    <div>
+      <Dialog
+        onClose={() => props.setOpenUserList(!props.open)}
+        open={props.open}
+        className='text-center'
+        fullWidth={true}
+        maxWidth={'xs'}
+        style={{
+          maxHeight: '45rem',
+          position: 'absolute',
+          top: '15%',
+        }}
+      >
+        <DialogTitle
+          style={{
+            marginRight: '1rem',
+            marginLeft: '1rem',
+            marginBottom: '-0.7rem',
+          }}
+        >
+          {title}
+        </DialogTitle>
+        {list.length === 0 && !spin && <p>아무것도 없습니다.</p>}
+        {renderCard}
+        {hasMore && (
+          <div
+            style={{
+              color: primaryColor,
+              paddingBottom: '1rem',
+              marginTop: '1rem',
+            }}
+          >
+            {title} 모두 보기
+          </div>
+        )}
+
+        {spin && (
+          <div style={{ position: 'absolute', left: '45%' }}>
+            <Spinner />
+          </div>
+        )}
+      </Dialog>
+    </div>
   );
 };
 export default Userlist;

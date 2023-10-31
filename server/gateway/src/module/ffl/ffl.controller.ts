@@ -62,7 +62,12 @@ export class FflController {
 
   @Post('/getuserlist')
   async getUserList(
-    @Body() body: { id: string; type: 'like' | 'follower' | 'following' },
+    @Body()
+    body: {
+      id: string;
+      type: 'like' | 'follower' | 'following';
+      page: number;
+    },
   ): Promise<{
     userList: { userId: string; img: string; username: string }[];
   }> {

@@ -107,9 +107,11 @@ export interface FflGrpcService {
   getUserIds({
     id,
     type,
+    page,
   }: {
     id: string;
     type: 'like' | 'follower' | 'following';
+    page: number;
   }): Observable<{ userIds: string[] }>;
   getCommentLiked({
     commentIdList,

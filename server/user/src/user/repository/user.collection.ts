@@ -1,23 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { UserModel, UserSchemaType } from '../schema/user.schema';
+import { User, UserSchemaType } from '../schema/user.schema';
 import mongoose, { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class UserCollection {
   private logger = new Logger('UserCollection');
-  constructor(public readonly db) {}
+  constructor(@InjectModel('user') private userModel: Model<User>) {}
 
   createUser(data: {
     username: string;
     userId: number;
   }): Promise<UserSchemaType> {
-    const createdUser = new this.db(data);
+    const createdUser = new this.userModel(data);
     return createdUser.save();
   }
 
   changeUsername(data: { username: string; userId: string }) {
-    return this.db.findOneAndUpdate(
+    return this.userModel.findOneAndUpdate(
       {
         userId: Number(data.userId),
       },
@@ -26,7 +26,7 @@ export class UserCollection {
   }
 
   changeIntro(data: { userId: string; intro: string }) {
-    return this.db.findOneAndUpdate(
+    return this.userModel.findOneAndUpdate(
       {
         userId: Number(data.userId),
       },
@@ -34,7 +34,7 @@ export class UserCollection {
     );
   }
   changeIntroduceName(data: { userId: string; introduceName: string }) {
-    return this.db.findOneAndUpdate(
+    return this.userModel.findOneAndUpdate(
       {
         userId: Number(data.userId),
       },
@@ -43,7 +43,7 @@ export class UserCollection {
   }
 
   changeImg(data: { userId: string; img: string }) {
-    return this.db.findOneAndUpdate(
+    return this.userModel.findOneAndUpdate(
       {
         userId: Number(data.userId),
       },

@@ -56,15 +56,17 @@ followSchema.index(
 );
 followSchema.index({ userFrom: 1, userTo: 1 }, { unique: true });
 
-//참고한 블로그
+//참조키 거는거 참고한 블로그
 //https://cocook.tistory.com/189
-followSchema.virtual('getUserTo', {
+export const UserToPopulate = 'getUserTo';
+export const UserFromPopulate = 'getUserFrom';
+followSchema.virtual(UserToPopulate, {
   ref: 'user', // 참조할 collections
   localField: 'userTo', // 현재 스키마에 선언되어 있는 참조할 필드
   foreignField: 'userId', // collections에서 참조할 필드
   justOne: true, // 하나만 반환하는지 여부
 });
-followSchema.virtual('getUserFrom', {
+followSchema.virtual(UserFromPopulate, {
   ref: 'user', // 참조할 collections
   localField: 'userFrom', // 현재 스키마에 선언되어 있는 참조할 필드
   foreignField: 'userId', // collections에서 참조할 필드
@@ -75,16 +77,7 @@ export const Follow = mongoose.model('follow', followSchema);
 
 class FollowRepository {
   constructor(public readonly db) {
-    this.db
-      .find({ userFrom: 1 })
-      .populate('getUserTo')
-      .exec()
-      .then((res) => {
-        console.log(res[0].getUserTo);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // this.tstPopulate();
   }
   //constructor(public readonly db) {connectMongo();}
   //스키마 다중연결을 고려해서 몽고연결은 index.ts에서
@@ -122,13 +115,46 @@ class FollowRepository {
   async getUserIds(
     userId: string,
     type: 'follower' | 'following',
+    page: number,
   ): Promise<string[]> {
-    const userIds = await this.db.find(
-      type === 'follower' ? { userTo: userId } : { userFrom: userId },
-    );
+    const pageLen = 15;
+    const userIds =
+      page === -1
+        ? await this.db.find(
+            type === 'follower' ? { userTo: userId } : { userFrom: userId },
+          )
+        : await this.db
+            .find(
+              type === 'follower' ? { userTo: userId } : { userFrom: userId },
+            )
+            .skip(page * pageLen)
+            .limit(pageLen)
+            .exec();
+
     return userIds.map((item) => {
       return type === 'follower' ? item.userFrom : item.userTo;
     });
+  }
+
+  // 아래는 참조키로 가져오기 되는지 테스트한 코드,
+  //근데 이 방식이 처음 할때 싹다긁어오는지, 아니면 접근시 긁어오는지,
+  //그러니까 typeorm에서의 eager방식인지 아닌지 모르겠다 지금.
+  //여러개 팔로우 만들어서 테스트 해봐야함
+  //eager방식으로 싹다긁어온다.
+  async tstPopulate() {
+    this.db
+      .find({ userFrom: 1 })
+      .populate(UserToPopulate)
+      .exec()
+      .then((res) => {
+        const result = res.map((item) => {
+          return { ...item._doc, userTo: item.getUserTo };
+        });
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 }
 export const followRepository = new FollowRepository(Follow);

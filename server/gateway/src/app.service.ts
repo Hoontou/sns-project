@@ -39,6 +39,7 @@ export class AppService {
     const { userList } = await this.fflService.getUserList({
       id: userId,
       type: 'following',
+      page: -1,
     });
     userList.push({ userId, username: '', img: '' });
 

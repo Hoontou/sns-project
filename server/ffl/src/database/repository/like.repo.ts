@@ -54,8 +54,17 @@ class LikeRepository {
       });
   }
 
-  async getUserIds(postId: string): Promise<string[]> {
-    const userIds = await this.db.find({ postId });
+  async getUserIds(postId: string, page: number): Promise<string[]> {
+    const pageLen = 15;
+    const userIds =
+      page === -1
+        ? await this.db.find({ postId })
+        : await this.db
+            .find({ postId })
+            .skip(page * pageLen)
+            .limit(pageLen)
+            .exec();
+
     return userIds.map((item) => {
       return item.userId;
     });

@@ -5,9 +5,9 @@ import { Client } from '@elastic/elasticsearch';
 
 class Elasticsearch {
   public readonly client;
-  public readonly SnsPostsIndex = 'sns_users';
-  public readonly SnsHashtagsIndex = 'sns_tags';
-  public readonly SnsUsersIndex = 'sns_users';
+  public readonly SnsPostsIndex = 'sns.users';
+  public readonly SnsHashtagsIndex = 'sns.tags';
+  public readonly SnsUsersIndex = 'sns.users';
 
   constructor() {
     this.client = new Client({
