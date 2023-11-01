@@ -33,7 +33,7 @@ export const FflPage = () => {
     <div>
       <div
         style={{
-          paddingTop: '1rem',
+          paddingTop: '0.5rem',
         }}
         className='text-center'
       >
@@ -42,13 +42,21 @@ export const FflPage = () => {
           {title()}
         </span>
       </div>
-      <FollowTab />
+      {type === 'like' ? <LikeTab /> : <FollowTab />}
 
       <div></div>
     </div>
   );
 };
 
+//userId, type, page 날려서 유저리스트 계속 가져오고,
+//검색창 추가로 둬서 몽고 population 구현한거 이용해서 검색기능 적용
+//검색기능은 자원 많이잡아먹을거기 때문에, 딜레이를 좀 걸자.
+
+//유저리스트 가져오는건 userlistmodal에 있는 함수 그대로 쓰면 된다.
+//usercard 만드는것도 가져오면 됨.
+
+//일단 검색인풋 넣기보다, 무한스크롤로 리스트 가져오는것부터 구현
 const FollowTab = () => {
   const [value, setValue] = useState<number>(0); //패널 선택
 
@@ -72,4 +80,8 @@ const FollowTab = () => {
       </Box>
     </div>
   );
+};
+
+const LikeTab = () => {
+  return <div>this is LikeTab</div>;
 };

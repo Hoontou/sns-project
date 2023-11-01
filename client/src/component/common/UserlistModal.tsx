@@ -20,7 +20,7 @@ type ListType = 'like' | 'follower' | 'following';
 const pageLen = 15;
 
 /**좋아요, 팔로워, 팔로잉 한 유저리스트 보는 컴포넌트 */
-const Userlist = (props: {
+const UserlistModal = (props: {
   open: boolean;
   targetId: string;
   setOpenUserList(open: boolean): void;
@@ -168,4 +168,4 @@ const Userlist = (props: {
     </div>
   );
 };
-export default Userlist;
+export default UserlistModal;

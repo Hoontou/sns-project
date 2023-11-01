@@ -42,6 +42,8 @@ export const SearchTap = (props: {
           zIndex: '800',
         }}
       >
+        {/* 도저히 검색인풋 넓이조절이 안돼서 삽질하다가 되는대로 구현했음, 코드개판임 */}
+        {/* 원래 SearchBar 컴포넌트는 부모에 있었음, props도 단지 searchbar에 넘기기 위해서 받아온것들임 */}
         <div
           style={{
             margin: '0 auto',

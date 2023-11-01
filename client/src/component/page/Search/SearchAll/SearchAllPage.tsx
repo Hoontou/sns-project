@@ -29,6 +29,7 @@ const SearchAllPage = () => {
   const [openSearchModal, setOpenSearchModal] = useState<boolean>(false);
   return (
     <div style={{ paddingBottom: '3.5rem', width: '95%' }}>
+      {/* 도저히 검색인풋 넓이조절이 안돼서 삽질하다가 되는대로 구현했음, 코드개판임 */}
       <SearchTap
         searchString={searchString}
         userId={userId}

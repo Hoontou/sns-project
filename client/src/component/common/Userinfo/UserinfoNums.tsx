@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import { useState } from 'react';
-import Userlist from '../Userlist';
+import UserlistModal from '../UserlistModal';
 
 const UserinfoNums = (props: {
   postcount: number;
@@ -50,7 +50,7 @@ const UserinfoNums = (props: {
         </span>
       </Grid>
       {type !== '' && openUserList && (
-        <Userlist
+        <UserlistModal
           open={openUserList}
           setOpenUserList={setOpenUserList}
           targetId={props.userId}

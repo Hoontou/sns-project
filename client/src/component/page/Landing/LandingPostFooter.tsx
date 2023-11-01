@@ -5,8 +5,8 @@ import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';
-import Userlist from '../../common/Userlist';
 import { renderTitle } from '../../common/Post/PostFooter';
+import UserlistModal from '../../common/UserlistModal';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
 const LandingPostFooter = (props: {
@@ -143,7 +143,7 @@ const LandingPostFooter = (props: {
         </span>
       </div>
       {openUserList && (
-        <Userlist
+        <UserlistModal
           open={openUserList}
           setOpenUserList={setOpenUserList}
           targetId={props.postId}
