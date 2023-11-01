@@ -151,6 +151,9 @@ const Userlist = (props: {
               paddingBottom: '1rem',
               marginTop: '1rem',
             }}
+            onClick={() => {
+              navigate('/');
+            }}
           >
             {title} 모두 보기
           </div>

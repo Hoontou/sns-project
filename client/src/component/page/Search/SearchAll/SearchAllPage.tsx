@@ -28,21 +28,14 @@ const SearchAllPage = () => {
 
   const [openSearchModal, setOpenSearchModal] = useState<boolean>(false);
   return (
-    <div
-      style={{
-        width: '90%',
-        margin: '0.7rem auto',
-        paddingBottom: '3.5rem',
-      }}
-    >
-      <div>
-        <SearchBar
-          setOpenSearchModal={setOpenSearchModal}
-          openSearchModal={openSearchModal}
-          defaultValue={searchString}
-        />
-      </div>
-      <SearchTap searchString={searchString} userId={userId} />
+    <div style={{ paddingBottom: '3.5rem', width: '95%' }}>
+      <SearchTap
+        searchString={searchString}
+        userId={userId}
+        setOpenSearchModal={setOpenSearchModal}
+        openSearchModal={openSearchModal}
+        defaultValue={searchString}
+      />
       <div>
         <Navbar value={1} />
       </div>

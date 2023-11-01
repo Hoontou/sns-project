@@ -88,8 +88,6 @@ const Userinfo = (props: {
           }}
         />
       )}
-
-      <hr></hr>
     </div>
   );
 };

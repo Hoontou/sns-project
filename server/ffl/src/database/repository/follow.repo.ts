@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import { crypter } from '../../common/crypter';
 // user 서버의 user.schema.ts의 코드, ref설정위해 가져왔음
 const userSchema = new mongoose.Schema({

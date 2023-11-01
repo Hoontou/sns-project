@@ -72,9 +72,7 @@ const Feed = () => {
   }, []);
 
   return (
-    <div
-      style={{ width: '90%', margin: '0.7rem auto', paddingBottom: '3.5rem' }}
-    >
+    <div style={{ paddingBottom: '3.5rem' }}>
       {spin && (
         <div style={{ position: 'absolute', left: '45%', top: '30%' }}>
           <Spinner />
@@ -82,12 +80,17 @@ const Feed = () => {
       )}
       {!spin && (
         <>
-          <Userinfo
-            spin={spin}
-            authinfo={authinfo}
-            userinfo={userinfo}
-            feedType={feedType}
-          />
+          <div style={{ width: '95%', margin: '0.7rem auto' }}>
+            <Userinfo
+              spin={spin}
+              authinfo={authinfo}
+              userinfo={userinfo}
+              feedType={feedType}
+            />
+          </div>
+
+          <hr></hr>
+
           <Postlist
             userId={
               feedType === 'myInfo' && authinfo.success === true //내피드 이면 내아이디 넘김

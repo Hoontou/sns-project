@@ -24,12 +24,15 @@ const MainSearchPage = () => {
   return (
     <div
       style={{
-        width: '90%',
-        margin: '0.7rem auto',
         paddingBottom: '3.5rem',
       }}
     >
-      <div>
+      <div
+        style={{
+          width: '95%',
+          margin: '0.7rem auto',
+        }}
+      >
         <SearchBar
           setOpenSearchModal={setOpenSearchModal}
           openSearchModal={openSearchModal}

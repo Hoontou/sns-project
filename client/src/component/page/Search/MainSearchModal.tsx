@@ -148,10 +148,11 @@ const MainSearchResultModal = (props: {
         <div
           className='text-center'
           style={{
-            marginLeft: '-3rem',
             color: primaryColor,
             marginTop: '1rem',
             paddingBottom: '2rem',
+            display: 'flex',
+            justifyContent: 'center',
           }}
         >
           <span
@@ -159,9 +160,7 @@ const MainSearchResultModal = (props: {
               navigate(`/search/all/${props.searchString}`);
             }}
           >
-            {props.searchResult?.resultList.length === 0
-              ? '더 찾아보기'
-              : '결과 모두 보기'}
+            더 찾아보기
           </span>
         </div>
       )}

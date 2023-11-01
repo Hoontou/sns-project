@@ -18,7 +18,7 @@ export interface SearchedHashtag {
 export const searchUserOrHashtag = async (
   string: string,
 ): Promise<SearchResult> => {
-  const pageSize = 10;
+  const pageSize = 7;
 
   const type = string.at(0);
   const searchString = string.substring(1);
