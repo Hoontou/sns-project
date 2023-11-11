@@ -76,9 +76,7 @@ followSchema.virtual(UserFromPopulate, {
 export const Follow = mongoose.model('follow', followSchema);
 
 class FollowRepository {
-  constructor(public readonly db) {
-    // this.tstPopulate();
-  }
+  constructor(public readonly db) {}
   //constructor(public readonly db) {connectMongo();}
   //스키마 다중연결을 고려해서 몽고연결은 index.ts에서
 
@@ -136,25 +134,85 @@ class FollowRepository {
     });
   }
 
-  // 아래는 참조키로 가져오기 되는지 테스트한 코드,
-  //근데 이 방식이 처음 할때 싹다긁어오는지, 아니면 접근시 긁어오는지,
-  //그러니까 typeorm에서의 eager방식인지 아닌지 모르겠다 지금.
-  //여러개 팔로우 만들어서 테스트 해봐야함
-  //eager방식으로 싹다긁어온다.
-  async tstPopulate() {
-    this.db
-      .find({ userFrom: 1 })
+  /**팔로잉에서 사람검색 */
+  async searchUserFollowing(data: {
+    targetUser: string;
+    searchString: string;
+  }) {
+    const targetUserId = Number(crypter.decrypt(data.targetUser));
+
+    const allUserList = await this.db
+      .find({ userFrom: targetUserId })
       .populate(UserToPopulate)
       .exec()
       .then((res) => {
-        const result = res.map((item) => {
-          return { ...item._doc, userTo: item.getUserTo };
+        return res.map((item) => {
+          return {
+            ...item.getUserTo._doc,
+          };
         });
-        console.log(result);
       })
       .catch((err) => {
         console.log(err);
       });
+
+    const matchedUserList = findMatchingIndices(allUserList, data.searchString);
+    return matchedUserList;
+  }
+
+  /**팔로워에서 사람검색 */
+  async searchUserFollower(data: { targetUser: string; searchString: string }) {
+    const targetUserId = Number(crypter.decrypt(data.targetUser));
+
+    const allUserList = await this.db
+      .find({ userTo: targetUserId })
+      .populate(UserFromPopulate)
+      .exec()
+      .then((res) => {
+        return res.map((item) => {
+          return {
+            ...item.getUserFrom._doc,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    const matchedUserList = findMatchingIndices(allUserList, data.searchString);
+
+    return matchedUserList;
   }
 }
+
+export const findMatchingIndices = (
+  userList: {
+    username: string;
+    userId: number;
+    introduceName: string;
+    img: string;
+  }[],
+  prefix: string,
+) => {
+  const matchingIndices: {
+    username: string;
+    userId: number;
+    introduceName: string;
+    img: string;
+  }[] = [];
+
+  for (let i = 0; i < userList.length; i++) {
+    if (userList[i].username.startsWith(prefix)) {
+      matchingIndices.push({
+        username: userList[i].username,
+        userId: userList[i].userId,
+        img: userList[i].img,
+        introduceName: userList[i].introduceName,
+      });
+    }
+  }
+
+  return matchingIndices;
+};
+
 export const followRepository = new FollowRepository(Follow);

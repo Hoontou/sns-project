@@ -124,6 +124,19 @@ export interface FflGrpcService {
     cocommentIdList: number[];
     userId: string;
   }): Observable<{ cocommentLikedList: boolean[] }>;
+
+  searchUserFfl(data: {
+    type: 'follower' | 'following' | 'like';
+    searchString: string;
+    target: string;
+  }): Observable<{
+    userList: {
+      userId: number;
+      username: string;
+      introduceName: string;
+      img: string;
+    }[];
+  }>;
 }
 
 export interface PostGrpcService {

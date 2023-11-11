@@ -151,4 +151,18 @@ export class FflService {
   }> {
     return lastValueFrom(this.fflGrpcService.getCocommentLiked(data));
   }
+
+  async searchUserFfl(data: {
+    type: 'like' | 'follower' | 'following';
+    searchString: string;
+    target: string;
+  }) {
+    const { userList } = await lastValueFrom(
+      this.fflGrpcService.searchUserFfl(data),
+    );
+    if (userList === undefined) {
+      return { userList: [] };
+    }
+    return { userList };
+  }
 }

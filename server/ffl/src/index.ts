@@ -137,6 +137,40 @@ const getServer = () => {
       res(null, { cocommentLikedList });
       return;
     },
+    SearchUserFfl: async (req, res) => {
+      console.log(req.request);
+      //타입이 팔로우일 경우 암호회 된 userId가 타겟으로 온다.
+      //좋아요일 경우 objId로 된 postId가 온다.
+      //요청온 타입에 맞게 검색요청
+      const selectAndRequestSearching = (type) => {
+        if (type === 'follower') {
+          return followRepository.searchUserFollower({
+            targetUser: req.request.target,
+            searchString: req.request.searchString,
+          });
+        }
+        if (type === 'following') {
+          return followRepository.searchUserFollowing({
+            targetUser: req.request.target,
+            searchString: req.request.searchString,
+          });
+        }
+        return likeRopository.searchUserLike({
+          targetPostId: req.request.target,
+          searchString: req.request.searchString,
+        });
+      };
+
+      const searchedUserList: {
+        username: string;
+        userId: number;
+        introduceName: string;
+        img: string;
+      }[] = await selectAndRequestSearching(req.request.type);
+
+      res(null, { userList: searchedUserList });
+      return;
+    },
   } as FflServiceHandlers);
   return server;
 };

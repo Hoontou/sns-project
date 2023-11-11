@@ -13,6 +13,8 @@ import sample from '../../../asset/sample2.jpg';
 import { requestUrl } from '../../../common/etc';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Spinner from '../../../common/Spinner';
+import FflSearchBar from './FflSearchBar';
+import { SearchResult } from '../Upload/Upload';
 
 function a11yProps(index: number) {
   return {
@@ -39,6 +41,7 @@ const FollowTab = (props: {
     follower: number;
     following: number;
   }>({ follower: 0, following: 0 });
+
   useEffect(() => {
     setTabIndex(props.defalutTab);
   }, [props.defalutTab]);
@@ -64,16 +67,6 @@ const FollowTab = (props: {
         });
         setTargetrUserId(result.userId);
       });
-  };
-  //2.한번은 사람가져오기 용도, ffl에 요청 api그대로 쓰면됨
-  const getUserList = () => {
-    //ffl에 요청
-  };
-
-  //3.추가로 입력들어오면 ffl에 서칭요청
-  //3개의 요청함수 필요
-  const serchByInput = () => {
-    //ffl에 요청
   };
 
   useEffect(() => {
@@ -128,6 +121,10 @@ export const FollowListPannel = (props: {
 
   //탭 왔다갔다할 때마다 계속 불러오는걸 막기위해
   const [firstReq, setFirstReq] = useState<boolean>(true);
+
+  const [searchResult, setSearchResult] = useState<
+    { username: string; introduceName: string; img: string }[] | undefined
+  >(undefined);
 
   const onClick = (username: string) => {
     navigate(`/feed/${username}`);
@@ -221,6 +218,46 @@ export const FollowListPannel = (props: {
     );
   });
 
+  const renderSearchCard = searchResult?.map((item, index) => {
+    return (
+      <ListItem
+        key={index}
+        onClick={() => {
+          onClick(item.username);
+        }}
+      >
+        <ListItemAvatar>
+          <Avatar
+            sx={{ width: 50, height: 50 }}
+            style={{ marginLeft: '0.7rem' }}
+            alt={String(index)}
+            src={item.img === '' ? sample : `${requestUrl}/${item.img}`}
+          ></Avatar>
+        </ListItemAvatar>
+        <div>
+          <div
+            style={{
+              marginLeft: '1rem',
+              fontSize: '1.4rem',
+              marginTop: '-0.2rem',
+            }}
+          >
+            {item.username}
+          </div>
+          <div
+            style={{
+              marginLeft: '1rem',
+              marginTop: '-0.4rem',
+              fontSize: '0.9rem',
+            }}
+          >
+            {item.introduceName}
+          </div>
+        </div>
+      </ListItem>
+    );
+  });
+
   return (
     <div
       role='tabpanel'
@@ -229,19 +266,53 @@ export const FollowListPannel = (props: {
       aria-labelledby={`simple-tab-${props.index}`}
       style={{ display: props.value === props.index ? 'block' : 'none' }}
     >
-      <div>
-        <InfiniteScroll
-          next={getUserList}
-          hasMore={hasMore}
-          loader={<></>}
-          dataLength={list.length}
-          scrollThreshold={'100%'}
-        >
-          {/* scrollThreshold={'90%'} 페이지 얼만큼 내려오면 다음거 불러올건지 설정 */}
-          <div>{renderCard}</div>
-        </InfiniteScroll>
-        {spin && <Spinner />}
-      </div>
+      {list.length > 0 && (
+        <>
+          <div>
+            <FflSearchBar
+              setSearchResult={setSearchResult}
+              targetUserId={props.targetUserId}
+              type={props.index === 0 ? 'follower' : 'following'}
+            />
+          </div>
+          <div>
+            {/* 검색결과가 채워져 있으면 */}
+            {searchResult === undefined ? (
+              <InfiniteScroll
+                next={getUserList}
+                hasMore={hasMore}
+                loader={<></>}
+                dataLength={list.length}
+                scrollThreshold={'100%'}
+              >
+                {/* scrollThreshold={'90%'} 페이지 얼만큼 내려오면 다음거 불러올건지 설정 */}
+                <div>{renderCard}</div>
+              </InfiniteScroll>
+            ) : (
+              <div>{renderSearchCard}</div>
+            )}
+            {spin && <Spinner />}
+          </div>
+        </>
+      )}
+
+      {list.length === 0 || searchResult?.length === 0 ? (
+        <>
+          <div
+            style={{
+              fontSize: '1.5rem',
+              color: 'gray',
+              justifyContent: 'center',
+              display: 'flex',
+              marginTop: '7rem',
+            }}
+          >
+            아무것도 없어요.
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

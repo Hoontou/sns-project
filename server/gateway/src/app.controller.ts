@@ -58,10 +58,12 @@ export class AppController {
   @Post('/postfooter')
   /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 댓글수 리턴해야함. */
   async postFooter(
-    @Body() body: { userId: string; postId: string; targetId: string },
+    @Body() body: { postId: string; targetId: string },
+    @Req() req,
   ): Promise<PostFooterContent> {
     return this.appService.postFooter({
       ...body,
+      userId: req.user.userId,
       targetId: crypter.decrypt(body.targetId),
     });
   }

@@ -12,6 +12,8 @@ import type { GetCommentLikedReq as _ffl_GetCommentLikedReq, GetCommentLikedReq_
 import type { GetCommentLikedRes as _ffl_GetCommentLikedRes, GetCommentLikedRes__Output as _ffl_GetCommentLikedRes__Output } from '../ffl/GetCommentLikedRes';
 import type { GetUserIdsReq as _ffl_GetUserIdsReq, GetUserIdsReq__Output as _ffl_GetUserIdsReq__Output } from '../ffl/GetUserIdsReq';
 import type { GetUserIdsRes as _ffl_GetUserIdsRes, GetUserIdsRes__Output as _ffl_GetUserIdsRes__Output } from '../ffl/GetUserIdsRes';
+import type { SearchUserFflReq as _ffl_SearchUserFflReq, SearchUserFflReq__Output as _ffl_SearchUserFflReq__Output } from '../ffl/SearchUserFflReq';
+import type { SearchUserFflRes as _ffl_SearchUserFflRes, SearchUserFflRes__Output as _ffl_SearchUserFflRes__Output } from '../ffl/SearchUserFflRes';
 
 export interface FflServiceClient extends grpc.Client {
   CheckFollowed(argument: _ffl_CheckFollowedReq, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_ffl_CheckFollowedRes__Output>): grpc.ClientUnaryCall;
@@ -59,6 +61,15 @@ export interface FflServiceClient extends grpc.Client {
   getUserIds(argument: _ffl_GetUserIdsReq, options: grpc.CallOptions, callback: grpc.requestCallback<_ffl_GetUserIdsRes__Output>): grpc.ClientUnaryCall;
   getUserIds(argument: _ffl_GetUserIdsReq, callback: grpc.requestCallback<_ffl_GetUserIdsRes__Output>): grpc.ClientUnaryCall;
   
+  SearchUserFfl(argument: _ffl_SearchUserFflReq, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_ffl_SearchUserFflRes__Output>): grpc.ClientUnaryCall;
+  SearchUserFfl(argument: _ffl_SearchUserFflReq, metadata: grpc.Metadata, callback: grpc.requestCallback<_ffl_SearchUserFflRes__Output>): grpc.ClientUnaryCall;
+  SearchUserFfl(argument: _ffl_SearchUserFflReq, options: grpc.CallOptions, callback: grpc.requestCallback<_ffl_SearchUserFflRes__Output>): grpc.ClientUnaryCall;
+  SearchUserFfl(argument: _ffl_SearchUserFflReq, callback: grpc.requestCallback<_ffl_SearchUserFflRes__Output>): grpc.ClientUnaryCall;
+  searchUserFfl(argument: _ffl_SearchUserFflReq, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_ffl_SearchUserFflRes__Output>): grpc.ClientUnaryCall;
+  searchUserFfl(argument: _ffl_SearchUserFflReq, metadata: grpc.Metadata, callback: grpc.requestCallback<_ffl_SearchUserFflRes__Output>): grpc.ClientUnaryCall;
+  searchUserFfl(argument: _ffl_SearchUserFflReq, options: grpc.CallOptions, callback: grpc.requestCallback<_ffl_SearchUserFflRes__Output>): grpc.ClientUnaryCall;
+  searchUserFfl(argument: _ffl_SearchUserFflReq, callback: grpc.requestCallback<_ffl_SearchUserFflRes__Output>): grpc.ClientUnaryCall;
+  
 }
 
 export interface FflServiceHandlers extends grpc.UntypedServiceImplementation {
@@ -72,6 +83,8 @@ export interface FflServiceHandlers extends grpc.UntypedServiceImplementation {
   
   GetUserIds: grpc.handleUnaryCall<_ffl_GetUserIdsReq__Output, _ffl_GetUserIdsRes>;
   
+  SearchUserFfl: grpc.handleUnaryCall<_ffl_SearchUserFflReq__Output, _ffl_SearchUserFflRes>;
+  
 }
 
 export interface FflServiceDefinition extends grpc.ServiceDefinition {
@@ -80,4 +93,5 @@ export interface FflServiceDefinition extends grpc.ServiceDefinition {
   GetCocommentLiked: MethodDefinition<_ffl_GetCocommentLikedReq, _ffl_GetCocommentLikedRes, _ffl_GetCocommentLikedReq__Output, _ffl_GetCocommentLikedRes__Output>
   GetCommentLiked: MethodDefinition<_ffl_GetCommentLikedReq, _ffl_GetCommentLikedRes, _ffl_GetCommentLikedReq__Output, _ffl_GetCommentLikedRes__Output>
   GetUserIds: MethodDefinition<_ffl_GetUserIdsReq, _ffl_GetUserIdsRes, _ffl_GetUserIdsReq__Output, _ffl_GetUserIdsRes__Output>
+  SearchUserFfl: MethodDefinition<_ffl_SearchUserFflReq, _ffl_SearchUserFflRes, _ffl_SearchUserFflReq__Output, _ffl_SearchUserFflRes__Output>
 }

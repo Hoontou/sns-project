@@ -20,6 +20,9 @@ export interface ProtoGrpcType {
     GetCommentLikedRes: MessageTypeDefinition
     GetUserIdsReq: MessageTypeDefinition
     GetUserIdsRes: MessageTypeDefinition
+    SearchUserFflReq: MessageTypeDefinition
+    SearchUserFflRes: MessageTypeDefinition
+    userinfo: MessageTypeDefinition
   }
 }
 

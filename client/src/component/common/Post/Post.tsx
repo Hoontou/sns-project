@@ -43,7 +43,6 @@ const Post = (props: {
 
     axios
       .post('/gateway/postfooter', {
-        userId: props.userId,
         postId: props.metadata.id,
         targetId: props.metadata.userId,
       })

@@ -16,13 +16,19 @@ export class FflController {
   }
 
   @Post('/addlike')
-  async addLike(@Body() body: { userId: string; postId: string }) {
-    return this.fflService.addLike(body);
+  async addLike(@Body() body: { postId: string }, @Req() req) {
+    return this.fflService.addLike({
+      postId: body.postId,
+      userId: req.user.userId,
+    });
   }
 
   @Post('/removelike')
-  async removeLike(@Body() body: { userId: string; postId: string }) {
-    return this.fflService.removeLike(body);
+  async removeLike(@Body() body: { postId: string }, @Req() req) {
+    return this.fflService.removeLike({
+      postId: body.postId,
+      userId: req.user.userId,
+    });
   }
 
   @Post('/addcommentlike')
@@ -72,5 +78,17 @@ export class FflController {
     userList: { userId: string; img: string; username: string }[];
   }> {
     return this.fflService.getUserList(body);
+  }
+
+  @Post('/searchUserFfl')
+  searchUserFfl(
+    @Body()
+    body: {
+      type: 'like' | 'follower' | 'following';
+      searchString: string;
+      target: string;
+    },
+  ) {
+    return this.fflService.searchUserFfl(body);
   }
 }
