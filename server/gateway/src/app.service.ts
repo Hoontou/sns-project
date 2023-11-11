@@ -138,7 +138,6 @@ export class AppService {
       this.postService.getPost(body.postId),
       this.userService.getUsernameWithImg(body.targetId), //작성자 정보
     ]);
-
     return {
       ...liked,
       ...postContent,

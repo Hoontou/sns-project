@@ -68,6 +68,7 @@ const Userinfo = (props: {
               userId={
                 props.feedType === 'myInfo' ? authUserId : props.userinfo.userId
               }
+              targetUsername={props.userinfo.username}
             />
           </Grid>
           <div style={{ marginTop: '0.5rem', marginBottom: '0.2rem' }}>

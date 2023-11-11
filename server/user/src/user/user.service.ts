@@ -33,6 +33,8 @@ export class UserService {
   async getUsernameWithImg(data: {
     userId: string;
   }): Promise<{ username: string; img: string; introduceName: string }> {
+    //요청온게 name인지 id인지 보고 메서드 선택함
+
     const result:
       | { username: string; img: string; introduce_name: string }
       | undefined = await this.userRepo.getUsernameWithImg(data.userId);

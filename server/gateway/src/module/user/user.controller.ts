@@ -44,4 +44,9 @@ export class UserController {
   ) {
     return this.userService.searchUsersBySearchString(body);
   }
+
+  @Post('/getFollowCount')
+  getFollowCount(@Body() body: { username: string }) {
+    return this.userService.getFollowCount(body);
+  }
 }

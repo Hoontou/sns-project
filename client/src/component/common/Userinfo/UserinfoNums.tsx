@@ -7,6 +7,7 @@ const UserinfoNums = (props: {
   follower: number;
   following: number;
   userId: string;
+  targetUsername: string;
 }) => {
   const [type, setType] = useState<'follower' | 'following' | ''>('');
   const [openUserList, setOpenUserList] = useState<boolean>(false);
@@ -55,6 +56,7 @@ const UserinfoNums = (props: {
           setOpenUserList={setOpenUserList}
           targetId={props.userId}
           type={type}
+          targetUsername={props.targetUsername}
         />
       )}
     </>

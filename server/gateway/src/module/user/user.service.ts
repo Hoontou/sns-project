@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Body } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { SearchedUser } from 'sns-interfaces/grpc.interfaces';
@@ -52,9 +52,12 @@ export class UserService {
     }
   }
 
-  async getUsernameWithImg(
-    userId: string,
-  ): Promise<{ username: string; img: string; userId: number }> {
+  async getUsernameWithImg(userId: string): Promise<{
+    username: string;
+    img: string;
+    userId: number;
+    introduceName: string;
+  }> {
     return {
       ...(await lastValueFrom(
         this.userGrpcService.getUsernameWithImg({
@@ -105,5 +108,21 @@ export class UserService {
       return { userList: [] };
     }
     return { userList };
+  }
+
+  //api재사용한다. 나중에 새로 만들어서 쓰는게 좋을듯
+  //필요없는 정보도 같이가져옴
+  async getFollowCount(body: { username: string }) {
+    const result = await lastValueFrom(
+      this.userGrpcService.getUserinfoByUsername({
+        username: body.username,
+      }),
+    );
+
+    return {
+      userId: result.userId,
+      follower: result.follower,
+      following: result.following,
+    };
   }
 }

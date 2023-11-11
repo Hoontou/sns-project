@@ -40,7 +40,7 @@ export interface UserGrpcService {
     userId,
   }: {
     userId: string;
-  }): Observable<{ username: string; img: string }>;
+  }): Observable<{ username: string; img: string; introduceName: string }>;
   getUsernameWithImgList({ userIds }: { userIds: string[] }): Observable<{
     userList: { username: string; img: string; userId: number }[];
   }>;

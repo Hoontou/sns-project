@@ -85,7 +85,6 @@ export class UserRepository {
     WHERE ui.username = '${username}';
     `;
     const result = await pgdb.client.query(query);
-    console.log(result.rows[0]);
     return { ...result.rows[0], introduceName: result.rows[0].introduce_name };
   }
 

@@ -25,6 +25,7 @@ const UserlistModal = (props: {
   targetId: string;
   setOpenUserList(open: boolean): void;
   type: ListType;
+  targetUsername?: string;
 }) => {
   const navigate = useNavigate();
   const [list, setList] = useState<
@@ -152,7 +153,11 @@ const UserlistModal = (props: {
               marginTop: '1rem',
             }}
             onClick={() => {
-              navigate('/');
+              navigate(
+                `/ffl/${props.type}/${
+                  props.type === 'like' ? props.targetId : props.targetUsername
+                }`
+              );
             }}
           >
             {title} 모두 보기
