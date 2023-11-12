@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { crypter } from '../../common/crypter';
+import { cacheManager } from '../../common/userlist.cache.manager';
 // user 서버의 user.schema.ts의 코드, ref설정위해 가져왔음
 const userSchema = new mongoose.Schema({
   userId: {
@@ -139,56 +140,98 @@ class FollowRepository {
     targetUser: string;
     searchString: string;
   }) {
-    const targetUserId = Number(crypter.decrypt(data.targetUser));
+    const type = 'following';
+    const targetUserId = crypter.decrypt(data.targetUser);
 
-    const allUserList = await this.db
-      .find({ userFrom: targetUserId })
-      .populate(UserToPopulate)
-      .exec()
-      .then((res) => {
-        return res.map((item) => {
-          return {
-            ...item.getUserTo._doc,
-          };
+    //캐시에서 가져온다
+    const userList = cacheManager.getUserList({
+      type,
+      target: targetUserId,
+      searchString: data.searchString,
+    });
+
+    if (userList === undefined) {
+      console.log(`missing from ${type} container, loading requested`);
+
+      //캐시에 없다면 디비에서 가져온다
+      const tmpAllUserList = await this.db
+        .find({ userFrom: targetUserId })
+        .populate(UserToPopulate)
+        .exec()
+        .then((res) => {
+          return res.map((item) => {
+            return {
+              ...item.getUserTo._doc,
+            };
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
 
-    const matchedUserList = findMatchingIndices(allUserList, data.searchString);
-    return matchedUserList;
+      //가져온거 캐시에 등록
+      cacheManager.loadUserList({
+        type,
+        userList: tmpAllUserList,
+        target: targetUserId,
+      });
+      //prefix find 해서 리턴
+      return findMatchingIndices(tmpAllUserList, data.searchString);
+    }
+
+    console.log('list is existed, no db request');
+    return findMatchingIndices(userList, data.searchString);
   }
 
   /**팔로워에서 사람검색 */
   async searchUserFollower(data: { targetUser: string; searchString: string }) {
-    const targetUserId = Number(crypter.decrypt(data.targetUser));
+    const type = 'follower';
+    const targetUserId = crypter.decrypt(data.targetUser);
 
-    const allUserList = await this.db
-      .find({ userTo: targetUserId })
-      .populate(UserFromPopulate)
-      .exec()
-      .then((res) => {
-        return res.map((item) => {
-          return {
-            ...item.getUserFrom._doc,
-          };
+    //캐시에서 가져온다
+    const userList = cacheManager.getUserList({
+      type,
+      target: targetUserId,
+      searchString: data.searchString,
+    });
+
+    if (userList === undefined) {
+      console.log(`missing from ${type} container, loading requested`);
+
+      //캐시에 없다면 디비에서 가져온다
+      const tmpAllUserList = await this.db
+        .find({ userTo: targetUserId })
+        .populate(UserFromPopulate)
+        .exec()
+        .then((res) => {
+          return res.map((item) => {
+            return {
+              ...item.getUserFrom._doc,
+            };
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
+
+      //가져온거 캐시에 등록
+      cacheManager.loadUserList({
+        type,
+        userList: tmpAllUserList,
+        target: targetUserId,
       });
+      //prefix find 해서 리턴
+      return findMatchingIndices(tmpAllUserList, data.searchString);
+    }
+    console.log('list is existed, no db request');
 
-    const matchedUserList = findMatchingIndices(allUserList, data.searchString);
-
-    return matchedUserList;
+    return findMatchingIndices(userList, data.searchString);
   }
 }
 
 export const findMatchingIndices = (
   userList: {
     username: string;
-    userId: number;
     introduceName: string;
     img: string;
   }[],
@@ -196,7 +239,6 @@ export const findMatchingIndices = (
 ) => {
   const matchingIndices: {
     username: string;
-    userId: number;
     introduceName: string;
     img: string;
   }[] = [];
@@ -205,7 +247,6 @@ export const findMatchingIndices = (
     if (userList[i].username.startsWith(prefix)) {
       matchingIndices.push({
         username: userList[i].username,
-        userId: userList[i].userId,
         img: userList[i].img,
         introduceName: userList[i].introduceName,
       });

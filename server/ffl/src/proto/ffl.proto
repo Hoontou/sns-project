@@ -52,10 +52,9 @@ message GetCocommentLikedRes {
 }
 
 message userinfo {
-  int32 userId = 1;
-  string username = 2;
-  string introduceName = 3;
-  string img = 4;
+  string username = 1;
+  string introduceName = 2;
+  string img = 3;
 }
 message SearchUserFflReq {
   string type = 1;

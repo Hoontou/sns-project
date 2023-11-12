@@ -131,7 +131,6 @@ export interface FflGrpcService {
     target: string;
   }): Observable<{
     userList: {
-      userId: number;
       username: string;
       introduceName: string;
       img: string;

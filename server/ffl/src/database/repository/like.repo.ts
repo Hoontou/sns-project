@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { crypter } from '../../common/crypter';
 import { findMatchingIndices } from './follow.repo';
+import { cacheManager } from '../../common/userlist.cache.manager';
 
 // user 서버의 user.schema.ts의 코드, ref설정위해 가져왔음
 const userSchema = new mongoose.Schema({
@@ -118,24 +119,46 @@ class LikeRepository {
 
   /**좋아요에서 사람검색 */
   async searchUserLike(data: { targetPostId: string; searchString: string }) {
-    const allUserList = await this.db
-      .find({ postId: data.targetPostId })
-      .populate('getUserId')
-      .exec()
-      .then((res) => {
-        return res.map((item) => {
-          return {
-            ...item.getUserId._doc,
-          };
+    const type = 'like';
+
+    //캐시에서 가져온다
+    const userList = cacheManager.getUserList({
+      type,
+      target: data.targetPostId,
+      searchString: data.searchString,
+    });
+
+    if (userList === undefined) {
+      console.log(`missing from ${type} container, loading requested`);
+
+      //캐시에 없다면 디비에서 가져온다
+      const tmpAllUserList = await this.db
+        .find({ postId: data.targetPostId })
+        .populate('getUserId')
+        .exec()
+        .then((res) => {
+          return res.map((item) => {
+            return {
+              ...item.getUserId._doc,
+            };
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
+
+      //가져온거 캐시에 등록
+      cacheManager.loadUserList({
+        type,
+        userList: tmpAllUserList,
+        target: data.targetPostId,
       });
+      //prefix find 해서 리턴
+      return findMatchingIndices(tmpAllUserList, data.searchString);
+    }
+    console.log('list is existed, no db request');
 
-    const matchedUserList = findMatchingIndices(allUserList, data.searchString);
-
-    return matchedUserList;
+    return findMatchingIndices(userList, data.searchString);
   }
 }
 export const likeRopository = new LikeRepository(Like);

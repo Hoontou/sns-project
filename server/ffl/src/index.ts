@@ -163,7 +163,6 @@ const getServer = () => {
 
       const searchedUserList: {
         username: string;
-        userId: number;
         introduceName: string;
         img: string;
       }[] = await selectAndRequestSearching(req.request.type);
