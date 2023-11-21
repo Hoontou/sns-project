@@ -46,6 +46,32 @@ export class AuthService {
       }
 
       return user;
+    } catch (err) {
+      console.log(err);
+      this.logger.error('Auth failed');
+      return { success: false };
+    }
+  }
+
+  async authNoNeedInfo(authDto: AuthDto): Promise<AuthResultRes> {
+    try {
+      //토큰검사 후 이메일 가져옴
+      const authInfo: { email: string; iat: string; exp: string } =
+        await this.jwtService.verify(authDto.accessToken);
+      console.log(authInfo);
+
+      //가져온 이메일로 유저정보 요청
+      const user: AuthSuccess = await this.jwtStrategy.validate(authInfo.email);
+
+      //refresh필요하다면? 토큰재발급해서 담아준다.
+      if (authDto.refresh === true) {
+        this.logger.log('regenerate accessToekn');
+        user.accessToken = await this.jwtService.sign({
+          email: authInfo.email,
+        });
+      }
+
+      return user;
     } catch {
       this.logger.error('Auth failed');
       return { success: false };

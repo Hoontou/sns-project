@@ -5,6 +5,10 @@ const alertSchema = new mongoose.Schema({
   _id: String,
   userId: String,
   content: Object,
+  createdAt: {
+    type: Date,
+    default: Date.now, // 현재 날짜 및 시간으로 기본값 설정
+  },
 });
 alertSchema.index({
   userId: 1,

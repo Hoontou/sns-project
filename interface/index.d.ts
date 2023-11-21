@@ -10,27 +10,6 @@ export interface MetadataDto_id {
   files: string[];
 }
 
-//알람 DTO 정의
-export interface AlertDto {
-  _id: string;
-  userId: string | number;
-  content: AlertContentUnion;
-} //타입과 content는 계속해서 추가.
-
-export type AlertContentUnion = UploadContent | DeletePostContent;
-export type Upload = 'upload';
-export type DelPost = 'deletePost';
-export interface UploadContent {
-  type: Upload;
-  success: boolean;
-  postId: string;
-}
-export interface DeletePostContent {
-  type: DelPost;
-  success: boolean;
-  postId: string;
-}
-
 export interface SignInDto {
   email: string;
   password: string;

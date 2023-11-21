@@ -229,6 +229,7 @@ class FollowRepository {
   }
 }
 
+/**인풋으로 온 리스트 돌면서 prefix로 매칭되는것만 리턴 */
 export const findMatchingIndices = (
   userList: {
     username: string;

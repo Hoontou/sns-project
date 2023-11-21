@@ -14,6 +14,7 @@ class CacheManager {
   private likeContainer: Container = {};
   private removeCount = 6000; //60초
 
+  /**캐시에 적재 */
   loadUserList(data: {
     type: 'follower' | 'following' | 'like';
     userList: userinfo[];
@@ -35,7 +36,7 @@ class CacheManager {
       this.removeUserList(data);
     }, this.removeCount);
   }
-
+  /**캐시에서 가져오기 */
   getUserList(data: {
     type: 'follower' | 'following' | 'like';
     target: string;
@@ -52,6 +53,7 @@ class CacheManager {
     return this.likeContainer[data.target];
   }
 
+  /**캐시에서 삭제 */
   removeUserList(data: {
     type: 'follower' | 'following' | 'like';
     target: string;

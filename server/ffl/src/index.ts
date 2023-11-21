@@ -138,7 +138,6 @@ const getServer = () => {
       return;
     },
     SearchUserFfl: async (req, res) => {
-      console.log(req.request);
       //타입이 팔로우일 경우 암호회 된 userId가 타겟으로 온다.
       //좋아요일 경우 objId로 된 postId가 온다.
       //요청온 타입에 맞게 검색요청

@@ -27,6 +27,11 @@ export class AuthController {
     return this.authService.auth(authDto);
   }
 
+  @GrpcMethod('AuthService', 'AuthNoNeedInfo')
+  authNoNeedInfo(authDto: AuthDto): Promise<AuthResultRes> {
+    return this.authService.auth(authDto);
+  }
+
   @GrpcMethod('AuthService', 'SignUp')
   @UsePipes(ValidationPipe)
   signUp(
