@@ -1,7 +1,6 @@
 import { io } from 'socket.io-client';
 import { useState } from 'react';
-import { AlertContentUnion, AlertDto } from 'sns-interfaces';
-
+import { AlertDto, AlertContentUnion } from 'sns-interfaces/alert.interface';
 const AlertSock = (props: { userId: string }) => {
   const [alertItems, setAlertItems] = useState<Array<AlertContentUnion>>([]);
   // const userId = localStorage.getItem('userId');

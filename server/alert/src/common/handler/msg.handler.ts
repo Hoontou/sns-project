@@ -1,6 +1,17 @@
-import { AlertDto, UploadMessage } from 'sns-interfaces';
+import { UploadMessage } from 'sns-interfaces';
+import { AlertDto, CommentAlert } from 'sns-interfaces/alert.interface';
 import { socketManager } from '../../alert.server/socket.manager';
 import { alertRepository } from '../../database/alert.repo';
+
+export const msgHandler = (data: {
+  method: string;
+  whereFrom: string;
+  content: AlertDto;
+}) => {
+  console.log(data);
+  if (data.method === 'addComment') {
+  }
+};
 
 export const uploadHandler = (msg) => {
   //exchange가 upload인 메세지가 여기로 전달됨.

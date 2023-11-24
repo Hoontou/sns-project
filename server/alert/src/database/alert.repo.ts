@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { AlertDto } from 'sns-interfaces';
+import { AlertDto } from 'sns-interfaces/alert.interface';
 
 const alertSchema = new mongoose.Schema({
   _id: String,

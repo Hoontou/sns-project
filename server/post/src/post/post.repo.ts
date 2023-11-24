@@ -17,10 +17,10 @@ export class PostRepository {
   }
   async addComment(data: CommentDto) {
     //코멘트 테이블에 코멘트 삽입
-    await this.commentTable.addComment(data);
+    const row = await this.commentTable.addComment(data);
     //코멘트 카운터 증가.
     await this.postTable.addComment(data.postId);
-    return;
+    return row;
   }
   async addCocomment(data: CocommentDto) {
     //대댓글 테이블에 내용삽입

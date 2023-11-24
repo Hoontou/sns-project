@@ -8,15 +8,22 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Post('/addcomment')
-  addComment(@Body() body: { postId: string; comment: string }, @Req() req) {
+  addComment(
+    @Body() body: { postId: string; comment: string; postOwnerUserId: string },
+    @Req() req,
+  ) {
+    console.log(body.postOwnerUserId);
     return this.postService.addComment({ ...body, userId: req.user.userId });
   }
 
   @Post('/addcocomment')
   addCocomment(
-    @Body() body: { commentId: number; cocomment: string },
+    @Body()
+    body: { commentId: number; cocomment: string; commentOwnerUserId: string },
     @Req() req,
   ) {
+    console.log(body.commentOwnerUserId);
+
     return this.postService.addCocomment({ ...body, userId: req.user.userId });
   }
 

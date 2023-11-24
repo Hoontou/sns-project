@@ -5,11 +5,13 @@ export type SubmitForm = SubmitCocoForm | SubmitCommentForm;
 export interface SubmitCommentForm {
   type: 'comment';
   postId: string;
+  postOwnerUserId: string;
 }
 export interface SubmitCocoForm {
   type: 'cocomment';
   commentId: number;
   targetUsername: string;
+  commentOwnerUserId: string | number;
   index: number;
 }
 

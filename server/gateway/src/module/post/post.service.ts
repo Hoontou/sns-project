@@ -88,7 +88,12 @@ export class PostService {
     return { cocommentItem };
   }
 
-  async addComment(data: { userId: string; postId: string; comment: string }) {
+  async addComment(data: {
+    userId: string;
+    postId: string;
+    comment: string;
+    postOwnerUserId: string;
+  }) {
     this.amqpService.sendMsg('post', data, 'addComment');
     return;
   }
@@ -96,6 +101,7 @@ export class PostService {
     userId: string;
     commentId: number;
     cocomment: string;
+    commentOwnerUserId: string;
   }) {
     this.amqpService.sendMsg('post', data, 'addCocomment');
     return;

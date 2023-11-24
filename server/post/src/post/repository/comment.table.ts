@@ -14,15 +14,25 @@ export class CommentTable {
     public db: Repository<Comment>,
   ) {}
 
-  addComment(commentDto: CommentDto) {
+  async addComment(commentDto: CommentDto) {
     const { postId, userId, comment } = commentDto;
-    //n+1문제가 싫어서 걍 바닐라쿼리로 날렸음.
 
     const query = `INSERT INTO public.comment(
       comment, "userId", "postId")
-      VALUES ('${comment}', '${crypter.decrypt(userId)}', '${postId}');`;
+      VALUES ('${comment}', '${crypter.decrypt(userId)}', '${postId}')
+      RETURNING *;`;
+    const result = await pgdb.client.query(query);
 
-    return pgdb.client.query(query);
+    const row: {
+      id: number;
+      comment: string;
+      likes: number;
+      cocommentcount: number;
+      createdat: Date;
+      userId: number;
+      postId: string;
+    } = result.rows[0];
+    return row;
   }
 
   addCocomment(commentId: number) {

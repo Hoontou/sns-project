@@ -30,6 +30,7 @@ const Comment = (props: {
   setOpenComment: Dispatch<SetStateAction<boolean>>;
   postFooterContent: PostFooterContent;
 }) => {
+  console.log(props.postFooterContent);
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);
@@ -38,6 +39,7 @@ const Comment = (props: {
   const [submitForm, setSubmitForm] = useState<SubmitForm>({
     type: 'comment',
     postId: props.postFooterContent.id,
+    postOwnerUserId: props.postFooterContent.userId,
   });
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
@@ -119,6 +121,7 @@ const Comment = (props: {
     setSubmitForm({
       type: 'comment',
       postId: props.postFooterContent.id,
+      postOwnerUserId: props.postFooterContent.userId,
     });
   };
 
@@ -200,9 +203,11 @@ const Comment = (props: {
     //3. 타입에 따라 댓글리스트에 푸시
     if (submitForm.type === 'cocomment') {
       //대댓작성 request
+      //댓글작성자에게 알림 넣기위해서 주인 id도 보냄
       axios.post('/gateway/post/addcocomment', {
         cocomment: submitingComment,
         commentId: submitForm.commentId,
+        commentOwnerUserId: submitForm.commentOwnerUserId,
       });
 
       //내 username, img 가져온다.
@@ -245,9 +250,11 @@ const Comment = (props: {
     }
     if (submitForm.type === 'comment') {
       //댓 작성 request
+      //글작성자에게 알림 넣기위해서 주인 id도 보냄
       axios.post('/gateway/post/addcomment', {
         comment: submitingComment,
         postId: props.postFooterContent.id,
+        postOwnerUserId: props.postFooterContent.userId,
       });
 
       //내 username, img 가져온다.

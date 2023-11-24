@@ -1,6 +1,6 @@
 //알람 DTO 정의
 export interface AlertDto {
-  _id: string;
+  _id?: string;
   userId: string;
   content: AlertContentUnion;
 } //타입과 content는 계속해서 추가.

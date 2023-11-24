@@ -7,8 +7,8 @@ import { CocommentContent } from 'sns-interfaces/client.interface';
 import { PostRepository } from './post.repo';
 import { AddLikeType } from 'src/amqp/handler/exchange.handler';
 import { SearchService } from './search.service';
+import { AlertDto, CommentAlert } from 'sns-interfaces/alert.interface';
 
-@Injectable()
 export class PostService {
   constructor(
     private postRepo: PostRepository,
@@ -30,8 +30,20 @@ export class PostService {
     return;
   }
 
-  addComment(commentDto: CommentDto) {
-    return this.postRepo.addComment(commentDto);
+  async addComment(commentDto: CommentDto) {
+    const insertedRow = await this.postRepo.addComment(commentDto);
+
+    const alertForm: AlertDto = {
+      userId: commentDto.postOwnerUserId,
+      content: {
+        type: 'comment',
+        postId: commentDto.postId,
+        commentId: insertedRow.id,
+        userId: Number(crypter.decrypt(commentDto.userId)),
+      },
+    };
+
+    return this.amqpService.sendMsg('alert', alertForm, 'addComment');
   }
   addCocomment(cocommentDto: CocommentDto) {
     return this.postRepo.addCocomment(cocommentDto);

@@ -23,6 +23,7 @@ const CommentItem = (props: {
     index: number
   ): Promise<number>;
 }) => {
+  console.log(props.content);
   const navigate = useNavigate();
   // const [content, setContent] = useState<CommentItemContent>({
   //   ...props.content,
@@ -173,6 +174,7 @@ const CommentItem = (props: {
                       type: 'cocomment',
                       commentId: props.content.commentId,
                       targetUsername: props.content.username,
+                      commentOwnerUserId: props.content.userId,
                       index: props.index,
                     });
                   }}

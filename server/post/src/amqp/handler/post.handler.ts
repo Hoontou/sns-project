@@ -18,13 +18,23 @@ export class PostHandler {
     //const methodFrom = msg.properties.type
     if (msg.properties.type === 'addComment') {
       this.postService.addComment(
-        data as { userId: string; postId: string; comment: string },
+        data as {
+          userId: string;
+          postId: string;
+          comment: string;
+          postOwnerUserId: string;
+        },
       );
       return;
     }
     if (msg.properties.type === 'addCocomment') {
       this.postService.addCocomment(
-        data as { userId: string; commentId: number; cocomment: string },
+        data as {
+          userId: string;
+          commentId: number;
+          cocomment: string;
+          commentOwnerUserId: string;
+        },
       );
       return;
     }

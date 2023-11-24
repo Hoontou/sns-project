@@ -39,6 +39,7 @@ const LandingComment = (props: {
   const [submitForm, setSubmitForm] = useState<SubmitForm>({
     type: 'comment',
     postId: props.postFooterContent.id,
+    postOwnerUserId: props.postFooterContent.userId,
   });
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
@@ -119,6 +120,7 @@ const LandingComment = (props: {
     setSubmitForm({
       type: 'comment',
       postId: props.postFooterContent.id,
+      postOwnerUserId: props.postFooterContent.userId,
     });
   };
 

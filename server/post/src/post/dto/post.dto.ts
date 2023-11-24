@@ -12,24 +12,37 @@ export class PostDto {
   userId: string; //작성자 id
 }
 
-export class CommentDto {
-  @IsNotEmpty()
+// export class CommentDto {
+//   @IsNotEmpty()
+//   comment: string;
+
+//   @IsNotEmpty()
+//   userId: string; //작성자
+
+//   @IsNotEmpty()
+//   postId: string; //부모 post id (objectid)
+// }
+
+export interface CommentDto {
   comment: string;
-
-  @IsNotEmpty()
   userId: string; //작성자
-
-  @IsNotEmpty()
   postId: string; //부모 post id (objectid)
+  postOwnerUserId: string;
 }
+// export class CocommentDto {
+// @IsNotEmpty()
+// cocomment: string;
+//
+// @IsNotEmpty()
+// userId: string;
+//
+// @IsNotEmpty()
+// commentId: number; //부모 comment id (int)
+// }
 
-export class CocommentDto {
-  @IsNotEmpty()
+export interface CocommentDto {
   cocomment: string;
-
-  @IsNotEmpty()
   userId: string;
-
-  @IsNotEmpty()
   commentId: number; //부모 comment id (int)
+  commentOwnerUserId: string;
 }
