@@ -13,13 +13,24 @@ export class CoCommentTable {
     @InjectRepository(Cocomment)
     public db: Repository<Cocomment>,
   ) {}
-  addCocomment(cocommentDto: CocommentDto) {
+  async addCocomment(cocommentDto: CocommentDto) {
     const { commentId, userId, cocomment } = cocommentDto;
     const query = `INSERT INTO public.cocomment(
         cocomment, "userId", "commentId")
-        VALUES ('${cocomment}', '${crypter.decrypt(userId)}', ${commentId});`;
+        VALUES ('${cocomment}', '${crypter.decrypt(userId)}', ${commentId})
+        RETURNING *;`;
+    const result = await pgdb.client.query(query);
 
-    return pgdb.client.query(query);
+    const row: {
+      id: number;
+      // comment: string;
+      // likes: number;
+      // cocommentcount: number;
+      // createdat: Date;
+      // userId: number;
+      // postId: string;
+    } = result.rows[0];
+    return row;
   }
 
   async getCocommentList(

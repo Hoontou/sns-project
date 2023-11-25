@@ -20,17 +20,18 @@ class RabbitMQ {
     // 내 MSA이름으로 퍼블리시 할 큐 생성, 알람서버는 필요없을듯?
     // await this.channel.assertExchange(this.que, 'topic', { durable: true });
 
-    //구독한 메세지 받아올 익명큐 생성
+    //내 MSA 이름으로 된 큐 생성
+    await this.channel.assertQueue(this.que, { durable: true });
+    //내 MSA이름으로 퍼블리시 할 큐 생성
+    await this.channel.assertExchange(this.que, 'topic', { durable: true });
+    //내가 구독한 exchange를 가져올 익명큐 생성.
     const { anonQue } = this.channel.assertQueue('', {
       exclusive: true,
     });
-    //내 MSA 이름으로 된 큐 생성
-    await this.channel.assertQueue(this.que, { durable: true });
 
     //내 이름으로 오는 메세지 컨슘 등록
     await this.setConsume();
-
-    //구독한 exchange를 익명큐에 바인드
+    //exchange 구독과 익명큐 컨슘 등록
     await this.bindExchanges(anonQue);
 
     console.log('RabbitMQ connected');

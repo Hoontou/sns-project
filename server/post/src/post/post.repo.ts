@@ -24,10 +24,11 @@ export class PostRepository {
   }
   async addCocomment(data: CocommentDto) {
     //대댓글 테이블에 내용삽입
-    await this.cocommentTable.addCocomment(data);
+    const row = await this.cocommentTable.addCocomment(data);
+
     //comment에다가 대댓글 카운터 증가.
     await this.commentTable.addCocomment(data.commentId);
-    return;
+    return row;
   }
 
   async getPost(data: { postId: string }): Promise<PostContent> {

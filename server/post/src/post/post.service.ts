@@ -45,8 +45,21 @@ export class PostService {
 
     return this.amqpService.sendMsg('alert', alertForm, 'addComment');
   }
-  addCocomment(cocommentDto: CocommentDto) {
-    return this.postRepo.addCocomment(cocommentDto);
+
+  async addCocomment(cocommentDto: CocommentDto) {
+    const insertedRow = await this.postRepo.addCocomment(cocommentDto);
+
+    const alertForm: AlertDto = {
+      userId: cocommentDto.commentOwnerUserId,
+      content: {
+        type: 'cocomment',
+        commentId: cocommentDto.commentId,
+        cocommentId: insertedRow.id,
+        userId: Number(crypter.decrypt(cocommentDto.userId)),
+      },
+    };
+
+    return this.amqpService.sendMsg('alert', alertForm, 'addCocomment');
   }
 
   async getCommentList(data: { postId: string; page: number }) {
