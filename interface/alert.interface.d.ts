@@ -1,7 +1,7 @@
 //알람 DTO 정의
 export interface AlertDto {
   _id?: string;
-  userId: string;
+  userId: number | string;
   content: AlertContentUnion;
 } //타입과 content는 계속해서 추가.
 
@@ -50,22 +50,44 @@ interface ManyCocommentAlert {
 }
 
 //누가 나를 팔로우했나
+interface ManyFollowAlert {
+  type: 'manyFollow';
+  userIds: number[][]; //팔로우 누른 사람들, 최대 세명? 두명까지 생각중
+}
+
+//누가 나를 팔로우했나
 interface FollowAlert {
   type: 'follow';
-  userId: number[]; //팔로우 누른 사람들, 최대 세명? 두명까지 생각중
+  userId: number; //팔로우 누른 사람들, 최대 세명? 두명까지 생각중
 }
 
 //누가 나를 어디에 태그했나
 interface TagAlert {
   type: 'tag';
   where: 'comment' | 'cocomment' | 'post';
-  whereId: string;
+  whereId: string | number;
   userId: number;
 }
 
 //누가 어떤게시물에 좋아요 했나
 interface LikeAlert {
   type: 'like';
+  userId: number; //좋아요 누른 사람들, 최대 세명? 두명까지 생각중
+  postId: string;
+}
+//누가 어떤게시물에 좋아요 했나
+interface ManyLikeAlert {
+  type: 'manyLike';
   userIds: number[]; //좋아요 누른 사람들, 최대 세명? 두명까지 생각중
   postId: string;
+}
+
+export interface UserTagAlertReqForm {
+  usernames: string[];
+  content: {
+    type: 'tag';
+    where: 'post' | 'comment' | 'cocomment';
+    whereId: string | number;
+    userId: number;
+  };
 }

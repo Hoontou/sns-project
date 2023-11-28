@@ -12,7 +12,6 @@ export class PostController {
     @Body() body: { postId: string; comment: string; postOwnerUserId: string },
     @Req() req,
   ) {
-    console.log(body.postOwnerUserId);
     return this.postService.addComment({ ...body, userId: req.user.userId });
   }
 
@@ -22,8 +21,6 @@ export class PostController {
     body: { commentId: number; cocomment: string; commentOwnerUserId: string },
     @Req() req,
   ) {
-    console.log(body.commentOwnerUserId);
-
     return this.postService.addCocomment({ ...body, userId: req.user.userId });
   }
 

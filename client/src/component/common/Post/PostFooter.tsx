@@ -71,6 +71,7 @@ const PostFooter = (props: {
     axios
       .post('/gateway/ffl/addLike', {
         postId: props.postId,
+        postOwnerUserId: props.postFooterContent.userId,
       })
       .then(() => {
         setContent({

@@ -1,15 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { PostDto } from './dto/post.dto';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
 import { SnsPostsDocType, elastic } from 'src/configs/elasticsearch';
+import { AmqpService } from 'src/amqp/amqp.service';
+import { findUserIdsByUsernames } from './repository/user.table';
+import { AlertDto, UserTagAlertReqForm } from 'sns-interfaces/alert.interface';
+import { crypter } from 'src/common/crypter';
 
 //해시태그 처리 서비스
 @Injectable()
 export class SearchService {
+  constructor(
+    @Inject(forwardRef(() => AmqpService)) private amqpService: AmqpService,
+  ) {}
+
   //업로드 메서드로부터 오는 해시태그 핸들링 요청
   //해시태그 존재여부 체크후 없으면 추가,
   //해시태그가 사용된 횟수 카운트? 필요할까 업데이트가 꽤 많을듯
   //해시태그 추출, postId와 해시태그 나열해서 엘라스틱에 저장
-  async indexPostDoc(postDto: PostDto) {
+  /**해시태그 엘라스틱에 등록, 유저태그 알림요청 alert에 전송 */
+  async handlePostTag(postDto: PostDto) {
     //post DOC 삽입. 태그일치 검색을 위한 tag문자열, 전문검색을 위한 title 전문
     const postDoc: SnsPostsDocType = {
       title: postDto.title.replace(/[@#]/g, ''), //검색에 잘 잡히게 태그문자열 삭제
@@ -17,17 +26,17 @@ export class SearchService {
     };
 
     //title로부터 해시태그만을 추출
-    const tags = postDto.title.match(/#\S+/g)?.map((item) => {
+    const hashtags = postDto.title.match(/#\S+/g)?.map((item) => {
       return item.substring(1);
     });
-    if (tags !== undefined) {
+    if (hashtags !== undefined) {
       //태그 존재하면 postDoc에 tags필드 추가
-      const tmp = [...new Set(tags)];
+      const tmp = [...new Set(hashtags)];
       postDoc.tags = tmp.join(' ');
     }
 
     //검색기능에 올리는건 후순위 작업이니 await 안함
-    elastic.client
+    return elastic.client
       .index({
         index: elastic.SnsPostsIndex,
         id: postDto.postId,
@@ -41,7 +50,6 @@ export class SearchService {
           });
         }
       });
-    return;
   }
 
   /**태그가 존재하는지 체크해서 있으면 카운터증가, 없으면 DOC삽입 */
@@ -119,7 +127,7 @@ export class SearchService {
             .then((res) => {
               return res._source;
             })
-            .catch((err) => {
+            .catch(() => {
               //찾기실패
               return undefined;
             })

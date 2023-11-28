@@ -7,7 +7,16 @@ import { CocommentContent } from 'sns-interfaces/client.interface';
 import { PostRepository } from './post.repo';
 import { AddLikeType } from 'src/amqp/handler/exchange.handler';
 import { SearchService } from './search.service';
-import { AlertDto, CommentAlert } from 'sns-interfaces/alert.interface';
+import { AlertDto, UserTagAlertReqForm } from 'sns-interfaces/alert.interface';
+
+const tagUser = 'tagUser';
+type HandleUserTagReqBody = {
+  //유저태그 추출할 텍스트
+  text: string;
+  type: 'post' | 'comment' | 'cocomment';
+  whereId: number | string;
+  userId: number;
+};
 
 export class PostService {
   constructor(
@@ -24,22 +33,43 @@ export class PostService {
       userId: content.userId,
       title: content.title,
     };
-    //태그 핸들링 요청, 테이블 삽입 요청
+    //태그 핸들링 요청, 테이블 삽입 요청, 유저태그 알람전송 요청
+    this.searchService.handlePostTag(postDto);
     this.postRepo.addPost(postDto);
-    this.searchService.indexPostDoc(postDto);
+    this.handleUserTag({
+      type: 'post',
+      userId: Number(crypter.decrypt(postDto.userId)),
+      text: postDto.title,
+      whereId: postDto.postId,
+    });
     return;
   }
 
   async addComment(commentDto: CommentDto) {
     const insertedRow = await this.postRepo.addComment(commentDto);
 
+    const decUserId = Number(crypter.decrypt(commentDto.userId));
+    const decPostOwnerUserId = Number(
+      crypter.decrypt(commentDto.postOwnerUserId),
+    );
+
+    this.handleUserTag({
+      type: 'comment',
+      userId: decUserId,
+      text: commentDto.comment,
+      whereId: insertedRow.id,
+    });
+
+    if (decPostOwnerUserId === decUserId) {
+      return;
+    }
     const alertForm: AlertDto = {
-      userId: commentDto.postOwnerUserId,
+      userId: decPostOwnerUserId,
       content: {
         type: 'comment',
         postId: commentDto.postId,
         commentId: insertedRow.id,
-        userId: Number(crypter.decrypt(commentDto.userId)),
+        userId: decUserId,
       },
     };
 
@@ -49,13 +79,29 @@ export class PostService {
   async addCocomment(cocommentDto: CocommentDto) {
     const insertedRow = await this.postRepo.addCocomment(cocommentDto);
 
+    const decUserId = Number(crypter.decrypt(cocommentDto.userId));
+    const decCommentOwnerUserId = Number(
+      crypter.decrypt(cocommentDto.commentOwnerUserId),
+    );
+
+    this.handleUserTag({
+      type: 'cocomment',
+      userId: decUserId,
+      text: cocommentDto.cocomment,
+      whereId: insertedRow.id,
+    });
+
+    if (decCommentOwnerUserId === decUserId) {
+      return;
+    }
+
     const alertForm: AlertDto = {
-      userId: cocommentDto.commentOwnerUserId,
+      userId: decCommentOwnerUserId,
       content: {
         type: 'cocomment',
         commentId: cocommentDto.commentId,
         cocommentId: insertedRow.id,
-        userId: Number(crypter.decrypt(cocommentDto.userId)),
+        userId: decUserId,
       },
     };
 
@@ -141,5 +187,29 @@ export class PostService {
       1,
     );
     return;
+  }
+
+  handleUserTag(body: HandleUserTagReqBody) {
+    console.log(body);
+    //title로부터 유저태그만을 추출
+    const usertags = body.text.match(/@\S+/g)?.map((item) => {
+      return item.substring(1);
+    });
+
+    if (usertags === undefined) {
+      return;
+    }
+
+    const alertForm: UserTagAlertReqForm = {
+      usernames: usertags,
+      content: {
+        type: 'tag',
+        where: body.type,
+        whereId: body.whereId,
+        userId: body.userId,
+      },
+    };
+
+    return this.amqpService.sendMsg('alert', alertForm, tagUser);
   }
 }

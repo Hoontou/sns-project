@@ -16,10 +16,14 @@ export class FflController {
   }
 
   @Post('/addlike')
-  async addLike(@Body() body: { postId: string }, @Req() req) {
+  async addLike(
+    @Body() body: { postId: string; postOwnerUserId: string },
+    @Req() req,
+  ) {
     return this.fflService.addLike({
       postId: body.postId,
       userId: req.user.userId,
+      postOwnerUserId: body.postOwnerUserId,
     });
   }
 

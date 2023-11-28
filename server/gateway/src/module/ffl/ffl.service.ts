@@ -5,7 +5,7 @@ import { AmqpService } from 'src/module/amqp/amqp.service';
 import { FflGrpcService } from 'src/grpc/grpc.services';
 import { UserService } from '../user/user.service';
 import { crypter } from 'src/common/crypter';
-
+import { AlertDto } from 'sns-interfaces/alert.interface';
 @Injectable()
 export class FflService {
   private logger = new Logger(FflService.name);
@@ -29,6 +29,15 @@ export class FflService {
     const { followed } = await this.checkFollowed(body);
     //팔로우 안돼있으면 팔로우함
     if (followed === false) {
+      const alertForm: AlertDto = {
+        userId: Number(crypter.decrypt(body.userTo)),
+        content: {
+          type: 'follow',
+          userId: Number(crypter.decrypt(body.userFrom)),
+        },
+      };
+      this.amqpService.sendMsg('alert', alertForm, 'addFollow');
+
       this.amqpService.sendMsg('ffl', body, this.addFollow.name);
       this.amqpService.sendMsg('user', body, this.addFollow.name);
       return;
@@ -53,14 +62,32 @@ export class FflService {
     return lastValueFrom(this.fflGrpcService.checkLiked(body));
   }
 
-  async addLike(body: { userId: string; postId: string }) {
+  async addLike(body: {
+    userId: string;
+    postId: string;
+    postOwnerUserId: string;
+  }) {
     const { liked } = await this.checkLiked(body);
     //좋아요 안돼있으면 좋아요 누름
-    if (liked === false) {
-      //ffl에 Doc추가, post에 likesCount증가
-      return this.amqpService.publishMsg('addLike', body);
+
+    if (liked === true) {
+      return;
     }
-    return;
+
+    if (body.userId !== body.postOwnerUserId) {
+      const alertForm: AlertDto = {
+        userId: Number(crypter.decrypt(body.postOwnerUserId)),
+        content: {
+          type: 'like',
+          userId: Number(crypter.decrypt(body.userId)),
+          postId: body.postId,
+        },
+      };
+      this.amqpService.sendMsg('alert', alertForm, 'addLike');
+    }
+
+    //ffl에 Doc추가, post에 likesCount증가
+    return this.amqpService.publishMsg('addLike', body);
   }
   async removeLike(body: { userId: string; postId: string }) {
     const { liked } = await this.checkLiked(body);

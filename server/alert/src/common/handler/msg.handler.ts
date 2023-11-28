@@ -2,6 +2,7 @@ import { UploadMessage } from 'sns-interfaces';
 import { AlertDto, CommentAlert } from 'sns-interfaces/alert.interface';
 import { socketManager } from '../../alert.server/socket.manager';
 import { alertRepository } from '../../database/alert.repo';
+import { crypter } from '../crypter';
 
 export const msgHandler = (data: {
   method: string;
@@ -10,6 +11,20 @@ export const msgHandler = (data: {
 }) => {
   console.log(data);
   if (data.method === 'addComment') {
+    alertRepository.saveAlert(data.content);
+  }
+
+  if (data.method === 'addCocomment') {
+    alertRepository.saveAlert(data.content);
+  }
+  if (data.method === 'addFollow') {
+    alertRepository.saveAlert(data.content);
+  }
+  if (data.method === 'addLike') {
+    alertRepository.saveAlert(data.content);
+  }
+  if (data.method === 'tagUser') {
+    // alertRepository.saveAlert(data.content);
   }
 };
 
@@ -26,7 +41,7 @@ export const uploadHandler = (msg) => {
 const handleAlert = (content: UploadMessage) => {
   const alertDto: AlertDto = {
     _id: content.alertId,
-    userId: content.userId,
+    userId: Number(crypter.decrypt(content.userId)),
     content: {
       type: 'upload',
       success: true,

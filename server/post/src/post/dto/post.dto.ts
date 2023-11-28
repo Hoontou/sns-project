@@ -9,7 +9,7 @@ export class PostDto {
   title: string;
 
   @IsNotEmpty()
-  userId: string; //작성자 id
+  userId: string | number; //작성자 id
 }
 
 // export class CommentDto {
@@ -25,9 +25,9 @@ export class PostDto {
 
 export interface CommentDto {
   comment: string;
-  userId: string; //작성자
+  userId: string | number; //작성자
   postId: string; //부모 post id (objectid)
-  postOwnerUserId: string;
+  postOwnerUserId: string | number;
 }
 // export class CocommentDto {
 // @IsNotEmpty()
@@ -42,7 +42,7 @@ export interface CommentDto {
 
 export interface CocommentDto {
   cocomment: string;
-  userId: string;
+  userId: string | number;
   commentId: number; //부모 comment id (int)
-  commentOwnerUserId: string;
+  commentOwnerUserId: string | number;
 }
