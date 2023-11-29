@@ -1,30 +1,34 @@
 import { UploadMessage } from 'sns-interfaces';
-import { AlertDto, CommentAlert } from 'sns-interfaces/alert.interface';
+import {
+  AlertDto,
+  CommentAlert,
+  UserTagAlertReqForm,
+} from 'sns-interfaces/alert.interface';
 import { socketManager } from '../../alert.server/socket.manager';
-import { alertRepository } from '../../database/alert.repo';
 import { crypter } from '../crypter';
+import { alertService } from '../alert.service';
 
 export const msgHandler = (data: {
   method: string;
   whereFrom: string;
-  content: AlertDto;
+  content: AlertDto | UserTagAlertReqForm;
 }) => {
   console.log(data);
   if (data.method === 'addComment') {
-    alertRepository.saveAlert(data.content);
+    // alertService.saveAlert(data.content as AlertDto);
+    alertService.saveCommentAlert(data.content as AlertDto);
   }
-
   if (data.method === 'addCocomment') {
-    alertRepository.saveAlert(data.content);
+    alertService.saveAlert(data.content as AlertDto);
   }
   if (data.method === 'addFollow') {
-    alertRepository.saveAlert(data.content);
+    alertService.saveAlert(data.content as AlertDto);
   }
   if (data.method === 'addLike') {
-    alertRepository.saveAlert(data.content);
+    alertService.saveAlert(data.content as AlertDto);
   }
   if (data.method === 'tagUser') {
-    // alertRepository.saveAlert(data.content);
+    alertService.saveTagAlert(data.content as UserTagAlertReqForm);
   }
 };
 
@@ -54,5 +58,5 @@ const handleAlert = (content: UploadMessage) => {
     console.log('업로드 소켓전송');
   }
   // console.log(data);
-  alertRepository.saveAlert(alertDto); //몽고디비 저장 함수
+  alertService.saveAlert(alertDto); //몽고디비 저장 함수
 };

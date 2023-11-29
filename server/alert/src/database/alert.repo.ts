@@ -1,17 +1,16 @@
 import mongoose from 'mongoose';
-import { AlertDto } from 'sns-interfaces/alert.interface';
+import { AlertContentUnion, AlertDto } from 'sns-interfaces/alert.interface';
 
+/**알람이 합쳐지면 여러명이 동일한 동작을했다는 뜻이니까
+ content의 userId가 여러명이 된다 */
 interface AlertDocType {
   userId: number;
-  content: {
-    userId: number;
-    userIds?: number[];
-    [key: string]: any;
-  };
+  content: AlertContentUnion & { userId: number[] };
+  createdAt: Date;
 }
 const alertSchema = new mongoose.Schema({
-  userId: Number,
-  content: Object,
+  userId: { type: Number, required: true },
+  content: { type: Object, required: true },
   createdAt: {
     type: Date,
     default: Date.now, // 현재 날짜 및 시간으로 기본값 설정
@@ -23,10 +22,10 @@ alertSchema.index({
 
 const Alert = mongoose.model('alert', alertSchema);
 
-class AlertRepository {
+export class AlertRepository {
   //  constructor(public readonly db) {connectMongo();}
   //스키마 다중연결을 고려해서 몽고연결은 index.ts에서
-  constructor(public readonly db) {
+  constructor(public readonly db: mongoose.Model<AlertDocType>) {
     //다중필드에서 중첩객체 검색하는법
     //저장할 때 처럼 content: {type} 이렇게 하는거 아님
     // this.db

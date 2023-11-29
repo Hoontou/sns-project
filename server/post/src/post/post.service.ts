@@ -201,7 +201,7 @@ export class PostService {
     }
 
     const alertForm: UserTagAlertReqForm = {
-      usernames: usertags,
+      usernames: [...new Set(usertags)],
       content: {
         type: 'tag',
         where: body.type,
