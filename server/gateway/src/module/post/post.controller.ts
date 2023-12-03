@@ -90,4 +90,12 @@ export class PostController {
   ) {
     return this.postService.deleteCocomment(body, req);
   }
+
+  @Post('/getCommentPageContent')
+  getCommentPageContent(@Body() body: { postId: string }, @Req() req) {
+    return this.postService.getCommentPageContent({
+      postId: body.postId,
+      userId: req.user.userId,
+    });
+  }
 }

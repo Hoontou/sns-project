@@ -3,6 +3,7 @@ export interface PostContent {
   title: string;
   likesCount: number;
   commentCount: number;
+  userId: string | number;
 }
 
 export interface PostFooterContent extends PostContent {

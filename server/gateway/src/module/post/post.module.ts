@@ -7,6 +7,7 @@ import { FflModule } from '../ffl/ffl.module';
 import { AmqpModule } from 'src/module/amqp/amqp.module';
 import { MetadataModule } from '../metadata/metadata.module';
 import { AppModule } from '../../app.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AppModule } from '../../app.module';
     AmqpModule,
     forwardRef(() => MetadataModule),
     forwardRef(() => AppModule),
+    UserModule,
   ],
   controllers: [PostController],
   providers: [PostService],

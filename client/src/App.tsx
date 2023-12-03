@@ -12,6 +12,7 @@ import SearchAllPage from './component/page/Search/SearchAll/SearchAllPage';
 import MainSearchPage from './component/page/Search/MainSearchPage';
 import { FflPage } from './component/page/Ffl/FflPage';
 import PostPage from './component/page/Post/PostPage';
+import CommentPage from './component/page/Post/CommentPage';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#0d47a1';
@@ -47,6 +48,7 @@ function App() {
           <Route path='/ffl/:type/:target' element={<FflPage />} />
 
           <Route path='/post/:postId' element={<PostPage />} />
+          <Route path='/comment/:postId' element={<CommentPage />} />
         </Routes>
       </Router>
     </>

@@ -20,6 +20,7 @@ message GetPostRes {
   int32 commentCount = 2;
   string title = 3;
   string id = 4;
+  string userId = 5;
 }
 
 
@@ -88,3 +89,4 @@ message tags {
   string tagName = 1;
   int32 count = 2;
 }
+

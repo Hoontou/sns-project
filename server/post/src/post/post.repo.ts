@@ -4,6 +4,7 @@ import { CommentTable } from './repository/comment.table';
 import { CoCommentTable } from './repository/cocomment.table';
 import { PostContent } from 'sns-interfaces/client.interface';
 import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
+import { crypter } from 'src/common/crypter';
 
 @Injectable()
 export class PostRepository {
@@ -32,15 +33,17 @@ export class PostRepository {
   }
 
   async getPost(data: { postId: string }): Promise<PostContent> {
-    const post = await this.postTable.db.findOneBy({ id: data.postId });
+    const post = await this.postTable.getPost(data);
     if (post === null) {
       throw new Error('err when getPostnums, postnums === null');
     }
+
     return {
       id: post.id,
       likesCount: post.likes,
       commentCount: post.commentcount,
       title: post.title,
+      userId: crypter.encrypt(post.userId),
     };
   }
   getCommentList(data: { postId: string; page: number }) {

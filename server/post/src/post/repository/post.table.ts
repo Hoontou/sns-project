@@ -5,6 +5,7 @@ import { Post } from '../entity/post.entity';
 import { PostDto } from '../dto/post.dto';
 import { crypter } from 'src/common/crypter';
 import { PostContent } from 'sns-interfaces/client.interface';
+import { pgdb } from 'src/configs/pg';
 
 @Injectable()
 export class PostTable {
@@ -13,7 +14,27 @@ export class PostTable {
     @InjectRepository(Post)
     public db: Repository<Post>,
     private dataSource: DataSource,
-  ) {}
+  ) {
+    this.getPost({ postId: '656cc2c00a5f2f640196eb9a' });
+  }
+
+  async getPost(data: { postId: string }) {
+    const query = `
+    SELECT * FROM public.post
+    WHERE id = '${data.postId}'
+    `;
+
+    const result = await pgdb.client.query(query);
+    const rows: {
+      id: string;
+      title: string;
+      likes: number;
+      commentcount: number;
+      userId: number;
+    }[] = result.rows;
+
+    return rows[0];
+  }
 
   //새로운 포스트데이터 삽입
   addPost(postDto: PostDto) {

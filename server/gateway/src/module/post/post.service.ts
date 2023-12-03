@@ -13,6 +13,7 @@ import { AmqpService } from 'src/module/amqp/amqp.service';
 import { MetadataService } from '../metadata/metadata.service';
 import { AppService } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class PostService {
@@ -25,6 +26,7 @@ export class PostService {
     private metadataService: MetadataService,
     @Inject(forwardRef(() => AppService))
     private appService: AppService,
+    private userService: UserService,
   ) {}
   onModuleInit() {
     this.postGrpcService =
@@ -35,6 +37,8 @@ export class PostService {
   }
 
   async getCommentList(body: { postId: string; page: number }, userId: string) {
+    console.log(body);
+
     //1 id로 코멘트 다 가져옴
     const { comments } = await lastValueFrom(
       this.postGrpcService.getCommentList({
@@ -204,5 +208,21 @@ export class PostService {
 
   deleteCocomment(body: { cocommentId: string; commentId }, req) {
     return this.amqpService.sendMsg('post', body, 'deleteCocomment');
+  }
+
+  async getCommentPageContent(data: { postId: string; userId: string }) {
+    const postContent = await this.getPost(data.postId);
+    const postOwnerInfo = await this.userService.getUsernameWithImg(
+      crypter.decrypt(postContent.userId),
+    ); //작성자 정보
+
+    const postFooterContent: PostFooterContent = {
+      liked: false,
+      ...postOwnerInfo,
+      ...postContent,
+      userId: String(postContent.userId),
+    };
+
+    return { postFooterContent, userId: data.userId };
   }
 }

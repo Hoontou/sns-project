@@ -13,7 +13,6 @@ export const renderTitle = (title: string) => {
   //  const tmp = title
   // .split(/(#[\w가-힣]+|@[\w가-힣]+)/)
   // .filter((part) => part.trim() !== '');
-  console.log(tmp);
 
   return tmp.map((item, index) => {
     if (item.at(0) === '@') {
