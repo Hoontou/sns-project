@@ -1,10 +1,12 @@
-import fastify from 'fastify';
+import fastify, { FastifyRequest } from 'fastify';
 import fastifyIO from 'fastify-socket.io';
 import { socketManager } from './alert.server/socket.manager';
 import { SocketEx } from './common/interface';
 import { crypter } from './common/crypter';
 import { rabbitMQ } from './common/amqp';
 import { connectMongo } from './database/initialize.mongo';
+import { alertService } from './common/alert.service';
+import { GetUnreadAlertReq } from './http.request.interface';
 
 const server = fastify();
 
@@ -28,6 +30,15 @@ server.ready().then(() => {
       //console.log(socketManager.container);
     });
   });
+});
+
+server.post('/getUnreadAlert', (req: GetUnreadAlertReq, reply) => {
+  try {
+    return alertService.getUnreadAlert(req.body);
+  } catch (error) {
+    console.log(error);
+    return reply.status(404).send({ success: false });
+  }
 });
 
 server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {

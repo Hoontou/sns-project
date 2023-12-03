@@ -1,16 +1,24 @@
 import mongoose from 'mongoose';
-import { AlertContentUnion, AlertDto } from 'sns-interfaces/alert.interface';
+import {
+  AlertContentUnion,
+  AlertDto,
+  UploadAlertDto,
+} from 'sns-interfaces/alert.interface';
 
 /**알람이 합쳐지면 여러명이 동일한 동작을했다는 뜻이니까
  content의 userId가 여러명이 된다 */
-interface AlertDocType {
+export interface AlertDocType {
+  _id?: string;
   userId: number;
-  content: AlertContentUnion & { userId: number[] };
+  content: AlertContentUnion;
+  // content: AlertContentUnion & { userId: number[] };
   createdAt: Date;
+  read: boolean;
 }
 const alertSchema = new mongoose.Schema({
   userId: { type: Number, required: true },
   content: { type: Object, required: true },
+  read: { type: Boolean, default: false },
   createdAt: {
     type: Date,
     default: Date.now, // 현재 날짜 및 시간으로 기본값 설정
@@ -18,6 +26,12 @@ const alertSchema = new mongoose.Schema({
 });
 alertSchema.index({
   userId: 1,
+});
+alertSchema.virtual('userPop', {
+  ref: 'user', // 참조할 collections
+  localField: 'content.userId', // 현재 스키마에 선언되어 있는 참조할 필드
+  foreignField: 'userId', // collections에서 참조할 필드
+  justOne: true, // 하나만 반환하는지 여부
 });
 
 const Alert = mongoose.model('alert', alertSchema);
@@ -38,8 +52,12 @@ export class AlertRepository {
     //   });
   }
 
+  getUnreadAlert(data: { userId: string }) {
+    return this.db.find();
+  }
+
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
-  saveAlert(alertDto: AlertDto) {
+  saveAlert(alertDto: AlertDto | UploadAlertDto) {
     const newOne = new Alert({
       userId: alertDto.userId,
       content: alertDto.content,

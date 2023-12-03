@@ -1,7 +1,7 @@
 import { UploadMessage } from 'sns-interfaces';
 import {
   AlertDto,
-  CommentAlert,
+  UploadAlertDto,
   UserTagAlertReqForm,
 } from 'sns-interfaces/alert.interface';
 import { socketManager } from '../../alert.server/socket.manager';
@@ -16,7 +16,7 @@ export const msgHandler = (data: {
   console.log(data);
   if (data.method === 'addComment') {
     // alertService.saveAlert(data.content as AlertDto);
-    alertService.saveCommentAlert(data.content as AlertDto);
+    alertService.saveAlert(data.content as AlertDto);
   }
   if (data.method === 'addCocomment') {
     alertService.saveAlert(data.content as AlertDto);
@@ -43,7 +43,7 @@ export const uploadHandler = (msg) => {
 };
 
 const handleAlert = (content: UploadMessage) => {
-  const alertDto: AlertDto = {
+  const alertDto: AlertDto | UploadAlertDto = {
     _id: content.alertId,
     userId: Number(crypter.decrypt(content.userId)),
     content: {

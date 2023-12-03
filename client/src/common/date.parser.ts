@@ -1,4 +1,4 @@
-export const getElapsedTimeString = (targetTime: string): string => {
+export const getElapsedTimeString = (targetTime: string | Date): string => {
   if (targetTime === '') {
     return '요청 보냄';
   }

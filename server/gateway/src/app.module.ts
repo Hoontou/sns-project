@@ -18,6 +18,7 @@ import { AppService } from './app.service';
 import { MetadataController } from './module/metadata/metadata.controller';
 import { FflController } from './module/ffl/ffl.controller';
 import { UserController } from './module/user/user.controller';
+import { AlertController } from './module/alert/alert.controller';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ export class AppModule implements NestModule {
         MetadataController,
         FflController,
         UserController,
+        AlertController,
       );
   }
 }

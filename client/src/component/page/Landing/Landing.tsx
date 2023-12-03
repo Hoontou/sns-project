@@ -3,11 +3,14 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../common/Navbar/Navbar';
 import LandingPost from './LandingPost';
 import LandingComment from './LandingComment';
-import { Box, Modal, Button } from '@mui/material';
+import { Box, Modal, Button, Grid } from '@mui/material';
 import { LandingContent, defaultLandingContent } from './interface';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate } from 'react-router-dom';
 import { authHoc } from '../../../common/auth.hoc';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import SmsOutlinedIcon from '@mui/icons-material/SmsOutlined';
+import AlertComponent from './Alert';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -23,6 +26,7 @@ const Landing = () => {
   );
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
 
   const openCo = (index: number) => {
     if (index === -1) {
@@ -95,6 +99,7 @@ const Landing = () => {
     //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
     const handleBack = (event: PopStateEvent) => {
       openCo(-1);
+      setOpenAlert(false);
     };
 
     //뒤로가기 event리스너 등록
@@ -107,34 +112,87 @@ const Landing = () => {
   }, []);
   return (
     <>
-      <InfiniteScroll
-        next={getPost}
-        hasMore={enablingGetMoreButton}
-        loader={<div className='spinner'></div>}
-        dataLength={posts.length}
-        scrollThreshold={'100%'}
+      <div
+        style={{
+          width: '100%',
+          height: '2.2rem',
+          position: 'fixed',
+          backgroundColor: 'white',
+          zIndex: '999',
+        }}
       >
-        {/* scrollThreshold={'90%'} 페이지 얼만큼 내려오면 다음거 불러올건지 설정 */}
-        <div>{renderPosts}</div>
-      </InfiniteScroll>
-      {openComment && (
-        <Modal
-          open={openComment}
-          onClose={() => {
-            setOpenComment(false);
-          }}
+        <Grid container spacing={1}>
+          <Grid item xs={9}>
+            <span
+              style={{
+                fontSize: '1.5rem',
+                marginLeft: '0.5rem',
+                fontWeight: '600',
+              }}
+            >
+              Pepsi is the best
+            </span>
+          </Grid>
+          <Grid item xs={3}>
+            <div style={{ display: 'flex', justifyContent: 'right' }}>
+              <NotificationsNoneIcon
+                fontSize='large'
+                style={{ marginRight: '0.4rem' }}
+                onClick={() => {
+                  setOpenAlert(true);
+                }}
+              />
+              <SmsOutlinedIcon
+                fontSize='large'
+                style={{ marginRight: '0.5rem' }}
+              />
+            </div>
+          </Grid>
+        </Grid>
+      </div>
+
+      <div style={{ paddingTop: '2.2rem' }}>
+        <InfiniteScroll
+          next={getPost}
+          hasMore={enablingGetMoreButton}
+          loader={<div className='spinner'></div>}
+          dataLength={posts.length}
+          scrollThreshold={'100%'}
         >
-          <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
-            <LandingComment
-              index={targetPostIndex}
-              createdAt={createdAtToComment}
-              postFooterContent={postToComment}
-              userId={userId}
-              openCo={openCo}
-            />
-          </Box>
-        </Modal>
-      )}
+          {/* scrollThreshold={'90%'} 페이지 얼만큼 내려오면 다음거 불러올건지 설정 */}
+          <div>{renderPosts}</div>
+        </InfiniteScroll>
+        {openComment && (
+          <Modal
+            open={openComment}
+            onClose={() => {
+              setOpenComment(false);
+            }}
+          >
+            <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
+              <LandingComment
+                index={targetPostIndex}
+                createdAt={createdAtToComment}
+                postFooterContent={postToComment}
+                userId={userId}
+                openCo={openCo}
+              />
+            </Box>
+          </Modal>
+        )}
+        {openAlert && (
+          <Modal
+            open={openAlert}
+            onClose={() => {
+              setOpenAlert(false);
+            }}
+          >
+            <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
+              <AlertComponent userId={userId} />
+            </Box>
+          </Modal>
+        )}
+      </div>
       <div style={{ paddingTop: '4rem' }}>
         <Navbar value={0} />
       </div>

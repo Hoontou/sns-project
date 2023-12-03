@@ -95,3 +95,11 @@ localhost:9200/tst.tst/_search/
 
 서버 시작 후 각 서버가 래빗서버 등록 콜드스타트 때문에
 첫 up 이후에 다 기다렸다가 껐다가 다시up 해야 제대로 동작
+
+## 5. nginx시작
+
+```
+docker-compose -f 'nginx.yml' up
+```
+
+하면 3000포트로 진입가능

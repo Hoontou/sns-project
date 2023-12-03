@@ -5,12 +5,24 @@ export interface AlertDto {
   content: AlertContentUnion;
 } //타입과 content는 계속해서 추가.
 
+export interface AlertDocType {
+  _id?: string;
+  userId: number;
+  content: AlertContentUnion;
+  // content: AlertContentUnion & { userId: number[] };
+  createdAt: Date;
+  read: boolean;
+}
+
+export interface UploadAlertDto {
+  _id?: string;
+  userId: number | string;
+  content: UploadAlert;
+} //타입과 content는 계속해서 추가.
+
 export type AlertContentUnion =
-  | UploadAlert
   | CommentAlert
-  | ManyCommentAlert
   | CocommentAlert
-  | ManyCocommentAlert
   | FollowAlert
   | TagAlert
   | LikeAlert;
@@ -28,12 +40,6 @@ interface CommentAlert {
   commentId: number;
   userId: number;
 }
-//포스트에 댓글 두개이상부터는, 어느포스트에 누가누가 달았다만 표시
-interface ManyCommentAlert {
-  type: 'manyComment';
-  postId: string;
-  userIds: number[];
-}
 
 //누가 어떤댓글에 어떤대댓을 달았나
 interface CocommentAlert {
@@ -41,18 +47,6 @@ interface CocommentAlert {
   commentId: number;
   cocommentId: number;
   userId: number;
-}
-//댓글에 대댓글 두개이상부터는, 어떤댓글에 누가누가 달았다만 표시
-interface ManyCocommentAlert {
-  type: 'manyCocomment';
-  commentId: string;
-  userIds: number[];
-}
-
-//누가 나를 팔로우했나
-interface ManyFollowAlert {
-  type: 'manyFollow';
-  userIds: number[][]; //팔로우 누른 사람들, 최대 세명? 두명까지 생각중
 }
 
 //누가 나를 팔로우했나
@@ -73,12 +67,6 @@ interface TagAlert {
 interface LikeAlert {
   type: 'like';
   userId: number; //좋아요 누른 사람들, 최대 세명? 두명까지 생각중
-  postId: string;
-}
-//누가 어떤게시물에 좋아요 했나
-interface ManyLikeAlert {
-  type: 'manyLike';
-  userIds: number[]; //좋아요 누른 사람들, 최대 세명? 두명까지 생각중
   postId: string;
 }
 
