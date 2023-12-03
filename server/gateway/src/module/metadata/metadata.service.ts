@@ -1,13 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { MetadataDto } from 'sns-interfaces';
+import { AppService } from 'src/app.service';
+import { crypter } from 'src/common/crypter';
 import { MetadataGrpcService } from 'src/grpc/grpc.services';
 
 @Injectable()
 export class MetadataService {
   private metadataGrpcService: MetadataGrpcService;
-  constructor(@Inject('metadata') private client: ClientGrpc) {}
+  constructor(
+    @Inject('metadata') private client: ClientGrpc,
+    @Inject(forwardRef(() => AppService))
+    private appService: AppService,
+  ) {}
   onModuleInit() {
     this.metadataGrpcService =
       this.client.getService<MetadataGrpcService>('MetadataService');
@@ -44,5 +50,26 @@ export class MetadataService {
     return await lastValueFrom(
       this.metadataGrpcService.getMetadatasByPostId(data),
     );
+  }
+
+  async getMetadataWithPostFooter(data: { postId: string; userId: string }) {
+    const result = await lastValueFrom(
+      this.metadataGrpcService.getMetadatasByPostId({ _ids: [data.postId] }),
+    );
+
+    const metadata = result.metadatas[0];
+    console.log({
+      userId: data.userId,
+      postId: data.postId,
+      targetId: metadata.userId,
+    });
+
+    const postFooter = await this.appService.postFooter({
+      userId: data.userId,
+      postId: data.postId,
+      targetId: crypter.decrypt(metadata.userId),
+    });
+
+    return { metadata, userId: data.userId, postFooter };
   }
 }

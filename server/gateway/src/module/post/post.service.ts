@@ -12,6 +12,7 @@ import { FflService } from '../ffl/ffl.service';
 import { AmqpService } from 'src/module/amqp/amqp.service';
 import { MetadataService } from '../metadata/metadata.service';
 import { AppService } from 'src/app.service';
+import { crypter } from 'src/common/crypter';
 
 @Injectable()
 export class PostService {
@@ -20,6 +21,7 @@ export class PostService {
     @Inject('post') private client: ClientGrpc,
     private fflService: FflService,
     private amqpService: AmqpService,
+    @Inject(forwardRef(() => MetadataService))
     private metadataService: MetadataService,
     @Inject(forwardRef(() => AppService))
     private appService: AppService,
@@ -94,6 +96,7 @@ export class PostService {
     comment: string;
     postOwnerUserId: string;
   }) {
+    console.log(data);
     this.amqpService.sendMsg('post', data, 'addComment');
     return;
   }

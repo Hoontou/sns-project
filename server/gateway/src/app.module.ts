@@ -22,10 +22,10 @@ import { AlertController } from './module/alert/alert.controller';
 
 @Module({
   imports: [
-    AmqpModule,
-    MetadataModule,
-    AlertModule,
     forwardRef(() => PostModule),
+    forwardRef(() => MetadataModule),
+    AmqpModule,
+    AlertModule,
     FflModule,
     AuthModule,
     UserModule,

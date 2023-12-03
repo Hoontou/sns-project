@@ -13,7 +13,7 @@ import { AppModule } from '../../app.module';
     ClientsModule.register([postMicroserviceOptions]),
     FflModule,
     AmqpModule,
-    MetadataModule,
+    forwardRef(() => MetadataModule),
     forwardRef(() => AppModule),
   ],
   controllers: [PostController],

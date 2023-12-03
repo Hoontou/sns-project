@@ -28,6 +28,7 @@ export class AppService {
     private fflService: FflService,
     @Inject(forwardRef(() => PostService))
     private postService: PostService,
+    @Inject(forwardRef(() => MetadataService))
     private metadataService: MetadataService,
   ) {}
 

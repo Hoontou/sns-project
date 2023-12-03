@@ -52,6 +52,7 @@ export class PostService {
     const decPostOwnerUserId = Number(
       crypter.decrypt(commentDto.postOwnerUserId),
     );
+    console.log(commentDto.postOwnerUserId);
 
     this.handleUserTag({
       type: 'comment',

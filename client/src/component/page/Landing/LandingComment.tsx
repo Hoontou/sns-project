@@ -211,6 +211,7 @@ const LandingComment = (props: {
       axios.post('/gateway/post/addcocomment', {
         cocomment: submitingComment,
         commentId: submitForm.commentId,
+        commentOwnerUserId: submitForm.commentOwnerUserId,
       });
 
       //내 username, img 가져온다.
@@ -254,6 +255,7 @@ const LandingComment = (props: {
       axios.post('/gateway/post/addcomment', {
         comment: submitingComment,
         postId: props.postFooterContent.id,
+        postOwnerUserId: props.postFooterContent.userId,
       });
 
       //내 username, img 가져온다.

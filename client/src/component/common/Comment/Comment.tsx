@@ -160,6 +160,8 @@ const Comment = (props: {
   };
 
   useEffect(() => {
+    window.history.pushState(null, document.title, window.location.href);
+
     getComments().then(() => {
       setSpin(false);
     });

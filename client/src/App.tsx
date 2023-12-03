@@ -11,6 +11,7 @@ import SearchPostsByHashtagResultPage from './component/page/Search/SearchPostsB
 import SearchAllPage from './component/page/Search/SearchAll/SearchAllPage';
 import MainSearchPage from './component/page/Search/MainSearchPage';
 import { FflPage } from './component/page/Ffl/FflPage';
+import PostPage from './component/page/Post/PostPage';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#0d47a1';
@@ -44,6 +45,8 @@ function App() {
           />
 
           <Route path='/ffl/:type/:target' element={<FflPage />} />
+
+          <Route path='/post/:postId' element={<PostPage />} />
         </Routes>
       </Router>
     </>

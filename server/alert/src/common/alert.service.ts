@@ -14,9 +14,7 @@ class AlertService {
   constructor(
     private readonly alertDb: AlertRepository,
     private readonly userDb: UserRepository,
-  ) {
-    this.getUnreadAlert({ userId: 2, page: 0 });
-  }
+  ) {}
 
   async checkHasNewAlert(data: { userId: string }) {
     const decUserId = Number(crypter.decrypt(data.userId));

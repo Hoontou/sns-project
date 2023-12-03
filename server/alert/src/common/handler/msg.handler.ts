@@ -58,5 +58,5 @@ const handleAlert = (content: UploadMessage) => {
     console.log('업로드 소켓전송');
   }
   // console.log(data);
-  alertService.saveAlert(alertDto); //몽고디비 저장 함수
+  // alertService.saveAlert(alertDto); //몽고디비 저장 함수
 };

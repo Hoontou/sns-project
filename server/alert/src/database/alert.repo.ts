@@ -62,7 +62,6 @@ export class AlertRepository {
       userId: alertDto.userId,
       content: alertDto.content,
     });
-    console.log(typeof alertDto.userId);
 
     newOne
       .save()
