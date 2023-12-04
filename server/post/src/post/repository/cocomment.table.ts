@@ -12,7 +12,9 @@ export class CoCommentTable {
   constructor(
     @InjectRepository(Cocomment)
     public db: Repository<Cocomment>,
-  ) {}
+  ) {
+    this.getCocomment({ cocommentId: 1 });
+  }
   async addCocomment(cocommentDto: CocommentDto) {
     const { commentId, userId, cocomment } = cocommentDto;
     const query = `INSERT INTO public.cocomment(
@@ -59,6 +61,48 @@ export class CoCommentTable {
     `;
 
     return (await pgdb.client.query(query)).rows;
+  }
+
+  async getCocomment(data: {
+    cocommentId: number;
+  }): Promise<{ cocommentItem: CocommentContent }> {
+    const query = `SELECT
+    C.id AS "cocommentId",
+    C.cocomment,
+    C.createdat AS "createdAt",
+    C."userId",
+    C.likes AS "likesCount",
+    C."commentId" AS "commentId",
+    A.username,
+    A.img
+    FROM
+    (
+      SELECT * FROM public.cocomment 
+      WHERE public.cocomment.id = ${data.cocommentId}
+      ) AS C
+    JOIN public.userinfo AS A
+    ON C."userId" = A."userId"
+    ORDER BY createdAt DESC;
+    `;
+    const result = await pgdb.client.query(query);
+    const rows: {
+      cocommentId: number;
+      cocomment: string;
+      createdAt: string;
+      userId: number;
+      likesCount: number;
+      username: string;
+      img: string;
+      commentId: number;
+    }[] = result.rows;
+
+    return {
+      cocommentItem: {
+        ...rows[0],
+        liked: false,
+        userId: crypter.encrypt(rows[0].userId),
+      },
+    };
   }
 
   addLike(data: { cocommentId: number }) {

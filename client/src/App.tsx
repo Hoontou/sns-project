@@ -13,6 +13,8 @@ import MainSearchPage from './component/page/Search/MainSearchPage';
 import { FflPage } from './component/page/Ffl/FflPage';
 import PostPage from './component/page/Post/PostPage';
 import CommentPage from './component/page/Post/CommentPage';
+import HighlightCommentPage from './component/page/Post/HIghlightCommentPage';
+import HighlightCocommentPage from './component/page/Post/Cocomment/HighlightCocommentPage';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#0d47a1';
@@ -49,6 +51,14 @@ function App() {
 
           <Route path='/post/:postId' element={<PostPage />} />
           <Route path='/comment/:postId' element={<CommentPage />} />
+          <Route
+            path='/comment/:postId/:commentId'
+            element={<HighlightCommentPage />}
+          />
+          <Route
+            path='/cocomment/:cocommentId'
+            element={<HighlightCocommentPage />}
+          />
         </Routes>
       </Router>
     </>

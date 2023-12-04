@@ -5,7 +5,10 @@ package post;
 service PostService {
   rpc GetPost(GetPostReq) returns (GetPostRes) {};
   rpc GetCommentList(GetCommentListReq) returns (GetCommentListRes);
+  rpc GetComment(GetCommentReq) returns (GetCommentRes);
   rpc GetCocommentList(GetCocommentListReq) returns (GetCocommentListRes);
+  rpc GetCocomment(GetCocommentReq) returns (GetCocommentRes);
+
   rpc GetPostsIdsByHashtag(GetPostsIdsByHashtagReq) returns (GetPostsIdsByHashtagRes);
   rpc SearchPostIdsBySearchString(SearchPostIdsBySearchStringReq) returns (SearchPostIdsBySearchStringRes);
   rpc SearchHashtagsBySearchString(SearchHashtagsBySearchStringReq) returns (SearchHashtagsBySearchStringRes);
@@ -33,6 +36,7 @@ message Comment {
   int32 cocommentCount = 6;
   string username = 7;
   string img = 8;
+  string postId = 9;
 }
 message GetCommentListReq {
   string postId = 1;
@@ -41,6 +45,13 @@ message GetCommentListReq {
 message GetCommentListRes {
   repeated Comment comments = 1;
 }
+message GetCommentReq {
+  int32 commentId = 1;
+}
+message GetCommentRes {
+  Comment commentItem = 1;
+}
+
 
 
 message Cocomment {
@@ -51,6 +62,7 @@ message Cocomment {
   string username = 5;
   string img = 6;
   int32 cocommentId = 7;
+  int32 commentId = 8;
 }
 message GetCocommentListReq {
   int32 commentId = 1;
@@ -58,6 +70,12 @@ message GetCocommentListReq {
 }
 message GetCocommentListRes {
   repeated Cocomment cocomments = 1;
+}
+message GetCocommentReq {
+  int32 cocommentId = 1;
+}
+message GetCocommentRes {
+  Cocomment cocommentItem = 1;
 }
 
 message GetPostsIdsByHashtagReq {

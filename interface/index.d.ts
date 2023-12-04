@@ -106,6 +106,7 @@ export interface CommentItemContent {
   cocommentCount: number;
   username: string;
   img: string;
+  postId: string;
 }
 
 export type ReqUser =

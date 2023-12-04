@@ -43,4 +43,14 @@ export class PostController {
   searchHashtagsBySearchString(data: { searchString: string; page: number }) {
     return this.searchService.searchHashtagsBySearchString(data);
   }
+
+  @GrpcMethod('PostService', 'getComment')
+  getComment(data: { commentId: number }) {
+    return this.postRepo.commentTable.getComment(data);
+  }
+
+  @GrpcMethod('PostService', 'getCocomment')
+  getCocomment(data: { cocommentId: number }) {
+    return this.postRepo.cocommentTable.getCocomment(data);
+  }
 }

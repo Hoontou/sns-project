@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import {
   AuthDto,
   AuthResultRes,
+  CommentItemContent,
   MetadataDto,
   SignInDto,
   SignUpDto,
@@ -147,19 +148,16 @@ export interface PostGrpcService {
     postId: string;
     page: number;
   }): Observable<{
-    comments: {
-      commentId: number;
-      comment: string;
-      createdAt: string;
-      userId: number | string;
-      likesCount: number;
-      cocommentCount: number;
-      username: string;
-      img: string;
-    }[];
+    comments: CommentItemContent[];
+  }>;
+  getComment(data: { commentId: number }): Observable<{
+    commentItem: CommentItemContent;
   }>;
   getCocommentList(data: { commentId: number; page: number }): Observable<{
     cocomments: CocommentContent[];
+  }>;
+  getCocomment(data: { cocommentId: number }): Observable<{
+    cocommentItem: CocommentContent;
   }>;
 
   getPostsIdsByHashtag(data: {

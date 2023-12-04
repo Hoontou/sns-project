@@ -27,6 +27,7 @@ export interface UserInfo {
 
 export interface CocommentContent {
   cocommentId: number;
+  commentId: number;
   img: string;
   userId: string;
   username: string;

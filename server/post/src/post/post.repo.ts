@@ -52,4 +52,7 @@ export class PostRepository {
   getCocommentList(data: { commentId: number; page: number }) {
     return this.cocommentTable.getCocommentList(data.commentId, data.page);
   }
+  getCocomment(data: { cocommentId: number }) {
+    return this.cocommentTable.getCocomment(data);
+  }
 }

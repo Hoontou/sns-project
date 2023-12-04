@@ -31,6 +31,16 @@ export class PostController {
   ): Promise<{ commentItem: CommentItemContent[] }> {
     return this.postService.getCommentList(body, req.user.userId);
   }
+  @Post('/getcomment')
+  getComment(
+    @Body() body: { commentId: number },
+    @Req() req,
+  ): Promise<{ commentItem: CommentItemContent[] }> {
+    return this.postService.getComment({
+      commentId: body.commentId,
+      userId: req.user.userId,
+    });
+  }
 
   @Post('/getcocommentlist')
   getCocommentList(
@@ -38,6 +48,20 @@ export class PostController {
     @Req() req,
   ): Promise<{ cocommentItem: CocommentContent[] }> {
     return this.postService.getCocommentList(body, req.user.userId);
+  }
+
+  @Post('/getHighlightCocomment')
+  getHighlightCocomment(
+    @Body() body: { cocommentId: number },
+    @Req() req,
+  ): Promise<{
+    cocommentItem: CocommentContent[];
+    commentItem: CommentItemContent[];
+  }> {
+    return this.postService.getHighlightCocomment({
+      ...body,
+      userId: req.user.userId,
+    });
   }
 
   @Post('/searchhashtag')

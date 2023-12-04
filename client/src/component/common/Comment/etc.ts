@@ -16,6 +16,7 @@ export interface SubmitCocoForm {
 }
 
 export const defaultCommentItemContent: CommentItemContent = {
+  postId: '',
   liked: false,
   commentId: 0,
   comment: '',
@@ -28,6 +29,7 @@ export const defaultCommentItemContent: CommentItemContent = {
 };
 
 export const defaultCocommentItemContent: CocommentContent = {
+  commentId: 0,
   cocommentId: 0,
   img: '',
   username: '',

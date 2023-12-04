@@ -76,4 +76,31 @@ export class CommentTable {
 
     return (await pgdb.client.query(query)).rows;
   }
+
+  async getComment(data: { commentId: number }) {
+    const query = `
+    SELECT
+    C.id AS "commentId",
+    C.comment,
+    C.createdat AS "createdAt",
+    C."userId",
+    C.likes AS "likesCount",
+    C.cocommentcount AS "cocommentCount",
+    C."postId" AS "postId",
+    A.username,
+    A.img
+    FROM
+    (
+      SELECT * FROM public.comment 
+      WHERE comment.id = '${data.commentId}'
+      ) AS C
+    JOIN public.userinfo AS A
+    ON C."userId" = A."userId"
+    ORDER BY createdAt DESC;
+    `;
+    const result = await pgdb.client.query(query);
+    const rows: CommentItemContent[] = result.rows;
+
+    return { commentItem: rows[0] };
+  }
 }
