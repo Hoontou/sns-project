@@ -323,7 +323,7 @@ const HighlightCocommentPage = () => {
               <div
                 className='text-center'
                 onClick={() => {
-                  navigate(`/comment/${comment.postId}/${comment.commentId}`);
+                  navigate(`/comment/${comment.commentId}`);
                 }}
                 style={{ color: 'RoyalBlue' }}
               >

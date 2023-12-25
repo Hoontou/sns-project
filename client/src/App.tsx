@@ -15,6 +15,7 @@ import PostPage from './component/page/Post/PostPage';
 import CommentPage from './component/page/Post/CommentPage';
 import HighlightCommentPage from './component/page/Post/HIghlightCommentPage';
 import HighlightCocommentPage from './component/page/Post/Cocomment/HighlightCocommentPage';
+import HighlightCommentPage2 from './component/page/Post/HIghlightCommentPage2';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#0d47a1';
@@ -50,10 +51,14 @@ function App() {
           <Route path='/ffl/:type/:target' element={<FflPage />} />
 
           <Route path='/post/:postId' element={<PostPage />} />
-          <Route path='/comment/:postId' element={<CommentPage />} />
+          <Route path='/post/comment/:postId' element={<CommentPage />} />
           <Route
             path='/comment/:postId/:commentId'
             element={<HighlightCommentPage />}
+          />
+          <Route
+            path='/comment/:commentId'
+            element={<HighlightCommentPage2 />}
           />
           <Route
             path='/cocomment/:cocommentId'

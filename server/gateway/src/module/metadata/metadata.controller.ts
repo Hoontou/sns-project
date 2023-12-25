@@ -17,4 +17,9 @@ export class MetadataController {
       userId: req.user.userId,
     });
   }
+
+  @Post('/getMetadatasByPostId')
+  getMetadatasByPostId(@Body() body: { _ids: string[] }, @Req() req) {
+    return this.metadataService.getMetadatasByPostId(body);
+  }
 }

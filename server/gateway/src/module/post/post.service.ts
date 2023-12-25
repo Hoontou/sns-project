@@ -79,6 +79,11 @@ export class PostService {
       userId: data.userId,
     });
 
+    const postFooterResult = await this.getCommentPageContent({
+      postId: commentItem.postId,
+      userId: data.userId,
+    });
+
     return {
       commentItem: [
         {
@@ -86,6 +91,8 @@ export class PostService {
           liked: commentLikedList[0],
         },
       ],
+      userId: data.userId,
+      postFooterContent: postFooterResult.postFooterContent,
     };
   }
 

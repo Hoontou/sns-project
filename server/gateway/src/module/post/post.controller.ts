@@ -1,7 +1,10 @@
 import { Body, Controller, Delete, Post, Req } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CommentItemContent, MetadataDto } from 'sns-interfaces';
-import { CocommentContent } from 'sns-interfaces/client.interface';
+import {
+  CocommentContent,
+  PostFooterContent,
+} from 'sns-interfaces/client.interface';
 
 @Controller('post')
 export class PostController {
@@ -35,7 +38,11 @@ export class PostController {
   getComment(
     @Body() body: { commentId: number },
     @Req() req,
-  ): Promise<{ commentItem: CommentItemContent[] }> {
+  ): Promise<{
+    commentItem: CommentItemContent[];
+    userId: string;
+    postFooterContent: PostFooterContent;
+  }> {
     return this.postService.getComment({
       commentId: body.commentId,
       userId: req.user.userId,
