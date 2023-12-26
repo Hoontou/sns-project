@@ -12,9 +12,7 @@ export class CoCommentTable {
   constructor(
     @InjectRepository(Cocomment)
     public db: Repository<Cocomment>,
-  ) {
-    this.getCocomment({ cocommentId: 1 });
-  }
+  ) {}
   async addCocomment(cocommentDto: CocommentDto) {
     const { commentId, userId, cocomment } = cocommentDto;
     const query = `INSERT INTO public.cocomment(
