@@ -50,4 +50,10 @@ export class AlertService {
     });
     return result;
   }
+
+  async readAlert(data: { alert_id: string }) {
+    return axiosReq(PostMethod, '/readAlert', {
+      ...data,
+    });
+  }
 }

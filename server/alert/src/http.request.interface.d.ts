@@ -6,3 +6,9 @@ export interface GetUnreadAlertReq extends FastifyRequest {
     page: number;
   };
 }
+
+export interface ReadAlertReq extends FastifyRequest {
+  body: {
+    alert_id: string;
+  };
+}

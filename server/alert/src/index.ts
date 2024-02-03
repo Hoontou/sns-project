@@ -6,7 +6,7 @@ import { crypter } from './common/crypter';
 import { rabbitMQ } from './common/amqp';
 import { connectMongo } from './database/initialize.mongo';
 import { alertService } from './common/alert.service';
-import { GetUnreadAlertReq } from './http.request.interface';
+import { GetUnreadAlertReq, ReadAlertReq } from './http.request.interface';
 
 const server = fastify();
 
@@ -32,9 +32,20 @@ server.ready().then(() => {
   });
 });
 
+//안읽은 알림 가져오기
 server.post('/getUnreadAlert', (req: GetUnreadAlertReq, reply) => {
   try {
     return alertService.getUnreadAlert(req.body);
+  } catch (error) {
+    console.log(error);
+    return reply.status(404).send({ success: false });
+  }
+});
+
+//알림 읽음처리
+server.post('/readAlert', (req: ReadAlertReq, reply) => {
+  try {
+    return alertService.readAlert(req.body);
   } catch (error) {
     console.log(error);
     return reply.status(404).send({ success: false });

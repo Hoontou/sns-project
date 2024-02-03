@@ -8,6 +8,7 @@ import { getElapsedTimeString } from '../../../common/date.parser';
 import { useNavigate } from 'react-router-dom';
 import { MetadataDto } from 'sns-interfaces';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { authHoc } from '../../../common/auth.hoc';
 
 const pageLen = 20;
 
@@ -18,17 +19,20 @@ function a11yProps(index: number) {
   };
 }
 
-const AlertComponent = (props: { userId: string }) => {
+const AlertComponent = () => {
   const [tabIndex, setTabIndex] = useState<number>(0);
+  const [userId, setUserId] = useState<string>('');
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
 
   useEffect(() => {
-    //뒤로가기 막기 위해 아래코드 필요.
-    window.history.pushState(null, document.title, window.location.href);
+    authHoc().then((res) => {
+      console.log(res);
+    });
   }, []);
+
   return (
     <div>
       <Tabs
@@ -41,8 +45,8 @@ const AlertComponent = (props: { userId: string }) => {
         <Tab label={`안 읽은 알림`} {...a11yProps(0)} />
         <Tab label={`전체 알림`} {...a11yProps(1)} />
       </Tabs>
-      <UnReadAlertPannel index={0} value={tabIndex} userId={props.userId} />
-      <AllAlertPannel index={1} value={tabIndex} userId={props.userId} />
+      <UnReadAlertPannel index={0} value={tabIndex} userId={userId} />
+      <AllAlertPannel index={1} value={tabIndex} userId={userId} />
     </div>
   );
 };
@@ -69,7 +73,6 @@ const UnReadAlertPannel = (props: {
 
   const getAlerts = () => {
     axios.post('/gateway/alert/getUnreadAlert', { page }).then((res) => {
-      console.log(1);
       const data: {
         unreadAlerts: {
           _id: string;
@@ -92,6 +95,7 @@ const UnReadAlertPannel = (props: {
 
       const tmpAlerts = data.unreadAlerts;
 
+      //알람 가져온 후, 포스트 관련 알람이면 미리보기 이미지 가져옴
       tmpAlerts.map(async (item, index) => {
         if (
           item.content.type === 'follow' ||
@@ -132,13 +136,20 @@ const UnReadAlertPannel = (props: {
     getAlerts();
   }, []);
 
+  const sendAlertReadSignal = (alert_id: string) => {
+    return axios.post('/gateway/alert/readAlert', { alert_id });
+  };
+
   const renderAlerts = alerts.map((item, index) => {
+    //팔로우 알림
     if (item.content.type === 'follow') {
       return (
         <ListItem
           key={index}
-          onClick={() => {
-            navigate(`/feed/${item.content.userinfo.username}`);
+          onClick={(e) => {
+            sendAlertReadSignal(item._id).then(() => {
+              navigate(`/feed/${item.content.userinfo.username}`);
+            });
           }}
         >
           <ListItemAvatar>
@@ -161,7 +172,7 @@ const UnReadAlertPannel = (props: {
         </ListItem>
       );
     }
-
+    //좋아요 알림
     if (item.content.type === 'like') {
       const postId = item.content.postId;
       // axios
@@ -178,7 +189,9 @@ const UnReadAlertPannel = (props: {
         <ListItem
           key={index}
           onClick={() => {
-            navigate(`/post/${postId}`);
+            sendAlertReadSignal(item._id).then(() => {
+              navigate(`/post/${postId}`);
+            });
           }}
         >
           <ListItemAvatar>
@@ -214,7 +227,7 @@ const UnReadAlertPannel = (props: {
         </ListItem>
       );
     }
-
+    //댓 알림
     if (item.content.type === 'comment') {
       const postId = item.content.postId;
       const commentId = item.content.commentId;
@@ -232,7 +245,9 @@ const UnReadAlertPannel = (props: {
         <ListItem
           key={index}
           onClick={() => {
-            navigate(`/comment/${commentId}`);
+            sendAlertReadSignal(item._id).then(() => {
+              navigate(`/comment/${commentId}`);
+            });
           }}
         >
           <ListItemAvatar>
@@ -269,6 +284,7 @@ const UnReadAlertPannel = (props: {
         </ListItem>
       );
     }
+    //대댓 알림
     if (item.content.type === 'cocomment') {
       const cocommentId = item.content.cocommentId;
 
@@ -276,7 +292,9 @@ const UnReadAlertPannel = (props: {
         <ListItem
           key={index}
           onClick={() => {
-            navigate(`/cocomment/${cocommentId}`);
+            sendAlertReadSignal(item._id).then(() => {
+              navigate(`/cocomment/${cocommentId}`);
+            });
           }}
         >
           <ListItemAvatar>
@@ -308,7 +326,9 @@ const UnReadAlertPannel = (props: {
           <ListItem
             key={index}
             onClick={() => {
-              navigate(`/comment/${commentId}`);
+              sendAlertReadSignal(item._id).then(() => {
+                navigate(`/comment/${commentId}`);
+              });
             }}
           >
             <ListItemAvatar>
@@ -339,7 +359,9 @@ const UnReadAlertPannel = (props: {
           <ListItem
             key={index}
             onClick={() => {
-              navigate(`/cocomment/${cocommentId}`);
+              sendAlertReadSignal(item._id).then(() => {
+                navigate(`/cocomment/${cocommentId}`);
+              });
             }}
           >
             <ListItemAvatar>
@@ -380,7 +402,9 @@ const UnReadAlertPannel = (props: {
           <ListItem
             key={index}
             onClick={() => {
-              navigate(`/post/${postId}`);
+              sendAlertReadSignal(item._id).then(() => {
+                navigate(`/post/${postId}`);
+              });
             }}
           >
             <ListItemAvatar>

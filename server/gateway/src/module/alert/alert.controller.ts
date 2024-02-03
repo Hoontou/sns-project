@@ -12,4 +12,9 @@ export class AlertController {
       page: body.page,
     });
   }
+
+  @Post('/readAlert')
+  async readAlert(@Body() body: { alert_id: string }) {
+    return this.alertService.readAlert(body);
+  }
 }

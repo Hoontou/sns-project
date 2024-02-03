@@ -48,8 +48,6 @@ const Feed = () => {
           }
         | { success: false } = res.data;
 
-      console.log(data);
-
       //username 찾기실패 or auth실패
       if (data.success === false) {
         alert(`not exist username or auth err`);
@@ -92,11 +90,8 @@ const Feed = () => {
           <hr></hr>
 
           <Postlist
-            userId={
-              feedType === 'myInfo' && authinfo.success === true //내피드 이면 내아이디 넘김
-                ? authinfo.userId
-                : userinfo.userId
-            }
+            userId={authinfo.success ? authinfo.userId : ''}
+            targetId={userinfo.userId}
           />
 
           {/* 내브바 밖으로 빼면 feedType이 나중에 업데이트 돼서 

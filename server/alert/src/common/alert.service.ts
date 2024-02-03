@@ -35,7 +35,8 @@ class AlertService {
       })
       .populate('userPop')
       .skip(data.page * pageLen)
-      .limit(pageLen);
+      .limit(pageLen)
+      .sort({ _id: -1 });
 
     const result = unreadAlerts.map((i) => {
       delete i._doc.content.userId;

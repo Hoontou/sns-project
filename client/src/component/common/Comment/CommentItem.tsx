@@ -84,6 +84,9 @@ const CommentItem = (props: {
     );
   });
 
+  console.log(props.userId);
+  console.log(props.content.userId);
+
   return (
     <>
       <Grid container spacing={0} style={{ marginBottom: '1rem' }}>
@@ -186,16 +189,8 @@ const CommentItem = (props: {
           </div>
         </Grid>
         <Grid item xs={1.5} className='text-center'>
-          {props.content.createdAt !== '' &&
-            (props.userId === props.content.userId ? (
-              <span>
-                <CommentMenu
-                  commentId={props.content.commentId}
-                  postId={props.postId}
-                  type='comment'
-                />
-              </span>
-            ) : (
+          {props.content.createdAt !== '' && (
+            <>
               <span>
                 {!liked ? (
                   <VscHeart
@@ -215,7 +210,18 @@ const CommentItem = (props: {
                 )}
                 <div style={{ fontSize: '0.7rem' }}>{likesCount}</div>
               </span>
-            ))}
+              {/*내 댓글일 경우에만 화살표 표시 */}
+              {props.userId === props.content.userId && (
+                <span>
+                  <CommentMenu
+                    commentId={props.content.commentId}
+                    postId={props.postId}
+                    type='comment'
+                  />
+                </span>
+              )}
+            </>
+          )}
         </Grid>
       </Grid>
 

@@ -16,6 +16,7 @@ import CommentPage from './component/page/Post/CommentPage';
 import HighlightCommentPage from './component/page/Post/HIghlightCommentPage';
 import HighlightCocommentPage from './component/page/Post/Cocomment/HighlightCocommentPage';
 import HighlightCommentPage2 from './component/page/Post/HIghlightCommentPage2';
+import AlertComponent from './component/page/Alert/Alert';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#0d47a1';
@@ -64,6 +65,8 @@ function App() {
             path='/cocomment/:cocommentId'
             element={<HighlightCocommentPage />}
           />
+
+          <Route path='/alrt' element={<AlertComponent />} />
         </Routes>
       </Router>
     </>

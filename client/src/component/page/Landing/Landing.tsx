@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { authHoc } from '../../../common/auth.hoc';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import SmsOutlinedIcon from '@mui/icons-material/SmsOutlined';
-import AlertComponent from './Alert';
+import AlertComponent from '../Alert/Alert';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -26,7 +26,6 @@ const Landing = () => {
   );
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
 
   const openCo = (index: number) => {
     if (index === -1) {
@@ -99,7 +98,6 @@ const Landing = () => {
     //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
     const handleBack = (event: PopStateEvent) => {
       openCo(-1);
-      setOpenAlert(false);
     };
 
     //뒤로가기 event리스너 등록
@@ -139,7 +137,7 @@ const Landing = () => {
                 fontSize='large'
                 style={{ marginRight: '0.4rem' }}
                 onClick={() => {
-                  setOpenAlert(true);
+                  navigate('/alrt');
                 }}
               />
               <SmsOutlinedIcon
@@ -177,18 +175,6 @@ const Landing = () => {
                 userId={userId}
                 openCo={openCo}
               />
-            </Box>
-          </Modal>
-        )}
-        {openAlert && (
-          <Modal
-            open={openAlert}
-            onClose={() => {
-              setOpenAlert(false);
-            }}
-          >
-            <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
-              <AlertComponent userId={userId} />
             </Box>
           </Modal>
         )}
