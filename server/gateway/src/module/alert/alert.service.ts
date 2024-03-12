@@ -34,6 +34,17 @@ const axiosReq = (
 
 @Injectable()
 export class AlertService {
+  async checkHasNewAlert(data: {
+    userId: string;
+  }): Promise<{ hasNewAlert: boolean }> {
+    const result: {
+      hasNewAlert: boolean;
+    } = await axiosReq(PostMethod, '/checkHasNewAlert', {
+      ...data,
+    });
+    return result;
+  }
+
   async getUnreadAlert(data: { page: number; userId: string }) {
     const result: {
       unreadAlerts: {
@@ -45,6 +56,23 @@ export class AlertService {
         createdAt: Date;
       }[];
     } = await axiosReq(PostMethod, '/getUnreadAlert', {
+      ...data,
+      userId: crypter.decrypt(data.userId),
+    });
+    return result;
+  }
+
+  async getAllAlert(data: { page: number; userId: string }) {
+    const result: {
+      allAlerts: {
+        _id: string;
+        content: AlertContentUnion & {
+          userinfo: { username: string; img: string };
+        };
+        read: boolean;
+        createdAt: Date;
+      }[];
+    } = await axiosReq(PostMethod, '/getAllAlert', {
       ...data,
       userId: crypter.decrypt(data.userId),
     });

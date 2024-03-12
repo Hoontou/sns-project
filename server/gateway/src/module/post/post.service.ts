@@ -1,6 +1,6 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, onErrorResumeNextWith } from 'rxjs';
 import { CommentItemContent } from 'sns-interfaces';
 import {
   CocommentContent,
@@ -73,16 +73,24 @@ export class PostService {
       }),
     );
 
+    if (commentItem === undefined) {
+      return {
+        commentItem: [],
+        userId: data.userId,
+        // postFooterContent: postFooterResult.postFooterContent,
+      };
+    }
+
     //2 가져온 코멘트 id로 좋아요눌렀나 체크
     const { commentLikedList } = await this.fflService.getCommentLiked({
       commentIdList: [commentItem.commentId],
       userId: data.userId,
     });
 
-    const postFooterResult = await this.getCommentPageContent({
-      postId: commentItem.postId,
-      userId: data.userId,
-    });
+    // const postFooterResult = await this.getCommentPageContent({
+    // postId: commentItem.postId,
+    // userId: data.userId,
+    // });
 
     return {
       commentItem: [
@@ -92,7 +100,7 @@ export class PostService {
         },
       ],
       userId: data.userId,
-      postFooterContent: postFooterResult.postFooterContent,
+      // postFooterContent: postFooterResult.postFooterContent,
     };
   }
 
@@ -129,10 +137,14 @@ export class PostService {
     const { cocommentItem } = await lastValueFrom(
       this.postGrpcService.getCocomment(body),
     );
-    const cocomments = [cocommentItem];
-    if (cocomments === undefined) {
+
+    //대댓 찾기 miss나면 그냥 빈 리스트 리턴
+    if (cocommentItem === undefined) {
       return { cocommentItem: [], commentItem: [] };
     }
+
+    //프런트에서 display위해서 리스트에 담아줌
+    const cocomments = [cocommentItem];
 
     //2 대댓에 좋아요 눌렀나 체크
     const { cocommentLikedList } = await this.fflService.getCocommentLiked({
@@ -147,6 +159,9 @@ export class PostService {
       return { ...item, liked: cocommentLikedList[index] };
     });
 
+    if (cocommentItem.commentId === undefined) {
+      return { cocommentItem: cocoResult, commentItem: [] };
+    }
     const { commentItem }: { commentItem: CommentItemContent[] } =
       await this.getComment({
         userId: body.userId,
@@ -273,18 +288,24 @@ export class PostService {
   }
 
   async getCommentPageContent(data: { postId: string; userId: string }) {
-    const postContent = await this.getPost(data.postId);
-    const postOwnerInfo = await this.userService.getUsernameWithImg(
-      crypter.decrypt(postContent.userId),
-    ); //작성자 정보
+    try {
+      const postContent = await this.getPost(data.postId);
+      const postOwnerInfo = await this.userService.getUsernameWithImg(
+        crypter.decrypt(postContent.userId),
+      ); //작성자 정보
 
-    const postFooterContent: PostFooterContent = {
-      liked: false,
-      ...postOwnerInfo,
-      ...postContent,
-      userId: String(postContent.userId),
-    };
+      const postFooterContent: PostFooterContent = {
+        liked: false,
+        ...postOwnerInfo,
+        ...postContent,
+        userId: String(postContent.userId),
+      };
 
-    return { postFooterContent, userId: data.userId };
+      return { postFooterContent, userId: data.userId };
+    } catch (error) {
+      console.log(error);
+
+      return { postFooterContent: undefined, userId: data.userId };
+    }
   }
 }

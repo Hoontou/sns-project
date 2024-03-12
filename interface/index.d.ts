@@ -66,7 +66,8 @@ export type Que =
   | 'ffl'
   | 'upload'
   | 'user'
-  | 'gateway';
+  | 'gateway'
+  | 'dm';
 export interface AmqpMessage {
   fields: {
     exchange: Que;

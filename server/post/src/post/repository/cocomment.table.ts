@@ -63,7 +63,7 @@ export class CoCommentTable {
 
   async getCocomment(data: {
     cocommentId: number;
-  }): Promise<{ cocommentItem: CocommentContent }> {
+  }): Promise<{ cocommentItem: CocommentContent | undefined }> {
     const query = `SELECT
     C.id AS "cocommentId",
     C.cocomment,
@@ -94,13 +94,15 @@ export class CoCommentTable {
       commentId: number;
     }[] = result.rows;
 
-    return {
-      cocommentItem: {
-        ...rows[0],
-        liked: false,
-        userId: crypter.encrypt(rows[0].userId),
-      },
-    };
+    return rows.length === 0
+      ? { cocommentItem: undefined }
+      : {
+          cocommentItem: {
+            ...rows[0],
+            liked: false,
+            userId: crypter.encrypt(rows[0].userId),
+          },
+        };
   }
 
   addLike(data: { cocommentId: number }) {

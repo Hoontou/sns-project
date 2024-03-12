@@ -57,12 +57,11 @@ export class MetadataService {
       this.metadataGrpcService.getMetadatasByPostId({ _ids: [data.postId] }),
     );
 
+    if (result.metadatas === undefined) {
+      return { meatadata: undefined };
+    }
+
     const metadata = result.metadatas[0];
-    console.log({
-      userId: data.userId,
-      postId: data.postId,
-      targetId: metadata.userId,
-    });
 
     const postFooter = await this.appService.postFooter({
       userId: data.userId,

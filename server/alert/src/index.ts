@@ -6,7 +6,11 @@ import { crypter } from './common/crypter';
 import { rabbitMQ } from './common/amqp';
 import { connectMongo } from './database/initialize.mongo';
 import { alertService } from './common/alert.service';
-import { GetUnreadAlertReq, ReadAlertReq } from './http.request.interface';
+import {
+  CheckHasNewAlertReq,
+  GetAlertReq,
+  ReadAlertReq,
+} from './http.request.interface';
 
 const server = fastify();
 
@@ -32,10 +36,29 @@ server.ready().then(() => {
   });
 });
 
+server.post('/checkHasNewAlert', (req: CheckHasNewAlertReq, reply) => {
+  try {
+    return alertService.checkHasNewAlert(req.body);
+  } catch (error) {
+    console.log(error);
+    return reply.status(404).send({ success: false });
+  }
+});
+
 //안읽은 알림 가져오기
-server.post('/getUnreadAlert', (req: GetUnreadAlertReq, reply) => {
+server.post('/getUnreadAlert', (req: GetAlertReq, reply) => {
   try {
     return alertService.getUnreadAlert(req.body);
+  } catch (error) {
+    console.log(error);
+    return reply.status(404).send({ success: false });
+  }
+});
+
+//전체 알림 가져오기
+server.post('/getAllAlert', (req: GetAlertReq, reply) => {
+  try {
+    return alertService.getAllAlert(req.body);
   } catch (error) {
     console.log(error);
     return reply.status(404).send({ success: false });

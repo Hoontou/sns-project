@@ -132,3 +132,18 @@ services:
     environment:
       - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
+
+  dm:
+    image: dm
+    build:
+      context: ./server/dm
+      dockerfile: Dockerfile
+    container_name: dm
+    volumes:
+      - ./server/dm/src:/usr/src/app/src:z
+    ports:
+      - '4009:80'
+    environment:
+      - MONGO_URI=mongodb://mgdb:27017/sns
+      - RABBIT=amqp://guest:guest@rabbit:5672
+      - NODE_ENV=development

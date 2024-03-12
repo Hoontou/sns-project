@@ -77,7 +77,9 @@ export class CommentTable {
     return (await pgdb.client.query(query)).rows;
   }
 
-  async getComment(data: { commentId: number }) {
+  async getComment(data: { commentId: number }): Promise<{
+    commentItem: CommentItemContent | undefined;
+  }> {
     const query = `
     SELECT
     C.id AS "commentId",
@@ -101,6 +103,6 @@ export class CommentTable {
     const result = await pgdb.client.query(query);
     const rows: CommentItemContent[] = result.rows;
 
-    return { commentItem: rows[0] };
+    return { commentItem: rows.length === 0 ? undefined : rows[0] };
   }
 }

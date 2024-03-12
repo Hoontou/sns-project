@@ -162,7 +162,9 @@ export class PostService {
 
   async deletePost(data: { postId: string; userId: string }) {
     //pgdg에서 포스트삭제
-    this.postRepo.postTable.db.delete(data.postId);
+    this.postRepo.postTable.db.delete(data.postId).then((res) => {
+      console.log(res);
+    });
     //엘라스틱에서 포스트삭제, 태그카운트 감소
     this.searchService.deletePost(data);
     return;

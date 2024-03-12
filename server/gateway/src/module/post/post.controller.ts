@@ -39,9 +39,9 @@ export class PostController {
     @Body() body: { commentId: number },
     @Req() req,
   ): Promise<{
-    commentItem: CommentItemContent[];
+    commentItem: CommentItemContent[] | undefined;
     userId: string;
-    postFooterContent: PostFooterContent;
+    // postFooterContent: PostFooterContent;
   }> {
     return this.postService.getComment({
       commentId: body.commentId,

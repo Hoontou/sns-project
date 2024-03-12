@@ -92,6 +92,7 @@ const getServer = () => {
       const metadatas: MetadataDto[] = await metaRepository.db.find({
         _id: { $in: _ids },
       });
+
       res(null, {
         metadatas: metadatas.map((item) => {
           item.userId = crypter.encrypt(item.userId);

@@ -19,10 +19,13 @@ class AlertService {
   async checkHasNewAlert(data: { userId: string }) {
     const decUserId = Number(crypter.decrypt(data.userId));
 
-    const unreadAlerts = await this.alertDb.db.find({
-      userId: decUserId,
-      read: false,
-    });
+    const unreadAlerts = await this.alertDb.db
+      .find({
+        userId: decUserId,
+        read: false,
+      })
+      .limit(1)
+      .sort({ _id: -1 });
 
     return { hasNewAlert: unreadAlerts[0] === undefined ? false : true };
   }
@@ -54,15 +57,16 @@ class AlertService {
   }
 
   async getAllAlert(data: { userId: number; page: number }) {
-    const unreadAlerts: { [key: string]: any } = await this.alertDb.db
+    const allAlerts: { [key: string]: any } = await this.alertDb.db
       .find({
         userId: data.userId,
       })
       .populate('userPop')
       .skip(data.page * pageLen)
-      .limit(pageLen);
+      .limit(pageLen)
+      .sort({ _id: -1 });
 
-    const result = unreadAlerts.map((i) => {
+    const result = allAlerts.map((i) => {
       delete i._doc.content.userId;
       delete i._doc.userId;
       return {

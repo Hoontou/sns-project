@@ -15,8 +15,8 @@ import PostPage from './component/page/Post/PostPage';
 import CommentPage from './component/page/Post/CommentPage';
 import HighlightCommentPage from './component/page/Post/HIghlightCommentPage';
 import HighlightCocommentPage from './component/page/Post/Cocomment/HighlightCocommentPage';
-import HighlightCommentPage2 from './component/page/Post/HIghlightCommentPage2';
 import AlertComponent from './component/page/Alert/Alert';
+import SocketTest from './component/page/Dm/socket.test';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#0d47a1';
@@ -53,13 +53,13 @@ function App() {
 
           <Route path='/post/:postId' element={<PostPage />} />
           <Route path='/post/comment/:postId' element={<CommentPage />} />
-          <Route
+          {/* <Route
             path='/comment/:postId/:commentId'
-            element={<HighlightCommentPage />}
-          />
+            element={<HighlightCommentPage2 />}
+          /> */}
           <Route
             path='/comment/:commentId'
-            element={<HighlightCommentPage2 />}
+            element={<HighlightCommentPage />}
           />
           <Route
             path='/cocomment/:cocommentId'
@@ -67,6 +67,10 @@ function App() {
           />
 
           <Route path='/alrt' element={<AlertComponent />} />
+
+          <Route path='/1122' element={<SocketTest />} />
+          <Route path='/direct/inbox' />
+          <Route path='/direct/t/:dmId' />
         </Routes>
       </Router>
     </>

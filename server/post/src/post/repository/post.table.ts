@@ -32,7 +32,6 @@ export class PostTable {
       commentcount: number;
       userId: number;
     }[] = result.rows;
-
     return rows[0];
   }
 

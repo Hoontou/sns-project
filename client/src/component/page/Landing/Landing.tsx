@@ -10,7 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import { authHoc } from '../../../common/auth.hoc';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import SmsOutlinedIcon from '@mui/icons-material/SmsOutlined';
-import AlertComponent from '../Alert/Alert';
+import { AiOutlineAlert } from 'react-icons/ai';
+import { primaryColor } from '../../../App';
+import './Landing.css';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -26,6 +28,8 @@ const Landing = () => {
   );
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
+
+  const [hasNewAlert, setHasNewAlert] = useState<boolean>(false);
 
   const openCo = (index: number) => {
     if (index === -1) {
@@ -69,6 +73,12 @@ const Landing = () => {
       }
       setSpin(false);
       setUserId(authRes.userId);
+    });
+
+    axios.get('/gateway/alert/checkHasNewAlert').then((res) => {
+      const { hasNewAlert }: { hasNewAlert: boolean } = res.data;
+
+      setHasNewAlert(hasNewAlert);
     });
   }, [navigate]);
 
@@ -133,9 +143,16 @@ const Landing = () => {
           </Grid>
           <Grid item xs={3}>
             <div style={{ display: 'flex', justifyContent: 'right' }}>
-              <NotificationsNoneIcon
+              {/* <NotificationsNoneIcon
                 fontSize='large'
                 style={{ marginRight: '0.4rem' }}
+                onClick={() => {
+                  navigate('/alrt');
+                }}
+              /> */}
+              <AiOutlineAlert
+                className={hasNewAlert ? 'blink' : 'nonBlink'}
+                style={{ fontSize: '34px' }}
                 onClick={() => {
                   navigate('/alrt');
                 }}

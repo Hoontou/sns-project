@@ -25,12 +25,11 @@ import SearchResultModal from '../../common/SearchResultModal';
 import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
 
 const HighlightCommentPage2 = () => {
-  const { commentId } = useParams(); //url에서 가져온 username
+  const { postId, commentId } = useParams(); //url에서 가져온 username
   const [postFooterContent, setPostFooterContent] = useState<PostFooterContent>(
     emptyPostFooterContent
   );
   const [userId, setUserId] = useState<string>('');
-  const [postId, setPostId] = useState<string>('');
 
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
@@ -123,6 +122,22 @@ const HighlightCommentPage2 = () => {
     });
   };
 
+  const getCommentPageContent = async () => {
+    return axios
+      .post('/gateway/post/getCommentPageContent', { postId })
+      .then((res) => {
+        const result: {
+          postFooterContent: PostFooterContent;
+          userId: string;
+        } = res.data;
+
+        setPostFooterContent(result.postFooterContent);
+        setUserId(result.userId);
+
+        return getComment();
+      });
+  };
+
   /**코멘트 가져오기 */
   const getComment = async () => {
     setPending(true);
@@ -132,12 +147,9 @@ const HighlightCommentPage2 = () => {
       })
       .then((res) => {
         console.log(res.data);
-        const result: {
-          commentItem: CommentItemContent[];
-          userId: string;
-          postFooterContent: PostFooterContent;
-        } = res.data;
-        const newComments: CommentItems[] = result.commentItem.map((i) => {
+        const { commentItem: comments }: { commentItem: CommentItemContent[] } =
+          res.data;
+        const newComments: CommentItems[] = comments.map((i) => {
           //대댓 넣을 리스트 추가
           return { ...i, cocomments: [] };
         });
@@ -147,16 +159,14 @@ const HighlightCommentPage2 = () => {
           setPending(false);
           return;
         }
-        setUserId(result.userId);
-        setPostId(result.postFooterContent.id);
-        setPostFooterContent(result.postFooterContent);
+
         setCommentItems([...commentItems, ...newComments]);
         setPending(false);
       });
   };
 
   useEffect(() => {
-    getComment().then(() => {
+    getCommentPageContent().then(() => {
       setSpin(false);
     });
   }, []);
@@ -338,6 +348,61 @@ const HighlightCommentPage2 = () => {
               이 댓글이 달린 게시물
             </div>
 
+            <Grid
+              container
+              spacing={0}
+              style={{ marginTop: '1rem', marginBottom: '1rem' }}
+            >
+              <Grid item xs={10.5} style={{ overflowWrap: 'break-word' }}>
+                <div
+                  style={{
+                    width: '2.7rem',
+                    height: '2.7rem',
+                    borderRadius: '70%',
+                    overflow: 'hidden',
+                    marginTop: '0.4rem',
+                    marginLeft: '0.5rem',
+                    marginRight: '0.5rem',
+                    float: 'left',
+                  }}
+                >
+                  <img
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                    src={
+                      postFooterContent.img === ''
+                        ? sample1
+                        : `${requestUrl}/${postFooterContent.img}`
+                    }
+                    alt='profile'
+                  />
+                </div>
+                <div>
+                  <span
+                    style={{
+                      marginRight: '0.5rem',
+                      fontWeight: '600',
+                      fontSize: '0.9rem',
+                    }}
+                    onClick={() => {
+                      navigate(`/feed/${postFooterContent.username}`);
+                    }}
+                  >
+                    {/*metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
+                    {postFooterContent.username}
+                  </span>
+
+                  <div style={{ fontSize: '0.9rem' }}>
+                    {renderTitle(postFooterContent.title)}
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={9.5}></Grid>
+            </Grid>
+            <hr style={{ marginTop: '-0.2rem' }}></hr>
             {commentItems.length === 0 && (
               <div
                 style={{
@@ -356,7 +421,7 @@ const HighlightCommentPage2 = () => {
               <div
                 className='text-center'
                 onClick={() => {
-                  navigate(`/post/comment/${postFooterContent.id}`);
+                  navigate(`/comment/${postFooterContent.id}`);
                 }}
                 style={{ color: 'RoyalBlue' }}
               >

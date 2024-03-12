@@ -15,7 +15,7 @@ export class PostController {
   ) {}
 
   @GrpcMethod('PostService', 'GetPost')
-  getPost(data: { postId: string }): Promise<PostContent> {
+  getPost(data: { postId: string }): Promise<PostContent | undefined> {
     return this.postRepo.getPost(data);
   }
 

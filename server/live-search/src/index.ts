@@ -1,8 +1,6 @@
 import fastify from 'fastify';
 import fastifyIO from 'fastify-socket.io';
 import { SocketEx } from './common/interface';
-import { crypter } from './common/crypter';
-import { elastic } from './common/elasticsearch';
 import { searchUserOrHashtag } from './search.functions/user.hash.search';
 
 const server = fastify();

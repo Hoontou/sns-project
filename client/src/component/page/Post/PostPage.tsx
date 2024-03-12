@@ -37,21 +37,30 @@ const PostPage = () => {
     }
 
     //메타데이터 가져오기
-    const metadataResult = await axios
+    axios
       .post('/gateway/metadata/getMetadataWithPostFooter', {
         postId,
       })
       .then((res) => {
-        const result: {
-          metadata: Metadata;
-          userId: string;
-          postFooter: PostFooterContent;
-        } = res.data;
+        const result:
+          | {
+              metadata: Metadata;
+              userId: string;
+              postFooter: PostFooterContent;
+            }
+          | { metadata: undefined } = res.data;
+
+        if (result.metadata === undefined) {
+          return;
+        }
 
         setMetadata(result.metadata);
         setUserId(result.userId);
         setPostFooterContent(result.postFooter);
         setFulfilled(true);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
   useEffect(() => {
@@ -80,7 +89,38 @@ const PostPage = () => {
     };
   }, []);
 
-  return (
+  //게시물 찾아왔을때, missing일 때 리턴 다르게
+  return metadata.id === '' ? ( //missing?
+    <div style={{ overflowY: 'scroll', height: '100vh' }}>
+      <>
+        <div
+          style={{
+            textAlign: 'center',
+            fontSize: '1rem',
+            color: 'gray',
+            marginTop: '4rem',
+            marginBottom: '1rem',
+          }}
+        >
+          삭제된 게시물 이거나 잘못된 접근입니다.
+        </div>
+        <div
+          className='text-center'
+          onClick={() => {
+            navigate(-1);
+          }}
+          style={{ color: 'RoyalBlue' }}
+        >
+          뒤로가기
+        </div>
+      </>
+
+      <div style={{ paddingTop: '4rem' }}>
+        <Navbar value={0} />
+      </div>
+    </div>
+  ) : (
+    //find success?
     <div style={{ overflowY: 'scroll', height: '100vh' }}>
       {/* 상단 헤더 */}
       {!openComment && (

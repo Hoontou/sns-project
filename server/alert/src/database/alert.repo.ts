@@ -52,10 +52,6 @@ export class AlertRepository {
     //   });
   }
 
-  getUnreadAlert(data: { userId: string }) {
-    return this.db.find();
-  }
-
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
   saveAlert(alertDto: AlertDto | UploadAlertDto) {
     const newOne = new Alert({

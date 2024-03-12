@@ -1,0 +1,14 @@
+.blink {
+  font-size: 24px;
+  animation: blinkColor 1s infinite; /* 1초 동안 반복 */
+}
+
+@keyframes blinkColor {
+  0%,
+  100% {
+    color: black;
+  }
+  50% {
+    color: #0d47a1;
+  }
+}

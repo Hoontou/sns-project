@@ -32,10 +32,11 @@ export class PostRepository {
     return row;
   }
 
-  async getPost(data: { postId: string }): Promise<PostContent> {
+  async getPost(data: { postId: string }): Promise<PostContent | undefined> {
     const post = await this.postTable.getPost(data);
-    if (post === null) {
-      throw new Error('err when getPostnums, postnums === null');
+
+    if (post === undefined) {
+      throw new Error('Err while getPost at post.repo.ts, must be not found');
     }
 
     return {

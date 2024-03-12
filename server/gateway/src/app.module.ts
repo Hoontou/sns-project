@@ -19,6 +19,8 @@ import { MetadataController } from './module/metadata/metadata.controller';
 import { FflController } from './module/ffl/ffl.controller';
 import { UserController } from './module/user/user.controller';
 import { AlertController } from './module/alert/alert.controller';
+import { DmModule } from './module/dm/dm.module';
+import { DmController } from './module/dm/dm.controller';
 
 @Module({
   imports: [
@@ -29,6 +31,7 @@ import { AlertController } from './module/alert/alert.controller';
     FflModule,
     AuthModule,
     UserModule,
+    DmModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -48,6 +51,7 @@ export class AppModule implements NestModule {
         FflController,
         UserController,
         AlertController,
+        DmController,
       );
   }
 }

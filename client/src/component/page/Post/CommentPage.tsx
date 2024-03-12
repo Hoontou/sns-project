@@ -130,9 +130,14 @@ const CommentPage = () => {
       .post('/gateway/post/getCommentPageContent', { postId })
       .then((res) => {
         const result: {
-          postFooterContent: PostFooterContent;
+          postFooterContent: PostFooterContent | undefined;
           userId: string;
         } = res.data;
+        console.log(result);
+
+        if (result.postFooterContent === undefined) {
+          return;
+        }
 
         setPostFooterContent(result.postFooterContent);
         setUserId(result.userId);
@@ -176,7 +181,9 @@ const CommentPage = () => {
   };
 
   useEffect(() => {
-    window.history.pushState(null, document.title, window.location.href);
+    //이거 뒤로가기키 두번 눌러야 페이지 뒤로가져서 주석처리했음
+    //이거 쓸모없어보이는데 왜 놔뒀는지 기억이 안나서 남겨놨음 뒤로가기 막는거 필요하면 다시 활성화
+    // window.history.pushState(null, document.title, window.location.href);
 
     getCommentPageContent().then(() => {
       setSpin(false);
@@ -317,7 +324,63 @@ const CommentPage = () => {
       />
     );
   });
-  return (
+
+  return postFooterContent.id === '' ? (
+    <>
+      {spin && 'waiting...'}
+
+      {!spin && (
+        <div style={{ height: '100vh', overflowY: 'auto' }}>
+          <div
+            style={{
+              paddingTop: '0.5rem',
+              position: 'fixed',
+              zIndex: '999',
+              backgroundColor: 'white',
+              width: '100%',
+            }}
+            className='text-center'
+          >
+            <VscArrowLeft
+              style={{
+                marginBottom: '0.3rem',
+                position: 'fixed',
+                left: '1rem',
+              }}
+              onClick={() => {
+                navigate(-1);
+              }}
+            />
+            <span>댓글</span>
+          </div>
+          {postFooterContent.id === '' && (
+            <>
+              <div
+                style={{
+                  textAlign: 'center',
+                  fontSize: '1rem',
+                  color: 'gray',
+                  marginTop: '4rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                삭제된 게시물 이거나 잘못된 접근입니다.
+              </div>
+              <div
+                className='text-center'
+                onClick={() => {
+                  navigate(-1);
+                }}
+                style={{ color: 'RoyalBlue' }}
+              >
+                뒤로가기
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </>
+  ) : (
     <>
       {spin && 'waiting...'}
 

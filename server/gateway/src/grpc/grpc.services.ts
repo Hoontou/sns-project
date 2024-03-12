@@ -157,7 +157,7 @@ export interface PostGrpcService {
     cocomments: CocommentContent[];
   }>;
   getCocomment(data: { cocommentId: number }): Observable<{
-    cocommentItem: CocommentContent;
+    cocommentItem: CocommentContent | undefined;
   }>;
 
   getPostsIdsByHashtag(data: {

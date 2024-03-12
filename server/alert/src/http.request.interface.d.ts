@@ -1,9 +1,15 @@
 import { FastifyRequest } from 'fastify';
 
-export interface GetUnreadAlertReq extends FastifyRequest {
+export interface GetAlertReq extends FastifyRequest {
   body: {
     userId: number;
     page: number;
+  };
+}
+
+export interface CheckHasNewAlertReq extends FastifyRequest {
+  body: {
+    userId: string;
   };
 }
 

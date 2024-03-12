@@ -44,7 +44,7 @@ export class Comment extends BaseEntity {
   //@JoinColumn()
   user: User;
 
-  @ManyToOne(() => Post, (post) => post.comments)
+  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'SET NULL' })
   //@JoinColumn()
   post: Post;
 
