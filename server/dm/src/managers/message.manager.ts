@@ -3,7 +3,7 @@ import {
   messageRepository,
 } from '../repository/message.repo';
 
-class MessageManager {
+export class MessageManager {
   constructor(private messageRepository: MessageRepository) {}
 }
 

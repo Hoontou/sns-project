@@ -12,4 +12,5 @@ interface handshakeEx extends Handshake {
 }
 interface IncomingHttpHeadersEx extends IncomingHttpHeaders {
   userid: string;
+  location: string;
 }

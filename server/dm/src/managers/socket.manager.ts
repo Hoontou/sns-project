@@ -6,7 +6,7 @@ import { Socket } from 'socket.io';
 //   connAt: Date;
 // }
 
-class SocketManager {
+export class SocketManager {
   private container: Map<number, Socket | undefined>;
   constructor() {
     this.container = new Map();

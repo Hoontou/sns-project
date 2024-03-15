@@ -6,7 +6,7 @@ import { Socket } from 'socket.io';
 //   connAt: Date;
 // }
 
-class UserLocationManager {
+export class UserLocationManager {
   private container: Map<number, number | 'inbox' | undefined>;
   constructor() {
     this.container = new Map();

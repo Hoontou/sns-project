@@ -5,7 +5,7 @@ import {
   chatRoomRepository,
 } from '../repository/chatRoom.repo';
 
-class ChatRoomManager {
+export class ChatRoomManager {
   constructor(private readonly chatRoomRepository: ChatRoomRepository) {}
 
   async requestChatRoomId(data: {
@@ -43,6 +43,15 @@ class ChatRoomManager {
       return false;
     }
     return true;
+  }
+
+  async sendMessage(data: {
+    messageType: 'text' | 'photo';
+    content: string;
+    chatRoomId: number;
+  }) {
+    console.log(data);
+    return;
   }
 }
 
