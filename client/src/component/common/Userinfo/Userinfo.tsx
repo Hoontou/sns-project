@@ -1,12 +1,12 @@
 import { Grid } from '@mui/material';
 import sample from '../../../asset/sample1.jpg';
-import UserinfoButton from './UserinfoButton';
 import UserinfoNums from './UserinfoNums';
 import UserinfoMenu from './UserinfoMenu';
 import { requestUrl } from '../../../common/etc';
 import { UserInfo } from 'sns-interfaces/client.interface';
 import { ReqUser } from 'sns-interfaces';
 import { useEffect, useState } from 'react';
+import ButtonsUnderUserInfo from './ButtonsUnderUserInfo';
 
 //타겟아이디가 없다? 내 피드에서 온 요청이라는 뜻.
 const Userinfo = (props: {
@@ -80,7 +80,7 @@ const Userinfo = (props: {
 
       {/*내 피드로 들어왔을때는 아래 버튼 표시안함. 다른사람의 피드이고,  useEffect axios요청 끝난 후,  렌더링 시작. */}
       {props.feedType === 'otherInfo' && !props.spin && (
-        <UserinfoButton
+        <ButtonsUnderUserInfo
           addFollower={addFollower}
           followed={props.userinfo.followed}
           users={{

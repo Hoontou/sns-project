@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { AlertContentUnion } from 'sns-interfaces/alert.interface';
-import { crypter } from 'src/common/crypter';
 const PostMethod = 'post';
 const GetMethod = 'get';
 const DeleteMethod = 'delete';
 
 const parseUrl = (url: string) => {
-  return 'http://alert' + url;
+  return 'http://dm' + url;
 };
 
 const axiosReq = (
@@ -33,4 +31,14 @@ const axiosReq = (
 };
 
 @Injectable()
-export class DmService {}
+export class DmService {
+  async requestChatRoomId(data: { userId: string; chatTargetUserId: string }) {
+    const { chatRoomId }: { chatRoomId: number } = await axiosReq(
+      PostMethod,
+      '/requestChatRoomId',
+      data,
+    );
+
+    return { chatRoomId };
+  }
+}

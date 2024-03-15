@@ -1,5 +1,20 @@
 import { Client } from 'pg';
 
+export interface Message {
+  id: number;
+  chatRoomId: number;
+  speakerId: number;
+  messageType: string;
+  content: string;
+  createdAt: Date;
+  isRead: boolean;
+}
+
+export interface ChatRoom {
+  id: number;
+  refCount: number;
+}
+
 class Postgres {
   public readonly client;
   constructor() {
@@ -39,26 +54,22 @@ class Postgres {
       console.log(error);
     }
   }
+
+  async insertMessage(chatRoomId, speakerId, messageType, content, isRead) {
+    const query = `
+      INSERT INTO messages ("chatRoomId", "speakerId", "messageType", "content", "isRead")
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *;`;
+    const values = [chatRoomId, speakerId, messageType, content, isRead];
+
+    try {
+      const result = await this.client.query(query, values);
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error inserting message:', error);
+      throw error;
+    }
+  }
 }
 
 export const pgdb = new Postgres();
-
-// CREATE TABLE messages (
-// 	id SERIAL PRIMARY KEY,
-// 	"chatRoomId" character varying NOT NULL,
-// 	"speakerId" INTEGER NOT NULL,
-// 	"messageType" character varying NOT NULL,
-// 	"content" character varying NOT NULL,
-// 	"createdAt" timestamp without time zone NOT NULL DEFAULT now(),
-// 	"isRead" BOOLEAN NOT NULL DEFAULT false,
-
-// 	CONSTRAINT fk_chatroom_id FOREIGN KEY ("chatRoomId") REFERENCES chatrooms(id) ON DELETE CASCADE,
-// 	CONSTRAINT fk_speaker_id FOREIGN KEY ("speakerId") REFERENCES public.user(id)
-// );
-
-// CREATE TABLE IF NOT EXISTS public.chatrooms
-// (
-// id character varying COLLATE pg_catalog."default" NOT NULL,
-// "refCount" integer DEFAULT 2,
-// CONSTRAINT chatrooms_pkey PRIMARY KEY (id)
-// )

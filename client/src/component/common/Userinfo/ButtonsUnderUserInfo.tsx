@@ -1,12 +1,14 @@
 import { Button, Grid } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const UserinfoButton = (props: {
+const ButtonsUnderUserInfo = (props: {
   addFollower(num: number): void;
   followed: boolean;
   users: { userTo: string; userFrom: string };
 }) => {
+  const navigate = useNavigate();
   const [followed, setFollowed] = useState<boolean>(props.followed);
 
   const onClickFollow = async () => {
@@ -30,6 +32,17 @@ const UserinfoButton = (props: {
     setFollowed(!followed);
   };
 
+  const requestChatRoomId = async () => {
+    const result: { data: { chatRoomId: number } } = await axios.post(
+      '/gateway/dm/requestChatRoomId',
+      {
+        chatTargetUserId: props.users.userTo,
+      }
+    );
+
+    navigate(`/direct/t/${result.data.chatRoomId}`);
+  };
+
   return (
     <>
       <Grid container spacing={1}>
@@ -44,7 +57,13 @@ const UserinfoButton = (props: {
           </Button>
         </Grid>
         <Grid item xs={6}>
-          <Button fullWidth variant='outlined'>
+          <Button
+            fullWidth
+            variant='outlined'
+            onClick={() => {
+              requestChatRoomId();
+            }}
+          >
             메세지
           </Button>
         </Grid>
@@ -53,4 +72,4 @@ const UserinfoButton = (props: {
   );
 };
 
-export default UserinfoButton;
+export default ButtonsUnderUserInfo;
