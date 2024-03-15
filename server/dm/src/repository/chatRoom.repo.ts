@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { pgdb } from '../postgresql/initialize.postgres';
+import { pgdb } from './connect.config/initialize.postgres';
 
 export interface ChatRoomDocType {
   _id?: string;

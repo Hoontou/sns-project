@@ -6,7 +6,7 @@ import { Socket } from 'socket.io';
 //   connAt: Date;
 // }
 
-class DirectManager {
+class UserLocationManager {
   private container: Map<number, number | 'inbox' | undefined>;
   constructor() {
     this.container = new Map();
@@ -30,16 +30,6 @@ class DirectManager {
     return this.container.get(userId); //sock이 false, 또는 객체가 아예 없든지 둘다 false 리턴함.
   }
 
-  // delSocket(): void {
-  //   for (const key in this.container) {
-  //     const socket: Socket | false = this.container.get(key);
-  //     if (!socket) {
-  //       //연결 없는 소켓은 삭제
-  //       this.container.delete(key);
-  //     }
-  //   } //이거를 전역에 인터벌 시키던지 해서 주기적으로 돌려버리자.
-  // }
-
   checkManager() {
     setInterval(() => {
       console.log('checking chat room container --------');
@@ -49,4 +39,4 @@ class DirectManager {
   }
 }
 
-export const directManager = new DirectManager();
+export const userLocationManager = new UserLocationManager();

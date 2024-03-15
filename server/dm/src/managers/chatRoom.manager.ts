@@ -1,11 +1,11 @@
+import { crypter } from '../common/crypter';
 import {
   ChatRoomDocType,
   ChatRoomRepository,
   chatRoomRepository,
-} from '../database/mongo/chatRoom.repo';
-import { crypter } from './crypter';
+} from '../repository/chatRoom.repo';
 
-class DmService {
+class ChatRoomManager {
   constructor(private readonly chatRoomRepository: ChatRoomRepository) {}
 
   async requestChatRoomId(data: {
@@ -22,7 +22,6 @@ class DmService {
       });
 
     if (chatRoom !== null) {
-      console.log(chatRoom.chatRoomId);
       return { chatRoomId: chatRoom.chatRoomId };
     }
 
@@ -47,4 +46,4 @@ class DmService {
   }
 }
 
-export const dmService = new DmService(chatRoomRepository);
+export const chatRoomManager = new ChatRoomManager(chatRoomRepository);

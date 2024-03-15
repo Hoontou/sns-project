@@ -1,14 +1,14 @@
 import fastify from 'fastify';
 import fastifyIO from 'fastify-socket.io';
 import { rabbitMQ } from './common/amqp';
-import { connectMongo } from './database/mongo/initialize.mongo';
-import { pgdb } from './database/postgresql/initialize.postgres';
-import { dmService } from './common/dm.service';
+import { connectMongo } from './repository/connect.config/initialize.mongo';
 import { Socket } from 'socket.io';
-import { socketManager } from './socketController/socket.manager';
 import { crypter } from './common/crypter';
 import { SocketEx } from './common/interface';
-import { directManager } from './chatRoomController/chatRoom.manager';
+import { socketManager } from './managers/socket.manager';
+import { userLocationManager } from './managers/userLocation.manager';
+import { chatRoomManager } from './managers/chatRoom.manager';
+import { pgdb } from './repository/connect.config/initialize.postgres';
 
 const server = fastify();
 
@@ -21,18 +21,15 @@ server.ready().then(() => {
     console.log('connected');
     const userId = Number(crypter.decrypt(socket.handshake.headers.userid));
 
-    //1. 소켓 등록
-    socketManager.setSock(userId, socket);
-
     //2-1. 챗룸 입장
     socket.on('enterChatRoom', async (data: { chatRoomId: number }) => {
-      //1) 매니저에 chatroomId 등록 전 chatRoom 소유권 체크
-      const ownerCheckResult = await dmService.checkChatRoomOwner({
+      //1) location 매니저에 chatroomId 등록 전 chatRoom 소유권 체크
+      const ownerCheckResult = await chatRoomManager.checkChatRoomOwner({
         chatRoomId: data.chatRoomId,
         userId,
       });
 
-      //2-1) check실패, 유저 내보내기
+      //1-2) check실패, 유저 내보내기
       if (ownerCheckResult === false) {
         console.log(`check faild, user ${userId}, room ${data.chatRoomId}`);
         socket.emit('cannotEnter');
@@ -41,7 +38,8 @@ server.ready().then(() => {
 
       //2-2) check통과, 매니저에 등록, 이후 처리
       console.log(`check success, user ${userId}, room ${data.chatRoomId}`);
-      directManager.enterChatRoom(userId, Number(data.chatRoomId));
+      userLocationManager.enterChatRoom(userId, Number(data.chatRoomId));
+      socketManager.setSock(userId, socket);
 
       //3-1) 상대 userinfo 전송
       //3-2) 채팅기록 싹다 긁어와서 전송
@@ -57,7 +55,8 @@ server.ready().then(() => {
       console.log(`user ${userId}, inbox`);
 
       //1) 매니저에 등록
-      directManager.enterInbox(userId);
+      userLocationManager.enterInbox(userId);
+      socketManager.setSock(userId, socket);
 
       //2) 내 채팅방 긁어와서 클라이언트에 전송
     });
@@ -76,7 +75,7 @@ server.ready().then(() => {
       console.log(reason);
 
       //유저 state 삭제
-      directManager.exitDirect(userId);
+      userLocationManager.exitDirect(userId);
       socketManager.disconnSock(userId);
     });
   });
@@ -84,7 +83,7 @@ server.ready().then(() => {
 
 server.post('/requestChatRoomId', (req, reply) => {
   const body = req.body as { userId: string; chatTargetUserId: string };
-  return dmService.requestChatRoomId(body);
+  return chatRoomManager.requestChatRoomId(body);
 });
 
 server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
@@ -103,6 +102,6 @@ server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {
   });
   rabbitMQ.initialize('dm');
   // socketManager.checkManager();
-  // directManager.checkManager();
+  // userLocationManager.checkManager();
   console.log(`dm on 4009:80`);
 });
