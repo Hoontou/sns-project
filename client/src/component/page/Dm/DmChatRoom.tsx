@@ -25,10 +25,12 @@ const DmChatRoom = () => {
 
     //room owner check 실패 시 튕김
     socket.on('cannotEnter', () => {
+      socket.close();
       alert('cannot enter chat room');
       navigate('/');
       //인박스 구현 후
       // navigate('/direct/inbox');
+      return;
     });
 
     setDmserverSocket(socket);
@@ -39,7 +41,7 @@ const DmChatRoom = () => {
     const messageForm: {
       messageType: string;
       content: string;
-    } = { messageType: 'string', content: message };
+    } = { messageType: 'text', content: message };
 
     dmServerSocket?.emit('sendMessage', { messageForm });
   };

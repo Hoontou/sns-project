@@ -13,12 +13,16 @@ export class SocketManager {
     //빈번한 수정에는 Map이 그냥 객체보다 성능좋다고 한다. MDN피셜임.
   }
 
-  setSock(userId: number, socket: Socket): void {
-    this.container.set(userId, socket);
+  getSock(userId) {
+    return this.container.get(userId);
+  }
+
+  setSock(userId: number, socket: Socket) {
+    return this.container.set(userId, socket);
   } //컨테이너에 {Id: {obj}, Id2: {obj2},,,} 이렇게 넣는다.
 
-  disconnSock(userId: number): void {
-    this.container.set(userId, undefined);
+  disconnSock(userId: number) {
+    return this.container.delete(userId);
   } //객체를 아예 지워버리면 뭔가 비용이 많이발생할것같음.
   //false로 해놓고 나중에 한꺼번에 false인것들 지워버리게 하자.
   //conn, disconn이 빈번한데 그때마다 지우는것보다 업데이트로.

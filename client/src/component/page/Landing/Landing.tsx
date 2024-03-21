@@ -160,6 +160,9 @@ const Landing = () => {
               <SmsOutlinedIcon
                 fontSize='large'
                 style={{ marginRight: '0.5rem' }}
+                onClick={() => {
+                  navigate('/direct/inbox');
+                }}
               />
             </div>
           </Grid>

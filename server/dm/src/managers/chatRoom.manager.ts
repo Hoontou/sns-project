@@ -3,6 +3,8 @@ import {
   ChatRoomDocType,
   ChatRoomRepository,
   chatRoomRepository,
+  ChatRoomWithUserPop,
+  emptyChatRoom,
 } from '../repository/chatRoom.repo';
 
 export class ChatRoomManager {
@@ -40,18 +42,55 @@ export class ChatRoomManager {
       });
 
     if (chatRoom === null) {
-      return false;
+      return { ownerCheckResult: false, chatRoom: emptyChatRoom };
     }
-    return true;
+    return { ownerCheckResult: true, chatRoom };
   }
 
-  async sendMessage(data: {
-    messageType: 'text' | 'photo';
-    content: string;
-    chatRoomId: number;
+  async updateChatRoom(data: {
+    chatRoom: ChatRoomDocType;
+    messageForm: { messageType: 'text' | 'photo'; content: string };
+    isRead: boolean;
   }) {
-    console.log(data);
-    return;
+    const result: {
+      myChatRoom;
+      friendsChatRoom;
+    } = await this.chatRoomRepository.updateChatRoomAndReturn(data);
+
+    const parsedChatRoom = {
+      _id: result.friendsChatRoom?._id,
+      chatRoomId: result.friendsChatRoom?.chatRoomId,
+      lastTalk: result.friendsChatRoom?.lastTalk,
+      lastUpdatedAt: result.friendsChatRoom?.lastUpdatedAt,
+      newChatCount: result.friendsChatRoom?.newChatCount,
+      totalChatCount: result.friendsChatRoom?.totalChatCount,
+      chatWithUserInfo: {
+        ...result.friendsChatRoom?.userPop._doc,
+        userId: undefined,
+      },
+    };
+    return { myChatRoom: result.myChatRoom, friendsChatRoom: parsedChatRoom };
+  }
+
+  async getMyChatRooms(userId: number, page: number) {
+    const chatRooms: { [key: string]: any }[] =
+      await this.chatRoomRepository.getChatRoomsByUserIdWithUserPop(
+        userId,
+        page,
+      );
+
+    //pop해온 정보 풀어서 넣고 리턴
+    const tmp = chatRooms.map((i) => {
+      delete i._doc.ownerUserId;
+      delete i._doc.chatWithUserId;
+
+      return {
+        ...i._doc,
+        chatWithUserInfo: { ...i.userPop._doc, userId: undefined },
+      };
+    });
+
+    return tmp;
   }
 }
 

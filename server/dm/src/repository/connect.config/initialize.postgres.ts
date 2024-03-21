@@ -1,6 +1,6 @@
 import { Client } from 'pg';
 
-export interface Message {
+export interface DirectMessage {
   id: number;
   chatRoomId: number;
   speakerId: number;

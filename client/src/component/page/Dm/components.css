@@ -1,0 +1,16 @@
+.inbox-item-blink {
+  background-color: white; /* 초기 배경색 설정 */
+  opacity: 1; /* 초기 투명도 설정 */
+  animation: inbox-blink 0.3s;
+}
+
+@keyframes inbox-blink {
+  0% {
+    opacity: 1;
+    background-color: #0d47a1;
+  }
+  100% {
+    opacity: 1;
+    background-color: white;
+  }
+}

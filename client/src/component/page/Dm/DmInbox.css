@@ -1,0 +1,15 @@
+.blinkNewChat {
+  font-size: 1.1rem;
+  margin-top: 0.7rem;
+  animation: blinkColor 1s infinite; /* 1초 동안 반복 */
+}
+
+@keyframes blinkColor {
+  0%,
+  100% {
+    color: black;
+  }
+  50% {
+    color: #0d47a1;
+  }
+}

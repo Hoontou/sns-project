@@ -7,7 +7,7 @@ import Paper from '@mui/material/Paper';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
 import AddIcon from '@mui/icons-material/Add';
-const Navbar = (props: { value: number }) => {
+const Navbar = (props: { value: number | undefined }) => {
   const [value, setValue] = useState(props.value);
   return (
     <div>

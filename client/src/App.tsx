@@ -18,6 +18,7 @@ import HighlightCocommentPage from './component/page/Post/Cocomment/HighlightCoc
 import AlertComponent from './component/page/Alert/Alert';
 import SocketTest from './component/page/Dm/socket.test';
 import DmChatRoom from './component/page/Dm/DmChatRoom';
+import InBox from './component/page/Dm/DmInbox';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#0d47a1';
@@ -69,8 +70,7 @@ function App() {
 
           <Route path='/alrt' element={<AlertComponent />} />
 
-          <Route path='/1122' element={<SocketTest />} />
-          <Route path='/direct/inbox' />
+          <Route path='/direct/inbox' element={<InBox />} />
           <Route path='/direct/t/:chatRoomId' element={<DmChatRoom />} />
         </Routes>
       </Router>
