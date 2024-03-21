@@ -35,15 +35,38 @@ server.ready().then(() => {
 
     //등록완료 후 데이터전송
 
-    //2-1. 챗룸 입장
-    //3-1) 상대 userinfo 전송
-    //3-2) 채팅기록 싹다 긁어와서 전송
-    //3-3) unread였던 채팅기록 read처리
-    //3-3++) 상대가 채팅에 들어와있다면 실시간 읽음처리 socket emit 보내기
+    //챗룸들어왔으면 누구랑 dm하는지 정보전송, 안읽은 메세지 읽음처리
+    if (userLocation !== 'inbox') {
+      //2-1. 챗룸 입장
+      //3-1) 상대 userinfo 전송
+      //3-2) unread였던 채팅기록 read처리
+      //3-2++) 상대가 채팅에 들어와있다면 실시간 읽음처리 socket emit 보내기
+
+      // directService.readMessages(chatRoom);
+      //client에서 display 다만든 후 주석풀자
+
+      const friendsInfo = {
+        username: chatRoom.userPop?.username,
+        introduce: chatRoom.userPop?.introduce,
+        introduceName: chatRoom.userPop?.introduceName,
+        img: chatRoom.userPop?.img,
+      };
+      socket.emit('getFriendsInfo', { friendsInfo });
+    }
+
+    //3-3) 채팅기록 싹다 긁어와서 전송
+    socket.on('getMessages', (data: { startAt?: number }) => {
+      console.log(1);
+      return directService.getMessages(
+        socket,
+        chatRoom.chatRoomId,
+        data.startAt,
+      );
+    });
 
     //2-2. inbox 입장
     //2) 내 채팅방 긁어와서 클라이언트에 전송
-    socket.on('getDataForInbox', (data: { page: number }) => {
+    socket.on('getInbox', (data: { page: number }) => {
       return directService.getDataForInbox(userId, data.page, socket);
     });
 

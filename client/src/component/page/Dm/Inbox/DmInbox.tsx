@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../common/Navbar/Navbar';
 import { io, Socket } from 'socket.io-client';
 import { useEffect, useState } from 'react';
-import { authHoc } from '../../../common/auth.hoc';
-import { ChatRoomWithUserPop } from './interfaces';
 import { List } from '@mui/material';
 import { VscArrowLeft } from 'react-icons/vsc';
 import './DmInbox.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { InboxCard } from './components';
+import { authHoc } from '../../../../common/auth.hoc';
+import { InboxCard } from './InboxCard';
+import { ChatRoomWithUserPop } from '../interfaces';
+import Navbar from '../../../common/Navbar/Navbar';
 
 const pageItemLen = 12; //12개씩 서버에서 보내줌
 
@@ -34,18 +34,6 @@ const InBox = () => {
 
       return [chatRoom, ...tmp];
     });
-    // tmpChatRooms.findIndex((i) => {
-    //   console.log(i.chatRoomId, chatRoom.chatRoomId);
-    //   return i.chatRoomId === chatRoom.chatRoomId;
-    // });
-
-    // tmpChatRooms.splice(
-    //   chatRooms.findIndex((i) => i.chatRoomId),
-    //   1
-    // );
-    // tmpChatRooms.unshift(chatRoom);
-
-    // setChatRooms(tmpChatRooms);
   };
 
   //1 소켓연결
@@ -62,20 +50,17 @@ const InBox = () => {
     });
 
     setDmserverSocket(socket);
-    socket.emit('getDataForInbox', { page });
-    socket.on(
-      'getDataForInbox',
-      (data: { chatRooms: ChatRoomWithUserPop[] }) => {
-        if (data.chatRooms.length < pageItemLen) {
-          setHasMoreChatRooms(false);
-        }
-        console.log(data.chatRooms);
-
-        setPage(page + 1);
-        setChatRooms([...chatRooms, ...data.chatRooms]);
-        setSpin(false);
+    socket.emit('getInbox', { page });
+    socket.on('getInbox', (data: { chatRooms: ChatRoomWithUserPop[] }) => {
+      if (data.chatRooms.length < pageItemLen) {
+        setHasMoreChatRooms(false);
       }
-    );
+      console.log(data.chatRooms);
+
+      setPage(page + 1);
+      setChatRooms([...chatRooms, ...data.chatRooms]);
+      setSpin(false);
+    });
 
     //3 이후 서버가 날리는 실시간 정보 받아서 업데이트
 
@@ -92,7 +77,7 @@ const InBox = () => {
 
   const getChatRooms = () => {
     setSpin(true);
-    dmServerSocket?.emit('getDataForInbox', { page });
+    dmServerSocket?.emit('getInbox', { page });
     setPage(page + 1);
   };
 

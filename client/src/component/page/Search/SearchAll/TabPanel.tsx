@@ -1,8 +1,8 @@
 import { Box, Tab, Tabs } from '@mui/material';
 import { Dispatch, useState } from 'react';
-import { PostPannel } from './pannel/post/PostPannel';
-import { TagPannel } from './pannel/tag/TagPannel';
-import { UserPannel } from './pannel/user/UserPannel';
+import { PostPanel } from './panel/post/PostPanel';
+import { TagPanel } from './panel/tag/TagPanel';
+import { UserPanel } from './panel/user/UserPanel';
 import { Height } from '@mui/icons-material';
 import SearchBar from '../SearchBar';
 
@@ -74,20 +74,20 @@ export const SearchTap = (props: {
       </div>
       <div style={{ paddingTop: '6rem' }}>
         {/* <div style={{ height: '1rem' }}></div> */}
-        <PostPannel
+        <PostPanel
           userId={props.userId}
           value={value}
           index={0}
           searchString={props.searchString}
         />
-        <UserPannel
+        <UserPanel
           userId={props.userId}
           value={value}
           index={1}
           searchString={props.searchString}
         />
 
-        <TagPannel
+        <TagPanel
           userId={props.userId}
           value={value}
           index={2}

@@ -3,7 +3,6 @@ import {
   ChatRoomDocType,
   ChatRoomRepository,
   chatRoomRepository,
-  ChatRoomWithUserPop,
   emptyChatRoom,
 } from '../repository/chatRoom.repo';
 

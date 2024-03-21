@@ -4,7 +4,7 @@ import SearchPostList from './SearchPostList';
 //postlist 컴포넌트 가져오기,
 //데이터는 post/searchpostsbysearchstring 요청
 
-export const PostPannel = (props: TabPanelProps) => {
+export const PostPanel = (props: TabPanelProps) => {
   const { children, value, index, searchString, userId } = props;
 
   return (

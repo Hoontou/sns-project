@@ -27,3 +27,21 @@ export interface ChatRoomWithUserPop extends ChatRoomDocType {
     img: string;
   };
 }
+
+export interface DirectUserInfo {
+  userId: number;
+  username: string;
+  introduce: string;
+  introduceName: string;
+  img: string;
+}
+
+export interface DirectMessage {
+  id: number;
+  chatRoomId: number;
+  speakerId: string;
+  messageType: string;
+  content: string;
+  createdAt: Date;
+  isRead: boolean;
+}

@@ -1,44 +1,42 @@
-import { useEffect, useState } from 'react';
 import { TabPanelProps } from '../../TabPanel';
-import axios from 'axios';
-import { Avatar, List, ListItem, ListItemAvatar } from '@mui/material';
+import { SearchedHashtag, SearchedUser } from '../../../../Upload/Upload';
 import { useNavigate } from 'react-router-dom';
-import { SearchedUser } from 'sns-interfaces/grpc.interfaces';
-import sample from '../../../../../../asset/sample1.jpg';
-import { requestUrl } from '../../../../../../common/etc';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { List, ListItem } from '@mui/material';
+import { SearchedTag } from 'sns-interfaces/grpc.interfaces';
 import Spinner from '../../../../../../common/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-//user서버의 elastic.ts의 searchUsersBySearchString메서드와 동기화
-const pageLen = 20; //한번에 몇개의 유저 가져올지
+const pageLen = 20;
 
-export const UserPannel = (props: TabPanelProps) => {
+export const TagPanel = (props: TabPanelProps) => {
   const { children, value, index, userId, searchString } = props;
   const navigate = useNavigate();
-  const [searchedUserList, setSearchedUserList] = useState<
-    SearchedUser[] | undefined
+  const [searchedTagList, setSearchedTagList] = useState<
+    SearchedTag[] | undefined
   >(undefined);
   const [spin, setSpin] = useState<boolean>(true);
   const [page, setPage] = useState<number>(0);
   //더 가져올 유저가 있는가?
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const searchUsersBySearchString = () => {
+  const searchTagsBySearchString = () => {
     return axios
-      .post('/gateway/user/searchusersbysearchstring', {
+      .post('/gateway/post/searchhashtagsbysearchstring', {
         searchString,
         page,
       })
       .then((res) => {
-        const data: { userList: SearchedUser[] } = res.data;
-        if (data.userList.length < pageLen) {
+        const data: { searchedTags: SearchedTag[] } = res.data;
+        if (data.searchedTags.length < pageLen) {
           setHasMore(false);
         }
 
-        setSearchedUserList(
-          searchedUserList === undefined
-            ? data.userList
-            : [...searchedUserList, ...data.userList]
+        setSearchedTagList(
+          searchedTagList === undefined
+            ? data.searchedTags
+            : [...searchedTagList, ...data.searchedTags]
         );
         setPage(page + 1);
         setSpin(false);
@@ -46,45 +44,39 @@ export const UserPannel = (props: TabPanelProps) => {
   };
 
   useEffect(() => {
-    if (value === 1 && searchedUserList === undefined) {
-      searchUsersBySearchString();
+    if (value === 2 && searchedTagList === undefined) {
+      searchTagsBySearchString();
     }
   }, [value]);
 
   const makeCard = () => {
     return (
       <List sx={{ pt: 0 }} style={{ marginTop: '0.3rem' }}>
-        {searchedUserList?.map((item, index) => (
+        {searchedTagList?.map((item, index) => (
           <ListItem
             key={index}
             onClick={() => {
-              navigate(`/feed/${item.username.substring(0)}`);
+              navigate(`/search/hashtag/${item.tagName.substring(0)}`);
             }}
           >
-            <ListItemAvatar>
-              <Avatar
-                sx={{ width: 50, height: 50 }}
-                style={{ marginLeft: '-0.4rem' }}
-                alt={String(index)}
-                src={item.img === '' ? sample : `${requestUrl}/${item.img}`}
-              ></Avatar>
-            </ListItemAvatar>
             <div>
               <div
                 style={{
+                  marginLeft: '-0.4rem',
                   fontSize: '1.4rem',
                   marginTop: '-0.2rem',
                 }}
               >
-                {item.username}
+                #{item.tagName}
               </div>
               <div
                 style={{
+                  marginLeft: '-0.4rem',
                   marginTop: '-0.4rem',
                   fontSize: '0.9rem',
                 }}
               >
-                {item.introduceName}
+                게시물 {item.count}
               </div>
             </div>
           </ListItem>
@@ -94,7 +86,7 @@ export const UserPannel = (props: TabPanelProps) => {
   };
 
   const renderItem =
-    searchedUserList?.length === 0 ? (
+    searchedTagList?.length === 0 ? (
       <div
         style={{
           fontSize: '1.5rem',
@@ -115,7 +107,7 @@ export const UserPannel = (props: TabPanelProps) => {
       role='tabpanel'
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      style={{ display: value === 1 ? 'block' : 'none' }}
+      style={{ display: value === 2 ? 'block' : 'none' }}
     >
       {spin && (
         <div style={{ position: 'absolute', left: '48%', top: '45%' }}>
@@ -124,12 +116,10 @@ export const UserPannel = (props: TabPanelProps) => {
       )}
 
       <InfiniteScroll
-        next={searchUsersBySearchString}
+        next={searchTagsBySearchString}
         hasMore={hasMore}
         loader={<div className='spinner'></div>}
-        dataLength={
-          searchedUserList === undefined ? 0 : searchedUserList.length
-        }
+        dataLength={searchedTagList === undefined ? 0 : searchedTagList.length}
         scrollThreshold={'95%'}
       >
         {/* scrollThreshold={'90%'} 페이지 얼만큼 내려오면 다음거 불러올건지 설정 */}

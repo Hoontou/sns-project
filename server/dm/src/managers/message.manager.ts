@@ -1,3 +1,4 @@
+import { crypter } from '../common/crypter';
 import { ChatRoomDocType } from '../repository/chatRoom.repo';
 import {
   MessageRepository,
@@ -30,6 +31,29 @@ export class MessageManager {
     };
 
     return this.messageRepository.insertMessage(insertForm);
+  }
+
+  async getMessages(chatRoomId: number, startAt?: number) {
+    const messages = await this.messageRepository.getMessages(
+      chatRoomId,
+      startAt,
+    );
+
+    if (messages.length === 0) {
+      return [];
+    }
+
+    const encryptedId = crypter.encrypt(messages[0].speakerId);
+
+    const tmp = messages.map((i) => {
+      return { ...i, userId: encryptedId };
+    });
+
+    return tmp;
+  }
+
+  readMessages(chatRoom: ChatRoomDocType) {
+    return this.messageRepository.readMessages(chatRoom);
   }
 }
 

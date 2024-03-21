@@ -10,6 +10,14 @@ export interface ChatRoomDocType {
   chatWithUserId: number;
   newChatCount: number;
   totalChatCount: number;
+  userPop?: {
+    _id: string;
+    userId: number;
+    username: string;
+    introduce: string;
+    introduceName: string;
+    img: string;
+  };
 }
 
 export const emptyChatRoom: ChatRoomDocType = {
@@ -22,16 +30,16 @@ export const emptyChatRoom: ChatRoomDocType = {
   totalChatCount: 0,
 };
 
-export interface ChatRoomWithUserPop extends ChatRoomDocType {
-  chatWithUserInfo: {
-    _id: string;
-    userId: number;
-    username: string;
-    introduce: string;
-    introduceName: string;
-    img: string;
-  };
-}
+// export interface ChatRoomWithUserPop extends ChatRoomDocType {
+//   chatWithUserInfo: {
+//     _id: string;
+//     userId: number;
+//     username: string;
+//     introduce: string;
+//     introduceName: string;
+//     img: string;
+//   };
+// }
 
 const chatRoomSchema = new mongoose.Schema({
   chatRoomId: { type: Number, required: true },
@@ -68,10 +76,13 @@ export class ChatRoomRepository {
     });
   }
   async getChatRoomByRoomId(data: { ownerUserId: number; chatRoomId: number }) {
-    return this.db.findOne({
-      ownerUserId: data.ownerUserId,
-      chatRoomId: data.chatRoomId,
-    });
+    return this.db
+      .findOne({
+        ownerUserId: data.ownerUserId,
+        chatRoomId: data.chatRoomId,
+      })
+      .populate('userPop')
+      .exec();
   }
 
   async createChatRoom(data: {

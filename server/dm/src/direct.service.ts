@@ -74,7 +74,7 @@ class DirectService {
   async getDataForInbox(userId: number, page: number, socket: Socket) {
     const myChatRooms = await this.chatRoomManager.getMyChatRooms(userId, page);
 
-    return socket.emit('getDataForInbox', { chatRooms: myChatRooms });
+    return socket.emit('getInbox', { chatRooms: myChatRooms });
   }
 
   async sendMessage(data: {
@@ -125,6 +125,20 @@ class DirectService {
 
     //이후 본인한테도 실시간 정보 보냄
     //isRead값 + 제대로 전송됐는지, 챗룸페이지 구현하면서 채워넣기
+  }
+
+  async getMessages(socket: Socket, chatRoomId: number, startAt?: number) {
+    const messages = await this.messageManager.getMessages(chatRoomId, startAt);
+
+    socket.emit('getMessages', { messages });
+  }
+
+  readMessages(chatRoom: ChatRoomDocType) {
+    //안읽은 메세지 읽음처리
+    this.messageManager.readMessages(chatRoom);
+    //상대 챗룸에 있으면 읽었다고 실시간 전송
+    //getUserLocation()......계속
+    return;
   }
 }
 

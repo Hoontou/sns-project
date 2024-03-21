@@ -1,7 +1,11 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { authHoc } from '../../../common/auth.hoc';
+import { authHoc } from '../../../../common/auth.hoc';
 import { Socket, io } from 'socket.io-client';
+import MessageInput from '../chatroom/MessageInput';
+import MessageBoard from './MessageBoard';
+import { DirectMessage, DirectUserInfo } from '../interfaces';
+import ChatRoomHeader from './ChatRoomHeader';
 
 const DmChatRoom = () => {
   const navigate = useNavigate();
@@ -9,7 +13,14 @@ const DmChatRoom = () => {
   const [dmServerSocket, setDmserverSocket] = useState<Socket | undefined>(
     undefined
   );
-  const [message, setMessage] = useState<string>('');
+  const [friendsInfo, setFriendsInfo] = useState<DirectUserInfo>({
+    userId: 0,
+    username: '',
+    introduce: '',
+    introduceName: '',
+    img: '',
+  });
+  const [messages, setMessages] = useState<DirectMessage[]>([]);
 
   const connectSocket = (userId: string) => {
     if (dmServerSocket !== undefined) {
@@ -22,28 +33,37 @@ const DmChatRoom = () => {
         location: chatRoomId === undefined ? '' : chatRoomId,
       },
     });
+    setDmserverSocket(socket);
+
+    socket.emit('getMessages', {
+      page: 0,
+    });
 
     //room owner check 실패 시 튕김
     socket.on('cannotEnter', () => {
       socket.close();
       alert('cannot enter chat room');
-      navigate('/');
-      //인박스 구현 후
-      // navigate('/direct/inbox');
+      navigate('/direct/inbox');
       return;
     });
 
-    setDmserverSocket(socket);
+    socket.on('getFriendsInfo', (data: { friendsInfo: DirectUserInfo }) => {
+      setFriendsInfo(data.friendsInfo);
+    });
+
+    socket.on('getMessages', (data: { messages: DirectMessage[] }) => {
+      setMessages(() => {
+        return [...data.messages, ...messages];
+      });
+    });
+
     return;
   };
 
-  const sendDirectMessage = () => {
-    const messageForm: {
-      messageType: string;
-      content: string;
-    } = { messageType: 'text', content: message };
-
-    dmServerSocket?.emit('sendMessage', { messageForm });
+  const getMessages = (startAt?: number) => {
+    dmServerSocket?.emit('getMessages', {
+      startAt,
+    });
   };
 
   useEffect(() => {
@@ -75,22 +95,16 @@ const DmChatRoom = () => {
 
   return (
     <div>
-      this is dm chat room {chatRoomId}
+      <ChatRoomHeader friendsInfo={friendsInfo} />
+      <div style={{ paddingTop: '4rem' }}>
+        <MessageBoard
+          socket={dmServerSocket}
+          messages={messages}
+          getMessages={getMessages}
+        />
+      </div>
       <div>
-        <input
-          value={message}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setMessage(e.target.value);
-          }}
-        ></input>
-        <button
-          onClick={() => {
-            sendDirectMessage(); //send
-            setMessage(''); //clear input
-          }}
-        >
-          메세지 보내기
-        </button>
+        <MessageInput socket={dmServerSocket} />
       </div>
     </div>
   );

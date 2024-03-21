@@ -1,13 +1,11 @@
 import { Avatar, List, ListItem, ListItemAvatar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { ChatRoomWithUserPop } from './interfaces';
-import { requestUrl } from '../../../common/etc';
-import sample from '../../../asset/sample1.jpg';
-import { getElapsedTimeString } from '../../../common/date.parser';
-import { primaryColor } from '../../../App';
-import { useEffect, useState } from 'react';
-import './components.css';
-
+import sample from '../../../../asset/sample1.jpg';
+import { ChatRoomWithUserPop } from '../interfaces';
+import { useState, useEffect } from 'react';
+import { primaryColor } from '../../../../App';
+import { getElapsedTimeString } from '../../../../common/date.parser';
+import { requestUrl } from '../../../../common/etc';
 const controllTalkOverflow = (text: string) => {
   const overflow = 24;
   if (text.length <= overflow) {

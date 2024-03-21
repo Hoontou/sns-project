@@ -17,8 +17,8 @@ import HighlightCommentPage from './component/page/Post/HIghlightCommentPage';
 import HighlightCocommentPage from './component/page/Post/Cocomment/HighlightCocommentPage';
 import AlertComponent from './component/page/Alert/Alert';
 import SocketTest from './component/page/Dm/socket.test';
-import DmChatRoom from './component/page/Dm/DmChatRoom';
-import InBox from './component/page/Dm/DmInbox';
+import InBox from './component/page/Dm/Inbox/DmInbox';
+import DmChatRoom from './component/page/Dm/chatroom/DmChatRoom';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#0d47a1';
