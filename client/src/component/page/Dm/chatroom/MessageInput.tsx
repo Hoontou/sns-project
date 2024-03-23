@@ -1,17 +1,20 @@
 import { Divider, IconButton, InputBase, Paper } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
 import { Socket } from 'socket.io-client';
+import { IoMdPaperPlane } from 'react-icons/io';
 
-const MessageInput = (props: { socket: Socket | undefined }) => {
+const MessageInput = (props: {}) => {
   const [message, setMessage] = useState<string>('');
 
   const sendDirectMessage = (message: string) => {
+    if (message === '') {
+      return;
+    }
+
     const messageForm: {
       messageType: string;
       content: string;
     } = { messageType: 'text', content: message };
-
-    props.socket?.emit('sendMessage', { messageForm });
   };
 
   return (
@@ -29,7 +32,7 @@ const MessageInput = (props: { socket: Socket | undefined }) => {
     >
       <InputBase
         sx={{ ml: 1, flex: 1 }}
-        placeholder='댓글 입력'
+        placeholder='메세지 입력...'
         inputProps={{ 'aria-label': 'search google maps' }}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           setMessage(e.target.value);
@@ -49,7 +52,8 @@ const MessageInput = (props: { socket: Socket | undefined }) => {
   )} */}
       <Divider sx={{ height: 10, m: 0.5 }} orientation='vertical' />
       <IconButton
-        color='primary'
+        style={{ marginRight: '0.5rem' }}
+        color={message ? 'primary' : 'default'}
         aria-label='directions'
         onClick={(e) => {
           sendDirectMessage(message);
@@ -57,7 +61,7 @@ const MessageInput = (props: { socket: Socket | undefined }) => {
           //여기 추가로 내 챗룸에 방금보낸 메세지 display해아함
         }}
       >
-        <span style={{ fontSize: '1.2rem' }}>게시</span>
+        <IoMdPaperPlane style={{ fontSize: '1.9rem' }} />
       </IconButton>
     </Paper>
   );

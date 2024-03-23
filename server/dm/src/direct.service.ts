@@ -127,10 +127,33 @@ class DirectService {
     //isRead값 + 제대로 전송됐는지, 챗룸페이지 구현하면서 채워넣기
   }
 
-  async getMessages(socket: Socket, chatRoomId: number, startAt?: number) {
-    const messages = await this.messageManager.getMessages(chatRoomId, startAt);
+  async getMessages(
+    socket: Socket,
+    chatRoom: ChatRoomDocType,
+    startAt?: number,
+  ) {
+    const messages = await this.messageManager.getMessages(
+      chatRoom.chatRoomId,
+      startAt === 0 ? undefined : startAt,
+    );
 
-    socket.emit('getMessages', { messages });
+    const tmp = messages
+      .map((i) => {
+        return {
+          ...i,
+          speakerId: undefined,
+          isMyChat: i.speakerId === chatRoom.ownerUserId ? true : false,
+        };
+      })
+      .reverse();
+
+    socket.emit('getMessages', { messages: tmp });
+
+    if (tmp.length < 15) {
+      return undefined;
+    }
+
+    return tmp[0].id - 1;
   }
 
   readMessages(chatRoom: ChatRoomDocType) {

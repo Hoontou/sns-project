@@ -20,7 +20,6 @@ const InBox = () => {
   const [chatRooms, setChatRooms] = useState<ChatRoomWithUserPop[]>([]);
   const [hasMoreChatRooms, setHasMoreChatRooms] = useState<boolean>(true);
   const [myUsername, setMyUsername] = useState<string>('');
-  const [dmsocket, setSocket] = useState<Socket | undefined>(undefined);
 
   const updateChatRooms = (chatRoom: ChatRoomWithUserPop) => {
     setChatRooms((chatRooms) => {
@@ -35,9 +34,38 @@ const InBox = () => {
     });
   };
 
+  const socket = io({
+    path: '/dm/socket.io',
+    extraHeaders: {
+      userid: '1',
+      location: 'inbox',
+    },
+  });
+
+  socket.on('getInbox', (data: { chatRooms: ChatRoomWithUserPop[] }) => {
+    if (data.chatRooms.length < pageItemLen) {
+      setHasMoreChatRooms(false);
+    }
+    console.log(data.chatRooms);
+
+    setPage(page + 1);
+    setChatRooms([...chatRooms, ...data.chatRooms]);
+    setSpin(false);
+  });
+
+  //3 이후 서버가 날리는 실시간 정보 받아서 업데이트
+
+  socket.on(
+    'realTimeUpdateForInbox',
+    (data: { updatedChatRoom: ChatRoomWithUserPop }) => {
+      console.log('updateChatRoom');
+      updateChatRooms(data.updatedChatRoom);
+    }
+  );
+
   const getChatRooms = () => {
     setSpin(true);
-    dmsocket?.emit('getInbox', { page });
+    socket.emit('getInbox', { page });
     setPage(page + 1);
   };
 
@@ -50,49 +78,10 @@ const InBox = () => {
         return;
       }
       setMyUsername(res.username);
-
-      const socket = io({
-        path: '/dm/socket.io',
-        extraHeaders: {
-          userid: res.userId,
-          location: 'inbox',
-        },
-      });
-
-      socket.on('getInbox', (data: { chatRooms: ChatRoomWithUserPop[] }) => {
-        if (data.chatRooms.length < pageItemLen) {
-          setHasMoreChatRooms(false);
-        }
-        console.log(data.chatRooms);
-
-        setPage(page + 1);
-        setChatRooms([...chatRooms, ...data.chatRooms]);
-        setSpin(false);
-      });
-
-      //3 이후 서버가 날리는 실시간 정보 받아서 업데이트
-
-      socket.on(
-        'realTimeUpdateForInbox',
-        (data: { updatedChatRoom: ChatRoomWithUserPop }) => {
-          console.log('updateChatRoom');
-          updateChatRooms(data.updatedChatRoom);
-        }
-      );
-
-      socket.on('init', () => {
-        setSocket(socket);
-      });
       socket.emit('getInbox', { page });
 
       setSpin(false);
     });
-
-    return () => {
-      if (dmsocket) {
-        dmsocket.disconnect();
-      }
-    };
   }, []);
 
   const renderItem =

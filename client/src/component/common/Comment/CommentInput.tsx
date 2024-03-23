@@ -255,7 +255,7 @@ const CommentInput = (props: {
         )} */}
         <Divider sx={{ height: 10, m: 0.5 }} orientation='vertical' />
         <IconButton
-          color='primary'
+          color={props.submitingComment ? 'primary' : 'default'}
           aria-label='directions'
           onClick={(e) => {
             props.setSubmitingComment(props.submitingComment);

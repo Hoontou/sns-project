@@ -43,13 +43,7 @@ export class MessageManager {
       return [];
     }
 
-    const encryptedId = crypter.encrypt(messages[0].speakerId);
-
-    const tmp = messages.map((i) => {
-      return { ...i, userId: encryptedId };
-    });
-
-    return tmp;
+    return messages;
   }
 
   readMessages(chatRoom: ChatRoomDocType) {

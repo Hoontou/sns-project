@@ -39,9 +39,9 @@ export interface DirectUserInfo {
 export interface DirectMessage {
   id: number;
   chatRoomId: number;
-  speakerId: string;
+  isMyChat: boolean;
   messageType: string;
   content: string;
-  createdAt: Date;
+  createdAt: string;
   isRead: boolean;
 }

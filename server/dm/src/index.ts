@@ -33,6 +33,10 @@ server.ready().then(() => {
       socket,
     });
 
+    socket.emit('init');
+
+    let lastId: number | undefined = 0;
+
     //등록완료 후 데이터전송
 
     //챗룸들어왔으면 누구랑 dm하는지 정보전송, 안읽은 메세지 읽음처리
@@ -55,13 +59,11 @@ server.ready().then(() => {
     }
 
     //3-3) 채팅기록 싹다 긁어와서 전송
-    socket.on('getMessages', (data: { startAt?: number }) => {
-      console.log(1);
-      return directService.getMessages(
-        socket,
-        chatRoom.chatRoomId,
-        data.startAt,
-      );
+    socket.on('getMessages', async () => {
+      if (lastId === undefined) {
+        return;
+      }
+      lastId = await directService.getMessages(socket, chatRoom, lastId);
     });
 
     //2-2. inbox 입장
