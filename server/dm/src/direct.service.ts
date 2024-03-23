@@ -148,12 +148,6 @@ class DirectService {
       .reverse();
 
     socket.emit('getMessages', { messages: tmp });
-
-    if (tmp.length < 15) {
-      return undefined;
-    }
-
-    return tmp[0].id - 1;
   }
 
   readMessages(chatRoom: ChatRoomDocType) {

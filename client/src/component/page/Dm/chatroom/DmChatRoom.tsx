@@ -23,6 +23,7 @@ const DmChatRoom = () => {
   const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [dump, setDump] = useState<boolean>(false);
+  const [lastId, setLastId] = useState<number | undefined>(undefined);
 
   const getMessages = (startAt?: number) => {
     if (hasMore === false) {
@@ -30,7 +31,7 @@ const DmChatRoom = () => {
       return;
     }
     console.log(messages);
-    dmsocket?.emit('getMessages');
+    dmsocket?.emit('getMessages', { startAt: lastId });
   };
 
   useEffect(() => {
@@ -69,6 +70,11 @@ const DmChatRoom = () => {
       });
 
       socket.on('getMessages', (data: { messages: DirectMessage[] }) => {
+        if (data.messages.length === 0) {
+          return;
+        }
+
+        setLastId(data.messages[0].id - 1);
         if (data.messages.length < 15) {
           setHasMore(false);
         }
@@ -83,7 +89,7 @@ const DmChatRoom = () => {
         setSocket(socket);
       });
 
-      socket.emit('getMessages');
+      socket.emit('getMessages', { startAt: lastId });
     });
 
     return () => {
