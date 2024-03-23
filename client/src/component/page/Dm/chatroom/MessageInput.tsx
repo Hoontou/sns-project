@@ -3,7 +3,7 @@ import { ChangeEvent, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { IoMdPaperPlane } from 'react-icons/io';
 
-const MessageInput = (props: {}) => {
+const MessageInput = (props: { socket: Socket | undefined }) => {
   const [message, setMessage] = useState<string>('');
 
   const sendDirectMessage = (message: string) => {
@@ -15,6 +15,8 @@ const MessageInput = (props: {}) => {
       messageType: string;
       content: string;
     } = { messageType: 'text', content: message };
+
+    props.socket?.emit('sendMessage', { messageForm });
   };
 
   return (

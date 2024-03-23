@@ -22,7 +22,7 @@ const DmChatRoom = () => {
   });
   const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [dump, setDump] = useState<boolean>(false);
+  const [getMessageTrigger, setGetMessageTrigger] = useState<boolean>(false);
   const [lastId, setLastId] = useState<number | undefined>(undefined);
 
   const getMessages = (startAt?: number) => {
@@ -30,7 +30,6 @@ const DmChatRoom = () => {
       console.log(hasMore);
       return;
     }
-    console.log(messages);
     dmsocket?.emit('getMessages', { startAt: lastId });
   };
 
@@ -85,7 +84,6 @@ const DmChatRoom = () => {
       });
 
       socket.on('init', () => {
-        console.log('init');
         setSocket(socket);
       });
 
@@ -101,7 +99,7 @@ const DmChatRoom = () => {
 
   useEffect(() => {
     getMessages();
-  }, [dump]);
+  }, [getMessageTrigger]);
 
   //소켓연결해서 state controller 에 userId: chatroomId로 등록하고
   //채팅 상대 정보 + 채팅이력 불러오기
@@ -113,11 +111,11 @@ const DmChatRoom = () => {
         <MessageBoard
           messages={messages}
           getMessages={getMessages}
-          setDump={setDump}
+          setGetMessageTrigger={setGetMessageTrigger}
         />
       </div>
       <div>
-        <MessageInput />
+        <MessageInput socket={dmsocket} />
       </div>
     </div>
   );

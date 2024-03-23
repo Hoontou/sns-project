@@ -6,7 +6,7 @@ import MessageCard from './MessageCard';
 import { message } from 'antd';
 
 const MessageBoard = (props: {
-  setDump: Dispatch<React.SetStateAction<boolean>>;
+  setGetMessageTrigger: Dispatch<React.SetStateAction<boolean>>;
   messages: DirectMessage[];
   getMessages: (startAt?: number) => void;
 }) => {
@@ -29,7 +29,7 @@ const MessageBoard = (props: {
 
     setSpin(true);
 
-    props.setDump((prev) => {
+    props.setGetMessageTrigger((prev) => {
       return !prev;
     });
   };
