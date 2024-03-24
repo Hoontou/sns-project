@@ -41,4 +41,14 @@ export class DmService {
 
     return { chatRoomId };
   }
+
+  async checkHasNewMessage(data: { userId: string }) {
+    const { hasNewMessage }: { hasNewMessage: boolean } = await axiosReq(
+      PostMethod,
+      '/checkHasNewMessage',
+      data,
+    );
+
+    return { hasNewMessage };
+  }
 }

@@ -178,5 +178,26 @@ export class ChatRoomRepository {
       .limit(size)
       .exec();
   }
+
+  readMessages(chatRoom: ChatRoomDocType) {
+    this.db
+      .findOneAndUpdate(
+        {
+          _id: chatRoom._id,
+        },
+        {
+          newChatCount: 0,
+        },
+      )
+      .exec();
+  }
+
+  async getLastUpdatedChatRoom(userId: number) {
+    return this.db
+      .findOne({ ownerUserId: userId })
+      .sort({ lastUpdatedAt: -1 })
+      .limit(1)
+      .exec();
+  }
 }
 export const chatRoomRepository = new ChatRoomRepository(ChatRoomModel);

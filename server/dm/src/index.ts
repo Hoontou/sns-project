@@ -39,14 +39,7 @@ server.ready().then(() => {
 
     //챗룸들어왔으면 누구랑 dm하는지 정보전송, 안읽은 메세지 읽음처리
     if (userLocation !== 'inbox') {
-      //2-1. 챗룸 입장
       //3-1) 상대 userinfo 전송
-      //3-2) unread였던 채팅기록 read처리
-      //3-2++) 상대가 채팅에 들어와있다면 실시간 읽음처리 socket emit 보내기
-
-      // directService.readMessages(chatRoom);
-      //client에서 display 다만든 후 주석풀자
-
       const friendsInfo = {
         username: chatRoom.userPop?.username,
         introduce: chatRoom.userPop?.introduce,
@@ -54,6 +47,10 @@ server.ready().then(() => {
         img: chatRoom.userPop?.img,
       };
       socket.emit('getFriendsInfo', { friendsInfo });
+
+      //3-2) unread였던 채팅기록 read처리
+      directService.readMessages(chatRoom);
+      //3-2++) 상대가 채팅에 들어와있다면 실시간 읽음처리 socket emit 보내기
     }
 
     //3-3) 채팅기록 싹다 긁어와서 전송
@@ -71,7 +68,11 @@ server.ready().then(() => {
     socket.on(
       'sendMessage',
       (data: {
-        messageForm: { messageType: 'text' | 'photo'; content: string };
+        messageForm: {
+          messageType: 'text' | 'photo';
+          content: string;
+          tmpId: number;
+        };
       }) => {
         directService.sendMessage({
           messageForm: data.messageForm,
@@ -94,6 +95,11 @@ server.ready().then(() => {
 server.post('/requestChatRoomId', (req, reply) => {
   const body = req.body as { userId: string; chatTargetUserId: string };
   return chatRoomManager.requestChatRoomId(body);
+});
+
+server.post('/checkHasNewMessage', (req, reply) => {
+  const body = req.body as { userId: string };
+  return directService.checkHasNewMessage(body);
 });
 
 server.listen({ host: '0.0.0.0', port: 80 }, (err, address) => {

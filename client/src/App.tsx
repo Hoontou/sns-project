@@ -21,7 +21,7 @@ import InBox from './component/page/Dm/Inbox/DmInbox';
 import DmChatRoom from './component/page/Dm/chatroom/DmChatRoom';
 
 export const history = createBrowserHistory();
-export const primaryColor = '#0d47a1';
+export const primaryColor = '#3f50b5';
 export const mainTemplateStyle = {
   width: '90%',
   margin: '0.7rem auto',

@@ -44,4 +44,5 @@ export interface DirectMessage {
   content: string;
   createdAt: string;
   isRead: boolean;
+  tmpId?: number;
 }

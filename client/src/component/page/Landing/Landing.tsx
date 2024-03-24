@@ -8,10 +8,9 @@ import { LandingContent, defaultLandingContent } from './interface';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate } from 'react-router-dom';
 import { authHoc } from '../../../common/auth.hoc';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import SmsOutlinedIcon from '@mui/icons-material/SmsOutlined';
 import { AiOutlineAlert } from 'react-icons/ai';
-import { primaryColor } from '../../../App';
+import { IoMdPaperPlane } from 'react-icons/io';
+
 import './Landing.css';
 
 const Landing = () => {
@@ -30,6 +29,7 @@ const Landing = () => {
     useState<boolean>(true);
 
   const [hasNewAlert, setHasNewAlert] = useState<boolean>(false);
+  const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
 
   const openCo = (index: number) => {
     if (index === -1) {
@@ -79,6 +79,12 @@ const Landing = () => {
       const { hasNewAlert }: { hasNewAlert: boolean } = res.data;
 
       setHasNewAlert(hasNewAlert);
+    });
+
+    axios.get('/gateway/dm/checkHasNewMessage').then((res) => {
+      const { hasNewMessage }: { hasNewMessage: boolean } = res.data;
+
+      setHasNewMessage(hasNewMessage);
     });
   }, [navigate]);
 
@@ -157,9 +163,10 @@ const Landing = () => {
                   navigate('/alrt');
                 }}
               />
-              <SmsOutlinedIcon
-                fontSize='large'
-                style={{ marginRight: '0.5rem' }}
+              <IoMdPaperPlane
+                className={hasNewMessage ? 'blink' : 'nonBlink'}
+                fontSize='34px'
+                style={{ marginRight: '0.5rem', marginTop: '1px' }}
                 onClick={() => {
                   navigate('/direct/inbox');
                 }}

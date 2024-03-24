@@ -1,5 +1,4 @@
 .blink {
-  font-size: 24px;
   animation: blinkColor 1s infinite; /* 1초 동안 반복 */
 }
 

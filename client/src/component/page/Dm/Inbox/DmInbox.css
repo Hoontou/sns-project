@@ -1,6 +1,6 @@
 .blinkNewChat {
-  font-size: 1.1rem;
-  margin-top: 0.7rem;
+  font-size: 1.3rem;
+  margin-top: 0.3rem;
   animation: blinkColor 1s infinite; /* 1초 동안 반복 */
 }
 

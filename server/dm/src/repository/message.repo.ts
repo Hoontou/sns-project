@@ -34,7 +34,7 @@ export class MessageRepository {
   }
 
   async getMessages(chatRomId: number, startAt?: number) {
-    const limit = 15;
+    const limit = 40;
 
     const query = startAt
       ? `SELECT * FROM messages

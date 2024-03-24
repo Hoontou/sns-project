@@ -15,4 +15,11 @@ export class DmController {
       chatTargetUserId: body.chatTargetUserId,
     });
   }
+
+  @Get('/checkHasNewMessage')
+  async checkHasNewMessage(@Req() req): Promise<{ hasNewMessage: boolean }> {
+    return this.dmService.checkHasNewMessage({
+      userId: req.user.userId,
+    });
+  }
 }

@@ -2,21 +2,40 @@ import { Divider, IconButton, InputBase, Paper } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { IoMdPaperPlane } from 'react-icons/io';
+import { DirectMessage } from '../interfaces';
 
-const MessageInput = (props: { socket: Socket | undefined }) => {
+const MessageInput = (props: {
+  socket: Socket | undefined;
+  addNewMessage: (message: DirectMessage) => void;
+}) => {
   const [message, setMessage] = useState<string>('');
 
   const sendDirectMessage = (message: string) => {
     if (message === '') {
       return;
     }
+    const tmpId = Math.floor(Math.random() * 1023) + 1;
 
     const messageForm: {
       messageType: string;
       content: string;
-    } = { messageType: 'text', content: message };
+      tmpId: number;
+    } = {
+      messageType: 'text',
+      content: message,
+      tmpId,
+    };
+    const newMessage: DirectMessage = {
+      ...messageForm,
+      id: -1,
+      chatRoomId: 0,
+      isMyChat: true,
+      createdAt: new Date().toISOString(),
+      isRead: false,
+    };
 
     props.socket?.emit('sendMessage', { messageForm });
+    props.addNewMessage(newMessage);
   };
 
   return (

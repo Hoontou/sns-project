@@ -91,6 +91,24 @@ export class ChatRoomManager {
 
     return tmp;
   }
+
+  readMessages(chatRoom: ChatRoomDocType) {
+    return this.chatRoomRepository.readMessages(chatRoom);
+  }
+
+  async checkHasNewMessage(userId: number) {
+    const lastUpdatedChatRoom =
+      await this.chatRoomRepository.getLastUpdatedChatRoom(userId);
+    if (lastUpdatedChatRoom === null) {
+      return false;
+    }
+
+    if (lastUpdatedChatRoom.newChatCount > 0) {
+      return true;
+    }
+
+    return false;
+  }
 }
 
 export const chatRoomManager = new ChatRoomManager(chatRoomRepository);

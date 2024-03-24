@@ -80,6 +80,7 @@
 }
 
 .response {
+  display: flex;
   float: right;
   margin-right: 0px !important;
   margin-left: auto; /* flexbox alignment rule */
@@ -156,5 +157,45 @@
 }
 
 .clickable {
+  cursor: pointer;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg); /* 0도 회전에서 시작 */
+  }
+  to {
+    transform: rotate(360deg); /* 360도 회전까지 애니메이션 진행 */
+  }
+}
+#floatingButton {
+  position: fixed; /* 화면에 고정 */
+  bottom: 90px; /* 아래에서 20px 떨어져 있도록 설정 */
+  left: 50%; /* 왼쪽 여백을 화면의 가운데로 조정 */
+  transform: translateX(
+    -50%
+  ); /* 가로 방향으로 50%만큼 왼쪽으로 이동하여 가운데 정렬 */
+  z-index: 9999; /* 다른 요소들 위에 표시되도록 설정 */
+  background-color: #cbd7f7; /* 배경색 설정 */
+  color: black; /* 글자색 설정 */
+  border: none; /* 테두리 제거 */
+  border-radius: 20px; /* 모서리를 둥글게 만듦 */
+  padding: 10px 20px; /* 내부 여백 설정 */
+  cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 것을 나타냄 */
+  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+}
+
+.floating-down-button {
+  position: fixed;
+  bottom: 60px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(230, 231, 237, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }

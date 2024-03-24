@@ -1,16 +1,27 @@
-import { DirectMessage } from '../../interfaces';
-
+import { useEffect } from 'react';
+import { primaryColor } from '../../../../App';
+import { DirectMessage } from '../interfaces';
+import { ImSpinner8 } from 'react-icons/im';
 const MessageCard = (props: {
   message: DirectMessage;
   displayDate: boolean;
   displayTime: boolean;
 }) => {
   return (
-    <>
+    <div id={`${props.message.id}`}>
       {props.displayDate && <Date time={props.message.createdAt} />}
       {props.message.isMyChat ? (
         <>
-          <Message text={props.message.content} />
+          <div>
+            <Message
+              text={props.message.content}
+              spin={
+                props.message.id === -1 && props.message.tmpId !== -1
+                  ? true
+                  : false
+              }
+            />
+          </div>
           {props.displayTime && (
             <Time
               time={`${props.message.createdAt.slice(11, 16)}${
@@ -21,7 +32,14 @@ const MessageCard = (props: {
         </>
       ) : (
         <>
-          <ResponseMessage text={props.message.content} />
+          <ResponseMessage
+            text={props.message.content}
+            spin={
+              props.message.id === -1 && props.message.tmpId !== -1
+                ? true
+                : false
+            }
+          />
           {props.displayTime && (
             <ResponseTime
               time={`${props.message.createdAt.slice(11, 16)}${
@@ -31,32 +49,54 @@ const MessageCard = (props: {
           )}
         </>
       )}
-    </>
-  );
-};
-
-const Message = (props: { text: string }) => {
-  return (
-    <div className='message'>
-      <p className='text'>{props.text}</p>
     </div>
   );
 };
 
-const ResponseMessage = (props: { text: string }) => {
+const ResponseMessage = (props: { text: string; spin: boolean }) => {
+  return (
+    <div className='message' style={{ position: 'relative' }}>
+      <p className='text'>{props.text}</p>
+      {props.spin && (
+        <ImSpinner8
+          style={{
+            color: primaryColor,
+            marginTop: 'auto',
+            marginBottom: '3px',
+            marginLeft: '-1.8rem',
+            animation: 'rotate 1s linear infinite',
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+const Message = (props: { text: string; spin: boolean }) => {
   return (
     <div className='message'>
       <div className='response'>
+        {props.spin && (
+          <ImSpinner8
+            style={{
+              color: primaryColor,
+              marginTop: 'auto',
+              marginBottom: '3px',
+              marginRight: '-1.8rem',
+              animation: 'rotate 1s linear infinite',
+            }}
+          />
+        )}
         <p className='text'>{props.text}</p>
       </div>
     </div>
   );
 };
-const Time = (props: { time: string }) => {
+const ResponseTime = (props: { time: string }) => {
   return <p className='time'>{props.time}</p>;
 };
 
-const ResponseTime = (props: { time: string }) => {
+const Time = (props: { time: string }) => {
   return <p className='response-time time'>{props.time}</p>;
 };
 
