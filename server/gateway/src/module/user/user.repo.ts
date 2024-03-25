@@ -9,8 +9,8 @@ import { Usernums } from './entity/usernums.entity';
 import { SignUpDto } from '../auth/dto/sign.dto';
 import { UploadMessage } from 'sns-interfaces';
 import { UserCollection } from './repository/user.collection';
-import { pgdb } from '../configs/pg';
-import { crypter } from '../common/crypter';
+import { crypter } from 'src/common/crypter';
+import { pgdb } from '../../configs/postgres';
 
 export interface GetUserInfoData {
   id: number;
@@ -26,7 +26,6 @@ export interface GetUserInfoData {
 @Injectable()
 export class UserRepository {
   constructor(
-    private dataSource: DataSource,
     public readonly userTable: UserTable,
     public readonly userinfoTable: UserinfoTable,
     public readonly usernumsTable: UsernumsTable,

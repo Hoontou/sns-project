@@ -1,14 +1,27 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-
-import { ClientsModule } from '@nestjs/microservices';
-import { authMicroserviceOptions } from 'src/grpc/connection.options';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtSecret } from '../../common/crypter';
+import { PassportModule } from '@nestjs/passport';
+import { UserModule } from '../user/user.module';
+import { JwtStrategy } from './jwt-strategy';
 
 @Module({
-  imports: [ClientsModule.register([authMicroserviceOptions])],
+  imports: [
+    forwardRef(() => UserModule),
+    JwtModule.register({
+      secret: JwtSecret,
+      signOptions: {
+        expiresIn: '30d',
+      },
+    }),
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+    }),
+  ],
   controllers: [AuthController],
-  providers: [AuthService],
-  exports: [AuthService],
+  providers: [JwtStrategy, AuthService],
+  exports: [AuthService, JwtStrategy, PassportModule],
 })
 export class AuthModule {}

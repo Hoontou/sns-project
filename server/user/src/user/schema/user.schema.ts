@@ -67,9 +67,3 @@ export interface UserSchemaType {
   introduceName: string;
   img: string;
 }
-// // const newUserDoc: SnsUsersDocType = {
-// //   username: signUpDto.username,
-// //   introduce: '',
-// //   img: '',
-// //   introduceName: '',
-// // };

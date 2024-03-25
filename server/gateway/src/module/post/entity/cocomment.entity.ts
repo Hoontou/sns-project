@@ -10,7 +10,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Comment } from './comment.entity';
-import { User } from './user.entity/user.entity';
+import { User } from '../../user/entity/user.entity';
 
 @Entity()
 export class Cocomment extends BaseEntity {

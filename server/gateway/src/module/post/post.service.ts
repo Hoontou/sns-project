@@ -327,6 +327,7 @@ export class PostService {
     //엘라스틱에서 포스트삭제, 태그카운트 감소
     this.searchService.deletePost(body);
 
+    this.userService.decreatePostCount({ ...body, userId: req.user.userId });
     return;
   }
 

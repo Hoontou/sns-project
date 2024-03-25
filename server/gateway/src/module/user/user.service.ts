@@ -1,19 +1,16 @@
-import { Inject, Injectable, Body } from '@nestjs/common';
+import { Inject, Injectable, Body, NotFoundException } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { SearchedUser } from 'sns-interfaces/grpc.interfaces';
 import { UserInfoBody } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import { UserGrpcService } from 'src/grpc/grpc.services';
+import { UserRepository } from './user.repo';
+import { elastic } from '../../configs/elasticsearch';
 
 @Injectable()
 export class UserService {
-  private userGrpcService: UserGrpcService;
-  constructor(@Inject('user') private client: ClientGrpc) {}
-  onModuleInit() {
-    this.userGrpcService =
-      this.client.getService<UserGrpcService>('UserService');
-  }
+  constructor(private userRepo: UserRepository) {}
 
   async getUserinfo(body: UserInfoBody): Promise<
     | {
@@ -32,18 +29,19 @@ export class UserService {
     //userId는 userinfo를 찾아서 올 아이디.
     //myId는 다른유저의 피드로 접근했을 시 다른유저를 팔로우했는지 찾을 용도.
     try {
-      const result = await lastValueFrom(
+      const result =
         body.type === 'myInfo'
-          ? this.userGrpcService.getUserinfoById({
-              userId: crypter.decrypt(body.userId),
-            })
-          : this.userGrpcService.getUserinfoByUsername({
-              username: body.targetUsername,
-            }),
-      );
-      console.log(result);
+          ? await this.userRepo.getUserinfoById(crypter.decrypt(body.userId))
+          : await this.userRepo.getUserinfoByUsername(body.targetUsername);
+
+      if (result === undefined) {
+        console.log('getUserinfo is null, err at user.repo.ts');
+        throw new NotFoundException();
+      }
+
       return {
         ...result,
+        userId: crypter.encrypt(result.id),
         success: true,
       };
     } catch (err) {
@@ -58,51 +56,97 @@ export class UserService {
     userId: number;
     introduceName: string;
   }> {
+    //요청온게 name인지 id인지 보고 메서드 선택함
+
+    const result:
+      | { username: string; img: string; introduce_name: string }
+      | undefined = await this.userRepo.getUsernameWithImg(userId);
+
+    if (result === undefined) {
+      throw new Error('getUsernameWithImg is null, err at user.repo.ts');
+    }
     return {
-      ...(await lastValueFrom(
-        this.userGrpcService.getUsernameWithImg({
-          userId,
-        }),
-      )),
+      username: result.username,
+      img: result.img,
+      introduceName: result.introduce_name,
       userId: Number(userId),
     };
   }
 
-  getUsernameWithImgList(userIds: string[]): Promise<{
+  async getUsernameWithImgList(userIds: string[]): Promise<{
     userList: { username: string; img: string; userId: number }[];
   }> {
-    return lastValueFrom(
-      this.userGrpcService.getUsernameWithImgList({
-        userIds,
-      }),
-    );
+    const result:
+      | {
+          username: string;
+          img: string;
+          userId: number;
+          introduce_name: string;
+        }[]
+      | undefined = await this.userRepo.getUsernameWithImgList(userIds);
+
+    if (result === undefined) {
+      console.log('getUsernameWithImgList is null, err at user.repo.ts');
+      throw new NotFoundException();
+    }
+    const tmp = result.map((item) => {
+      return { ...item, introduceName: item.introduce_name };
+    });
+    return {
+      userList: tmp,
+    };
   }
 
-  changeUsername(body: {
+  async changeUsername(body: {
     userId: string;
     username: string;
   }): Promise<{ success: boolean; exist?: boolean }> {
-    return lastValueFrom(this.userGrpcService.changeUsername(body));
+    try {
+      await this.userRepo.changeUsername(body);
+      return { success: true };
+    } catch (error) {
+      console.log('user -> user.service.ts -> changeUsername 에서 err');
+      console.log(error);
+      if (error.code === '23505' || error.codeName === 'DuplicateKey') {
+        //유니크 중복 코드, 앞에껀 postgres, 뒤에껀 mongo 코드임
+        console.log('username 중복');
+        return { success: false, exist: true };
+      }
+
+      return { success: false };
+    }
   }
   /**자기소개 바꾸기 */
-  changeIntro(body: { userId: string; intro: string }) {
-    return lastValueFrom(this.userGrpcService.changeIntro(body));
+  async changeIntro(body: { userId: string; intro: string }) {
+    try {
+      await this.userRepo.changeIntro(body);
+      return { success: true };
+    } catch (err) {
+      console.log('user -> user.service.ts -> changeIntro 에서 err');
+      console.log(err);
+      return { success: false };
+    }
   }
 
-  changeIntroduceName(body: {
+  async changeIntroduceName(body: {
     introduceName: string;
     userId: string;
   }): Promise<{ success: boolean }> {
-    return lastValueFrom(this.userGrpcService.changeIntroduceName(body));
+    try {
+      await this.userRepo.changeIntroduceName(body);
+      return { success: true };
+    } catch (error) {
+      console.log('user -> user.service.ts -> changeIntroduceName 에서 err');
+      console.log(error);
+      return { success: false };
+    }
   }
 
   async searchUsersBySearchString(body: {
     searchString: string;
     page: number;
   }): Promise<{ userList: SearchedUser[] }> {
-    const { userList } = await lastValueFrom(
-      this.userGrpcService.searchUsersBySearchString(body),
-    );
+    const { userList } = await elastic.searchUsersBySearchString(body);
 
     if (userList === undefined) {
       return { userList: [] };
@@ -113,16 +157,21 @@ export class UserService {
   //api재사용한다. 나중에 새로 만들어서 쓰는게 좋을듯
   //필요없는 정보도 같이가져옴
   async getFollowCount(body: { username: string }) {
-    const result = await lastValueFrom(
-      this.userGrpcService.getUserinfoByUsername({
-        username: body.username,
-      }),
-    );
+    const result = await this.userRepo.getUserinfoByUsername(body.username);
+
+    if (!result) {
+      console.log('getUserinfo is null, err at user.repo.ts');
+      throw new NotFoundException();
+    }
 
     return {
-      userId: result.userId,
+      userId: crypter.encrypt(result.id),
       follower: result.follower,
       following: result.following,
     };
+  }
+
+  decreatePostCount(data: { postId: string; userId: string }) {
+    return this.userRepo.decreasePostCount(data);
   }
 }

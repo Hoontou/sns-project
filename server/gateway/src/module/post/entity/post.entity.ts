@@ -9,12 +9,12 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { Comment } from './comment.entity';
-import { User } from './user.entity/user.entity';
+import { User } from '../../user/entity/user.entity';
 
 @Entity()
 export class Post extends BaseEntity {
   @PrimaryColumn()
-  id: string; //post objectId를 내가 넣어줘야함. 자동생성 아님.
+  id: string; //post objectId를 내가 넣어줘야함. 자동생성 아님
 
   @Column()
   title: string;

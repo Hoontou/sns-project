@@ -1,5 +1,7 @@
 import * as CryptoJS from 'crypto-js';
 
+export const JwtSecret = 'HowCuteMyCheeze';
+
 class Crypto {
   constructor(private secret) {
     this.secret = CryptoJS.enc.Utf8.parse(secret);

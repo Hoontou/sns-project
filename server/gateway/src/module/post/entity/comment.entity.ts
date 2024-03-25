@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { Post } from './post.entity';
 import { Cocomment } from './cocomment.entity';
-import { User } from './user.entity/user.entity';
+import { User } from '../../user/entity/user.entity';
 
 @Entity()
 export class Comment extends BaseEntity {
