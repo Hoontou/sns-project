@@ -20,6 +20,7 @@
     "proto:gen": "npx proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=src/proto/ src/proto/hero.proto"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.12.2",
     "@fastify/mongodb": "^6.2.0",
     "@grpc/grpc-js": "^1.8.13",
     "@grpc/proto-loader": "^0.7.6",
@@ -28,6 +29,7 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^10.0.2",
     "@nestjs/microservices": "^9.3.12",
+    "@nestjs/mongoose": "^10.0.4",
     "@nestjs/passport": "^9.0.1",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
@@ -38,9 +40,10 @@
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "crypto-js": "^4.1.1",
+    "mongoose": "^8.2.3",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
-    "pg": "^8.10.0",
+    "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.5",
     "sns-interfaces": "^1.0.61",

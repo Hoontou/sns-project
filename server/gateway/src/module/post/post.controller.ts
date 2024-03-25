@@ -115,11 +115,8 @@ export class PostController {
   }
 
   @Post('/deleteCocomment')
-  deleteCocomment(
-    @Body() body: { cocommentId: string; commentId: string },
-    @Req() req,
-  ) {
-    return this.postService.deleteCocomment(body, req);
+  deleteCocomment(@Body() body: { cocommentId: string; commentId: string }) {
+    return this.postService.deleteCocomment(body);
   }
 
   @Post('/getCommentPageContent')

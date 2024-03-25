@@ -14,12 +14,37 @@ import { MetadataService } from '../metadata/metadata.service';
 import { AppService } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import { UserService } from '../user/user.service';
+import { PostRepository } from './post.repository';
+import { CocommentDto, CommentDto } from './dto/post.dto';
+import { AlertDto, UserTagAlertReqForm } from 'sns-interfaces/alert.interface';
+import { SearchService } from './search.service';
+
+const tagUser = 'tagUser';
+type HandleUserTagReqBody = {
+  //유저태그 추출할 텍스트
+  text: string;
+  type: 'post' | 'comment' | 'cocomment';
+  whereId: number | string;
+  userId: number;
+};
+
+export type AddLikeType = AddLikePost | AddLikeComment | AddLikeCocomment;
+export interface AddLikePost {
+  postId: string;
+  type: 'post';
+}
+export interface AddLikeComment {
+  commentId: number;
+  type: 'comment';
+}
+export interface AddLikeCocomment {
+  cocommentId: number;
+  type: 'cocomment';
+}
 
 @Injectable()
 export class PostService {
-  private postGrpcService: PostGrpcService;
   constructor(
-    @Inject('post') private client: ClientGrpc,
     private fflService: FflService,
     private amqpService: AmqpService,
     @Inject(forwardRef(() => MetadataService))
@@ -27,27 +52,31 @@ export class PostService {
     @Inject(forwardRef(() => AppService))
     private appService: AppService,
     private userService: UserService,
+    private postRepo: PostRepository,
+    private searchService: SearchService,
   ) {}
-  onModuleInit() {
-    this.postGrpcService =
-      this.client.getService<PostGrpcService>('PostService');
-  }
+
   async getPost(postId: string): Promise<PostContent> {
-    return lastValueFrom(this.postGrpcService.getPost({ postId }));
+    return this.postRepo.getPost(postId);
+
+    // return lastValueFrom(this.postGrpcService.getPost({ postId }));
   }
 
   async getCommentList(body: { postId: string; page: number }, userId: string) {
     console.log(body);
 
     //1 id로 코멘트 다 가져옴
-    const { comments } = await lastValueFrom(
-      this.postGrpcService.getCommentList({
-        postId: body.postId,
-        page: body.page,
-      }),
+    const comments: CommentItemContent[] = await this.postRepo.getCommentList(
+      body,
     );
-    if (comments === undefined) {
+
+    if (comments.length === 0) {
       return { commentItem: [] };
+    }
+
+    //userId 암호화
+    for (const i of comments) {
+      i.userId = crypter.encrypt(i.userId);
     }
 
     //2 가져온 코멘트 id로 좋아요눌렀나 체크
@@ -67,17 +96,12 @@ export class PostService {
   }
 
   async getComment(data: { userId: string; commentId: number }) {
-    const { commentItem } = await lastValueFrom(
-      this.postGrpcService.getComment({
-        commentId: data.commentId,
-      }),
-    );
+    const { commentItem } = await this.postRepo.commentTable.getComment(data);
 
     if (commentItem === undefined) {
       return {
         commentItem: [],
         userId: data.userId,
-        // postFooterContent: postFooterResult.postFooterContent,
       };
     }
 
@@ -109,11 +133,16 @@ export class PostService {
     userId: string,
   ): Promise<{ cocommentItem: CocommentContent[] }> {
     //1 commentId로 대댓 가져옴
-    const { cocomments } = await lastValueFrom(
-      this.postGrpcService.getCocommentList(body),
+    const cocomments: CocommentContent[] = await this.postRepo.getCocommentList(
+      body,
     );
-    if (cocomments === undefined) {
+    if (cocomments.length === 0) {
       return { cocommentItem: [] };
+    }
+
+    //userId 암호화
+    for (const i of cocomments) {
+      i.userId = crypter.encrypt(i.userId);
     }
 
     //2 대댓에 좋아요 눌렀나 체크
@@ -134,8 +163,8 @@ export class PostService {
 
   async getHighlightCocomment(body: { cocommentId: number; userId: string }) {
     //1 commentId로 대댓 가져옴
-    const { cocommentItem } = await lastValueFrom(
-      this.postGrpcService.getCocomment(body),
+    const { cocommentItem } = await this.postRepo.cocommentTable.getCocomment(
+      body,
     );
 
     //대댓 찾기 miss나면 그냥 빈 리스트 리턴
@@ -171,24 +200,67 @@ export class PostService {
     return { cocommentItem: cocoResult, commentItem };
   }
 
-  async addComment(data: {
-    userId: string;
-    postId: string;
-    comment: string;
-    postOwnerUserId: string;
-  }) {
-    console.log(data);
-    this.amqpService.sendMsg('post', data, 'addComment');
-    return;
+  async addComment(commentDto: CommentDto) {
+    const insertedRow = await this.postRepo.addComment(commentDto);
+
+    const decUserId = Number(crypter.decrypt(commentDto.userId));
+    const decPostOwnerUserId = Number(
+      crypter.decrypt(commentDto.postOwnerUserId),
+    );
+
+    this.handleUserTag({
+      type: 'comment',
+      userId: decUserId,
+      text: commentDto.comment,
+      whereId: insertedRow.id,
+    });
+
+    if (decPostOwnerUserId === decUserId) {
+      return;
+    }
+    const alertForm: AlertDto = {
+      userId: decPostOwnerUserId,
+      content: {
+        type: 'comment',
+        postId: commentDto.postId,
+        commentId: insertedRow.id,
+        userId: decUserId,
+      },
+    };
+
+    return this.amqpService.sendMsg('alert', alertForm, 'addComment');
   }
-  async addCocomment(data: {
-    userId: string;
-    commentId: number;
-    cocomment: string;
-    commentOwnerUserId: string;
-  }) {
-    this.amqpService.sendMsg('post', data, 'addCocomment');
-    return;
+
+  async addCocomment(cocommentDto: CocommentDto) {
+    const insertedRow = await this.postRepo.addCocomment(cocommentDto);
+
+    const decUserId = Number(crypter.decrypt(cocommentDto.userId));
+    const decCommentOwnerUserId = Number(
+      crypter.decrypt(cocommentDto.commentOwnerUserId),
+    );
+
+    this.handleUserTag({
+      type: 'cocomment',
+      userId: decUserId,
+      text: cocommentDto.cocomment,
+      whereId: insertedRow.id,
+    });
+
+    if (decCommentOwnerUserId === decUserId) {
+      return;
+    }
+
+    const alertForm: AlertDto = {
+      userId: decCommentOwnerUserId,
+      content: {
+        type: 'cocomment',
+        commentId: cocommentDto.commentId,
+        cocommentId: insertedRow.id,
+        userId: decUserId,
+      },
+    };
+
+    return this.amqpService.sendMsg('alert', alertForm, 'addCocomment');
   }
 
   async getPostsByHashtag(
@@ -196,9 +268,9 @@ export class PostService {
     userId: string,
   ) {
     //1 post에 해시태그로 게시글id 가져오기
-    const { _ids, count, searchSuccess } = await lastValueFrom(
-      this.postGrpcService.getPostsIdsByHashtag(data),
-    );
+    const { _ids, count, searchSuccess } =
+      await this.searchService.getPostsIdsByHashtag(data);
+
     if (searchSuccess === false) {
       return { searchSuccess };
     }
@@ -212,25 +284,6 @@ export class PostService {
       return { metadatas: [], totalPostCount: count, searchSuccess, userId };
     }
     return { metadatas, totalPostCount: count, searchSuccess, userId };
-
-    // //3 app.service의 postfooter메서드한테 postfooter요청
-
-    // const postFooter: PostFooterContent[] = await Promise.all(
-    //   metadatas.map((i) => {
-    //     return this.appService.postFooter({
-    //       userId,
-    //       postId: i.id,
-    //       targetId: i.userId,
-    //     });
-    //   }),
-    // );
-    // //4 리턴
-
-    // //4 정보들을 취합해서 하나의 리스트로 만듦.
-    // const combinedResult: LandingContent[] = metadatas.map((i, index) => {
-    //   return { ...i, ...postFooter[index], userId: crypter.encrypt(i.userId) };
-    // });
-    // return { last3daysPosts: combinedResult };
   }
 
   async searchPostsBySearchString(data: {
@@ -238,9 +291,7 @@ export class PostService {
     page: number;
   }) {
     //1. post에 요청날려서  string으로 매치되는 포스트들의 id를 가져옴
-    const { _ids } = await lastValueFrom(
-      this.postGrpcService.searchPostIdsBySearchString(data),
-    );
+    const { _ids } = await this.searchService.searchPostIdsBySearchString(data);
     //2. metadata에 _id들로 metadata 가져오기
     const { metadatas } = await this.metadataService.getMetadatasByPostId({
       _ids,
@@ -256,10 +307,8 @@ export class PostService {
     searchString: string;
     page: number;
   }) {
-    const { searchedTags } = await lastValueFrom(
-      this.postGrpcService.searchHashtagsBySearchString(data),
-    );
-    console.log(searchedTags);
+    const { searchedTags } =
+      await this.searchService.searchHashtagsBySearchString(data);
 
     if (searchedTags === undefined) {
       return { searchedTags: [] };
@@ -271,20 +320,39 @@ export class PostService {
   // 글삭제 엘라스틱에 남은 정보삭제 메타삭제 카운트감소
   //게시물에 달린 댓, 대댓, 거기붙은 좋아요 추후 삭제
   deletePost(body: { postId: string }, req) {
-    return this.amqpService.publishMsg('deletePost', {
-      ...body,
-      userId: req.user.userId,
+    //pgdg에서 포스트삭제
+    this.postRepo.postTable.db.delete(body.postId).then((res) => {
+      console.log(res);
     });
+    //엘라스틱에서 포스트삭제, 태그카운트 감소
+    this.searchService.deletePost(body);
+
+    return;
   }
 
   //post에서 받는다, 게시물의 댓글카운트 감소, 댓글 삭제
   //댓글에 달린 대댓, 좋아요 추후 삭제
   deleteComment(body: { commentId: string; postId: string }) {
-    return this.amqpService.sendMsg('post', body, 'deleteComment');
+    // comment Id로 삭제, post에서 commentCount감소
+    this.postRepo.commentTable.db.delete(body.commentId);
+    this.postRepo.postTable.db.decrement(
+      { id: body.postId },
+      'commentcount',
+      1,
+    );
+    //결과체크하려면 .then 콘솔찍으면 됨
+    return;
   }
 
-  deleteCocomment(body: { cocommentId: string; commentId }, req) {
-    return this.amqpService.sendMsg('post', body, 'deleteCocomment');
+  deleteCocomment(body: { cocommentId: string; commentId }) {
+    //cocomment Id로 삭제, comment에서 cocommentCount감소
+    this.postRepo.cocommentTable.db.delete(body.cocommentId);
+    this.postRepo.commentTable.db.decrement(
+      { id: Number(body.commentId) },
+      'cocommentcount',
+      1,
+    );
+    return;
   }
 
   async getCommentPageContent(data: { postId: string; userId: string }) {
@@ -306,6 +374,53 @@ export class PostService {
       console.log(error);
 
       return { postFooterContent: undefined, userId: data.userId };
+    }
+  }
+
+  handleUserTag(body: HandleUserTagReqBody) {
+    //title로부터 유저태그만을 추출
+    const usertags = body.text.match(/@\S+/g)?.map((item) => {
+      return item.substring(1);
+    });
+
+    if (usertags === undefined) {
+      return;
+    }
+
+    const alertForm: UserTagAlertReqForm = {
+      usernames: [...new Set(usertags)],
+      content: {
+        type: 'tag',
+        where: body.type,
+        whereId: body.whereId,
+        userId: body.userId,
+      },
+    };
+
+    return this.amqpService.sendMsg('alert', alertForm, tagUser);
+  }
+
+  addLike(data: AddLikeType) {
+    if (data.type === 'post') {
+      return this.postRepo.postTable.addLike(data);
+    }
+    if (data.type === 'comment') {
+      return this.postRepo.commentTable.addLike(data);
+    }
+    if (data.type === 'cocomment') {
+      return this.postRepo.cocommentTable.addLike(data);
+    }
+  }
+
+  removeLike(data: AddLikeType) {
+    if (data.type === 'post') {
+      return this.postRepo.postTable.removeLike(data);
+    }
+    if (data.type === 'comment') {
+      return this.postRepo.commentTable.removeLike(data);
+    }
+    if (data.type === 'cocomment') {
+      return this.postRepo.cocommentTable.removeLike(data);
     }
   }
 }

@@ -8,10 +8,19 @@ import { AmqpModule } from 'src/module/amqp/amqp.module';
 import { MetadataModule } from '../metadata/metadata.module';
 import { AppModule } from '../../app.module';
 import { UserModule } from '../user/user.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Post } from './entity/post.entity';
+import { Cocomment } from './entity/cocomment.entity';
+import { Comment } from './entity/comment.entity';
+import { PostRepository } from './post.repository';
+import { CoCommentTable } from './repository/cocomment.table';
+import { CommentTable } from './repository/comment.table';
+import { PostTable } from './repository/post.table';
+import { SearchService } from './search.service';
 
 @Module({
   imports: [
-    ClientsModule.register([postMicroserviceOptions]),
+    TypeOrmModule.forFeature([Post, Comment, Cocomment]),
     FflModule,
     AmqpModule,
     forwardRef(() => MetadataModule),
@@ -19,7 +28,14 @@ import { UserModule } from '../user/user.module';
     UserModule,
   ],
   controllers: [PostController],
-  providers: [PostService],
+  providers: [
+    PostService,
+    PostRepository,
+    PostTable,
+    CommentTable,
+    CoCommentTable,
+    SearchService,
+  ],
   exports: [PostService],
 })
 export class PostModule {}

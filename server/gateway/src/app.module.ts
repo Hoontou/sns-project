@@ -21,9 +21,23 @@ import { UserController } from './module/user/user.controller';
 import { AlertController } from './module/alert/alert.controller';
 import { DmModule } from './module/dm/dm.module';
 import { DmController } from './module/dm/dm.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
+import { typeORMConfig } from './configs/typeorm.config';
+
+const MONGO_URI = process.env.MONGO_URI;
+
+const mongoUrl = (url: string | undefined) => {
+  if (url === undefined) {
+    throw new Error('MONGO URL IS MISSING');
+  }
+  return url;
+};
 
 @Module({
   imports: [
+    TypeOrmModule.forRoot(typeORMConfig),
+    MongooseModule.forRoot(mongoUrl(MONGO_URI)),
     forwardRef(() => PostModule),
     forwardRef(() => MetadataModule),
     AmqpModule,

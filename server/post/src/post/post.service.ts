@@ -118,7 +118,6 @@ export class PostService {
     for (const i of comments) {
       i.userId = crypter.encrypt(i.userId);
     }
-    console.log(comments);
     return { comments };
   }
 

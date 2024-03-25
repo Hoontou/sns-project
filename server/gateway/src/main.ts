@@ -1,23 +1,15 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { Logger } from '@nestjs/common';
 import { LoggingInterceptor } from './common/middleware/logging.interceptor';
-import { AllExceptionsFilter } from './common/middleware/all-exceptions.filter';
+import { connectMongo } from './configs/initialize.mongo';
+import { pgdb } from './configs/postgres';
 
 const logger = new Logger('Main');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  //https://docs.nestjs.com/faq/hybrid-application
-  // const microserviceGrp = app.connectMicroservice<MicroserviceOptions>({
-  //   transport: Transport.GRPC,
-  //   options: {
-  //     package: 'hero',
-  //     protoPath: join(__dirname, 'proto/hero.proto'),
-  //   },
-  // });
 
   app.use(cookieParser());
   app.useGlobalInterceptors(new LoggingInterceptor());
@@ -26,6 +18,18 @@ async function bootstrap() {
   //const queryText = `INSERT INTO public.comment(comment, "userId", "postId) VALUES ('${comment}', ${userId}, '${post_id}')`;
   //console.log(queryText);
   //https://node-postgres.com/features/queries
+
+  connectMongo();
+
+  pgdb.client.connect((err) => {
+    if (err) {
+      console.error('vanila pgdb connection error', err.stack);
+    } else {
+      console.log('vanila pgdb connected');
+      pgdb.createTables();
+    }
+  });
+
   await app.listen(80);
   logger.log(`gateway on 4000:80`);
 }
