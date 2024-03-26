@@ -1,13 +1,10 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom, onErrorResumeNextWith } from 'rxjs';
 import { CommentItemContent } from 'sns-interfaces';
 import {
   CocommentContent,
   PostContent,
   PostFooterContent,
 } from 'sns-interfaces/client.interface';
-import { PostGrpcService } from 'src/grpc/grpc.services';
 import { FflService } from '../ffl/ffl.service';
 import { AmqpService } from 'src/module/amqp/amqp.service';
 import { MetadataService } from '../metadata/metadata.service';
@@ -18,6 +15,7 @@ import { PostRepository } from './post.repository';
 import { CocommentDto, CommentDto } from './dto/post.dto';
 import { AlertDto, UserTagAlertReqForm } from 'sns-interfaces/alert.interface';
 import { SearchService } from './search.service';
+import { AlertService } from '../alert/alert.service';
 
 const tagUser = 'tagUser';
 type HandleUserTagReqBody = {
@@ -45,6 +43,7 @@ export interface AddLikeCocomment {
 @Injectable()
 export class PostService {
   constructor(
+    @Inject(forwardRef(() => FflService))
     private fflService: FflService,
     private amqpService: AmqpService,
     @Inject(forwardRef(() => MetadataService))
@@ -54,6 +53,7 @@ export class PostService {
     private userService: UserService,
     private postRepo: PostRepository,
     private searchService: SearchService,
+    private alertService: AlertService,
   ) {}
 
   getPost(postId: string): Promise<PostContent> {
@@ -228,7 +228,7 @@ export class PostService {
       },
     };
 
-    return this.amqpService.sendMsg('alert', alertForm, 'addComment');
+    return this.alertService.saveAlert(alertForm);
   }
 
   async addCocomment(cocommentDto: CocommentDto) {
@@ -260,7 +260,7 @@ export class PostService {
       },
     };
 
-    return this.amqpService.sendMsg('alert', alertForm, 'addCocomment');
+    return this.alertService.saveAlert(alertForm);
   }
 
   async getPostsByHashtag(
@@ -328,6 +328,8 @@ export class PostService {
     this.searchService.deletePost(body);
 
     this.userService.decreatePostCount({ ...body, userId: req.user.userId });
+
+    this.metadataService.deleteMetadata(body.postId);
     return;
   }
 

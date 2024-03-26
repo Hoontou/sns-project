@@ -36,6 +36,7 @@ export class AppService {
   async landing(userId: string, page: number) {
     //가져올게 아무것도 없을 시 metadatas.map 에서 오류남. 추후 수정필요.
     //1 팔로우 목록 가져오기
+
     const { userList } = await this.fflService.getUserList({
       id: userId,
       type: 'following',

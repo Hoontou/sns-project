@@ -1,28 +1,34 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom } from 'rxjs';
-import { AmqpService } from 'src/module/amqp/amqp.service';
-import { FflGrpcService } from 'src/grpc/grpc.services';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { crypter } from 'src/common/crypter';
 import { AlertDto } from 'sns-interfaces/alert.interface';
+import { UserRepository } from '../user/user.repo';
+import { FollowCollection } from './repository/follow.cellection';
+import { PostLikeCollection } from './repository/postLike.collection';
+import { PostService } from '../post/post.service';
+import { FflRepository } from './ffl.repository';
+import { CommentLikeCollection } from './repository/commentLike.collection';
+import { CocommentLikeCollection } from './repository/cocommentLike.collection';
+import { AlertService } from '../alert/alert.service';
 @Injectable()
 export class FflService {
-  private logger = new Logger(FflService.name);
-  private fflGrpcService: FflGrpcService;
   constructor(
-    @Inject('ffl') private client: ClientGrpc,
-    private amqpService: AmqpService,
     private userService: UserService,
+    private userRepository: UserRepository,
+    private fflRepository: FflRepository,
+    private followCollection: FollowCollection,
+    private postLikeCollection: PostLikeCollection,
+    private commentLikeCollection: CommentLikeCollection,
+    private cocommentLikeCollection: CocommentLikeCollection,
+    @Inject(forwardRef(() => PostService))
+    private postService: PostService,
+    private alertService: AlertService,
   ) {}
-  onModuleInit() {
-    this.fflGrpcService = this.client.getService<FflGrpcService>('FflService');
-  }
   async checkFollowed(body: {
     userTo: string;
     userFrom: string;
   }): Promise<{ followed: boolean }> {
-    return lastValueFrom(this.fflGrpcService.checkFollowed(body));
+    return this.followCollection.checkFollowed(body);
   }
 
   async addFollow(body: { userTo: string; userFrom: string }) {
@@ -36,10 +42,9 @@ export class FflService {
           userId: Number(crypter.decrypt(body.userFrom)),
         },
       };
-      this.amqpService.sendMsg('alert', alertForm, 'addFollow');
-
-      this.amqpService.sendMsg('ffl', body, this.addFollow.name);
-      this.amqpService.sendMsg('user', body, this.addFollow.name);
+      this.alertService.saveAlert(alertForm);
+      this.followCollection.addFollow(body);
+      this.userRepository.addFollow(body);
       return;
     }
     return;
@@ -48,8 +53,8 @@ export class FflService {
     const { followed } = await this.checkFollowed(body);
     //팔로우 돼 있으면 팔로우 취소
     if (followed === true) {
-      this.amqpService.sendMsg('ffl', body, this.removeFollow.name);
-      this.amqpService.sendMsg('user', body, this.removeFollow.name);
+      this.userRepository.removeFollow(body);
+      this.followCollection.removeFollow(body);
       return;
     }
     return;
@@ -59,7 +64,15 @@ export class FflService {
     userId: string;
     postId: string;
   }): Promise<{ liked: boolean }> {
-    return lastValueFrom(this.fflGrpcService.checkLiked(body));
+    //userId, postId
+    //userId가 postId에 좋아요 눌렀는지 가져와야함.
+    const decUserId = crypter.decrypt(body.userId);
+    const liked: unknown[] = await this.postLikeCollection.postLikeModel.find({
+      userId: decUserId,
+      postId: body.postId,
+    });
+
+    return { liked: liked.length === 0 ? false : true };
   }
 
   async addLike(body: {
@@ -83,17 +96,23 @@ export class FflService {
           postId: body.postId,
         },
       };
-      this.amqpService.sendMsg('alert', alertForm, 'addLike');
+
+      this.alertService.saveAlert(alertForm);
     }
 
     //ffl에 Doc추가, post에 likesCount증가
-    return this.amqpService.publishMsg('addLike', body);
+    this.postService.addLike({ type: 'post', postId: body.postId });
+    this.postLikeCollection.addLike(body);
+    return;
   }
+
   async removeLike(body: { userId: string; postId: string }) {
     const { liked } = await this.checkLiked(body);
     //좋아요 돼 있으면 좋아요 취소
     if (liked === true) {
-      return this.amqpService.publishMsg('removeLike', body);
+      this.postLikeCollection.removeLike(body);
+      this.postService.removeLike({ type: 'post', postId: body.postId });
+      return;
     }
     return;
   }
@@ -106,10 +125,9 @@ export class FflService {
     userList: { userId: string; img: string; username: string }[];
   }> {
     //1 먼저 userId들을 가져옴
-    const { userIds }: { userIds: string[] } = await lastValueFrom(
-      this.fflGrpcService.getUserIds(body),
-    );
-    if (userIds === undefined) {
+    const { userIds }: { userIds: string[] } =
+      await this.fflRepository.getUserIds(body);
+    if (userIds.length === 0) {
       //1.1 없으면 빈리스트 리턴
       return { userList: [] };
     }
@@ -134,40 +152,47 @@ export class FflService {
 
   async addCommentLike(body: { userId: string; commentId: number }) {
     //ffl msa에서 commentId, userId를 commentLikeSchema에 삽입
+    this.commentLikeCollection.addCommentLike(body);
     //post msa에서 comment의 likescount 증가
-    this.amqpService.publishMsg('addCommentLike', body);
+    this.postService.addLike({ type: 'comment', ...body });
+
+    return;
   }
 
   async removeCommentLike(body: { userId: string; commentId: number }) {
     //ffl msa에서 commentId, userId를 commentLikeSchema에 삭제
+    this.commentLikeCollection.removeCommentLike(body);
     //post msa에서 comment의 likescount 감소
-    this.amqpService.publishMsg('removeCommentLike', body);
+    this.postService.removeLike({ type: 'comment', ...body });
+
+    return;
   }
 
   async addCocommentLike(body: { userId: string; cocommentId: number }) {
     //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삽입
+    this.cocommentLikeCollection.addCocommentLike(body);
     //post msa에서 cocomment의 likescount 증가
-    this.amqpService.publishMsg('addCocommentLike', body);
+    this.postService.addLike({ type: 'cocomment', ...body });
+
+    return;
   }
 
   async removeCocommentLike(body: { userId: string; cocommentId: number }) {
     //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삭제
+    this.cocommentLikeCollection.removeCocommentLike(body);
     //post msa에서 cocomment의 likescount 감소
-    this.amqpService.publishMsg('removeCocommentLike', body);
+    this.postService.removeLike({ type: 'cocomment', ...body });
+
+    return;
   }
 
-  async getCommentLiked({
-    commentIdList,
-    userId,
-  }: {
+  async getCommentLiked(data: {
     commentIdList: number[];
     userId: string;
   }): Promise<{
     commentLikedList: boolean[];
   }> {
-    return lastValueFrom(
-      this.fflGrpcService.getCommentLiked({ commentIdList, userId }),
-    );
+    return this.commentLikeCollection.getCommentLiked(data);
   }
 
   async getCocommentLiked(data: {
@@ -176,7 +201,7 @@ export class FflService {
   }): Promise<{
     cocommentLikedList: boolean[];
   }> {
-    return lastValueFrom(this.fflGrpcService.getCocommentLiked(data));
+    return this.cocommentLikeCollection.getCocommentLiked(data);
   }
 
   async searchUserFfl(data: {
@@ -184,10 +209,8 @@ export class FflService {
     searchString: string;
     target: string;
   }) {
-    const { userList } = await lastValueFrom(
-      this.fflGrpcService.searchUserFfl(data),
-    );
-    if (userList === undefined) {
+    const { userList } = await this.fflRepository.serchUserFfl(data);
+    if (userList.length === 0) {
       return { userList: [] };
     }
     return { userList };

@@ -40,10 +40,8 @@ const mongoUrl = (url: string | undefined) => {
     MongooseModule.forRoot(mongoUrl(MONGO_URI)),
     forwardRef(() => PostModule),
     forwardRef(() => MetadataModule),
-    forwardRef(() => AlertModule),
-
+    AlertModule,
     AmqpModule,
-
     FflModule,
     AuthModule,
     UserModule,

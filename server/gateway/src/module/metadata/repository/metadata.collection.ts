@@ -15,7 +15,7 @@ export interface MetadataDto {
 export class MetadataCollection {
   constructor(
     @InjectModel('metadata')
-    private metadataModel: Model<MetadataSchemaDefinition>,
+    public readonly metadataModel: Model<MetadataSchemaDefinition>,
   ) {}
 
   async getMetadatas(data: { userId: string; page: number }) {

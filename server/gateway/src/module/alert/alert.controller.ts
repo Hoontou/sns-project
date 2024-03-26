@@ -5,13 +5,6 @@ import { AlertService } from './alert.service';
 export class AlertController {
   constructor(private alertService: AlertService) {}
 
-  @Post('/tst')
-  tst(@Body() body) {
-    console.log(1);
-    console.log(body);
-    return 1;
-  }
-
   @Get('/checkHasNewAlert')
   checkHasNewAlert(@Req() req) {
     return this.alertService.checkHasNewAlert({

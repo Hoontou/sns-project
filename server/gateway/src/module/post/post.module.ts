@@ -17,15 +17,17 @@ import { CoCommentTable } from './repository/cocomment.table';
 import { CommentTable } from './repository/comment.table';
 import { PostTable } from './repository/post.table';
 import { SearchService } from './search.service';
+import { AlertModule } from '../alert/alert.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Post, Comment, Cocomment]),
-    FflModule,
+    forwardRef(() => FflModule),
     AmqpModule,
     forwardRef(() => MetadataModule),
     forwardRef(() => AppModule),
     UserModule,
+    AlertModule,
   ],
   controllers: [PostController],
   providers: [
