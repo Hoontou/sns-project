@@ -1,5 +1,5 @@
 export interface PostContent {
-  id: string;
+  _id: string;
   title: string;
   likesCount: number;
   commentCount: number;

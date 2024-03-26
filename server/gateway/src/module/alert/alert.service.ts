@@ -34,6 +34,7 @@ const axiosReq = (
 
 @Injectable()
 export class AlertService {
+  constructor() {}
   async checkHasNewAlert(data: {
     userId: string;
   }): Promise<{ hasNewAlert: boolean }> {

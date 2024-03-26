@@ -40,8 +40,10 @@ const mongoUrl = (url: string | undefined) => {
     MongooseModule.forRoot(mongoUrl(MONGO_URI)),
     forwardRef(() => PostModule),
     forwardRef(() => MetadataModule),
+    forwardRef(() => AlertModule),
+
     AmqpModule,
-    AlertModule,
+
     FflModule,
     AuthModule,
     UserModule,
@@ -59,12 +61,12 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .exclude('auth/(.*)')
       .forRoutes(
+        AlertController,
         PostController,
         AppController,
         MetadataController,
         FflController,
         UserController,
-        AlertController,
         DmController,
       );
   }

@@ -35,13 +35,15 @@ export class PostRepository {
   async getPost(postId: string): Promise<PostContent> {
     const post = await this.postTable.getPost(postId);
 
+    console.log(post);
+
     if (post === undefined) {
       console.log('Err while getPost at post.repo.ts, must be not found');
       throw new NotFoundException();
     }
 
     return {
-      id: post.id,
+      _id: post.id,
       likesCount: post.likes,
       commentCount: post.commentcount,
       title: post.title,

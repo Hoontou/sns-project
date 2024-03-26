@@ -1,17 +1,18 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { MetadataController } from './metadata.controller';
 import { MetadataService } from './metadata.service';
-import { ClientsModule } from '@nestjs/microservices';
-import { metadataMicroserviceOptions } from 'src/grpc/connection.options';
 import { AppModule } from 'src/app.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MetadataSchema } from './repository/schema/metadata.schema';
+import { MetadataCollection } from './repository/metadata.collection';
 
 @Module({
   imports: [
-    ClientsModule.register([metadataMicroserviceOptions]),
+    MongooseModule.forFeature([{ name: 'metadata', schema: MetadataSchema }]),
     forwardRef(() => AppModule),
   ],
   controllers: [MetadataController],
-  providers: [MetadataService],
+  providers: [MetadataService, MetadataCollection],
   exports: [MetadataService],
 })
 export class MetadataModule {}

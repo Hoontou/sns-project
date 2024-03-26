@@ -7,7 +7,7 @@ import { emptyPostFooterContent } from './post.interfaces';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 export interface MetadataDto {
-  id: string;
+  _id: string;
   userId: string;
   files: string[];
 } //sns-interfaces에 있는걸 쓰려고 했는데 리액트에서 자체적으로 _id에서 _를 빼버리고 id로 만들어버림.
@@ -17,7 +17,7 @@ export interface Metadata extends MetadataDto {
   createdAt: string;
 }
 export const emptyMetadata: Metadata = {
-  id: '',
+  _id: '',
   userId: '',
   files: [''],
   createdAt: '',
@@ -83,7 +83,7 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
   const renderCard = posts.map((post, index) => {
     //이제 여기에 클릭하면 모달로 띄우는거 만들어야함
     return (
-      <Grid item xs={4} key={post.id}>
+      <Grid item xs={4} key={post._id}>
         <div style={{ position: 'relative' }}>
           <span
             onClick={() => {
@@ -98,7 +98,7 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
                 aspectRatio: '3/4.5',
               }}
               alt={`${index}`}
-              src={`${requestUrl}/${post.id}/${post.files[0]}`}
+              src={`${requestUrl}/${post._id}/${post.files[0]}`}
             />
           </span>
         </div>

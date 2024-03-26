@@ -3,7 +3,7 @@ export interface LandingContent {
   liked: boolean;
   username: string;
   img: string;
-  id: string;
+  _id: string;
   title: string;
   likesCount: number;
   commentCount: number;
@@ -16,7 +16,7 @@ export const defaultLandingContent: LandingContent = {
   liked: false,
   username: '',
   img: '',
-  id: '',
+  _id: '',
   title: '',
   likesCount: 0,
   commentCount: 0,

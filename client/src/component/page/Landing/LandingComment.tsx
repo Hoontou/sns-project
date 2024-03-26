@@ -38,7 +38,7 @@ const LandingComment = (props: {
   const [commentItems, setCommentItems] = useState<CommentItems[]>([]);
   const [submitForm, setSubmitForm] = useState<SubmitForm>({
     type: 'comment',
-    postId: props.postFooterContent.id,
+    postId: props.postFooterContent._id,
     postOwnerUserId: props.postFooterContent.userId,
   });
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
@@ -119,7 +119,7 @@ const LandingComment = (props: {
   const setSubmitFormToDefault = () => {
     setSubmitForm({
       type: 'comment',
-      postId: props.postFooterContent.id,
+      postId: props.postFooterContent._id,
       postOwnerUserId: props.postFooterContent.userId,
     });
   };
@@ -134,7 +134,7 @@ const LandingComment = (props: {
     setPending(true);
     axios
       .post('/gateway/post/getcommentlist', {
-        postId: props.postFooterContent.id,
+        postId: props.postFooterContent._id,
         page,
       })
       .then((res) => {
@@ -254,7 +254,7 @@ const LandingComment = (props: {
       //댓 작성 request
       axios.post('/gateway/post/addcomment', {
         comment: submitingComment,
-        postId: props.postFooterContent.id,
+        postId: props.postFooterContent._id,
         postOwnerUserId: props.postFooterContent.userId,
       });
 
@@ -296,7 +296,7 @@ const LandingComment = (props: {
         index={index}
         getCocomments={getCocomments}
         userId={props.userId}
-        postId={props.postFooterContent.id}
+        postId={props.postFooterContent._id}
       />
     );
   });

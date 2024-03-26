@@ -65,7 +65,7 @@ const PostPage = () => {
   };
   useEffect(() => {
     const modyfiedUrl = metadata.files.map((i: string) => {
-      return `${requestUrl}/${metadata.id}/${i}`;
+      return `${requestUrl}/${metadata._id}/${i}`;
     });
     setImages(modyfiedUrl);
   }, [metadata]);
@@ -90,7 +90,7 @@ const PostPage = () => {
   }, []);
 
   //게시물 찾아왔을때, missing일 때 리턴 다르게
-  return metadata.id === '' ? ( //missing?
+  return metadata._id === '' ? ( //missing?
     <div style={{ overflowY: 'scroll', height: '100vh' }}>
       <>
         <div
@@ -159,7 +159,7 @@ const PostPage = () => {
             <span
               style={{ position: 'absolute', right: '1rem', top: '0.7rem' }}
             >
-              <PostMenu postId={metadata.id} />
+              <PostMenu postId={metadata._id} />
             </span>
           )}
         </div>
@@ -171,7 +171,7 @@ const PostPage = () => {
 
       {!openComment && (
         <PostFooter
-          postId={metadata.id}
+          postId={metadata._id}
           createdAt={metadata.createdAt}
           userId={userId}
           setOpenComment={setOpenComment}

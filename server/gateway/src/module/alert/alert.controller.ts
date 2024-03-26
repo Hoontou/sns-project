@@ -5,8 +5,15 @@ import { AlertService } from './alert.service';
 export class AlertController {
   constructor(private alertService: AlertService) {}
 
+  @Post('/tst')
+  tst(@Body() body) {
+    console.log(1);
+    console.log(body);
+    return 1;
+  }
+
   @Get('/checkHasNewAlert')
-  async checkHasNewAlert(@Req() req) {
+  checkHasNewAlert(@Req() req) {
     return this.alertService.checkHasNewAlert({
       userId: req.user.userId,
     });

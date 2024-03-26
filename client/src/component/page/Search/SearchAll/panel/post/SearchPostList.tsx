@@ -72,7 +72,7 @@ const SearchPostList = (props: { searchString?: string; userId: string }) => {
   const renderCard = posts.map((post, index) => {
     //이제 여기에 클릭하면 모달로 띄우는거 만들어야함
     return (
-      <Grid item xs={4} key={post.id}>
+      <Grid item xs={4} key={post._id}>
         <div style={{ position: 'relative' }}>
           <span
             onClick={() => {
@@ -87,7 +87,7 @@ const SearchPostList = (props: { searchString?: string; userId: string }) => {
                 aspectRatio: '3/4.5',
               }}
               alt={`${index}`}
-              src={`${requestUrl}/${post.id}/${post.files[0]}`}
+              src={`${requestUrl}/${post._id}/${post.files[0]}`}
             />
           </span>
         </div>

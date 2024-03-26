@@ -35,7 +35,6 @@ export class AppService {
   /**랜딩페이지, 팔로우목록의 최근 3일 포스트를 가져온다. */
   async landing(userId: string, page: number) {
     //가져올게 아무것도 없을 시 metadatas.map 에서 오류남. 추후 수정필요.
-
     //1 팔로우 목록 가져오기
     const { userList } = await this.fflService.getUserList({
       id: userId,
@@ -45,12 +44,14 @@ export class AppService {
     userList.push({ userId, username: '', img: '' });
 
     //2 유저들의 최근3일 meta 가져오기
-    const { metadatas } = await this.metadataService.getMetadatasLast3Day({
-      userIds: userList.map((i) => {
-        return i.userId;
-      }),
-      page,
-    });
+    //밑에서 metadata를 해체하기 때문에 ._doc으로 가져와야해서 any로 했음
+    const { metadatas }: { metadatas: any } =
+      await this.metadataService.getMetadatasLast3Day({
+        userIds: userList.map((i) => {
+          return i.userId;
+        }),
+        page,
+      });
 
     //3 metadata로 PostFooter 가져옴,
     //재귀적 인데 나중에 성능체크해야할듯 list로 보내는것과.
@@ -59,7 +60,7 @@ export class AppService {
       metadatas.map((i) => {
         return this.postFooter({
           userId,
-          postId: i.id,
+          postId: i._id,
           targetId: i.userId,
         });
       }),
@@ -67,8 +68,13 @@ export class AppService {
 
     //4 정보들을 취합해서 하나의 리스트로 만듦.
     const combinedResult: LandingContent[] = metadatas.map((i, index) => {
-      return { ...i, ...postFooter[index], userId: crypter.encrypt(i.userId) };
+      return {
+        ...i._doc,
+        ...postFooter[index],
+        userId: crypter.encrypt(i.userId),
+      };
     });
+
     return { last3daysPosts: combinedResult };
   }
 
@@ -139,6 +145,7 @@ export class AppService {
       this.postService.getPost(body.postId),
       this.userService.getUsernameWithImg(body.targetId), //작성자 정보
     ]);
+
     return {
       ...liked,
       ...postContent,

@@ -1,31 +1,25 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom } from 'rxjs';
-import { MetadataDto } from 'sns-interfaces';
 import { AppService } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
-import { MetadataGrpcService } from 'src/grpc/grpc.services';
+import {
+  MetadataCollection,
+  MetadataDto,
+} from './repository/metadata.collection';
 
 @Injectable()
 export class MetadataService {
-  private metadataGrpcService: MetadataGrpcService;
   constructor(
-    @Inject('metadata') private client: ClientGrpc,
     @Inject(forwardRef(() => AppService))
     private appService: AppService,
+    private metadataCollection: MetadataCollection,
   ) {}
-  onModuleInit() {
-    this.metadataGrpcService =
-      this.client.getService<MetadataGrpcService>('MetadataService');
-  }
 
   async getMetadatas(body: { userId: string; page: number }): Promise<{
     metadatas: (MetadataDto & { createdAt: string })[];
   }> {
-    const { metadatas } = await lastValueFrom(
-      this.metadataGrpcService.getMetadatas(body),
-    );
-    if (metadatas === undefined) {
+    const { metadatas } = await this.metadataCollection.getMetadatas(body);
+    if (metadatas.length === 0) {
       return { metadatas: [] };
     }
     return { metadatas };
@@ -37,25 +31,24 @@ export class MetadataService {
   }): Promise<{
     metadatas: MetadataDto[];
   }> {
-    const { metadatas } = await lastValueFrom(
-      this.metadataGrpcService.getMetadatasLast3Day(data),
+    const { metadatas } = await this.metadataCollection.getMetadatasLast3Day(
+      data,
     );
-    if (metadatas === undefined) {
+
+    if (metadatas.length === 0) {
       return { metadatas: [] };
     }
     return { metadatas };
   }
 
-  async getMetadatasByPostId(data: { _ids: string[] }) {
-    return await lastValueFrom(
-      this.metadataGrpcService.getMetadatasByPostId(data),
-    );
+  getMetadatasByPostId(data: { _ids: string[] }) {
+    return this.metadataCollection.getMetadatasByPostId(data._ids);
   }
 
   async getMetadataWithPostFooter(data: { postId: string; userId: string }) {
-    const result = await lastValueFrom(
-      this.metadataGrpcService.getMetadatasByPostId({ _ids: [data.postId] }),
-    );
+    const result = await this.metadataCollection.getMetadatasByPostId([
+      data.postId,
+    ]);
 
     if (result.metadatas === undefined) {
       return { meatadata: undefined };

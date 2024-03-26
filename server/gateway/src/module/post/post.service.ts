@@ -56,7 +56,7 @@ export class PostService {
     private searchService: SearchService,
   ) {}
 
-  async getPost(postId: string): Promise<PostContent> {
+  getPost(postId: string): Promise<PostContent> {
     return this.postRepo.getPost(postId);
 
     // return lastValueFrom(this.postGrpcService.getPost({ postId }));

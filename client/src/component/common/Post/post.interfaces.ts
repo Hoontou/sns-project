@@ -5,7 +5,7 @@ export const emptyPostFooterContent: PostFooterContent = {
   liked: false,
   username: '',
   img: '',
-  id: '',
+  _id: '',
   title: '',
   likesCount: 0,
   commentCount: 0,

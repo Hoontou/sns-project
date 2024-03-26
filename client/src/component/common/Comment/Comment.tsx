@@ -38,7 +38,7 @@ const Comment = (props: {
   const [commentItems, setCommentItems] = useState<CommentItems[]>([]);
   const [submitForm, setSubmitForm] = useState<SubmitForm>({
     type: 'comment',
-    postId: props.postFooterContent.id,
+    postId: props.postFooterContent._id,
     postOwnerUserId: props.postFooterContent.userId,
   });
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
@@ -120,7 +120,7 @@ const Comment = (props: {
   const setSubmitFormToDefault = () => {
     setSubmitForm({
       type: 'comment',
-      postId: props.postFooterContent.id,
+      postId: props.postFooterContent._id,
       postOwnerUserId: props.postFooterContent.userId,
     });
   };
@@ -134,7 +134,7 @@ const Comment = (props: {
     setPending(true);
     axios
       .post('/gateway/post/getcommentlist', {
-        postId: props.postFooterContent.id,
+        postId: props.postFooterContent._id,
         page,
       })
       .then((res) => {
@@ -255,7 +255,7 @@ const Comment = (props: {
       //글작성자에게 알림 넣기위해서 주인 id도 보냄
       axios.post('/gateway/post/addcomment', {
         comment: submitingComment,
-        postId: props.postFooterContent.id,
+        postId: props.postFooterContent._id,
         postOwnerUserId: props.postFooterContent.userId,
       });
 
@@ -297,7 +297,7 @@ const Comment = (props: {
         index={index}
         getCocomments={getCocomments}
         userId={props.userId}
-        postId={props.postFooterContent.id}
+        postId={props.postFooterContent._id}
       />
     );
   });

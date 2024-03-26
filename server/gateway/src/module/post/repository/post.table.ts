@@ -23,6 +23,7 @@ export class PostTable {
     `;
 
     const result = await pgdb.client.query(query);
+
     const rows: {
       id: string;
       title: string;
