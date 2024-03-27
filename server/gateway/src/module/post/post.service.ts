@@ -63,12 +63,9 @@ export class PostService {
   }
 
   async getCommentList(body: { postId: string; page: number }, userId: string) {
-    console.log(body);
-
     //1 id로 코멘트 다 가져옴
-    const comments: CommentItemContent[] = await this.postRepo.getCommentList(
-      body,
-    );
+    const comments: CommentItemContent[] =
+      await this.postRepo.getCommentList(body);
 
     if (comments.length === 0) {
       return { commentItem: [] };
@@ -133,9 +130,8 @@ export class PostService {
     userId: string,
   ): Promise<{ cocommentItem: CocommentContent[] }> {
     //1 commentId로 대댓 가져옴
-    const cocomments: CocommentContent[] = await this.postRepo.getCocommentList(
-      body,
-    );
+    const cocomments: CocommentContent[] =
+      await this.postRepo.getCocommentList(body);
     if (cocomments.length === 0) {
       return { cocommentItem: [] };
     }
@@ -163,9 +159,8 @@ export class PostService {
 
   async getHighlightCocomment(body: { cocommentId: number; userId: string }) {
     //1 commentId로 대댓 가져옴
-    const { cocommentItem } = await this.postRepo.cocommentTable.getCocomment(
-      body,
-    );
+    const { cocommentItem } =
+      await this.postRepo.cocommentTable.getCocomment(body);
 
     //대댓 찾기 miss나면 그냥 빈 리스트 리턴
     if (cocommentItem === undefined) {

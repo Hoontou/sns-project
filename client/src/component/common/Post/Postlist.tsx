@@ -35,7 +35,6 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
   const [page, setPage] = useState<number>(0);
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
-  console.log(props.userId);
   useEffect(() => {
     //post가져오기
     getPost();

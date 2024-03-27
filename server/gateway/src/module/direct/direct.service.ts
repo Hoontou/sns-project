@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ChatRoomManager } from './managers/chatRoom.manager';
 import { MessageManager } from './managers/message.manager';
 import { SocketManager } from './managers/socket.manager';
@@ -13,6 +13,8 @@ import { DirectMessage } from './repository/message.repository';
 
 @Injectable()
 export class DirectService {
+  private readonly logger = new Logger(DirectService.name);
+
   constructor(
     private chatRoomManager: ChatRoomManager,
     private messageManager: MessageManager,
@@ -149,6 +151,7 @@ export class DirectService {
       //이후 본인한테도 실시간 정보 보냄
       data.socket.emit('sendingSuccess', {
         tmpId: data.messageForm.tmpId,
+        isRead: sendedMessage.isRead,
       });
     } catch (error) {
       console.log('sending message failed');

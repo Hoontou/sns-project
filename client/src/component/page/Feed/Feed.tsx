@@ -36,8 +36,6 @@ const Feed = () => {
   const [userinfo, setUserinfo] = useState<UserInfo>(emptyUserInfo);
   const [feedType, setFeedType] = useState<'otherInfo' | 'myInfo'>('otherInfo');
 
-  console.log(window.navigator.userAgent);
-
   useEffect(() => {
     //타겟유저네임만 보내면, 가져와야할게 내정보인지 남의정보인지 판단.
     axios.post('/gateway/userinfo', { targetUsername }).then((res) => {

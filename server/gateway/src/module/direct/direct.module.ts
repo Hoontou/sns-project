@@ -9,6 +9,7 @@ import { SocketManager } from './managers/socket.manager';
 import { UserLocationManager } from './managers/userLocation.manager';
 import { ChatRoomManager } from './managers/chatRoom.manager';
 import { MessageRepository } from './repository/message.repository';
+import { DirectGateway } from './direct.gateway';
 
 //provider의 조직도는, DircetService -> 매니저들 -> repo 순으로.
 
@@ -17,6 +18,7 @@ import { MessageRepository } from './repository/message.repository';
     MongooseModule.forFeature([{ name: 'chatroom', schema: ChatRoomSchema }]),
   ],
   providers: [
+    DirectGateway,
     DirectService,
     MessageManager,
     SocketManager,
