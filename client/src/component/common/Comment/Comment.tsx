@@ -30,7 +30,6 @@ const Comment = (props: {
   setOpenComment: Dispatch<SetStateAction<boolean>>;
   postFooterContent: PostFooterContent;
 }) => {
-  console.log(props.postFooterContent);
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);

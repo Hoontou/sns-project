@@ -1,5 +1,4 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { ClientGrpc } from '@nestjs/microservices';
 import { AppService } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import {
@@ -31,9 +30,8 @@ export class MetadataService {
   }): Promise<{
     metadatas: MetadataDto[];
   }> {
-    const { metadatas } = await this.metadataCollection.getMetadatasLast3Day(
-      data,
-    );
+    const { metadatas } =
+      await this.metadataCollection.getMetadatasLast3Day(data);
 
     if (metadatas.length === 0) {
       return { metadatas: [] };

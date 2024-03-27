@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { MetadataService } from './metadata.service';
 
 @Controller('metadata')
@@ -19,7 +19,7 @@ export class MetadataController {
   }
 
   @Post('/getMetadatasByPostId')
-  getMetadatasByPostId(@Body() body: { _ids: string[] }, @Req() req) {
+  getMetadatasByPostId(@Body() body: { _ids: string[] }) {
     return this.metadataService.getMetadatasByPostId(body);
   }
 }

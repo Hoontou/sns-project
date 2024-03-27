@@ -13,6 +13,7 @@ export interface MetadataDto {
 
 @Injectable()
 export class MetadataCollection {
+  private logger = new Logger(MetadataCollection.name);
   constructor(
     @InjectModel('metadata')
     public readonly metadataModel: Model<MetadataSchemaDefinition>,
