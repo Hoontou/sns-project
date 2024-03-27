@@ -3,7 +3,6 @@ import {
   AlertContentUnion,
   AlertDto,
   UploadAlertDto,
-  UserTagAlertReqForm,
 } from 'sns-interfaces/alert.interface';
 import { crypter } from 'src/common/crypter';
 import { AlertCollection } from './repository/alert.collection';
@@ -21,18 +20,14 @@ const pageLen = 20;
 
 @Injectable()
 export class AlertService {
-  constructor(private alertCollection: AlertCollection) {
-    this.getAllAlert({ userId: '1', page: 0 });
-  }
+  constructor(private alertCollection: AlertCollection) {}
 
   async checkHasNewAlert(data: {
     userId: string;
   }): Promise<{ hasNewAlert: boolean }> {
-    const decUserId = Number(crypter.decrypt(data.userId));
-
     const unreadAlerts = await this.alertCollection.alertModel
       .find({
-        userId: decUserId,
+        userId: Number(crypter.decrypt(data.userId)),
         read: false,
       })
       .limit(1)
@@ -48,7 +43,7 @@ export class AlertService {
     const unreadAlerts: { [key: string]: any } =
       await this.alertCollection.alertModel
         .find({
-          userId: data.userId,
+          userId: Number(crypter.decrypt(data.userId)),
           read: false,
         })
         .populate('userPop')
@@ -78,7 +73,7 @@ export class AlertService {
     const allAlerts: { [key: string]: any } =
       await this.alertCollection.alertModel
         .find({
-          userId: data.userId,
+          userId: Number(crypter.decrypt(data.userId)),
         })
         .populate('userPop')
         .skip(data.page * pageLen)

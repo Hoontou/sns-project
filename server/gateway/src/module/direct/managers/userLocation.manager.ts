@@ -1,3 +1,6 @@
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
 export class UserLocationManager {
   private container: Map<number, number | 'inbox' | undefined>;
   constructor() {

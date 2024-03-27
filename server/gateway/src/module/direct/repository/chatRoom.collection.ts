@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { crypter } from '../../../common/crypter';
 import {
   ChatRoomSchemaDefinition,
   ChatRoomSchemaType,
@@ -13,7 +12,7 @@ export class ChatRoomCollection {
   private readonly pgClient;
   constructor(
     @InjectModel('chatroom')
-    private chatRoomModel: Model<ChatRoomSchemaDefinition>,
+    public readonly chatRoomModel: Model<ChatRoomSchemaDefinition>,
   ) {
     this.pgClient = pgdb.client;
   }
@@ -145,11 +144,13 @@ export class ChatRoomCollection {
       .exec();
   }
 
-  async getLastUpdatedChatRoom(userId: number) {
+  async getLastUpdatedChatRoom(
+    userId: number,
+  ): Promise<ChatRoomSchemaType | null> {
     return this.chatRoomModel
       .findOne({ ownerUserId: userId })
       .sort({ lastUpdatedAt: -1 })
       .limit(1)
-      .exec();
+      .exec() as any;
   }
 }

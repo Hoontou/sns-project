@@ -4,7 +4,9 @@ import {
   ChatRoomSchemaType,
   emptyChatRoom,
 } from '../repository/schema/chatRoom.schema';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ChatRoomManager {
   constructor(private readonly chatRoomCollection: ChatRoomCollection) {}
 
@@ -102,6 +104,7 @@ export class ChatRoomManager {
   async checkHasNewMessage(userId: number) {
     const lastUpdatedChatRoom =
       await this.chatRoomCollection.getLastUpdatedChatRoom(userId);
+
     if (lastUpdatedChatRoom === null) {
       return false;
     }

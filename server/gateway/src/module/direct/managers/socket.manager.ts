@@ -4,8 +4,10 @@
 //   connAt: Date;
 // }
 
+import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 
+@Injectable()
 export class SocketManager {
   private container: Map<number, Socket | undefined>;
   constructor() {

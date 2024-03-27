@@ -1,6 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import { MessageRepository } from '../repository/message.repository';
 import { ChatRoomSchemaType } from '../repository/schema/chatRoom.schema';
 
+@Injectable()
 export class MessageManager {
   constructor(private messageRepository: MessageRepository) {}
 

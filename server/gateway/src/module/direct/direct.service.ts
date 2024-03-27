@@ -25,9 +25,8 @@ export class DirectService {
   }
 
   async checkHasNewMessage(data: { userId: string }) {
-    const userId = crypter.decrypt(data.userId);
     const hasNewMessage = await this.chatRoomManager.checkHasNewMessage(
-      Number(userId),
+      Number(crypter.decrypt(data.userId)),
     );
 
     return { hasNewMessage };
