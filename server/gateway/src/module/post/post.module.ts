@@ -1,8 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { PostController } from './post.controller';
 import { PostService } from './post.service';
-import { ClientsModule } from '@nestjs/microservices';
-import { postMicroserviceOptions } from 'src/grpc/connection.options';
 import { FflModule } from '../ffl/ffl.module';
 import { AmqpModule } from 'src/module/amqp/amqp.module';
 import { MetadataModule } from '../metadata/metadata.module';
@@ -16,8 +14,8 @@ import { PostRepository } from './post.repository';
 import { CoCommentTable } from './repository/cocomment.table';
 import { CommentTable } from './repository/comment.table';
 import { PostTable } from './repository/post.table';
-import { SearchService } from './search.service';
 import { AlertModule } from '../alert/alert.module';
+import { SearchModule } from '../live-search/search.module';
 
 @Module({
   imports: [
@@ -28,6 +26,7 @@ import { AlertModule } from '../alert/alert.module';
     forwardRef(() => AppModule),
     UserModule,
     AlertModule,
+    SearchModule,
   ],
   controllers: [PostController],
   providers: [
@@ -36,7 +35,6 @@ import { AlertModule } from '../alert/alert.module';
     PostTable,
     CommentTable,
     CoCommentTable,
-    SearchService,
   ],
   exports: [PostService],
 })

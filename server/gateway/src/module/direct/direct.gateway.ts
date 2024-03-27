@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 import {
   OnGatewayConnection,
-  OnGatewayInit,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -11,14 +10,12 @@ import { DirectService } from './direct.service';
 import { ChatRoomSchemaType } from './repository/schema/chatRoom.schema';
 
 @WebSocketGateway({ cors: { origin: '*' } })
-export class DirectGateway implements OnGatewayInit, OnGatewayConnection {
+export class DirectGateway implements OnGatewayConnection {
   private readonly logger = new Logger(DirectGateway.name);
   constructor(private directService: DirectService) {}
 
   @WebSocketServer()
   server: Server;
-
-  async afterInit() {}
 
   async handleConnection(socket: Socket) {
     console.log(1);

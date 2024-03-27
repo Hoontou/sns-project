@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { UserinfoTable } from './repository/userinfo.table';
 import { UsernumsTable } from './repository/usernums.table';
 import { UserTable } from './repository/user.table';
-import { DataSource } from 'typeorm';
 import { User } from './entity/user.entity';
 import { Userinfo } from './entity/userinfo.entity';
 import { Usernums } from './entity/usernums.entity';

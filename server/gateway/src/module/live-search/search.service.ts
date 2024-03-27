@@ -1,17 +1,36 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
-import { SnsPostsDocType, elastic } from 'src/configs/elasticsearch';
-import { findUserIdsByUsernames } from './repository/user.table';
-import { AlertDto, UserTagAlertReqForm } from 'sns-interfaces/alert.interface';
-import { crypter } from 'src/common/crypter';
-import { AmqpService } from '../amqp/amqp.service';
+// https://www.npmjs.com/package/@elastic/elasticsearch
+//공식문서 참고
+import { Client } from '@elastic/elasticsearch';
 
-//해시태그 처리 서비스
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { PostDto } from '../post/dto/post.dto';
+import {
+  SearchedHashtag,
+  SearchedUser,
+  SearchResult,
+  SnsPostsDocType,
+} from './types/search.types';
+
 @Injectable()
-export class SearchService {
-  constructor(
-    @Inject(forwardRef(() => AmqpService)) private amqpService: AmqpService,
-  ) {}
+export class SearchService implements OnModuleInit {
+  private readonly elasticClient: Client;
+  private readonly SnsPostsIndex = 'sns.posts';
+  private readonly SnsTagsIndex = 'sns.tags';
+  private readonly SnsUsersIndex = 'sns.users';
+
+  constructor() {
+    this.elasticClient = new Client({
+      node: 'http://elasticsearch:9200',
+      auth: {
+        username: 'elastic',
+        password: 'elastic',
+      },
+    });
+  }
+
+  onModuleInit() {
+    this.init();
+  }
 
   //업로드 메서드로부터 오는 해시태그 핸들링 요청
   //해시태그 존재여부 체크후 없으면 추가,
@@ -36,9 +55,9 @@ export class SearchService {
     }
 
     //검색기능에 올리는건 후순위 작업이니 await 안함
-    return elastic.client
+    return this.elasticClient
       .index({
-        index: elastic.SnsPostsIndex,
+        index: this.SnsPostsIndex,
         id: postDto.postId,
         document: postDoc,
       })
@@ -54,16 +73,16 @@ export class SearchService {
 
   /**태그가 존재하는지 체크해서 있으면 카운터증가, 없으면 DOC삽입 */
   checkTagExisted(tag: string) {
-    elastic.client
+    this.elasticClient
       .get({
-        index: elastic.SnsTagsIndex,
+        index: this.SnsTagsIndex,
         id: tag,
       })
       .then((res) => {
         console.log(`${tag} tag is exist, count ++`);
         //2-1. 존재하는 태그면 count 증가
-        elastic.client.update({
-          index: elastic.SnsTagsIndex,
+        this.elasticClient.update({
+          index: this.SnsTagsIndex,
           id: tag,
           script: {
             //https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/update_examples.html
@@ -78,8 +97,8 @@ export class SearchService {
         console.log(`${tag} tag is missing, create tag DOC`);
 
         //2-2. 존재하지 않으면 새로운 DOC 추가, missing하면 err뱉어내서 여기로 옴
-        elastic.client.index({
-          index: elastic.SnsTagsIndex,
+        this.elasticClient.index({
+          index: this.SnsTagsIndex,
           id: tag,
           document: {
             tagName: tag,
@@ -93,8 +112,8 @@ export class SearchService {
   async searchHashtag(data: {
     hashtag: string;
   }): Promise<{ tagName: string; count: number }[]> {
-    const result = await elastic.client.search({
-      index: elastic.SnsTagsIndex,
+    const result = await this.elasticClient.search({
+      index: this.SnsTagsIndex,
       body: {
         query: {
           prefix: {
@@ -106,7 +125,7 @@ export class SearchService {
 
     const tagList = result.hits.hits.map((item) => {
       return item._source;
-    });
+    }) as { tagName: string; count: number }[];
 
     return tagList;
   }
@@ -117,11 +136,11 @@ export class SearchService {
   }): Promise<{ searchSuccess: boolean; _ids: string[]; count: number }> {
     const pageSize = 12; // 페이지당 수
 
-    const tagInfo: { tagName: string; count: number } | undefined =
+    const tagInfo = (
       data.page === 0
-        ? await elastic.client
+        ? await this.elasticClient
             .get({
-              index: elastic.SnsTagsIndex,
+              index: this.SnsTagsIndex,
               id: data.hashtag,
             })
             .then((res) => {
@@ -132,7 +151,8 @@ export class SearchService {
               return undefined;
             })
         : //첫번째 요청인지 페이지 보고 알아낸 후, 두번째 요청부터는 검색안함
-          { tagName: data.hashtag, count: 0 };
+          { tagName: data.hashtag, count: 0 }
+    ) as { tagName: string; count: number } | undefined;
 
     // const tagInfo =
     //   data.page === 0
@@ -142,8 +162,8 @@ export class SearchService {
     if (tagInfo === undefined) {
       return { searchSuccess: false, _ids: [], count: 0 };
     }
-    const result = await elastic.client.search({
-      index: elastic.SnsPostsIndex,
+    const result = await this.elasticClient.search({
+      index: this.SnsPostsIndex,
       body: {
         from: data.page * pageSize, // 시작 인덱스 계산
         size: pageSize,
@@ -176,8 +196,8 @@ export class SearchService {
   }) {
     const pageSize = 12; // 페이지당 수
 
-    const result = await elastic.client.search({
-      index: elastic.SnsPostsIndex,
+    const result = await this.elasticClient.search({
+      index: this.SnsPostsIndex,
       body: {
         from: data.page * pageSize, // 시작 인덱스 계산
         size: pageSize,
@@ -210,8 +230,8 @@ export class SearchService {
     page: number;
   }) {
     const pageSize = 20;
-    const result = await elastic.client.search({
-      index: elastic.SnsTagsIndex,
+    const result = await this.elasticClient.search({
+      index: this.SnsTagsIndex,
       body: {
         from: data.page * pageSize, // 시작 인덱스 계산
         size: pageSize,
@@ -230,26 +250,25 @@ export class SearchService {
       },
     });
 
-    const searchedTagList: { tagName: string; count: number }[] =
-      result.hits.hits.map((item) => {
-        return item._source;
-      });
+    const searchedTagList = result.hits.hits.map((item) => {
+      return item._source;
+    }) as { tagName: string; count: number }[];
 
     return { searchedTags: searchedTagList };
   }
 
   async deletePost(data: { postId: string }) {
     try {
-      const targetDoc = await elastic.client.get({
-        index: elastic.SnsPostsIndex,
+      const targetDoc: any = await this.elasticClient.get({
+        index: this.SnsPostsIndex,
         id: data.postId,
       });
       //get 실패했으면 에러떠서 catch로 간다.
 
       const tags: string | undefined = targetDoc._source.tags;
       //1. 검색용 데이터를 postIndex에서 삭제
-      await elastic.client.delete({
-        index: elastic.SnsPostsIndex,
+      await this.elasticClient.delete({
+        index: this.SnsPostsIndex,
         id: data.postId,
       });
 
@@ -259,8 +278,8 @@ export class SearchService {
         return;
       }
       tags.split(' ').forEach((item) => {
-        return elastic.client.update({
-          index: elastic.SnsTagsIndex,
+        return this.elasticClient.update({
+          index: this.SnsTagsIndex,
           id: item,
           script: {
             //https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/update_examples.html
@@ -275,6 +294,138 @@ export class SearchService {
       console.log('elastic에서 post정보 삭제중 에러, 아마 정보가 없을거임');
       console.log(error);
     }
+  }
+
+  async init() {
+    //이미 있는지 체크
+    const indexExistCheck1: boolean = await this.elasticClient.indices.exists({
+      index: this.SnsPostsIndex,
+    });
+    const indexExistCheck2: boolean = await this.elasticClient.indices.exists({
+      index: this.SnsTagsIndex,
+    });
+
+    if (indexExistCheck1 === true && indexExistCheck2 === true) {
+      return;
+    }
+
+    //인덱스 생성, user인덱스는 몽고 타입 그대로 엘라스틱에 넣어도 되서 필요없다.
+    //user인덱스는 monstache가 해준다.
+    //monstache가 엄청좋은데? 라고 생각했는데, 검색에 필요한 데이터를 따로
+    //가공해서 엘라스틱에 넣어야 하면 역시 업데이트쿼리를 내가 날려줘야하네..
+    try {
+      await this.elasticClient.indices.create({
+        index: this.SnsPostsIndex,
+        body: {
+          mappings: {
+            properties: {
+              //postId: { type: 'text' },
+              title: { type: 'text' },
+              tags: { type: 'text' },
+            },
+          },
+        },
+      });
+      await this.elasticClient.indices.create({
+        index: this.SnsTagsIndex,
+        body: {
+          mappings: {
+            properties: {
+              tagName: { type: 'text' },
+              count: { type: 'integer' },
+            },
+          },
+        },
+      });
+
+      console.log(`Index created:${this.SnsPostsIndex}, ${this.SnsTagsIndex}`);
+    } catch (error) {
+      console.log(
+        `Error creating index:${this.SnsPostsIndex} , ${this.SnsTagsIndex}`,
+      );
+      console.log(error);
+    }
+  }
+
+  async searchUsersBySearchString(data: {
+    searchString: string;
+    page: number;
+  }) {
+    const pageSize = 20; // 페이지당 수
+
+    const string = data.searchString + '*';
+
+    //와일드카드(프리픽스랑 비슷한듯)로 검색을 여러필드에서 수행함
+    const result = await this.elasticClient.search({
+      index: this.SnsUsersIndex,
+      body: {
+        from: data.page * pageSize, // 시작 인덱스 계산
+        size: pageSize,
+        query: {
+          bool: {
+            should: [
+              {
+                wildcard: {
+                  username: string,
+                },
+              },
+              {
+                wildcard: {
+                  introduceName: string,
+                },
+              },
+              {
+                wildcard: {
+                  introduce: string,
+                },
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    const userInfoList = result.hits.hits.map((item) => {
+      return item._source;
+    }) as {
+      username: string;
+      introduce: string;
+      img: string;
+      introduceName: string;
+    }[];
+
+    return { userList: userInfoList };
+  }
+
+  async searchUserOrHashtag(string: string): Promise<SearchResult> {
+    const pageSize = 7;
+
+    const type = string.at(0);
+    const searchString = string.substring(1);
+
+    //#시작하면 태그검색, @시작하면 유저검색임
+    const result = await this.elasticClient.search({
+      index: type === '#' ? this.SnsTagsIndex : this.SnsUsersIndex,
+      body: {
+        size: pageSize,
+        query: {
+          prefix:
+            type === '#'
+              ? {
+                  tagName: searchString,
+                }
+              : {
+                  username: searchString,
+                },
+        },
+      },
+    });
+
+    const resultList = result.hits.hits.map((item) => {
+      return item._source;
+    }) as SearchedUser[] | SearchedHashtag[];
+
+    return { resultList, type: type === '#' ? 'hashtag' : 'user' };
   }
 }
 
@@ -294,7 +445,7 @@ export class SearchService {
 //     examplePostDto.userId = '34';
 //     //this.handleHashtag(examplePostDto);
 
-//     // elastic.client.index({
+//     // this.elasticClient.index({
 //     //   index: elastic.SnsTagsIndex,
 //     // id: '강호5',
 //     //   document: {
@@ -303,7 +454,7 @@ export class SearchService {
 //     //   },
 //     // });
 
-//     // elastic.client
+//     // this.elasticClient
 //     //   .get({ index: elastic.SnsTagsIndex, id: '강호3' })
 //     //   .then((res) => {
 //     //     console.log(res.found);
@@ -319,7 +470,7 @@ export class SearchService {
 //     //->> 태그가 포함된 게시물을 찾을 때 쓰자.
 //     //태그의 _id는 태그네임 그 자체로 써서 중복방지하고, 찾을 때 빨리 찾을수도 있음.
 //     //_id로 태그검색해서 err뜨면 DOC삽입, then으로 넘어가면 카운트 증가
-//     // elastic.client
+//     // this.elasticClient
 //     //   .search({
 //     //     query: {
 //     //       match: {
@@ -364,7 +515,7 @@ export class SearchService {
 
 //   /**태그가 존재하는지 체크해서 있으면 카운터증가, 없으면 DOC삽입 */
 //   checkTagExisted(tag: string) {
-//     elastic.client
+//     this.elasticClient
 //       .get({
 //         index: elastic.SnsTagsIndex,
 //         id: tag,
@@ -372,7 +523,7 @@ export class SearchService {
 //       .then((res) => {
 //         console.log(`${tag} is exist, count ++`);
 //         //2-1. 존재하는 태그면 count 증가
-//         elastic.client.update({
+//         this.elasticClient.update({
 //           index: elastic.SnsTagsIndex,
 //           id: tag,
 //           script: {
@@ -388,7 +539,7 @@ export class SearchService {
 //         console.log(`${tag} is missing, create DOC`);
 
 //         //2-2. 존재하지 않으면 새로운 DOC 추가, missing하면 err뱉어내서 여기로 옴
-//         elastic.client.index({
+//         this.elasticClient.index({
 //           index: elastic.SnsTagsIndex,
 //           id: tag,
 //           document: {

@@ -1,9 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import { Userinfo } from '../entity/userinfo.entity';
-import { crypter } from 'src/common/crypter';
-import { elastic } from 'src/configs/elasticsearch';
 import { pgdb } from '../../../configs/postgres';
 
 @Injectable()
@@ -12,7 +10,6 @@ export class UserinfoTable {
   constructor(
     @InjectRepository(Userinfo)
     public readonly db: Repository<Userinfo>,
-    private dataSource: DataSource,
   ) {}
 
   changeUsername(data: { userId: string; username: string }) {

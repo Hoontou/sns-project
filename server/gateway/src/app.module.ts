@@ -24,6 +24,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { typeORMConfig } from './configs/typeorm.config';
 import { DirectController } from './module/direct/direct.controller';
 import { DirectModule } from './module/direct/direct.module';
+import { SearchModule } from './module/live-search/search.module';
 
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -46,6 +47,7 @@ const mongoUrl = (url: string | undefined) => {
     AuthModule,
     UserModule,
     DirectModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

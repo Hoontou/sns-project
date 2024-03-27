@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { Logger } from '@nestjs/common';
 import { LoggingInterceptor } from './common/middleware/logging.interceptor';
-import { connectMongo } from './configs/initialize.mongo';
 import { pgdb } from './configs/postgres';
 
 const logger = new Logger('Main');
@@ -18,8 +17,6 @@ async function bootstrap() {
   //const queryText = `INSERT INTO public.comment(comment, "userId", "postId) VALUES ('${comment}', ${userId}, '${post_id}')`;
   //console.log(queryText);
   //https://node-postgres.com/features/queries
-
-  connectMongo();
 
   pgdb.client.connect((err) => {
     if (err) {

@@ -1,16 +1,16 @@
-import { Inject, Injectable, Body, NotFoundException } from '@nestjs/common';
-import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom } from 'rxjs';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { SearchedUser } from 'sns-interfaces/grpc.interfaces';
 import { UserInfoBody } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
-import { UserGrpcService } from 'src/grpc/grpc.services';
 import { UserRepository } from './user.repo';
-import { elastic } from '../../configs/elasticsearch';
+import { SearchService } from '../live-search/search.service';
 
 @Injectable()
 export class UserService {
-  constructor(private userRepo: UserRepository) {}
+  constructor(
+    private userRepo: UserRepository,
+    private searchService: SearchService,
+  ) {}
 
   async getUserinfo(body: UserInfoBody): Promise<
     | {
@@ -146,7 +146,8 @@ export class UserService {
     searchString: string;
     page: number;
   }): Promise<{ userList: SearchedUser[] }> {
-    const { userList } = await elastic.searchUsersBySearchString(body);
+    const { userList } =
+      await this.searchService.searchUsersBySearchString(body);
 
     if (userList === undefined) {
       return { userList: [] };

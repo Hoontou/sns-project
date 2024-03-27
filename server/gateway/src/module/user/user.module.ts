@@ -1,8 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { ClientsModule } from '@nestjs/microservices';
-import { userMicroserviceOptions } from 'src/grpc/connection.options';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
@@ -16,12 +14,14 @@ import { AuthModule } from '../auth/auth.module';
 import { Userinfo } from './entity/userinfo.entity';
 import { Usernums } from './entity/usernums.entity';
 import { User } from './entity/user.entity';
+import { SearchModule } from '../live-search/search.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Userinfo, Usernums]),
     MongooseModule.forFeature([{ name: 'user', schema: UserSchema }]),
     forwardRef(() => AuthModule),
+    SearchModule,
   ],
   controllers: [UserController],
   providers: [

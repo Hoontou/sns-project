@@ -14,8 +14,8 @@ import { UserService } from '../user/user.service';
 import { PostRepository } from './post.repository';
 import { CocommentDto, CommentDto } from './dto/post.dto';
 import { AlertDto, UserTagAlertReqForm } from 'sns-interfaces/alert.interface';
-import { SearchService } from './search.service';
 import { AlertService } from '../alert/alert.service';
+import { SearchService } from '../live-search/search.service';
 
 const tagUser = 'tagUser';
 type HandleUserTagReqBody = {
