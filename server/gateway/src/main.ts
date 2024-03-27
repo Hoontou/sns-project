@@ -26,7 +26,6 @@ async function bootstrap() {
       console.error('vanila pgdb connection error', err.stack);
     } else {
       console.log('vanila pgdb connected');
-      pgdb.createTables();
     }
   });
 

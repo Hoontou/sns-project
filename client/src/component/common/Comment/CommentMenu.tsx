@@ -62,7 +62,7 @@ const CommentMenu = (props: {
   };
 
   return (
-    <>
+    <div style={{ marginTop: '-0.5rem' }}>
       <IconButton
         id='basic-button'
         aria-controls={open ? 'basic-menu' : undefined}
@@ -107,7 +107,7 @@ const CommentMenu = (props: {
           Delete request sended.
         </Alert>
       </Snackbar>
-    </>
+    </div>
   );
 };
 

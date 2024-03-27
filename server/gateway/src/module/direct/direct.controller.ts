@@ -1,16 +1,16 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
-import { DmService } from './dm.service';
+import { DirectService } from './direct.service';
 
 @Controller('dm')
-export class DmController {
-  constructor(private dmService: DmService) {}
+export class DirectController {
+  constructor(private directService: DirectService) {}
 
   @Post('/requestChatRoomId')
   async requestChatRoomId(
     @Req() req,
     @Body() body: { chatTargetUserId: string },
   ): Promise<{ chatRoomId: number }> {
-    return this.dmService.requestChatRoomId({
+    return this.directService.requestChatRoomId({
       userId: req.user.userId,
       chatTargetUserId: body.chatTargetUserId,
     });
@@ -18,7 +18,7 @@ export class DmController {
 
   @Get('/checkHasNewMessage')
   async checkHasNewMessage(@Req() req): Promise<{ hasNewMessage: boolean }> {
-    return this.dmService.checkHasNewMessage({
+    return this.directService.checkHasNewMessage({
       userId: req.user.userId,
     });
   }

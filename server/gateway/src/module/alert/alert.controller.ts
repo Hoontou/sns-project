@@ -6,7 +6,7 @@ export class AlertController {
   constructor(private alertService: AlertService) {}
 
   @Get('/checkHasNewAlert')
-  checkHasNewAlert(@Req() req) {
+  async checkHasNewAlert(@Req() req) {
     return this.alertService.checkHasNewAlert({
       userId: req.user.userId,
     });

@@ -19,11 +19,11 @@ import { MetadataController } from './module/metadata/metadata.controller';
 import { FflController } from './module/ffl/ffl.controller';
 import { UserController } from './module/user/user.controller';
 import { AlertController } from './module/alert/alert.controller';
-import { DmModule } from './module/dm/dm.module';
-import { DmController } from './module/dm/dm.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { typeORMConfig } from './configs/typeorm.config';
+import { DirectController } from './module/direct/direct.controller';
+import { DirectModule } from './module/direct/direct.module';
 
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -45,7 +45,7 @@ const mongoUrl = (url: string | undefined) => {
     FflModule,
     AuthModule,
     UserModule,
-    DmModule,
+    DirectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -65,7 +65,7 @@ export class AppModule implements NestModule {
         MetadataController,
         FflController,
         UserController,
-        DmController,
+        DirectController,
       );
   }
 }
