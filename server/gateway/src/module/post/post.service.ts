@@ -1,5 +1,5 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { CommentItemContent } from 'sns-interfaces';
+import { CommentItemContent, UploadMessage } from 'sns-interfaces';
 import {
   CocommentContent,
   PostContent,
@@ -10,12 +10,11 @@ import { MetadataService } from '../metadata/metadata.service';
 import { crypter } from 'src/common/crypter';
 import { UserService } from '../user/user.service';
 import { PostRepository } from './post.repository';
-import { CocommentDto, CommentDto } from './dto/post.dto';
+import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
 import { AlertDto, UserTagAlertReqForm } from 'sns-interfaces/alert.interface';
 import { AlertService } from '../alert/alert.service';
 import { SearchService } from '../search/search.service';
 
-const tagUser = 'tagUser';
 type HandleUserTagReqBody = {
   //유저태그 추출할 텍스트
   text: string;
@@ -414,5 +413,24 @@ export class PostService {
     if (data.type === 'cocomment') {
       return this.postRepo.cocommentTable.removeLike(data);
     }
+  }
+
+  posting(content: UploadMessage) {
+    //필요한 데이터만 파싱 후 포스트테이블에 내용 삽입
+    const postDto: PostDto = {
+      postId: content.postId,
+      userId: content.userId,
+      title: content.title,
+    };
+    //태그 핸들링 요청, 테이블 삽입 요청, 유저태그 알람전송 요청
+    this.searchService.handlePostTag(postDto);
+    this.postRepo.addPost(postDto);
+    this.handleUserTag({
+      type: 'post',
+      userId: Number(crypter.decrypt(postDto.userId)),
+      text: postDto.title,
+      whereId: postDto.postId,
+    });
+    return;
   }
 }

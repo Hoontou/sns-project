@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { PostFooterContent, UserInfo } from 'sns-interfaces/client.interface';
 import { crypter } from './common/crypter';
@@ -19,7 +19,13 @@ export interface LandingContent {
 @Controller('')
 export class AppController {
   constructor(private appService: AppService) {}
-  //AppService의 메서드 이la름은 client의 페이지 이름과 매칭
+  @Post('/tst')
+  tst(@Body() body) {
+    console.log(body);
+    return;
+  }
+
+  //AppService의 메서드 이름은 client의 페이지 이름과 매칭
 
   /**팔로우목록의 3일간 게시글 가져오기 */
   @Post('/landing')

@@ -1,6 +1,7 @@
 import { UploadRequest } from '../interface';
 import { UploadMessage } from 'sns-interfaces';
 import { rabbitMQ } from '../amqp';
+import axios from 'axios';
 
 export const reqParser = (req: UploadRequest): void => {
   const { title } = JSON.parse(req.body.title);
@@ -20,8 +21,8 @@ export const reqParser = (req: UploadRequest): void => {
     title,
   };
 
-  console.log('broadcasting to MSA');
-  rabbitMQ.publishMsg('upload', uploadForm);
+  // rabbitMQ.publishMsg('upload', uploadForm);
+  axios.post('http://gateway/upload/post', { uploadForm });
 };
 
 /**user한테 userId랑 img url 쏴준다. */
@@ -35,6 +36,6 @@ export const reqParserUserImg = (req: UploadRequest): void => {
     img: `${postId}/${postList[0]}`,
   };
 
-  console.log('broadcasting to MSA');
-  rabbitMQ.sendMsg('user', form, 'uploadUserImg');
+  // rabbitMQ.sendMsg('user', form, 'uploadUserImg');
+  axios.post('http://gateway/upload/userImg', { uploadForm: form });
 };

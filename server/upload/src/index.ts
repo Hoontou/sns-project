@@ -20,6 +20,7 @@ import {
 } from './common/local.upload.middleware';
 import fastifyStatic from '@fastify/static';
 import { join } from 'path';
+import axios from 'axios';
 
 const server = fastify();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -114,7 +115,7 @@ server.post(
 
 // server.get('/cootest', (req, reply) => {
 //   console.log(req.cookies);
-//   // axios.get('http://main-back:4000/user').then((res) => console.log(res.data));
+// axios.get('http://main-back:4000/user').then((res) => console.log(res.data));
 //   return { success: true };
 // }); hoc 엑시오스 테스트코드. 근데 쿠키가 안날라가서 폐기. hoc는 클라이언트에서 진행하는걸로..
 

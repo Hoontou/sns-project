@@ -19,6 +19,7 @@ import { typeORMConfig } from './configs/typeorm.config';
 import { DirectController } from './module/direct/direct.controller';
 import { DirectModule } from './module/direct/direct.module';
 import { SearchModule } from './module/search/search.module';
+import { UploadModule } from './module/upload/upload.module';
 
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -41,6 +42,7 @@ const mongoUrl = (url: string | undefined) => {
     UserModule,
     DirectModule,
     SearchModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

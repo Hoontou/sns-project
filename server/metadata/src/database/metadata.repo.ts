@@ -25,7 +25,7 @@ class MetaRepository {
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
   async saveMeatadata(metadataDto: MetadataDto) {
     const newOne = await new this.db(metadataDto);
-    newOne
+    await newOne
       .save()
       .then(() => console.log('meatadata stored in mongo successfully'))
       .catch(() => console.log('err when storing metadata in mongo'));

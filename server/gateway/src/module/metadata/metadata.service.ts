@@ -5,6 +5,7 @@ import {
   MetadataCollection,
   MetadataDto,
 } from './repository/metadata.collection';
+import { UploadMessage } from 'sns-interfaces';
 
 @Injectable()
 export class MetadataService {
@@ -72,5 +73,15 @@ export class MetadataService {
         console.log('메타데이터 삭제성공.');
       }
     });
+  }
+
+  saveMetadata(content: UploadMessage) {
+    //날라온 메세지 파싱
+    const metadataDto = {
+      _id: content.postId,
+      userId: crypter.decrypt(content.userId),
+      files: content.files,
+    };
+    return this.metadataCollection.saveMeatadata(metadataDto);
   }
 }
