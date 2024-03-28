@@ -30,7 +30,7 @@ const DmChatRoom = () => {
     window.innerHeight - 110
   );
   const [processedMessage, setProcessedMessage] = useState<
-    { tmpId: number; state: 'success' | 'fail' } | undefined
+    { tmpId: number; state: 'success' | 'fail'; isRead?: boolean } | undefined
   >(undefined);
   const [readSignal, setReadSignal] = useState<boolean>(false);
   const [showingNewMessageButton, setShowingNewMessageButton] =
@@ -90,7 +90,7 @@ const DmChatRoom = () => {
       }
 
       const socket = io({
-        path: '/dm/socket.io',
+        path: '/direct/socket.io',
         extraHeaders: {
           userid: res.userId,
           location: chatRoomId === undefined ? '' : chatRoomId,
@@ -149,10 +149,17 @@ const DmChatRoom = () => {
       //전송에 성공이든 실패든, signal 받으면 tmpId를 -1로 바꿔야함
       //tmpId 보고 spinning 돌릴 지 판단.
       //전송 실패시 글을 '전송실패'로 바꾸기
-      socket.on('sendingSuccess', (data: { tmpId: number }) => {
-        setProcessedMessage({ tmpId: data.tmpId, state: 'success' });
-        return;
-      });
+      socket.on(
+        'sendingSuccess',
+        (data: { tmpId: number; isRead: boolean }) => {
+          setProcessedMessage({
+            tmpId: data.tmpId,
+            state: 'success',
+            isRead: data.isRead,
+          });
+          return;
+        }
+      );
       socket.on('sendingFailed', (data: { tmpId: number }) => {
         setProcessedMessage({ tmpId: data.tmpId, state: 'fail' });
 
@@ -192,6 +199,9 @@ const DmChatRoom = () => {
 
     const targetIndex = findIndexByTmpId(processedMessage.tmpId);
     messages[targetIndex].tmpId = -1;
+    messages[targetIndex].isRead = processedMessage.isRead
+      ? processedMessage.isRead
+      : false;
     if (processedMessage.state === 'fail') {
       messages[targetIndex].content = '전송 실패';
     }
@@ -241,7 +251,8 @@ const DmChatRoom = () => {
       displayTime={
         index === 0 ||
         item.createdAt.slice(8, 16) !==
-          messages[index - 1].createdAt.slice(8, 16)
+          messages[index - 1].createdAt.slice(8, 16) ||
+        item.isMyChat !== messages[index - 1].isMyChat
       }
     />
   ));

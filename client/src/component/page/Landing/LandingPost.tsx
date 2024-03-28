@@ -30,7 +30,7 @@ const LandingPost = (props: {
     setMetadata(props.post);
     setPostFooterContent(props.post);
     const modyfiedUrl = props.post.files.map((i: string) => {
-      return `${requestUrl}/${props.post.id}/${i}`;
+      return `${requestUrl}/${props.post._id}/${i}`;
     });
     setImages(modyfiedUrl);
     setSpin(false);
@@ -74,7 +74,7 @@ const LandingPost = (props: {
       {!spin && (
         <LandingPostFooter
           index={props.index}
-          postId={metadata.id}
+          postId={metadata._id}
           createdAt={metadata.createdAt}
           userId={props.userId}
           openCo={props.openCo}

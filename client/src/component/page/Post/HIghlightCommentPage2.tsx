@@ -37,7 +37,7 @@ const HighlightCommentPage2 = () => {
   const [commentItems, setCommentItems] = useState<CommentItems[]>([]);
   const [submitForm, setSubmitForm] = useState<SubmitForm>({
     type: 'comment',
-    postId: postFooterContent.id,
+    postId: postFooterContent._id,
     postOwnerUserId: postFooterContent.userId,
   });
 
@@ -117,7 +117,7 @@ const HighlightCommentPage2 = () => {
   const setSubmitFormToDefault = () => {
     setSubmitForm({
       type: 'comment',
-      postId: postFooterContent.id,
+      postId: postFooterContent._id,
       postOwnerUserId: postFooterContent.userId,
     });
   };
@@ -259,7 +259,7 @@ const HighlightCommentPage2 = () => {
       //글작성자에게 알림 넣기위해서 주인 id도 보냄
       axios.post('/gateway/post/addcomment', {
         comment: submitingComment,
-        postId: postFooterContent.id,
+        postId: postFooterContent._id,
         postOwnerUserId: postFooterContent.userId,
       });
 
@@ -301,7 +301,7 @@ const HighlightCommentPage2 = () => {
         index={index}
         getCocomments={getCocomments}
         userId={userId}
-        postId={postFooterContent.id}
+        postId={postFooterContent._id}
       />
     );
   });
@@ -328,7 +328,7 @@ const HighlightCommentPage2 = () => {
                 left: '1rem',
               }}
               onClick={() => {
-                navigate(`/post/${postFooterContent.id}`);
+                navigate(`/post/${postFooterContent._id}`);
               }}
             />
             <span>댓글</span>
@@ -421,7 +421,7 @@ const HighlightCommentPage2 = () => {
               <div
                 className='text-center'
                 onClick={() => {
-                  navigate(`/comment/${postFooterContent.id}`);
+                  navigate(`/comment/${postFooterContent._id}`);
                 }}
                 style={{ color: 'RoyalBlue' }}
               >

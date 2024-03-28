@@ -110,14 +110,8 @@ const Cocomment = (props: {
           </div>
         </Grid>
         <Grid item xs={1.5} className='text-center'>
-          {props.content.createdAt !== '' &&
-            (props.userId === props.content.userId ? (
-              <CommentMenu
-                type='cocomment'
-                commentId={props.commentId}
-                cocommentId={props.content.cocommentId}
-              />
-            ) : (
+          {props.content.createdAt !== '' && (
+            <>
               <span>
                 {!liked ? (
                   <VscHeart
@@ -136,8 +130,16 @@ const Cocomment = (props: {
                   />
                 )}
                 <div style={{ fontSize: '0.7rem' }}>{likesCount}</div>
-              </span>
-            ))}
+              </span>{' '}
+              {props.userId === props.content.userId && (
+                <CommentMenu
+                  type='cocomment'
+                  commentId={props.commentId}
+                  cocommentId={props.content.cocommentId}
+                />
+              )}
+            </>
+          )}
         </Grid>
       </Grid>
     </>

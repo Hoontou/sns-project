@@ -38,7 +38,7 @@ const CommentPage = () => {
   const [commentItems, setCommentItems] = useState<CommentItems[]>([]);
   const [submitForm, setSubmitForm] = useState<SubmitForm>({
     type: 'comment',
-    postId: postFooterContent.id,
+    postId: postFooterContent._id,
     postOwnerUserId: postFooterContent.userId,
   });
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
@@ -120,7 +120,7 @@ const CommentPage = () => {
   const setSubmitFormToDefault = () => {
     setSubmitForm({
       type: 'comment',
-      postId: postFooterContent.id,
+      postId: postFooterContent._id,
       postOwnerUserId: postFooterContent.userId,
     });
   };
@@ -278,7 +278,7 @@ const CommentPage = () => {
       //글작성자에게 알림 넣기위해서 주인 id도 보냄
       axios.post('/gateway/post/addcomment', {
         comment: submitingComment,
-        postId: postFooterContent.id,
+        postId: postFooterContent._id,
         postOwnerUserId: postFooterContent.userId,
       });
 
@@ -320,12 +320,12 @@ const CommentPage = () => {
         index={index}
         getCocomments={getCocomments}
         userId={userId}
-        postId={postFooterContent.id}
+        postId={postFooterContent._id}
       />
     );
   });
 
-  return postFooterContent.id === '' ? (
+  return postFooterContent._id === '' ? (
     <>
       {spin && 'waiting...'}
 
@@ -353,7 +353,7 @@ const CommentPage = () => {
             />
             <span>댓글</span>
           </div>
-          {postFooterContent.id === '' && (
+          {postFooterContent._id === '' && (
             <>
               <div
                 style={{
@@ -403,7 +403,7 @@ const CommentPage = () => {
                 left: '1rem',
               }}
               onClick={() => {
-                navigate(`/post/${postFooterContent.id}`);
+                navigate(`/post/${postFooterContent._id}`);
               }}
             />
             <span>댓글</span>

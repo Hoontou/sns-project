@@ -52,7 +52,7 @@ const InBox = () => {
       setMyUsername(res.username);
 
       const socket = io({
-        path: '/dm/socket.io',
+        path: '/direct/socket.io',
         extraHeaders: {
           userid: res.userId,
           location: 'inbox',
@@ -63,7 +63,6 @@ const InBox = () => {
         if (data.chatRooms.length < pageItemLen) {
           setHasMoreChatRooms(false);
         }
-        console.log(data.chatRooms);
 
         setPage(page + 1);
         setChatRooms([...chatRooms, ...data.chatRooms]);
@@ -75,7 +74,6 @@ const InBox = () => {
       socket.on(
         'realTimeUpdateForInbox',
         (data: { updatedChatRoom: ChatRoomWithUserPop }) => {
-          console.log('updateChatRoom');
           updateChatRooms(data.updatedChatRoom);
         }
       );

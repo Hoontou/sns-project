@@ -32,7 +32,7 @@ const Post = (props: {
 
   useEffect(() => {
     const modyfiedUrl = props.metadata.files.map((i: string) => {
-      return `${requestUrl}/${props.metadata.id}/${i}`;
+      return `${requestUrl}/${props.metadata._id}/${i}`;
     });
     setImages(modyfiedUrl);
   }, [props.metadata]);
@@ -43,17 +43,18 @@ const Post = (props: {
 
     axios
       .post('/gateway/postfooter', {
-        postId: props.metadata.id,
+        postId: props.metadata._id,
         targetId: props.metadata.userId,
       })
       .then((res) => {
         const data: PostFooterContent = res.data;
+        console.log(data);
         setPostFooterContent({ ...data });
         setFulfilled(true);
       });
 
     setDisplayPostMenu(props.userId === props.metadata.userId ? true : false);
-  }, [props.metadata.id, props.metadata.userId, props.userId]);
+  }, [props.metadata._id, props.metadata.userId, props.userId]);
 
   return (
     <div style={{ overflowY: 'scroll', height: '100vh' }}>
@@ -84,7 +85,7 @@ const Post = (props: {
               top: '1.2rem',
             }}
             onClick={() => {
-              navigate(`/feed/${props.postFooterContent.username}`);
+              navigate(`/feed/${postFooterContent.username}`);
             }}
           >
             {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}
@@ -94,7 +95,7 @@ const Post = (props: {
             <span
               style={{ position: 'absolute', right: '1rem', top: '0.7rem' }}
             >
-              <PostMenu postId={props.metadata.id} />
+              <PostMenu postId={props.metadata._id} />
             </span>
           )}
         </div>
@@ -106,7 +107,7 @@ const Post = (props: {
 
       {!openComment && (
         <PostFooter
-          postId={props.metadata.id}
+          postId={props.metadata._id}
           createdAt={props.metadata.createdAt}
           userId={props.userId}
           setOpenComment={setOpenComment}
