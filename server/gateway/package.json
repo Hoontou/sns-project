@@ -21,9 +21,6 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.13.0",
-    "@fastify/mongodb": "^8.0.0",
-    "@grpc/grpc-js": "^1.10.4",
-    "@grpc/proto-loader": "^0.7.11",
     "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^10.3.5",
     "@nestjs/core": "^10.3.5",
@@ -35,8 +32,6 @@
     "@nestjs/platform-socket.io": "^10.3.5",
     "@nestjs/typeorm": "^10.0.2",
     "@nestjs/websockets": "^10.3.5",
-    "amqplib": "^0.10.3",
-    "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

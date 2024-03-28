@@ -93,20 +93,3 @@ services:
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
-
-  #  redis:
-  #    image: redis:latest
-  #    restart: always
-  #    ports:
-  #      - 6380:6379
-
-  rabbit:
-    image: rabbitmq:3.8.5-management
-    container_name: rabbit
-    ports:
-      - '5672:5672'
-      - '15672:15672'
-    expose:
-      - '5672'
-      - '15672'
-    restart: always
