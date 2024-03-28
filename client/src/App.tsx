@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Signup from './component/page/Signup/Signup';
 import Signin from './component/page/Signin/Signin';
 import Upload from './component/page/Upload/Upload';
-import AlertSock from './component/AlertSocket';
 import Feed from './component/page/Feed/Feed';
 import UserSetting from './component/page/UserSetting/UserSetting';
 import { createBrowserHistory } from 'history';
@@ -16,7 +15,6 @@ import CommentPage from './component/page/Post/CommentPage';
 import HighlightCommentPage from './component/page/Post/HIghlightCommentPage';
 import HighlightCocommentPage from './component/page/Post/Cocomment/HighlightCocommentPage';
 import AlertComponent from './component/page/Alert/Alert';
-import SocketTest from './component/page/Dm/socket.test';
 import InBox from './component/page/Dm/Inbox/DmInbox';
 import DmChatRoom from './component/page/Dm/chatroom/DmChatRoom';
 

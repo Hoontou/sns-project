@@ -187,10 +187,11 @@ const PostPage = () => {
           setOpenComment={setOpenComment}
         />
       )}
-
-      <div style={{ paddingTop: '4rem' }}>
-        <Navbar value={0} />
-      </div>
+      {!openComment && (
+        <div style={{ paddingTop: '4rem' }}>
+          <Navbar value={undefined} />
+        </div>
+      )}
     </div>
   );
 };

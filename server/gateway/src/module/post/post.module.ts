@@ -4,7 +4,6 @@ import { PostService } from './post.service';
 import { FflModule } from '../ffl/ffl.module';
 import { AmqpModule } from 'src/module/amqp/amqp.module';
 import { MetadataModule } from '../metadata/metadata.module';
-import { AppModule } from '../../app.module';
 import { UserModule } from '../user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from './entity/post.entity';
@@ -15,7 +14,7 @@ import { CoCommentTable } from './repository/cocomment.table';
 import { CommentTable } from './repository/comment.table';
 import { PostTable } from './repository/post.table';
 import { AlertModule } from '../alert/alert.module';
-import { SearchModule } from '../live-search/search.module';
+import { SearchModule } from '../search/search.module';
 
 @Module({
   imports: [
@@ -23,7 +22,6 @@ import { SearchModule } from '../live-search/search.module';
     forwardRef(() => FflModule),
     AmqpModule,
     forwardRef(() => MetadataModule),
-    forwardRef(() => AppModule),
     UserModule,
     AlertModule,
     SearchModule,

@@ -14,7 +14,7 @@ import { AuthModule } from '../auth/auth.module';
 import { Userinfo } from './entity/userinfo.entity';
 import { Usernums } from './entity/usernums.entity';
 import { User } from './entity/user.entity';
-import { SearchModule } from '../live-search/search.module';
+import { SearchModule } from '../search/search.module';
 
 @Module({
   imports: [

@@ -8,14 +8,13 @@ import {
 import { FflService } from '../ffl/ffl.service';
 import { AmqpService } from 'src/module/amqp/amqp.service';
 import { MetadataService } from '../metadata/metadata.service';
-import { AppService } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import { UserService } from '../user/user.service';
 import { PostRepository } from './post.repository';
 import { CocommentDto, CommentDto } from './dto/post.dto';
 import { AlertDto, UserTagAlertReqForm } from 'sns-interfaces/alert.interface';
 import { AlertService } from '../alert/alert.service';
-import { SearchService } from '../live-search/search.service';
+import { SearchService } from '../search/search.service';
 
 const tagUser = 'tagUser';
 type HandleUserTagReqBody = {
@@ -48,8 +47,6 @@ export class PostService {
     private amqpService: AmqpService,
     @Inject(forwardRef(() => MetadataService))
     private metadataService: MetadataService,
-    @Inject(forwardRef(() => AppService))
-    private appService: AppService,
     private userService: UserService,
     private postRepo: PostRepository,
     private searchService: SearchService,

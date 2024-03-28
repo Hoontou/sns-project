@@ -1,9 +1,4 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  forwardRef,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AmqpModule } from './module/amqp/amqp.module';
 import { AlertModule } from './module/alert/alert.module';
 import { MetadataModule } from './module/metadata/metadata.module';
@@ -24,7 +19,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { typeORMConfig } from './configs/typeorm.config';
 import { DirectController } from './module/direct/direct.controller';
 import { DirectModule } from './module/direct/direct.module';
-import { SearchModule } from './module/live-search/search.module';
+import { SearchModule } from './module/search/search.module';
 
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -39,8 +34,8 @@ const mongoUrl = (url: string | undefined) => {
   imports: [
     TypeOrmModule.forRoot(typeORMConfig),
     MongooseModule.forRoot(mongoUrl(MONGO_URI)),
-    forwardRef(() => PostModule),
-    forwardRef(() => MetadataModule),
+    PostModule,
+    MetadataModule,
     AlertModule,
     AmqpModule,
     FflModule,
