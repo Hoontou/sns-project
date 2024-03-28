@@ -11,6 +11,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { authHoc } from '../../../common/auth.hoc';
 import AllAlertPanel from './panel/AllAlertPanel';
 import UnReadAlertPanel from './panel/UnreadAlert';
+import Navbar from '../../common/Navbar/Navbar';
 
 export const AlertPageLen = 20;
 
@@ -47,6 +48,10 @@ const AlertComponent = () => {
       </Tabs>
       <UnReadAlertPanel index={0} value={tabIndex} userId={userId} />
       <AllAlertPanel index={1} value={tabIndex} userId={userId} />
+
+      <div style={{ paddingTop: '4rem' }}>
+        <Navbar value={0} />
+      </div>
     </div>
   );
 };

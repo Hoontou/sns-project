@@ -65,14 +65,12 @@ export class MetadataService {
   }
 
   deleteMetadata(postId: string) {
-    this.metadataCollection.metadataModel.deleteOne({ _id: postId }, (err) => {
-      if (err) {
-        console.log('메타데이터 삭제 중 에러');
-        console.error(err);
-      } else {
-        console.log('메타데이터 삭제성공.');
-      }
-    });
+    this.metadataCollection.metadataModel
+      .deleteOne({
+        _id: postId,
+      })
+      .exec();
+    return;
   }
 
   saveMetadata(content: UploadMessage) {

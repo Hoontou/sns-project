@@ -58,7 +58,6 @@ const UserinfoMenu = () => {
             내정보 수정
           </a>
         </MenuItem>
-        <MenuItem onClick={handleClose}>팔로우 관리</MenuItem>
         <MenuItem onClick={handleClose}>
           <span onClick={logoutAction}>로그아웃</span>
         </MenuItem>

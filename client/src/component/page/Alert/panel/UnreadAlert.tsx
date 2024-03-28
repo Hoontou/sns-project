@@ -427,6 +427,18 @@ const UnReadAlertPanel = (props: {
           {renderAlerts}
         </InfiniteScroll>
       </div>
+      {alerts?.length === 0 && (
+        <div
+          style={{
+            textAlign: 'center',
+            fontSize: '1rem',
+            color: 'gray',
+            marginTop: '2rem',
+          }}
+        >
+          아무것도 없어요
+        </div>
+      )}
     </div>
   );
 };
