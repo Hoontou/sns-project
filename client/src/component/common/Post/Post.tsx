@@ -85,7 +85,7 @@ const Post = (props: {
               top: '1.2rem',
             }}
             onClick={() => {
-              navigate(`/feed/${props.postFooterContent.username}`);
+              navigate(`/feed/${postFooterContent.username}`);
             }}
           >
             {/*props.metadata.userId 로 요청날려서 오는값 useState로 채워넣기*/}

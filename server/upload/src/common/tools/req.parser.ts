@@ -1,6 +1,5 @@
 import { UploadRequest } from '../interface';
 import { UploadMessage } from 'sns-interfaces';
-import { rabbitMQ } from '../amqp';
 import axios from 'axios';
 
 export const reqParser = (req: UploadRequest): void => {

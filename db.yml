@@ -53,7 +53,7 @@ services:
       - elasticsearch
     restart: unless-stopped
 
-  #mgdb접속 후 mongosh /usr/src/config/set.js 입력하면 레플리카셋 설정
+  #mgdb bash에 접속 후 mongosh /usr/src/config/set.js 입력하면 레플리카셋 설정
   mgdb:
     image: mongo:latest
     volumes:

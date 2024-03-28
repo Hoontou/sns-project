@@ -11,7 +11,6 @@ import { UploadRequest } from './common/interface'; //req 파라미터의 타입
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
-import { rabbitMQ } from './common/amqp';
 import { reqParser, reqParserUserImg } from './common/tools/req.parser';
 import {
   add_idToReq,
@@ -20,7 +19,6 @@ import {
 } from './common/local.upload.middleware';
 import fastifyStatic from '@fastify/static';
 import { join } from 'path';
-import axios from 'axios';
 
 const server = fastify();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -124,6 +122,5 @@ server.listen({ host: '0.0.0.0', port: 80 }, async (err, address) => {
     console.error(err);
     process.exit(1);
   }
-  rabbitMQ.initialize('upload');
-  console.log(`upload on 4002:80`);
+  console.log(`upload on 4001:80`);
 });

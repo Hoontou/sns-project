@@ -25,7 +25,6 @@ services:
     ports:
       - '4000:80'
     environment:
-      - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
       - MONGO_URI=mongodb://mgdb:27017/sns
 
@@ -37,9 +36,6 @@ services:
     container_name: upload
     volumes:
       - ./server/upload/src:/usr/src/app/src:z
-    ports:
-      - '4001:80'
     environment:
-      - RABBIT=amqp://guest:guest@rabbit:5672
       - NODE_ENV=development
       - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=snsupload;AccountKey=sVDkSKQZyQPURSTGJrDoCOjizHGlaiRdgCwC00qqBggymMWDqWH49aslc8tVLX9VIrZW7r6B2f/Z+AStBA649Q==;EndpointSuffix=core.windows.net
