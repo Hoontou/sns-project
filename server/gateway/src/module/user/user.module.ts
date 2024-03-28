@@ -33,6 +33,6 @@ import { SearchModule } from '../search/search.module';
     UserService,
     JwtService,
   ],
-  exports: [UserRepository, UserService],
+  exports: [UserRepository, UserService, UserCollection],
 })
 export class UserModule {}

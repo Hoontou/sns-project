@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { User, UserSchemaType } from '../schema/user.schema';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
@@ -49,5 +49,17 @@ export class UserCollection {
       },
       { $set: { img: data.img } },
     );
+  }
+
+  async findUserIdsByUsernames(usernames: string[]): Promise<number[]> {
+    const result = await this.userModel.find({
+      username: { $in: usernames },
+    });
+
+    const userIds = result.map((item) => {
+      return item.userId;
+    });
+
+    return userIds;
   }
 }

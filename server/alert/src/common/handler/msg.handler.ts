@@ -28,7 +28,7 @@ export const msgHandler = (data: {
     alertService.saveAlert(data.content as AlertDto);
   }
   if (data.method === 'tagUser') {
-    alertService.saveTagAlert(data.content as UserTagAlertReqForm);
+    // alertService.saveTagAlert(data.content as UserTagAlertReqForm);
   }
 };
 

@@ -2,7 +2,6 @@ import { Module, forwardRef } from '@nestjs/common';
 import { PostController } from './post.controller';
 import { PostService } from './post.service';
 import { FflModule } from '../ffl/ffl.module';
-import { AmqpModule } from 'src/module/amqp/amqp.module';
 import { MetadataModule } from '../metadata/metadata.module';
 import { UserModule } from '../user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,7 +19,6 @@ import { SearchModule } from '../search/search.module';
   imports: [
     TypeOrmModule.forFeature([Post, Comment, Cocomment]),
     forwardRef(() => FflModule),
-    AmqpModule,
     forwardRef(() => MetadataModule),
     UserModule,
     AlertModule,

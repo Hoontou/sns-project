@@ -1,5 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AmqpModule } from './module/amqp/amqp.module';
 import { AlertModule } from './module/alert/alert.module';
 import { MetadataModule } from './module/metadata/metadata.module';
 import { PostModule } from './module/post/post.module';
@@ -37,7 +36,6 @@ const mongoUrl = (url: string | undefined) => {
     PostModule,
     MetadataModule,
     AlertModule,
-    AmqpModule,
     FflModule,
     AuthModule,
     UserModule,

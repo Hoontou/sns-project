@@ -32,6 +32,6 @@ import { UserCollection } from './repository/user.collection';
     UserService,
     JwtService,
   ],
-  exports: [UserRepository],
+  exports: [UserRepository, UserCollection],
 })
 export class UserModule {}

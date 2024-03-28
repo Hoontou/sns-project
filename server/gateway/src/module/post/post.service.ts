@@ -6,7 +6,6 @@ import {
   PostFooterContent,
 } from 'sns-interfaces/client.interface';
 import { FflService } from '../ffl/ffl.service';
-import { AmqpService } from 'src/module/amqp/amqp.service';
 import { MetadataService } from '../metadata/metadata.service';
 import { crypter } from 'src/common/crypter';
 import { UserService } from '../user/user.service';
@@ -44,7 +43,6 @@ export class PostService {
   constructor(
     @Inject(forwardRef(() => FflService))
     private fflService: FflService,
-    private amqpService: AmqpService,
     @Inject(forwardRef(() => MetadataService))
     private metadataService: MetadataService,
     private userService: UserService,
@@ -391,8 +389,7 @@ export class PostService {
         userId: body.userId,
       },
     };
-
-    return this.amqpService.sendMsg('alert', alertForm, tagUser);
+    return this.alertService.saveTagAlert(alertForm);
   }
 
   addLike(data: AddLikeType) {

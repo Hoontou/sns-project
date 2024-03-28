@@ -1,7 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { FflController } from './ffl.controller';
 import { FflService } from './ffl.service';
-import { AmqpModule } from 'src/module/amqp/amqp.module';
 import { UserModule } from '../user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FollowSchema } from './repository/schema/follow.schema';
@@ -25,7 +24,6 @@ import { AlertModule } from '../alert/alert.module';
       { name: 'cocommentlike', schema: CocommentLikeSchema },
     ]),
     forwardRef(() => PostModule),
-    AmqpModule,
     UserModule,
     AlertModule,
   ],

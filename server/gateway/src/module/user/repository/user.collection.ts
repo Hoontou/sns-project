@@ -52,4 +52,16 @@ export class UserCollection {
       { $set: { img: data.img } },
     );
   }
+
+  async findUserIdsByUsernames(usernames: string[]): Promise<number[]> {
+    const result = await this.userModel.find({
+      username: { $in: usernames },
+    });
+
+    const userIds = result.map((item) => {
+      return item.userId;
+    });
+
+    return userIds;
+  }
 }

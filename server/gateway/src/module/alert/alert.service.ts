@@ -3,9 +3,11 @@ import {
   AlertContentUnion,
   AlertDto,
   UploadAlertDto,
+  UserTagAlertReqForm,
 } from 'sns-interfaces/alert.interface';
 import { crypter } from 'src/common/crypter';
 import { AlertCollection } from './repository/alert.collection';
+import { UserCollection } from '../user/repository/user.collection';
 
 export interface FianlAlertType {
   _id: string;
@@ -20,7 +22,10 @@ const pageLen = 20;
 
 @Injectable()
 export class AlertService {
-  constructor(private alertCollection: AlertCollection) {}
+  constructor(
+    private userCollection: UserCollection,
+    private alertCollection: AlertCollection,
+  ) {}
 
   async checkHasNewAlert(data: {
     userId: string;
@@ -112,14 +117,17 @@ export class AlertService {
     return this.alertCollection.saveAlert(alertDto);
   }
 
-  // async saveTagAlert(data: UserTagAlertReqForm) {
-  //   //usernames로 userId찾아온다
-  //   const userIds = await this.userDb.findUserIdsByUsernames(data.usernames);
+  async saveTagAlert(data: UserTagAlertReqForm) {
+    //usernames로 userId찾아온다
+    const userIds = await this.userCollection.findUserIdsByUsernames(
+      data.usernames,
+    );
+    console.log(userIds);
 
-  //   return Promise.all(
-  //     userIds.map((item) => {
-  //       return this.saveAlert({ userId: item, content: data.content });
-  //     }),
-  //   );
-  // }
+    return Promise.all(
+      userIds.map((item) => {
+        return this.saveAlert({ userId: item, content: data.content });
+      }),
+    );
+  }
 }
