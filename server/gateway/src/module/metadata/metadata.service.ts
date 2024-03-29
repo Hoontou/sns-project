@@ -99,11 +99,13 @@ export class MetadataService {
   }
 
   async getMetadatasOrderByLikes(body: { page: number }) {
-    const _idsOrderedByLikes =
-      await this.postService.getPostIdsOrderByLikes(body);
-    const { metadatas } = await this.getMetadatasByPostId(_idsOrderedByLikes);
+    const { _ids } = await this.postService.getPostIdsOrderByLikes(body);
+    const { metadatas } = await this.getMetadatasByPostId({ _ids });
 
-    return { metadatas };
+    const sorted = _ids.map((_id) =>
+      metadatas.find((metadata) => metadata._id === _id),
+    );
+    return { metadatas: sorted };
   }
 
   async getMyCollection(data: { page: number; userId: string }) {

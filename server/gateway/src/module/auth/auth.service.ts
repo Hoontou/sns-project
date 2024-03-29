@@ -26,7 +26,6 @@ export class AuthService {
   ) {}
 
   async auth(@Req() req, @Res() res): Promise<AuthResultRes> {
-    console.log(req);
     const accessToken: string | undefined = req.cookies['Authorization'];
     const createdAt: string | undefined = req.cookies['createdAt'];
     //위 둘중 하나라도 없으면 튕긴다.
