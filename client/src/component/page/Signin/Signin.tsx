@@ -39,14 +39,15 @@ const Signin = () => {
     });
   };
 
-  useEffect(() => {
-    //다른곳에서는 실패하면 /signin으로 이동하게.
-    authHoc().then((authRes) => {
-      if (authRes.success === true) {
-        navigate('/');
-      }
-    });
-  }, [navigate]);
+  // useEffect(() => {
+  //   //다른곳에서는 실패하면 /signin으로 이동하게.
+  //   authHoc().then((authRes) => {
+  //     if (authRes.success === true) {
+  //       navigate('/');
+  //     }
+  //   });
+  // }, []);
+
   return (
     <div
       className='container text-center'
@@ -97,7 +98,6 @@ const Signin = () => {
           </Link>
         </form>
       </div>
-      <Navbar value={1} />
     </div>
   );
 };

@@ -31,9 +31,6 @@ const Landing = () => {
   const [hasNewAlert, setHasNewAlert] = useState<boolean>(false);
   const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
 
-  const userAgent = navigator.userAgent;
-  console.log('User-Agent:', userAgent);
-
   const openCo = (index: number) => {
     if (index === -1) {
       setOpenComment(false);
@@ -209,6 +206,20 @@ const Landing = () => {
             </Box>
           </Modal>
         )}
+      </div>
+      <div
+        className='text-center'
+        style={{ paddingTop: '2rem', paddingBottom: '2rem' }}
+      >
+        <div>최근 3일동안 새롭에 올라온 게시물을 모두 확인했습니다.</div>
+        <span
+          style={{ color: 'RoyalBlue' }}
+          onClick={() => {
+            navigate('/search');
+          }}
+        >
+          다른 게시물 둘러보기
+        </span>
       </div>
       <div style={{ paddingTop: '4rem' }}>
         <Navbar value={0} />

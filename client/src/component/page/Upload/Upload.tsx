@@ -3,7 +3,7 @@ import { genObjectId } from '../../../common/genobjectid';
 import './Upload.css';
 import Slider from '../../common/Slider';
 import Navbar from '../../common/Navbar/Navbar';
-import { Button } from '@mui/material';
+import { Backdrop, Button, CircularProgress } from '@mui/material';
 import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
 import { resizer } from '../../../common/image.resizer';
@@ -36,6 +36,7 @@ export interface SearchedHashtag {
 
 const Upload = () => {
   const navigate = useNavigate();
+  const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [images, setImages] = useState<string[]>([]);
   const [sendingFileList, setFileList] = useState<File[]>([]);
@@ -106,6 +107,8 @@ const Upload = () => {
       return;
     }
 
+    setOpenBackSpin(true);
+
     //보내기전 리사이징, 인증
     const contents: File[] | false = await resizer([...sendingFileList]); //리사이저로 복사배열보내고 리사이징배열 받는다.
     if (contents === false) {
@@ -143,7 +146,7 @@ const Upload = () => {
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
     //벗어나도 되면 그냥 알람MSA에 Id 보내고 페이지 벗어나자.
     //then을 안받아도 되게 느슨한 연결로 만들어 보자.
-    alert('file sending succeed');
+    alert('사진을 서버로 보냈어요. 업로드 하는 데 시간이 걸릴 수 있어요.');
     navigate(`/feed`);
   };
 
@@ -257,6 +260,14 @@ const Upload = () => {
           Upload
         </Button>
       </form>
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackSpin}
+      >
+        <div>사진을 처리중....&nbsp;&nbsp;&nbsp;</div>
+        <CircularProgress color='inherit' />
+      </Backdrop>
 
       {searchBarDisplay && (
         <SearchResultModal

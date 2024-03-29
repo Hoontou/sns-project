@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Metadata, emptyMetadata } from '../../common/Post/Postlist';
 import Navbar from '../../common/Navbar/Navbar';
 import SearchPostList from './SearchPostList';
 
@@ -12,15 +11,8 @@ import SearchPostList from './SearchPostList';
 const SearchPostsByHashtagResultPage = () => {
   const { targetHashtag } = useParams(); //url에서 가져온
   const navigate = useNavigate();
-  const [spin, setSpin] = useState<boolean>(true);
   const [searchSuccess, setSearchSuccess] = useState<boolean>(true);
   const [totalPostCount, setTotalPostCount] = useState<number>(0);
-  const [posts, setPosts] = useState<Metadata[]>([]);
-  const [page, setPage] = useState<number>(0);
-  const [enablingGetMoreButton, setEnablingGetMoreButton] =
-    useState<boolean>(true);
-  const [open, setOpen] = useState(false);
-  const [selectedItem, setItem] = useState<Metadata>(emptyMetadata);
 
   useEffect(() => {
     if (targetHashtag === undefined) {
