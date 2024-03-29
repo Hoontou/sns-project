@@ -25,6 +25,13 @@ PostLikeSchema.virtual('getUserId', {
   justOne: true,
 });
 
+PostLikeSchema.virtual('getMetadata', {
+  ref: 'metadata',
+  localField: 'postId',
+  foreignField: '_id',
+  justOne: true,
+});
+
 export interface PostLikeSchemaType {
   userId: string;
   postId: string;

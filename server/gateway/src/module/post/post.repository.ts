@@ -57,4 +57,7 @@ export class PostRepository {
   getCocomment(data: { cocommentId: number }) {
     return this.cocommentTable.getCocomment(data);
   }
+  getPostIdsOrderByLikes(page: number) {
+    return this.postTable.getPostIdsOrderByLikes(page);
+  }
 }

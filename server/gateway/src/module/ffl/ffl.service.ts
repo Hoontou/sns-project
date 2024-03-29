@@ -10,8 +10,11 @@ import { FflRepository } from './ffl.repository';
 import { CommentLikeCollection } from './repository/commentLike.collection';
 import { CocommentLikeCollection } from './repository/cocommentLike.collection';
 import { AlertService } from '../alert/alert.service';
+import { MetadataDto } from '../metadata/repository/metadata.collection';
 @Injectable()
 export class FflService {
+  private logger = new Logger(FflService.name);
+
   constructor(
     private userService: UserService,
     private userRepository: UserRepository,
@@ -23,7 +26,10 @@ export class FflService {
     @Inject(forwardRef(() => PostService))
     private postService: PostService,
     private alertService: AlertService,
-  ) {}
+  ) {
+    this.getMyLikes({ userId: '1', page: 0 });
+  }
+
   async checkFollowed(body: {
     userTo: string;
     userFrom: string;
@@ -214,5 +220,24 @@ export class FflService {
       return { userList: [] };
     }
     return { userList };
+  }
+
+  async getMyLikes(data: { userId: string; page: number }) {
+    const len = 12;
+    const _ids = await this.postLikeCollection.postLikeModel
+      .find({
+        userId: crypter.decrypt(data.userId),
+      })
+      .populate('getMetadata')
+      .sort({ _id: -1 })
+      .limit(len)
+      .skip(len * data.page)
+      .exec();
+
+    const tmp = _ids.map((i) => {
+      return i.$getPopulatedDocs()[0] as unknown;
+    }) as MetadataDto[];
+
+    return tmp;
   }
 }

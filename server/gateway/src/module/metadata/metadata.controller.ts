@@ -10,6 +10,16 @@ export class MetadataController {
     return this.metadataService.getMetadatas(body);
   }
 
+  @Post('/getMetadatasOrderByDate')
+  getMetadatasOrderBy(@Body() body: { by: 'last' | 'first'; page: number }) {
+    return this.metadataService.getMetadatasOrderByDate(body);
+  }
+
+  @Post('/getMetadatasOrderByLikes')
+  getMetadatasOrderByLikes(@Body() body: { page: number }) {
+    return this.metadataService.getMetadatasOrderByLikes(body);
+  }
+
   @Post('/getMetadataWithPostFooter')
   getMetadataWithPostFooter(@Body() body: { postId: string }, @Req() req) {
     return this.metadataService.getMetadataWithPostFooter({
@@ -21,5 +31,13 @@ export class MetadataController {
   @Post('/getMetadatasByPostId')
   getMetadatasByPostId(@Body() body: { _ids: string[] }) {
     return this.metadataService.getMetadatasByPostId(body);
+  }
+
+  @Post('/getMyCollections')
+  getMyCollection(@Body() body: { page: number }, @Req() req) {
+    return this.metadataService.getMyCollection({
+      ...body,
+      userId: req.user.userId,
+    });
   }
 }

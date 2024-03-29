@@ -218,11 +218,11 @@ const Upload = () => {
   return (
     <div
       className='container text-center'
-      style={{ width: '95%', margin: '1.5rem auto', paddingBottom: '3.5rem' }}
+      style={{ width: '95%', margin: '1rem auto', paddingBottom: '3.5rem' }}
     >
-      <h2>4개보다 많이올려도 네개만 올라감., jpg, mp4, png만 가능</h2>
-      <h2>가로3:세로4 비율로 보임. 나중에 반응형 으로 수정해야할듯?</h2>
-      <div style={{ marginBottom: '1rem' }}>
+      <h6>사진을 4개 올릴 수 있어요.</h6>
+      <hr></hr>
+      <div>
         <Slider images={images} />
       </div>
       <TitleInput

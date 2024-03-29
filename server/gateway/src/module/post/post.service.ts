@@ -433,4 +433,8 @@ export class PostService {
     });
     return;
   }
+
+  async getPostIdsOrderByLikes(data: { page: number }) {
+    return this.postRepo.getPostIdsOrderByLikes(data.page);
+  }
 }

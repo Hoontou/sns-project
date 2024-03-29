@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import SearchBar from '../SearchBar';
 import { authHoc } from '../../../../common/auth.hoc';
 import Navbar from '../../../common/Navbar/Navbar';
-import { SearchTap } from './TabPanel';
+import { SearchResultTab } from './SearchResultTap';
 
 const SearchAllPage = () => {
   const { searchString } = useParams(); //url에서 가져온 username
@@ -30,7 +30,7 @@ const SearchAllPage = () => {
   return (
     <div style={{ paddingBottom: '3.5rem', width: '95%' }}>
       {/* 도저히 검색인풋 넓이조절이 안돼서 삽질하다가 되는대로 구현했음, 코드개판임 */}
-      <SearchTap
+      <SearchResultTab
         searchString={searchString}
         userId={userId}
         setOpenSearchModal={setOpenSearchModal}

@@ -3,8 +3,10 @@ import Navbar from '../../common/Navbar/Navbar';
 import SearchBar from './SearchBar';
 import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
+import MainTab from './MainPageTab/MainTab';
 const MainSearchPage = () => {
   const navigate = useNavigate();
+  const [userId, setUserId] = useState<string>('');
 
   //인증 effect
   useEffect(() => {
@@ -15,7 +17,7 @@ const MainSearchPage = () => {
         navigate('/signin');
         return;
       }
-      // setId(authRes.userId);
+      setUserId(authRes.userId);
       // setUsername(authRes.username !== undefined ? authRes.username : '');
     });
   }, [navigate]);
@@ -37,8 +39,11 @@ const MainSearchPage = () => {
           setOpenSearchModal={setOpenSearchModal}
           openSearchModal={openSearchModal}
         />
+        <hr></hr>
       </div>
-      <div>this is main search page</div>
+      <div>
+        <MainTab userId={userId} />
+      </div>
       <div>
         <Navbar value={1} />
       </div>

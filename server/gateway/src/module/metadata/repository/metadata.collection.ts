@@ -69,9 +69,11 @@ export class MetadataCollection {
   }
 
   async getMetadatasByPostId(_ids: string[]) {
-    const metadatas: MetadataDto[] = await this.metadataModel.find({
-      _id: { $in: _ids },
-    });
+    const metadatas: MetadataDto[] = (await this.metadataModel
+      .find({
+        _id: { $in: _ids },
+      })
+      .sort({ _id: -1 })) as any;
 
     return {
       metadatas: metadatas.map((item) => {
@@ -89,5 +91,23 @@ export class MetadataCollection {
       .catch(() => console.log('err when storing metadata in mongo'));
     //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
     return newOne;
+  }
+
+  async getMetadatasOrderByDate(data: { by: 'last' | 'first'; page: number }) {
+    const len = 12; //가져올 갯수
+    const metadatas = await this.metadataModel
+      .find()
+      .sort({ _id: data.by === 'last' ? -1 : 1 })
+      .limit(len)
+      .skip(data.page * len);
+
+    const tmp = metadatas.map((item: any) => {
+      item.userId = crypter.encrypt(item.userId);
+      return item;
+    }) as MetadataDto[];
+
+    return {
+      metadatas: tmp,
+    };
   }
 }

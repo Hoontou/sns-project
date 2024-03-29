@@ -17,6 +17,7 @@ import HighlightCocommentPage from './component/page/Post/Cocomment/HighlightCoc
 import AlertComponent from './component/page/Alert/Alert';
 import InBox from './component/page/Dm/Inbox/DmInbox';
 import DmChatRoom from './component/page/Dm/chatroom/DmChatRoom';
+import CollectionPage from './component/page/Collection/CollectionPage';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#3f50b5';
@@ -70,6 +71,8 @@ function App() {
 
           <Route path='/direct/inbox' element={<InBox />} />
           <Route path='/direct/t/:chatRoomId' element={<DmChatRoom />} />
+
+          <Route path='/collections' element={<CollectionPage />} />
         </Routes>
       </Router>
     </>

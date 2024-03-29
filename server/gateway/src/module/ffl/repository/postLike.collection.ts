@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { crypter } from '../../../common/crypter';
@@ -53,7 +53,7 @@ export class PostLikeCollection {
             .exec();
 
     return userIds.map((item) => {
-      return item.userId;
+      return String(item.userId);
     });
   }
 

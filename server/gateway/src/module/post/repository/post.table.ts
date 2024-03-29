@@ -1,10 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import { Post } from '../entity/post.entity';
 import { PostDto } from '../dto/post.dto';
 import { crypter } from 'src/common/crypter';
-import { PostContent } from 'sns-interfaces/client.interface';
 import { pgdb } from '../../../configs/postgres';
 
 @Injectable()
@@ -13,7 +12,6 @@ export class PostTable {
   constructor(
     @InjectRepository(Post)
     public db: Repository<Post>,
-    private dataSource: DataSource,
   ) {}
 
   async getPost(postId: string) {
@@ -122,6 +120,25 @@ export class PostTable {
       .catch((err) => {
         console.log('err when remove like, at post.repo.ts', err);
       });
+  }
+
+  async getPostIdsOrderByLikes(page: number): Promise<{ _ids: string[] }> {
+    const limit = 12;
+
+    const query = `
+    SELECT P.id AS _id
+    FROM post AS P
+    ORDER BY P.likes DESC
+    LIMIT ${limit} OFFSET ${page * limit};
+    `;
+
+    const result = await pgdb.client.query(query);
+
+    const tmp: string[] = result.rows.map((i) => {
+      return i._id;
+    });
+
+    return { _ids: tmp };
   }
 }
 

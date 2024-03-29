@@ -1,4 +1,4 @@
-import { TabPanelProps } from '../../TabPanel';
+import { TabPanelProps } from '../../SearchResultTap';
 import SearchPostList from './SearchPostList';
 
 //postlist 컴포넌트 가져오기,

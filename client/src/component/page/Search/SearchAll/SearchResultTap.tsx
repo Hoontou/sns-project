@@ -1,10 +1,10 @@
 import { Box, Tab, Tabs } from '@mui/material';
 import { Dispatch, useState } from 'react';
-import { PostPanel } from './panel/post/PostPanel';
-import { TagPanel } from './panel/tag/TagPanel';
-import { UserPanel } from './panel/user/UserPanel';
 import { Height } from '@mui/icons-material';
 import SearchBar from '../SearchBar';
+import { UserPanel } from './SearchResultPanel/user/UserPanel';
+import { PostPanel } from './SearchResultPanel/post/PostPanel';
+import { TagPanel } from './SearchResultPanel/tag/TagPanel';
 
 export interface TabPanelProps {
   children?: React.ReactNode;
@@ -20,7 +20,7 @@ export function a11yProps(index: number) {
   };
 }
 
-export const SearchTap = (props: {
+export const SearchResultTab = (props: {
   searchString: string | undefined;
   userId: string;
   setOpenSearchModal: Dispatch<React.SetStateAction<boolean>>;

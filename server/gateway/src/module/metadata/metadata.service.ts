@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { AppService } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import {
@@ -6,13 +6,19 @@ import {
   MetadataDto,
 } from './repository/metadata.collection';
 import { UploadMessage } from 'sns-interfaces';
+import { PostService } from '../post/post.service';
+import { FflService } from '../ffl/ffl.service';
 
 @Injectable()
 export class MetadataService {
+  private logger = new Logger(MetadataService.name);
+
   constructor(
     @Inject(forwardRef(() => AppService))
     private appService: AppService,
     private metadataCollection: MetadataCollection,
+    private postService: PostService,
+    private fflService: FflService,
   ) {}
 
   async getMetadatas(body: { userId: string; page: number }): Promise<{
@@ -81,5 +87,28 @@ export class MetadataService {
       files: content.files,
     };
     return this.metadataCollection.saveMeatadata(metadataDto);
+  }
+
+  async getMetadatasOrderByDate(body: { by: 'last' | 'first'; page: number }) {
+    const { metadatas } =
+      await this.metadataCollection.getMetadatasOrderByDate(body);
+    if (metadatas.length === 0) {
+      return { metadatas: [] };
+    }
+    return { metadatas };
+  }
+
+  async getMetadatasOrderByLikes(body: { page: number }) {
+    const _idsOrderedByLikes =
+      await this.postService.getPostIdsOrderByLikes(body);
+    const { metadatas } = await this.getMetadatasByPostId(_idsOrderedByLikes);
+
+    return { metadatas };
+  }
+
+  async getMyCollection(data: { page: number; userId: string }) {
+    const myCollections = await this.fflService.getMyLikes(data);
+
+    return { metadatas: myCollections };
   }
 }
