@@ -19,11 +19,6 @@ export interface LandingContent {
 @Controller('')
 export class AppController {
   constructor(private appService: AppService) {}
-  @Post('/tst')
-  tst(@Body() body) {
-    console.log(body);
-    return;
-  }
 
   //AppService의 메서드 이름은 client의 페이지 이름과 매칭
 

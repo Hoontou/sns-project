@@ -89,7 +89,7 @@ const Landing = () => {
 
       setHasNewMessage(hasNewMessage);
     });
-  }, [navigate]);
+  }, []);
 
   const renderPosts = posts.map((i, index) => {
     return (
@@ -111,21 +111,22 @@ const Landing = () => {
         return;
       }
       setUserId(authRes.userId);
+
+      getPost();
+
+      //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
+      const handleBack = (event: PopStateEvent) => {
+        openCo(-1);
+      };
+
+      //뒤로가기 event리스너 등록
+      window.addEventListener('popstate', handleBack);
+
+      return () => {
+        //이게 꼭 있어야한단다. 창 나갈때 반환인가?
+        window.removeEventListener('popstate', handleBack);
+      };
     });
-    getPost();
-
-    //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
-    const handleBack = (event: PopStateEvent) => {
-      openCo(-1);
-    };
-
-    //뒤로가기 event리스너 등록
-    window.addEventListener('popstate', handleBack);
-
-    return () => {
-      //이게 꼭 있어야한단다. 창 나갈때 반환인가?
-      window.removeEventListener('popstate', handleBack);
-    };
   }, []);
   return (
     <>

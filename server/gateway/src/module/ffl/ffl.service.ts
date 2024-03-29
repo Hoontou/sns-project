@@ -25,9 +25,7 @@ export class FflService {
     @Inject(forwardRef(() => PostService))
     private postService: PostService,
     private alertService: AlertService,
-  ) {
-    this.getMyLikes({ userId: '1', page: 0 });
-  }
+  ) {}
 
   async checkFollowed(body: {
     userTo: string;
