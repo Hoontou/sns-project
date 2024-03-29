@@ -61,7 +61,7 @@ const Upload = () => {
   //소켓연결 함수, 자식인 titleInput에서 실행함
   const connectSocket = () => {
     if (searchSocket === undefined) {
-      const socket = io();
+      const socket = io('http://localhost:4000/search');
       socket.on('searchUserOrHashtagResult', (data: SearchResult) => {
         setSearchResult(data);
         //데이터 가져왔으면 스핀멈춘다
@@ -152,6 +152,14 @@ const Upload = () => {
 
   //뒤로가기로 검색모달 끄는 useEffect
   useEffect(() => {
+    // authHoc().then((authRes) => {
+    //   if (authRes.success === false) {
+    //     alert('Err while Authentication, need login');
+    //     navigate('/signin');
+    //     return;
+    //   }
+    // });
+
     //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
     const handleBack = (event: PopStateEvent) => {
       setSearchbarDisplay(false);
@@ -165,20 +173,6 @@ const Upload = () => {
       window.removeEventListener('popstate', handleBack);
     };
   }, []);
-
-  //인증 effect
-  useEffect(() => {
-    //다른곳에서는 실패하면 /signin으로 이동하게.
-    authHoc().then((authRes) => {
-      if (authRes.success === false) {
-        alert('Err while Authentication, need login');
-        navigate('/signin');
-        return;
-      }
-      // setId(authRes.userId);
-      // setUsername(authRes.username !== undefined ? authRes.username : '');
-    });
-  }, [navigate]);
 
   //웹소켓에 검색날리는 effect, 연속입력 대비해서  타임아웃 걸었음
   useEffect(() => {

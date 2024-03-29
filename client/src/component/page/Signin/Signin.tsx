@@ -1,7 +1,13 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { SignInDto, AuthResultRes } from 'sns-interfaces';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Grid, TextField } from '@mui/material';
+import {
+  Backdrop,
+  Button,
+  CircularProgress,
+  Grid,
+  TextField,
+} from '@mui/material';
 import { authHoc } from '../../../common/auth.hoc';
 import Navbar from '../../common/Navbar/Navbar';
 import { axiosInstance } from '../../../App';
@@ -10,6 +16,7 @@ const Signin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('hoontou@gmail.com');
   const [password, setPassword] = useState('test');
+  const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
 
   const onEmailHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.currentTarget.value);
@@ -20,6 +27,8 @@ const Signin = () => {
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setOpenBackSpin(true);
     const signInForm: SignInDto = {
       email,
       password,
@@ -27,26 +36,26 @@ const Signin = () => {
     axiosInstance.post('/gateway/auth/signin', signInForm).then((res) => {
       const result: AuthResultRes = res.data;
       if (result.success === true) {
-        alert('login succeed');
-        //AuthSuccess
-        // localStorage.setItem('userId', result.userId); //AES로 암호화 된 id 원래(int)
-        // localStorage.setItem('username', res.data.username);
         navigate('/');
+        return;
       }
       if (result.success === false) {
+        setOpenBackSpin(false);
         alert('login failed');
       }
     });
   };
 
-  // useEffect(() => {
-  //   //다른곳에서는 실패하면 /signin으로 이동하게.
-  //   authHoc().then((authRes) => {
-  //     if (authRes.success === true) {
-  //       navigate('/');
-  //     }
-  //   });
-  // }, []);
+  useEffect(() => {
+    //다른곳에서는 실패하면 /signin으로 이동하게.
+    authHoc().then((authRes) => {
+      if (authRes.success === true) {
+        alert('이미 로그인 상태입니다.');
+        navigate('/');
+        return;
+      }
+    });
+  }, []);
 
   return (
     <div
@@ -99,6 +108,13 @@ const Signin = () => {
           </Link>
         </form>
       </div>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackSpin}
+      >
+        <div>로그인 중....&nbsp;&nbsp;&nbsp;</div>
+        <CircularProgress color='inherit' />
+      </Backdrop>
     </div>
   );
 };
