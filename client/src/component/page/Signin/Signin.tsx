@@ -53,7 +53,8 @@ const Signin = () => {
       className='container text-center'
       style={{ width: '90%', margin: '1.5rem auto' }}
     >
-      this is signin
+      로그인
+      <hr></hr>
       <div>
         <form onSubmit={onSubmitHandler}>
           <Grid container spacing={2}>

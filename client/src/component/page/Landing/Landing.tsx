@@ -64,30 +64,6 @@ const Landing = () => {
     });
   };
 
-  useEffect(() => {
-    authHoc().then((authRes) => {
-      if (authRes.success === false) {
-        alert('Err while Authentication, need login');
-        navigate('/signin');
-        return;
-      }
-      setSpin(false);
-      setUserId(authRes.userId);
-    });
-
-    axiosInstance.get('/gateway/alert/checkHasNewAlert').then((res) => {
-      const { hasNewAlert }: { hasNewAlert: boolean } = res.data;
-
-      setHasNewAlert(hasNewAlert);
-    });
-
-    axiosInstance.get('/gateway/dm/checkHasNewMessage').then((res) => {
-      const { hasNewMessage }: { hasNewMessage: boolean } = res.data;
-
-      setHasNewMessage(hasNewMessage);
-    });
-  }, []);
-
   const renderPosts = posts.map((i, index) => {
     return (
       <LandingPost

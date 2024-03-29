@@ -54,7 +54,9 @@ const Signup = () => {
       className='container text-center'
       style={{ width: '90%', margin: '1.5rem auto' }}
     >
-      this is signup, 비번 영어숫자만, 이름 영어만
+      <div>계정 등록</div>
+      username은 영어만, 비밀번호는 영어와 숫자만 가능.
+      <hr></hr>
       <form onSubmit={onSubmitHandler}>
         <Grid container spacing={2}>
           <Grid item xs={12}>

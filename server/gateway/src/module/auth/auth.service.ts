@@ -41,11 +41,11 @@ export class AuthService {
     //리프레시 토큰이 담겨왔으면 쿠키 다시세팅
     if (authInfo.success === true && authInfo.accessToken !== undefined) {
       res.cookie('Authorization', authInfo.accessToken, {
-        httpOnly: true,
+        httpOnly: false,
         maxAge: this.month,
       });
       res.cookie('createdAt', new Date(), {
-        httpOnly: true,
+        httpOnly: false,
         maxAge: this.month,
       });
       delete authInfo.accessToken; //쿠키에 담았으니까 리턴값에서는 지워준다.
@@ -84,11 +84,11 @@ export class AuthService {
       // const maxAgeInMilliseconds = maxAgeInSeconds * 1000; // 밀리초로 변환
       //로그인 플래그 성공이면 쿠키에 담아서 보낸다.
       res.cookie('Authorization', authInfo.accessToken, {
-        httpOnly: true,
+        httpOnly: false,
         maxAge: this.month,
       });
       res.cookie('createdAt', new Date(), {
-        httpOnly: true,
+        httpOnly: false,
         maxAge: this.month,
       });
       delete authInfo.accessToken; //쿠키에 담았으니까 지워준다.
