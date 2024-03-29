@@ -1,12 +1,12 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Button, TextField } from '@mui/material';
 import './UserSetting.css';
 import ChangeImg from './ChangeImg';
 import Navbar from '../../common/Navbar/Navbar';
 import { UserInfo } from 'sns-interfaces/client.interface';
 import { ReqUser } from 'sns-interfaces';
+import { axiosInstance } from '../../../App';
 
 const UserSetting = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const UserSetting = () => {
   const submitUsername = () => {
     setSpin(true);
 
-    axios
+    axiosInstance
       .post('/gateway/user/changeusername', { userId, username })
       .then((res) => {
         setSpin(false);
@@ -53,7 +53,7 @@ const UserSetting = () => {
   const submitIntroduceName = () => {
     setSpin(true);
 
-    axios
+    axiosInstance
       .post('/gateway/user/changeintroducename', { userId, introduceName })
       .then((res) => {
         setSpin(false);
@@ -87,20 +87,22 @@ const UserSetting = () => {
       return;
     }
 
-    axios.post('/gateway/user/changeintro', { userId, intro }).then((res) => {
-      setSpin(false);
-      const { success } = res.data;
-      if (success === false) {
-        alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해 주세요.');
+    axiosInstance
+      .post('/gateway/user/changeintro', { userId, intro })
+      .then((res) => {
+        setSpin(false);
+        const { success } = res.data;
+        if (success === false) {
+          alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해 주세요.');
+          return;
+        }
+        navigate('/feed');
         return;
-      }
-      navigate('/feed');
-      return;
-    });
+      });
   };
 
   useEffect(() => {
-    axios.post('/gateway/userinfo').then((res) => {
+    axiosInstance.post('/gateway/userinfo').then((res) => {
       const data:
         | {
             userinfo: UserInfo;

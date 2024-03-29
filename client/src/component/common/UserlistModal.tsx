@@ -6,14 +6,13 @@ import {
   ListItem,
   ListItemAvatar,
 } from '@mui/material';
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sample from '../../asset/sample1.jpg';
 import { requestUrl } from '../../common/etc';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Spinner from '../../common/Spinner';
-import { primaryColor } from '../../App';
+import { axiosInstance, primaryColor } from '../../App';
 
 type ListType = 'like' | 'follower' | 'following';
 
@@ -49,7 +48,7 @@ const UserlistModal = (props: {
     } else if (props.type === 'following') {
       setTitle('팔로잉');
     }
-    axios
+    axiosInstance
       .post('/gateway/ffl/getuserlist', {
         id: props.targetId,
         type: props.type,

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { genObjectId } from '../../../common/genobjectid';
 import './Upload.css';
@@ -9,10 +8,10 @@ import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
 import { resizer } from '../../../common/image.resizer';
 import { AuthResultRes } from 'sns-interfaces';
-import AlertSock from '../../AlertSocket';
 import TitleInput from './TitleInput';
 import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../../common/SearchResultModal';
+import { axiosInstance } from '../../../App';
 
 export const titleLen = 80;
 
@@ -123,7 +122,7 @@ const Upload = () => {
       return;
     }
 
-    //axios 보내기
+    //axiosInstance 보내기
     const formData = new FormData();
     //인풋에 많이 담아도 네개 까지만 컷한다.
     contents.map((i) => {
@@ -134,10 +133,10 @@ const Upload = () => {
     formData.append('alert_id', JSON.stringify({ alert_id: genObjectId() })); //게시물 업로드중 알람을 위한 Id
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     if (process.env.NODE_ENV === 'development') {
-      await axios //업로드 서버로 보낸다.
+      await axiosInstance //업로드 서버로 보낸다.
         .post('/upload/uploadtolocal', formData);
     } else {
-      await axios //업로드 서버로 보낸다.
+      await axiosInstance //업로드 서버로 보낸다.
         .post('/upload/uploadtoazure', formData);
     }
 

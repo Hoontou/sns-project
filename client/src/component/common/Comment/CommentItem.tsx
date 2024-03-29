@@ -7,9 +7,9 @@ import { getElapsedTimeString } from '../../../common/date.parser';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Cocomment from './Cocomment';
 import { CommentItems, SubmitForm } from './etc';
-import axios from 'axios';
 import { renderTitle } from '../Post/PostFooter';
 import CommentMenu from './CommentMenu';
+import { axiosInstance } from '../../../App';
 
 const CommentItem = (props: {
   postId: string;
@@ -51,7 +51,7 @@ const CommentItem = (props: {
   };
 
   const addLike = () => {
-    axios.post('/gateway/ffl/addcommentlike', {
+    axiosInstance.post('/gateway/ffl/addcommentlike', {
       commentId: props.content.commentId,
     });
     setLiked(!liked);
@@ -60,7 +60,7 @@ const CommentItem = (props: {
   };
 
   const removeLike = () => {
-    axios.post('/gateway/ffl/removecommentlike', {
+    axiosInstance.post('/gateway/ffl/removecommentlike', {
       commentId: props.content.commentId,
     });
     setLiked(!liked);

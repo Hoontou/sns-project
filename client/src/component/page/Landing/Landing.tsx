@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import Navbar from '../../common/Navbar/Navbar';
 import LandingPost from './LandingPost';
@@ -12,6 +11,7 @@ import { AiOutlineAlert } from 'react-icons/ai';
 import { IoMdPaperPlane } from 'react-icons/io';
 
 import './Landing.css';
+import { axiosInstance } from '../../../App';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ const Landing = () => {
 
   const getPost = () => {
     setSpin(true);
-    axios.post('gateway/landing', { page }).then((res) => {
+    axiosInstance.post('gateway/landing', { page }).then((res) => {
       const {
         last3daysPosts,
       }: {
@@ -78,13 +78,13 @@ const Landing = () => {
       setUserId(authRes.userId);
     });
 
-    axios.get('/gateway/alert/checkHasNewAlert').then((res) => {
+    axiosInstance.get('/gateway/alert/checkHasNewAlert').then((res) => {
       const { hasNewAlert }: { hasNewAlert: boolean } = res.data;
 
       setHasNewAlert(hasNewAlert);
     });
 
-    axios.get('/gateway/dm/checkHasNewMessage').then((res) => {
+    axiosInstance.get('/gateway/dm/checkHasNewMessage').then((res) => {
       const { hasNewMessage }: { hasNewMessage: boolean } = res.data;
 
       setHasNewMessage(hasNewMessage);

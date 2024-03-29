@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { emptyMetadata, Metadata } from '../../../../common/Post/Postlist';
-import axios from 'axios';
 import { PageItemLen } from '../MainTab';
 import { Box, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../../../common/etc';
 import { emptyPostFooterContent } from '../../../../common/Post/post.interfaces';
 import Post from '../../../../common/Post/Post';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { axiosInstance } from '../../../../../App';
 
 const FirstUpdatePanel = (props: {
   userId: string;
@@ -21,7 +21,7 @@ const FirstUpdatePanel = (props: {
 
   /**post가져오기 */
   const getPost = async () => {
-    await axios
+    await axiosInstance
       .post('/gateway/metadata/getMetadatasOrderByDate', {
         by: 'first',
         page,

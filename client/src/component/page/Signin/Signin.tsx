@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import axios from 'axios';
 import { SignInDto, AuthResultRes } from 'sns-interfaces';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Grid, TextField } from '@mui/material';
 import { authHoc } from '../../../common/auth.hoc';
 import Navbar from '../../common/Navbar/Navbar';
+import { axiosInstance } from '../../../App';
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Signin = () => {
       email,
       password,
     };
-    axios.post('/gateway/auth/signin', signInForm).then((res) => {
+    axiosInstance.post('/gateway/auth/signin', signInForm).then((res) => {
       const result: AuthResultRes = res.data;
       if (result.success === true) {
         alert('login succeed');

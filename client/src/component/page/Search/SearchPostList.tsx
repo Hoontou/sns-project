@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Box, Button, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
@@ -7,6 +6,7 @@ import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
 import Post from '../../common/Post/Post';
 import Spinner from '../../../common/Spinner';
 import { pageItemLen } from '../../common/Post/Postlist';
+import { axiosInstance } from '../../../App';
 
 export interface MetadataDto {
   _id: string;
@@ -61,7 +61,7 @@ const SearchPostList = (props: {
   const getPost = async () => {
     setSpin(true);
     try {
-      await axios
+      await axiosInstance
         .post('/gateway/post/getpostsbyhashtag', {
           hashtag: props.targetHashtag,
           page,

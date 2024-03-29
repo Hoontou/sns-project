@@ -4,13 +4,13 @@ import PostFooter from './PostFooter';
 import { requestUrl } from '../../../common/etc';
 import { Metadata } from './Postlist';
 import Comment from '../Comment/Comment';
-import axios from 'axios';
 import { emptyPostFooterContent } from './post.interfaces';
 import { useNavigate } from 'react-router-dom';
 import sample1 from '../../../asset/sample1.jpg';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { Avatar } from '@mui/material';
 import PostMenu from './PostMenu';
+import { axiosInstance } from '../../../App';
 
 // export
 const Post = (props: {
@@ -41,7 +41,7 @@ const Post = (props: {
     //뒤로가기 막기 위해 아래코드 필요.
     window.history.pushState(null, document.title, window.location.href);
 
-    axios
+    axiosInstance
       .post('/gateway/postfooter', {
         postId: props.metadata._id,
         targetId: props.metadata.userId,

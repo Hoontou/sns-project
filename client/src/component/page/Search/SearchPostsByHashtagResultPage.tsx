@@ -1,10 +1,7 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Metadata, emptyMetadata } from '../../common/Post/Postlist';
 import Navbar from '../../common/Navbar/Navbar';
-import Spinner from '../../../common/Spinner';
-import SearchPostlist from './SearchPostList';
 import SearchPostList from './SearchPostList';
 
 //커밋로그

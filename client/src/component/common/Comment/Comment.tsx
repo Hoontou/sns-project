@@ -7,7 +7,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import CommentItem from './CommentItem';
-import axios from 'axios';
 import CommentInput from './CommentInput';
 import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft } from 'react-icons/vsc';
@@ -23,6 +22,7 @@ import { SearchResult } from '../../page/Upload/Upload';
 import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../SearchResultModal';
 import { renderTitle } from '../Post/PostFooter';
+import { axiosInstance } from '../../../App';
 
 const Comment = (props: {
   createdAt: string;
@@ -131,7 +131,7 @@ const Comment = (props: {
       return;
     }
     setPending(true);
-    axios
+    axiosInstance
       .post('/gateway/post/getcommentlist', {
         postId: props.postFooterContent._id,
         page,
@@ -172,7 +172,7 @@ const Comment = (props: {
     page: number,
     index: number
   ): Promise<number> => {
-    return axios
+    return axiosInstance
       .post('/gateway/post/getcocommentlist', {
         commentId,
         page,
@@ -199,20 +199,20 @@ const Comment = (props: {
     if (submitingComment === '') {
       return;
     }
-    //1. submitForm의 타입체크 후 post할 url 결정해서 axios
+    //1. submitForm의 타입체크 후 post할 url 결정해서 axiosInstance
     //2. img, username 가져와서 댓, 대댓 컴포넌트 생성
     //3. 타입에 따라 댓글리스트에 푸시
     if (submitForm.type === 'cocomment') {
       //대댓작성 request
       //댓글작성자에게 알림 넣기위해서 주인 id도 보냄
-      axios.post('/gateway/post/addcocomment', {
+      axiosInstance.post('/gateway/post/addcocomment', {
         cocomment: submitingComment,
         commentId: submitForm.commentId,
         commentOwnerUserId: submitForm.commentOwnerUserId,
       });
 
       //내 username, img 가져온다.
-      const { img, username, userId } = await axios
+      const { img, username, userId } = await axiosInstance
         .get('/gateway/user/getusernamewithimg')
         .then((res) => {
           const data: { img: string; username: string; userId: string } =
@@ -252,14 +252,14 @@ const Comment = (props: {
     if (submitForm.type === 'comment') {
       //댓 작성 request
       //글작성자에게 알림 넣기위해서 주인 id도 보냄
-      axios.post('/gateway/post/addcomment', {
+      axiosInstance.post('/gateway/post/addcomment', {
         comment: submitingComment,
         postId: props.postFooterContent._id,
         postOwnerUserId: props.postFooterContent.userId,
       });
 
       //내 username, img 가져온다.
-      const { img, username, userId } = await axios
+      const { img, username, userId } = await axiosInstance
         .get('/gateway/user/getusernamewithimg')
         .then((res) => {
           const data: { img: string; username: string; userId: string } =

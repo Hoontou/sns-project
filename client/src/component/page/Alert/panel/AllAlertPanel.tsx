@@ -1,5 +1,4 @@
 import { Avatar, ListItem, ListItemAvatar } from '@mui/material';
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +8,7 @@ import { getElapsedTimeString } from '../../../../common/date.parser';
 import { requestUrl } from '../../../../common/etc';
 import sample from '../../../../asset/sample1.jpg';
 import { AlertPageLen } from '../Alert';
+import { axiosInstance } from '../../../../App';
 
 const AllAlertPanel = (props: {
   index: number;
@@ -32,7 +32,7 @@ const AllAlertPanel = (props: {
   >(undefined);
 
   const getAllAlerts = () => {
-    axios.post('/gateway/alert/getAllAlert', { page }).then((res) => {
+    axiosInstance.post('/gateway/alert/getAllAlert', { page }).then((res) => {
       const data: {
         allAlerts: {
           _id: string;
@@ -73,7 +73,7 @@ const AllAlertPanel = (props: {
             ? item.content.whereId
             : item.content.postId;
 
-        axios
+        axiosInstance
           .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
           .then((res) => {
             const result: {
@@ -131,7 +131,7 @@ const AllAlertPanel = (props: {
     //좋아요 알림
     if (item.content.type === 'like') {
       const postId = item.content.postId;
-      // axios
+      // axiosInstance
       //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
       //   .then((res) => {
       //     const result: {
@@ -185,7 +185,7 @@ const AllAlertPanel = (props: {
     if (item.content.type === 'comment') {
       const postId = item.content.postId;
       const commentId = item.content.commentId;
-      // axios
+      // axiosInstance
       //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
       //   .then((res) => {
       //     const result: {
@@ -334,7 +334,7 @@ const AllAlertPanel = (props: {
       }
       if (item.content.where === 'post') {
         const postId = item.content.whereId;
-        // axios
+        // axiosInstance
         //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
         //   .then((res) => {
         //     const result: {

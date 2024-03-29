@@ -1,5 +1,4 @@
 import { Avatar, ListItem, ListItemAvatar } from '@mui/material';
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +8,7 @@ import { getElapsedTimeString } from '../../../../common/date.parser';
 import { requestUrl } from '../../../../common/etc';
 import sample from '../../../../asset/sample1.jpg';
 import { AlertPageLen } from '../Alert';
+import { axiosInstance } from '../../../../App';
 
 const UnReadAlertPanel = (props: {
   index: number;
@@ -32,64 +32,66 @@ const UnReadAlertPanel = (props: {
   >(undefined);
 
   const getUnreadAlerts = () => {
-    axios.post('/gateway/alert/getUnreadAlert', { page }).then((res) => {
-      const data: {
-        unreadAlerts: {
-          _id: string;
-          content: AlertContentUnion & {
-            userinfo: { username: string; img: string };
-            img?: string;
-          };
-          read: boolean;
-          createdAt: Date;
-        }[];
-      } = res.data;
+    axiosInstance
+      .post('/gateway/alert/getUnreadAlert', { page })
+      .then((res) => {
+        const data: {
+          unreadAlerts: {
+            _id: string;
+            content: AlertContentUnion & {
+              userinfo: { username: string; img: string };
+              img?: string;
+            };
+            read: boolean;
+            createdAt: Date;
+          }[];
+        } = res.data;
 
-      if (data.unreadAlerts.length < AlertPageLen) {
-        setHasMore(false);
-      }
-
-      setPage(page + 1);
-      const origin = alerts === undefined ? [] : [...alerts];
-      setAlerts([...origin, ...data.unreadAlerts]);
-
-      const tmpAlerts = data.unreadAlerts;
-
-      //알람 가져온 후, 포스트 관련 알람이면 미리보기 이미지 가져옴
-      tmpAlerts.map(async (item, index) => {
-        if (
-          item.content.type === 'follow' ||
-          item.content.type === 'cocomment'
-        ) {
-          return;
+        if (data.unreadAlerts.length < AlertPageLen) {
+          setHasMore(false);
         }
 
-        if (item.content.type === 'tag' && item.content.where !== 'post') {
+        setPage(page + 1);
+        const origin = alerts === undefined ? [] : [...alerts];
+        setAlerts([...origin, ...data.unreadAlerts]);
+
+        const tmpAlerts = data.unreadAlerts;
+
+        //알람 가져온 후, 포스트 관련 알람이면 미리보기 이미지 가져옴
+        tmpAlerts.map(async (item, index) => {
+          if (
+            item.content.type === 'follow' ||
+            item.content.type === 'cocomment'
+          ) {
+            return;
+          }
+
+          if (item.content.type === 'tag' && item.content.where !== 'post') {
+            return;
+          }
+
+          const postId =
+            item.content.type === 'tag'
+              ? item.content.whereId
+              : item.content.postId;
+
+          axiosInstance
+            .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
+            .then((res) => {
+              const result: {
+                metadatas: MetadataDto[];
+              } = res.data;
+              const img = result.metadatas[0].files[0];
+              tmpAlerts[index].content.img = `${requestUrl}/${postId}/${img}`;
+            });
           return;
-        }
+        });
 
-        const postId =
-          item.content.type === 'tag'
-            ? item.content.whereId
-            : item.content.postId;
-
-        axios
-          .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
-          .then((res) => {
-            const result: {
-              metadatas: MetadataDto[];
-            } = res.data;
-            const img = result.metadatas[0].files[0];
-            tmpAlerts[index].content.img = `${requestUrl}/${postId}/${img}`;
-          });
-        return;
+        //도저히 게시물 사진 채우는게 안되서 오만짓 다하다가 이상한 형태로 구현했음
+        setTimeout(() => {
+          setAlerts([...origin, ...tmpAlerts]);
+        }, 500);
       });
-
-      //도저히 게시물 사진 채우는게 안되서 오만짓 다하다가 이상한 형태로 구현했음
-      setTimeout(() => {
-        setAlerts([...origin, ...tmpAlerts]);
-      }, 500);
-    });
   };
 
   useEffect(() => {
@@ -99,7 +101,7 @@ const UnReadAlertPanel = (props: {
   }, [props.value]);
 
   const sendAlertReadSignal = (alert_id: string) => {
-    return axios.post('/gateway/alert/readAlert', { alert_id });
+    return axiosInstance.post('/gateway/alert/readAlert', { alert_id });
   };
 
   const renderAlerts = alerts?.map((item, index) => {
@@ -137,7 +139,7 @@ const UnReadAlertPanel = (props: {
     //좋아요 알림
     if (item.content.type === 'like') {
       const postId = item.content.postId;
-      // axios
+      // axiosInstance
       //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
       //   .then((res) => {
       //     const result: {
@@ -193,7 +195,7 @@ const UnReadAlertPanel = (props: {
     if (item.content.type === 'comment') {
       const postId = item.content.postId;
       const commentId = item.content.commentId;
-      // axios
+      // axiosInstance
       //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
       //   .then((res) => {
       //     const result: {
@@ -350,7 +352,7 @@ const UnReadAlertPanel = (props: {
       }
       if (item.content.where === 'post') {
         const postId = item.content.whereId;
-        // axios
+        // axiosInstance
         //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
         //   .then((res) => {
         //     const result: {

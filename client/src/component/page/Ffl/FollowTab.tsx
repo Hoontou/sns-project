@@ -6,7 +6,6 @@ import {
   Tab,
   Tabs,
 } from '@mui/material';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sample from '../../../asset/sample2.jpg';
@@ -14,7 +13,7 @@ import { requestUrl } from '../../../common/etc';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Spinner from '../../../common/Spinner';
 import FflSearchBar from './FflSearchBar';
-import { SearchResult } from '../Upload/Upload';
+import { axiosInstance } from '../../../App';
 
 function a11yProps(index: number) {
   return {
@@ -56,7 +55,7 @@ const FollowTab = (props: {
 
   const getCountByUsername = () => {
     //유저에 요청
-    axios
+    axiosInstance
       .post('/gateway/user/getFollowCount', { username: props.target })
       .then((res) => {
         const result: { follower: number; following: number; userId: string } =
@@ -138,7 +137,7 @@ export const FollowListPannel = (props: {
     //탭 왔다갔다할 때마다 계속 불러오는걸 막기위해
     setFirstReq(false);
 
-    axios
+    axiosInstance
       .post('/gateway/ffl/getuserlist', {
         id: props.targetUserId,
         type: props.index === 0 ? 'follower' : 'following',

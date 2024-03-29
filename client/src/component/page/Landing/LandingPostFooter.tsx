@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
 
@@ -7,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';
 import { renderTitle } from '../../common/Post/PostFooter';
 import UserlistModal from '../../common/UserlistModal';
+import { axiosInstance } from '../../../App';
 
 //좋아요버튼, 게시글 좋아요 수, 댓글 수, 댓글 불러오기 후 댓글창 열기
 const LandingPostFooter = (props: {
@@ -30,7 +30,7 @@ const LandingPostFooter = (props: {
       likesCount: postContent.likesCount + 1,
       liked: !postContent.liked,
     });
-    axios
+    axiosInstance
       .post('/gateway/ffl/addLike', {
         userId: props.userId,
         postId: props.postId,
@@ -44,7 +44,7 @@ const LandingPostFooter = (props: {
       });
   };
   const removeLike = () => {
-    axios
+    axiosInstance
       .post('/gateway/ffl/removelike', {
         userId: props.userId,
         postId: props.postId,

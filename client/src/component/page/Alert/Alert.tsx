@@ -1,13 +1,5 @@
-import { Avatar, ListItem, ListItemAvatar, Tab, Tabs } from '@mui/material';
-import axios from 'axios';
+import { Tab, Tabs } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { AlertContentUnion } from 'sns-interfaces/alert.interface';
-import { requestUrl } from '../../../common/etc';
-import sample from '../../../asset/sample1.jpg';
-import { getElapsedTimeString } from '../../../common/date.parser';
-import { useNavigate } from 'react-router-dom';
-import { MetadataDto } from 'sns-interfaces';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { authHoc } from '../../../common/auth.hoc';
 import AllAlertPanel from './panel/AllAlertPanel';
 import UnReadAlertPanel from './panel/UnreadAlert';

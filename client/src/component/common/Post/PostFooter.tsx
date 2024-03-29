@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';
 import UserlistModal from '../UserlistModal';
+import { axiosInstance } from '../../../App';
 
 /**글에서 태그를 a태그로 감싸서 리턴해줌 */
 export const renderTitle = (title: string) => {
@@ -67,7 +67,7 @@ const PostFooter = (props: {
       likesCount: postContent.likesCount + 1,
       liked: !postContent.liked,
     });
-    axios
+    axiosInstance
       .post('/gateway/ffl/addLike', {
         postId: props.postId,
         postOwnerUserId: props.postFooterContent.userId,
@@ -81,7 +81,7 @@ const PostFooter = (props: {
       });
   };
   const removeLike = () => {
-    axios
+    axiosInstance
       .post('/gateway/ffl/removelike', {
         postId: props.postId,
       })

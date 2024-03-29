@@ -18,6 +18,7 @@ import AlertComponent from './component/page/Alert/Alert';
 import InBox from './component/page/Dm/Inbox/DmInbox';
 import DmChatRoom from './component/page/Dm/chatroom/DmChatRoom';
 import CollectionPage from './component/page/Collection/CollectionPage';
+import axios from 'axios';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#3f50b5';
@@ -26,6 +27,10 @@ export const mainTemplateStyle = {
   margin: '0.7rem auto',
   paddingBottom: '3.5rem',
 };
+export const axiosInstance = axios.create({
+  // baseURL: 'http://localhost:4000',
+  withCredentials: true,
+});
 
 function App() {
   return (

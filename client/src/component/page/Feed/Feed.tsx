@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ReqUser } from 'sns-interfaces';
@@ -7,6 +6,7 @@ import Userinfo from '../../common/Userinfo/Userinfo';
 import Postlist from '../../common/Post/Postlist';
 import Navbar from '../../common/Navbar/Navbar';
 import Spinner from '../../../common/Spinner';
+import { axiosInstance } from '../../../App';
 
 export const emptyUserInfo: UserInfo = {
   userId: '',
@@ -38,7 +38,7 @@ const Feed = () => {
 
   useEffect(() => {
     //타겟유저네임만 보내면, 가져와야할게 내정보인지 남의정보인지 판단.
-    axios.post('/gateway/userinfo', { targetUsername }).then((res) => {
+    axiosInstance.post('/gateway/userinfo', { targetUsername }).then((res) => {
       const data:
         | {
             userinfo: UserInfo;

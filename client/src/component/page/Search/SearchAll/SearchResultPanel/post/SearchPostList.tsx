@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Box, Button, Grid, Modal } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -8,6 +7,7 @@ import Spinner from '../../../../../../common/Spinner';
 import Post from '../../../../../common/Post/Post';
 import { requestUrl } from '../../../../../../common/etc';
 import { pageItemLen } from '../../../../../common/Post/Postlist';
+import { axiosInstance } from '../../../../../../App';
 
 const SearchPostList = (props: { searchString?: string; userId: string }) => {
   const [spin, setSpin] = useState<boolean>(true);
@@ -38,7 +38,7 @@ const SearchPostList = (props: { searchString?: string; userId: string }) => {
   const getPost = async () => {
     setSpin(true);
     try {
-      await axios
+      await axiosInstance
         .post('/gateway/post/searchpostsbysearchstring', {
           searchString: props.searchString,
           page,

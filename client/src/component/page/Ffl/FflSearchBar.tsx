@@ -3,8 +3,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { ChangeEvent, Dispatch, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { SearchResult } from '../Upload/Upload';
-import axios from 'axios';
+import { axiosInstance } from '../../../App';
 
 const FflSearchBar = (props: {
   setSearchResult: Dispatch<
@@ -26,7 +25,7 @@ const FflSearchBar = (props: {
   };
 
   const requestSearch = () => {
-    axios
+    axiosInstance
       .post('/gateway/ffl/searchUserFfl', {
         target: props.targetUserId,
         type: props.type,

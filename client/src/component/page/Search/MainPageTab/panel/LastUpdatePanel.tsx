@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { emptyMetadata, Metadata } from '../../../../common/Post/Postlist';
-import axios from 'axios';
+import { axiosInstance } from '../../../../../App';
 import { PageItemLen } from '../MainTab';
 import { Box, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../../../common/etc';
@@ -21,7 +21,7 @@ const LastUpdatePanel = (props: {
 
   /**post가져오기 */
   const getPost = async () => {
-    await axios
+    await axiosInstance
       .post('/gateway/metadata/getMetadatasOrderByDate', {
         by: 'last',
         page,

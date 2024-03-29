@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, useState, useEffect } from 'react';
-import axios from 'axios';
 import { SignUpDto } from 'sns-interfaces';
 import { Button, Grid, TextField } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../../../App';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const Signup = () => {
     }; //나중에 main-back의 DTO에 부합하지 않으면 모달로 오류뱉어야함
     //유저네임 4~10개
     //비번은 영어랑숫자만 4~20개 (현재는,)
-    axios.post('/gateway/auth/signup', signUpForm).then((res) => {
+    axiosInstance.post('/gateway/auth/signup', signUpForm).then((res) => {
       if (res.data.success === true) {
         alert('signup succeed');
         navigate('/signin');

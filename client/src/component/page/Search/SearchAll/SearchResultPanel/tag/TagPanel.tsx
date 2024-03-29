@@ -1,12 +1,12 @@
 import { SearchedHashtag, SearchedUser } from '../../../../Upload/Upload';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { List, ListItem } from '@mui/material';
 import { SearchedTag } from 'sns-interfaces/grpc.interfaces';
 import Spinner from '../../../../../../common/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { TabPanelProps } from '../../SearchResultTap';
+import { axiosInstance } from '../../../../../../App';
 
 const pageLen = 20;
 
@@ -22,7 +22,7 @@ export const TagPanel = (props: TabPanelProps) => {
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   const searchTagsBySearchString = () => {
-    return axios
+    return axiosInstance
       .post('/gateway/post/searchhashtagsbysearchstring', {
         searchString,
         page,

@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { AuthResultRes } from 'sns-interfaces';
 import { authHoc } from '../../../common/auth.hoc';
 import { resizer } from '../../../common/image.resizer';
-import axios from 'axios';
 import { requestUrl } from '../../../common/etc';
 import sample from '../../../asset/sample1.jpg';
+import { axiosInstance } from '../../../App';
 
 const ChangeImg = (props: { img: string }) => {
   const navigate = useNavigate();
@@ -65,7 +65,7 @@ const ChangeImg = (props: { img: string }) => {
       return;
     }
 
-    //axios 보내기
+    //axiosInstance 보내기
     const formData = new FormData();
     //인풋에 많이 담아도 네개 까지만 컷한다.
     contents.map((i) => {
@@ -73,10 +73,10 @@ const ChangeImg = (props: { img: string }) => {
     });
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     if (process.env.NODE_ENV === 'development') {
-      await axios //업로드 서버로 보낸다.
+      await axiosInstance //업로드 서버로 보낸다.
         .post('/upload/uploaduserimgtoloacl', formData);
     } else {
-      await axios //업로드 서버로 보낸다.
+      await axiosInstance //업로드 서버로 보낸다.
         .post('/upload/uploaduserimgtoazure', formData);
     }
 

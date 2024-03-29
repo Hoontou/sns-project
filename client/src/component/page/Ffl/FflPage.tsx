@@ -1,9 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { mainTemplateStyle } from '../../../App';
-import { Box, Tab, Tabs } from '@mui/material';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import FollowTab, { FollowListPannel } from './FollowTab';
+import FollowTab from './FollowTab';
 import LikeTab from './LikeTab';
 
 export interface TabPanelProps {

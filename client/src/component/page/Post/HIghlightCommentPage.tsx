@@ -4,11 +4,11 @@ import {
 } from 'sns-interfaces/client.interface';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft } from 'react-icons/vsc';
 import { CommentItems, SubmitForm } from '../../common/Comment/etc';
 import CommentItem from '../../common/Comment/CommentItem';
+import { axiosInstance } from '../../../App';
 
 const HighlightCommentPage = () => {
   const { commentId } = useParams(); //url에서 가져온 username
@@ -28,7 +28,7 @@ const HighlightCommentPage = () => {
   /**코멘트 가져오기 */
   const getComment = async () => {
     setSpin(true);
-    axios
+    axiosInstance
       .post('/gateway/post/getcomment', {
         commentId,
       })
@@ -66,7 +66,7 @@ const HighlightCommentPage = () => {
     page: number,
     index: number
   ): Promise<number> => {
-    return axios
+    return axiosInstance
       .post('/gateway/post/getcocommentlist', {
         commentId,
         page,

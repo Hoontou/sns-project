@@ -3,13 +3,13 @@ import { requestUrl } from '../../../../common/etc';
 import { CocommentContent } from 'sns-interfaces/client.interface';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft, VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import sample1 from '../../../../asset/sample1.jpg';
 import CommentMenu from '../../../common/Comment/CommentMenu';
 import { renderTitle } from '../../../common/Post/PostFooter';
 import { getElapsedTimeString } from '../../../../common/date.parser';
+import { axiosInstance } from '../../../../App';
 
 const emptyCommentItemContent: CommentItemContent = {
   liked: false,
@@ -52,7 +52,7 @@ const HighlightCocommentPage = () => {
 
   /**코멘트 가져오기 */
   const getComment = async () => {
-    axios
+    axiosInstance
       .post('/gateway/post/getHighlightCocomment', {
         cocommentId,
       })

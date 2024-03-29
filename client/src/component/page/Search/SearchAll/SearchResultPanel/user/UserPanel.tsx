@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Avatar, List, ListItem, ListItemAvatar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { SearchedUser } from 'sns-interfaces/grpc.interfaces';
@@ -8,6 +7,7 @@ import { requestUrl } from '../../../../../../common/etc';
 import Spinner from '../../../../../../common/Spinner';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { TabPanelProps } from '../../SearchResultTap';
+import { axiosInstance } from '../../../../../../App';
 
 //user서버의 elastic.ts의 searchUsersBySearchString메서드와 동기화
 const pageLen = 20; //한번에 몇개의 유저 가져올지
@@ -24,7 +24,7 @@ export const UserPanel = (props: TabPanelProps) => {
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   const searchUsersBySearchString = () => {
-    return axios
+    return axiosInstance
       .post('/gateway/user/searchusersbysearchstring', {
         searchString,
         page,

@@ -5,10 +5,10 @@ import { requestUrl } from '../../../common/etc';
 import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { CocommentContent } from 'sns-interfaces/client.interface';
 import { renderTitle } from '../Post/PostFooter';
 import CommentMenu from './CommentMenu';
+import { axiosInstance } from '../../../App';
 
 //유저img, 좋아요수, 좋아요 했나, 대댓글수, 작성일자, 알람 보내야하니까 유저id까지.
 
@@ -23,7 +23,7 @@ const Cocomment = (props: {
   const [likesCount, setLikesCount] = useState<number>(0);
 
   const addLike = () => {
-    axios.post('/gateway/ffl/addcocommentlike', {
+    axiosInstance.post('/gateway/ffl/addcocommentlike', {
       cocommentId: props.content.cocommentId,
     });
     setLiked(!liked);
@@ -32,7 +32,7 @@ const Cocomment = (props: {
   };
 
   const removeLike = () => {
-    axios.post('/gateway/ffl/removecocommentlike', {
+    axiosInstance.post('/gateway/ffl/removecocommentlike', {
       cocommentId: props.content.cocommentId,
     });
     setLiked(!liked);

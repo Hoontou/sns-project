@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { emptyMetadata, Metadata } from '../../common/Post/Postlist';
-import axios from 'axios';
 import { PageItemLen } from '../Search/MainPageTab/MainTab';
 import { Box, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
@@ -11,6 +10,7 @@ import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
 import { Typography } from 'antd';
 import Navbar from '../../common/Navbar/Navbar';
+import { axiosInstance } from '../../../App';
 const { Title } = Typography;
 
 const CollectionPage = () => {
@@ -24,7 +24,7 @@ const CollectionPage = () => {
 
   /**post가져오기 */
   const getPost = async () => {
-    await axios
+    await axiosInstance
       .post('/gateway/metadata/getMyCollections', {
         page,
       })

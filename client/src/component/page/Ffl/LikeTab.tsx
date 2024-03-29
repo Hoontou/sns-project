@@ -1,13 +1,12 @@
 import { Avatar, ListItem, ListItemAvatar } from '@mui/material';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { requestUrl } from '../../../common/etc';
 import Spinner from '../../../common/Spinner';
 import sample from '../../../asset/sample2.jpg';
-import FflSearchBar from './FflSearchBar';
 import LikeSearchBar from './LikeSearchBar';
+import { axiosInstance } from '../../../App';
 
 //gateway에서 10개씩 보내줌.
 //like.repo.ts , follow.repo.ts 에서 getUserIds함수랑 동기화
@@ -33,7 +32,7 @@ const LikeTab = (props: { targetPost: string | undefined }) => {
   };
 
   const getUserList = () => {
-    axios
+    axiosInstance
       .post('/gateway/ffl/getuserlist', {
         id: props.targetPost,
         type: 'like',

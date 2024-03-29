@@ -4,12 +4,12 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 // import AddIcon from '@mui/icons-material/Add';
 import { forwardRef, useState } from 'react';
-import axios from 'axios';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import { axiosInstance } from '../../../App';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -46,7 +46,7 @@ const PostMenu = (props: { postId: string }) => {
   };
 
   const requestDeletePost = () => {
-    axios.post('/gateway/post/deletePost', { postId: props.postId });
+    axiosInstance.post('/gateway/post/deletePost', { postId: props.postId });
   };
 
   return (

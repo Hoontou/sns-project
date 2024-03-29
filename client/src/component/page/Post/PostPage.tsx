@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { requestUrl } from '../../../common/etc';
-import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import sample1 from '../../../asset/sample1.jpg';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
@@ -12,6 +11,7 @@ import Comment from '../../common/Comment/Comment';
 import { Metadata, emptyMetadata } from '../Search/SearchPostList';
 import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
 import Navbar from '../../common/Navbar/Navbar';
+import { axiosInstance } from '../../../App';
 // export
 const PostPage = () => {
   const { postId } = useParams(); //url에서 가져온 username
@@ -37,7 +37,7 @@ const PostPage = () => {
     }
 
     //메타데이터 가져오기
-    axios
+    axiosInstance
       .post('/gateway/metadata/getMetadataWithPostFooter', {
         postId,
       })

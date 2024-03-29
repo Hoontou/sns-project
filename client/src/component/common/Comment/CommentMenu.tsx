@@ -3,10 +3,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 // import AddIcon from '@mui/icons-material/Add';
 import { forwardRef, useState } from 'react';
-import axios from 'axios';
 
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import { axiosInstance } from '../../../App';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -48,14 +48,14 @@ const CommentMenu = (props: {
   };
 
   const requestDeleteComment = () => {
-    axios.post('/gateway/post/deleteComment', {
+    axiosInstance.post('/gateway/post/deleteComment', {
       commentId: String(props.commentId),
       postId: props.postId,
     });
   };
 
   const requestDeleteCocomment = () => {
-    axios.post('/gateway/post/deleteCocomment', {
+    axiosInstance.post('/gateway/post/deleteCocomment', {
       commentId: String(props.commentId),
       cocommentId: String(props.cocommentId),
     });

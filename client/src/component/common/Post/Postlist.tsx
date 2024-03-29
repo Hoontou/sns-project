@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Box, Button, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
 import Post from './Post';
 import { emptyPostFooterContent } from './post.interfaces';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { axiosInstance } from '../../../App';
 
 export interface MetadataDto {
   _id: string;
@@ -56,7 +56,7 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
   const getPost = async () => {
     setSpin(true);
     try {
-      await axios
+      await axiosInstance
         .post('/gateway/metadata/getmetadatas', {
           userId: props.targetId === undefined ? props.userId : props.targetId,
           page,
