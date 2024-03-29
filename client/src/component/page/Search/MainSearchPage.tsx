@@ -31,7 +31,7 @@ const MainSearchPage = () => {
     >
       <div
         style={{
-          width: '95%',
+          width: '97%',
           margin: '0.7rem auto',
         }}
       >

@@ -70,7 +70,7 @@ const Feed = () => {
   }, []);
 
   return (
-    <div style={{ paddingBottom: '3.5rem' }}>
+    <div style={{ paddingBottom: '3.5rem', width: '97%', margin: 'auto' }}>
       {spin && (
         <div style={{ position: 'absolute', left: '45%', top: '30%' }}>
           <Spinner />

@@ -5,6 +5,7 @@ import { crypter } from '../../../common/crypter';
 import { PostLikeSchemaDefinition } from './schema/postLike.schema';
 import { cacheManager, userinfo } from '../common/userlist.cache.manager';
 import { findMatchingIndices } from './follow.cellection';
+import { MetadataDto } from '../../../module/metadata/repository/metadata.collection';
 @Injectable()
 export class PostLikeCollection {
   constructor(
@@ -96,5 +97,24 @@ export class PostLikeCollection {
     console.log('list is existed, no db request');
 
     return findMatchingIndices(userList, data.searchString);
+  }
+
+  async getMyLikes(data: { userId: string; page: number }) {
+    const len = 12;
+    const _ids = await this.postLikeModel
+      .find({
+        userId: crypter.decrypt(data.userId),
+      })
+      .populate('getMetadata')
+      .sort({ _id: -1 })
+      .limit(len)
+      .skip(len * data.page)
+      .exec();
+
+    const tmp = _ids.map((i) => {
+      return i.$getPopulatedDocs()[0] as unknown;
+    }) as MetadataDto[];
+
+    return tmp;
   }
 }

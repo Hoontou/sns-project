@@ -93,7 +93,7 @@ const CollectionPage = () => {
   });
 
   return (
-    <div style={{ width: '95%', margin: '1.5rem auto' }}>
+    <div style={{ width: '97%', margin: '1.5rem auto' }}>
       <div>
         <Title level={3}>내 좋아요</Title>
       </div>

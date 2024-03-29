@@ -31,6 +31,9 @@ const Landing = () => {
   const [hasNewAlert, setHasNewAlert] = useState<boolean>(false);
   const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
 
+  const userAgent = navigator.userAgent;
+  console.log('User-Agent:', userAgent);
+
   const openCo = (index: number) => {
     if (index === -1) {
       setOpenComment(false);
