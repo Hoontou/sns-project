@@ -9,7 +9,7 @@ import { crypter } from '../../common/crypter';
 import { DirectService } from './direct.service';
 import { ChatRoomSchemaType } from './repository/schema/chatRoom.schema';
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({ namespace: 'direct', cors: { origin: '*' } })
 export class DirectGateway implements OnGatewayConnection {
   private readonly logger = new Logger(DirectGateway.name);
   constructor(private directService: DirectService) {}
@@ -18,7 +18,6 @@ export class DirectGateway implements OnGatewayConnection {
   server: Server;
 
   async handleConnection(socket: Socket) {
-    console.log(1);
     const userId = Number(
       crypter.decrypt(socket.handshake.headers.userid as string),
     );

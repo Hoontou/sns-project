@@ -12,6 +12,12 @@ import {
   SearchResult,
   SnsPostsDocType,
 } from './types/search.types';
+import {
+  awsElasticSearch,
+  localElasticSearch,
+} from 'src/configs/elascit.config';
+
+const NODE_ENV = process.env.NODE_ENV;
 
 @Injectable()
 export class SearchService implements OnModuleInit {
@@ -21,13 +27,9 @@ export class SearchService implements OnModuleInit {
   private readonly SnsUsersIndex = 'sns.users';
 
   constructor() {
-    this.elasticClient = new Client({
-      node: 'http://elasticsearch:9200',
-      auth: {
-        username: 'elastic',
-        password: 'elastic',
-      },
-    });
+    this.elasticClient = new Client(
+      NODE_ENV ? localElasticSearch : awsElasticSearch,
+    );
   }
 
   onModuleInit() {

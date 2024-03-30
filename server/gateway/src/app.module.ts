@@ -15,25 +15,19 @@ import { UserController } from './module/user/user.controller';
 import { AlertController } from './module/alert/alert.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
-import { typeORMConfig } from './configs/typeorm.config';
+import { awsTypeORMConfig, localTypeORMConfig } from './configs/typeorm.config';
 import { DirectController } from './module/direct/direct.controller';
 import { DirectModule } from './module/direct/direct.module';
 import { SearchModule } from './module/search/search.module';
 import { UploadModule } from './module/upload/upload.module';
 
-const MONGO_URI = process.env.MONGO_URI;
-
-const mongoUrl = (url: string | undefined) => {
-  if (url === undefined) {
-    throw new Error('MONGO URL IS MISSING');
-  }
-  return url;
-};
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://mgdb:27017/sns';
+const NODE_ENV = process.env.NODE_ENV;
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(typeORMConfig),
-    MongooseModule.forRoot(mongoUrl(MONGO_URI)),
+    TypeOrmModule.forRoot(NODE_ENV ? localTypeORMConfig : awsTypeORMConfig),
+    MongooseModule.forRoot(MONGO_URI),
     PostModule,
     MetadataModule,
     AlertModule,
