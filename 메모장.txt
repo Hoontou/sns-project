@@ -375,3 +375,29 @@ landingcomment.tsx
 commentpage.tsx
 searchbar.tsx
 upload.tsx
+
+03.30
+배포를 목전에 두고있다.
+aws로 postgres, elastic 인스턴스 만들어서 테스트 연결 해봤다.
+atlas 몽고는 이전에 해봤어서 테스트는 패스.
+
+배포/개발 환경변수 작업도 했다.
+
+까먹으면 안될것들 리드미 좀 적고, 어떤순서로 배포해야하는지
+예전에 플리 띄웠던거 생각하면서 정리 후 바로 시작.
+
+간단하게 생각좀 해보면,
+front는 react build해서 nginx로 80포트 index.html 연결해서 서빙,
+
+back은 도커컴포즈로 gateway, upload 동시에 띄우고
+docker-compose.yml가서 클라우드 저장소 환경변수 세팅.
+
+https 인증서 봇까지 돌리면 완성.
+
+예상되는 오류는 front에서 cors문제.
+
+까지 작업 한 후, gateway에서 유저 ip 제대로 가져와지면
+useragent, ip 등등 싹다 활용해서 하나의 기기에서만 로그인 가능하게.
+까지 하면,
+
+만족할만한 sns프로젝트 완성.
