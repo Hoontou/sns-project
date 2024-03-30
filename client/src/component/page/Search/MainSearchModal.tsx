@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Avatar, List, ListItem, ListItemAvatar } from '@mui/material';
 import sample from '../../../asset/sample1.jpg';
 import { requestUrl } from '../../../common/etc';

@@ -74,8 +74,8 @@ const Signin = () => {
                 label='Email'
                 variant='standard'
                 onChange={onEmailHandler}
+                placeholder='example@gmail.com'
                 type='email'
-                defaultValue={'hoontou@gmail.com'}
               />
             </Grid>
             <Grid item xs={12}>
@@ -85,7 +85,6 @@ const Signin = () => {
                 label='password'
                 variant='standard'
                 onChange={onPasswordHandler}
-                defaultValue={'test'}
                 type='password'
               />
             </Grid>
