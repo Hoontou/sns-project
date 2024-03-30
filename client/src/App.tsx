@@ -27,10 +27,16 @@ export const mainTemplateStyle = {
   margin: '0.7rem auto',
   paddingBottom: '3.5rem',
 };
-
+console.log(process.env.NODE_ENV);
 const baseURL = process.env.NODE_ENV ? '/gateway' : 'http://localhost:4000';
 export const axiosInstance = axios.create({
   baseURL,
+  withCredentials: true,
+});
+
+const baseURL2 = process.env.NODE_ENV ? '/upload' : 'http://localhost:4001';
+export const axiosUploadInstance = axios.create({
+  baseURL: baseURL2,
   withCredentials: true,
 });
 
