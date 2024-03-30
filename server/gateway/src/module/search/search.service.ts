@@ -20,10 +20,10 @@ export class SearchService implements OnModuleInit {
 
   constructor() {
     this.elasticClient = new Client({
-      node: 'http://elasticsearch:9200',
+      node: 'https://search-sns-domain-djhp3vxvpedpp3n6vc23d5lzxe.ap-northeast-2.es.amazonaws.com',
       auth: {
-        username: 'elastic',
-        password: 'elastic',
+        username: 'hoontou',
+        password: '1206Hoon!',
       },
     });
   }

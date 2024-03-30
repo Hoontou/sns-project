@@ -366,4 +366,12 @@ pgdb 트리거 등록해서 chatroom refCount -> 0 되면 chatroom삭제, 메세
 1. 랜딩에서 hasMore false 되면 3일간 올라온거 끝임 표시 나타나게, 완
 2. upload에서 업로드 버튼 클릭 시 processing... 모달 띄우기 완
 3. 로그아웃 쿠키삭제 만들기 완
-4. search socket 프런트에서 연결하기
+4. search socket 프런트에서 연결하기 완
+
+서치소켓 있는곳
+
+comment.tsx
+landingcomment.tsx
+commentpage.tsx
+searchbar.tsx
+upload.tsx

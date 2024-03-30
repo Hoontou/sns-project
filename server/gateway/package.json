@@ -20,7 +20,7 @@
     "proto:gen": "npx proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=src/proto/ src/proto/hero.proto"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.13.0",
+    "@elastic/elasticsearch": "^7.17.0",
     "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^10.3.5",
     "@nestjs/core": "^10.3.5",
