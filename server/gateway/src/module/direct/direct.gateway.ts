@@ -31,8 +31,6 @@ export class DirectGateway implements OnGatewayConnection {
       socket,
     });
 
-    socket.emit('init');
-
     //등록완료 후 데이터전송
 
     //챗룸들어왔으면 누구랑 dm하는지 정보전송, 안읽은 메세지 읽음처리
@@ -49,6 +47,7 @@ export class DirectGateway implements OnGatewayConnection {
       //3-2) unread였던 채팅기록 read처리
       this.directService.readMessages(chatRoom);
       //3-2++) 상대가 채팅에 들어와있다면 실시간 읽음처리 socket emit 보내기
+      socket.emit('init');
     }
 
     //3-3) 채팅기록 싹다 긁어와서 전송

@@ -1,7 +1,9 @@
+# https://rwynn.github.io/monstache-site/start/
+
 # connection settings
 
 # connect to MongoDB using the following URL
-mongo-url = "mongodb://mgdb:27017,mgdb2:27017/tst?replicaSet=rs0"
+mongo-url = "mongodb://mgdb:27017"
 
 # conn  ect to the Elasticsearch REST API at the following node URLs
 elasticsearch-urls = ["http://elasticsearch:9200"]

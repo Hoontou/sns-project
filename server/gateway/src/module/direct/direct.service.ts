@@ -85,6 +85,10 @@ export class DirectService {
   async getDataForInbox(userId: number, page: number, socket: Socket) {
     const myChatRooms = await this.chatRoomManager.getMyChatRooms(userId, page);
 
+    if (page === 0) {
+      socket.emit('init');
+    }
+
     return socket.emit('getInbox', { chatRooms: myChatRooms });
   }
 

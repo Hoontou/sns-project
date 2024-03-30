@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { useEffect, useState } from 'react';
-import { List } from '@mui/material';
+import { Backdrop, CircularProgress, List } from '@mui/material';
 import { VscArrowLeft } from 'react-icons/vsc';
 import './DmInbox.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -21,6 +21,7 @@ const InBox = () => {
   const [hasMoreChatRooms, setHasMoreChatRooms] = useState<boolean>(true);
   const [myUsername, setMyUsername] = useState<string>('');
   const [dmsocket, setSocket] = useState<Socket | undefined>(undefined);
+  const [openBackSpin, setOpenBackSpin] = useState<boolean>(true);
 
   const updateChatRooms = (chatRoom: ChatRoomWithUserPop) => {
     setChatRooms((chatRooms) => {
@@ -79,6 +80,7 @@ const InBox = () => {
 
       socket.on('init', () => {
         setSocket(socket);
+        setOpenBackSpin(false);
       });
       socket.emit('getInbox', { page });
 
@@ -151,6 +153,14 @@ const InBox = () => {
       <div style={{ paddingTop: '4rem' }}>
         <Navbar value={undefined} />
       </div>
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackSpin}
+      >
+        <div>서버와 연결중....&nbsp;&nbsp;&nbsp;</div>
+        <CircularProgress color='inherit' />
+      </Backdrop>
     </div>
   );
 };

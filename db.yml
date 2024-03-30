@@ -70,6 +70,21 @@ services:
     ports:
       - 27019:27017
 
+  # monstache:
+  #   restart: always
+  #   image: rwynn/monstache:rel6
+  #   command: -f /usr/src/mons.config.toml &
+  #   volumes:
+  #     - ./db/mons.config.toml:/usr/src/mons.config.toml
+  #   depends_on:
+  #     - elasticsearch
+  #     - mgdb
+  #     - mgdb2
+  #   links:
+  #     - elasticsearch
+  #   ports:
+  #     - '8080:8080'
+
   pgdb:
     image: postgres:latest
     restart: always

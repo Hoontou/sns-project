@@ -126,7 +126,7 @@ const Signup = () => {
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openBackSpin}
       >
-        <div>로그인 중....&nbsp;&nbsp;&nbsp;</div>
+        <div>계정 등록중....&nbsp;&nbsp;&nbsp;</div>
         <CircularProgress color='inherit' />
       </Backdrop>
     </div>

@@ -9,6 +9,7 @@ import './DmChatRoom.css';
 import MessageCard from './MessageCard';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { IoArrowDownOutline } from 'react-icons/io5';
+import { Backdrop, CircularProgress } from '@mui/material';
 
 const DmChatRoom = () => {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ const DmChatRoom = () => {
   const [showingNewMessageButton, setShowingNewMessageButton] =
     useState<boolean>(false);
   const [showingDownButton, setShowingDownButton] = useState<boolean>(false);
+  const [openBackSpin, setOpenBackSpin] = useState<boolean>(true);
 
   const scrollToBottom = () => {
     if (bottomRef.current) {
@@ -171,6 +173,7 @@ const DmChatRoom = () => {
 
       socket.on('init', () => {
         setSocket(socket);
+        setOpenBackSpin(false);
       });
 
       socket.emit('getMessages', { startAt: lastId });
@@ -320,6 +323,14 @@ const DmChatRoom = () => {
       <div>
         <MessageInput socket={dmsocket} addNewMessage={addNewMessage} />
       </div>
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackSpin}
+      >
+        <div>서버와 연결중....&nbsp;&nbsp;&nbsp;</div>
+        <CircularProgress color='inherit' />
+      </Backdrop>
     </div>
   );
 };
