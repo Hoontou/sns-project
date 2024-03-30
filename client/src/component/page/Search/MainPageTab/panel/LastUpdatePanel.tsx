@@ -22,7 +22,7 @@ const LastUpdatePanel = (props: {
   /**post가져오기 */
   const getPost = async () => {
     await axiosInstance
-      .post('/gateway/metadata/getMetadatasOrderByDate', {
+      .post('/metadata/getMetadatasOrderByDate', {
         by: 'last',
         page,
       })

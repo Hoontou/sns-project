@@ -25,7 +25,7 @@ const CollectionPage = () => {
   /**post가져오기 */
   const getPost = async () => {
     await axiosInstance
-      .post('/gateway/metadata/getMyCollections', {
+      .post('/metadata/getMyCollections', {
         page,
       })
       .then((res) => {

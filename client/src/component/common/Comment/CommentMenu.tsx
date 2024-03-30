@@ -48,14 +48,14 @@ const CommentMenu = (props: {
   };
 
   const requestDeleteComment = () => {
-    axiosInstance.post('/gateway/post/deleteComment', {
+    axiosInstance.post('/post/deleteComment', {
       commentId: String(props.commentId),
       postId: props.postId,
     });
   };
 
   const requestDeleteCocomment = () => {
-    axiosInstance.post('/gateway/post/deleteCocomment', {
+    axiosInstance.post('/post/deleteCocomment', {
       commentId: String(props.commentId),
       cocommentId: String(props.cocommentId),
     });

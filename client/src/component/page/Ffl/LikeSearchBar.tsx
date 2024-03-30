@@ -25,7 +25,7 @@ const LikeSearchBar = (props: {
 
   const requestSearch = () => {
     axiosInstance
-      .post('/gateway/ffl/searchUserFfl', {
+      .post('/ffl/searchUserFfl', {
         target: props.targetPostId,
         type: 'like',
         searchString: searchRequestString,

@@ -32,7 +32,7 @@ const AllAlertPanel = (props: {
   >(undefined);
 
   const getAllAlerts = () => {
-    axiosInstance.post('/gateway/alert/getAllAlert', { page }).then((res) => {
+    axiosInstance.post('/alert/getAllAlert', { page }).then((res) => {
       const data: {
         allAlerts: {
           _id: string;
@@ -74,7 +74,7 @@ const AllAlertPanel = (props: {
             : item.content.postId;
 
         axiosInstance
-          .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
+          .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
           .then((res) => {
             const result: {
               metadatas: MetadataDto[];
@@ -132,7 +132,7 @@ const AllAlertPanel = (props: {
     if (item.content.type === 'like') {
       const postId = item.content.postId;
       // axiosInstance
-      //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
+      //   .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
       //   .then((res) => {
       //     const result: {
       //       metadatas: MetadataDto[];
@@ -186,7 +186,7 @@ const AllAlertPanel = (props: {
       const postId = item.content.postId;
       const commentId = item.content.commentId;
       // axiosInstance
-      //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
+      //   .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
       //   .then((res) => {
       //     const result: {
       //       metadatas: MetadataDto[];
@@ -335,7 +335,7 @@ const AllAlertPanel = (props: {
       if (item.content.where === 'post') {
         const postId = item.content.whereId;
         // axiosInstance
-        //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
+        //   .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
         //   .then((res) => {
         //     const result: {
         //       metadatas: MetadataDto[];

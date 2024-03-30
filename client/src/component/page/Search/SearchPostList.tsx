@@ -62,7 +62,7 @@ const SearchPostList = (props: {
     setSpin(true);
     try {
       await axiosInstance
-        .post('/gateway/post/getpostsbyhashtag', {
+        .post('/post/getpostsbyhashtag', {
           hashtag: props.targetHashtag,
           page,
         })

@@ -2,7 +2,6 @@ import {
   Avatar,
   Dialog,
   DialogTitle,
-  List,
   ListItem,
   ListItemAvatar,
 } from '@mui/material';
@@ -10,7 +9,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sample from '../../asset/sample1.jpg';
 import { requestUrl } from '../../common/etc';
-import InfiniteScroll from 'react-infinite-scroll-component';
+// import InfiniteScroll from 'react-infinite-scroll-component';
 import Spinner from '../../common/Spinner';
 import { axiosInstance, primaryColor } from '../../App';
 
@@ -49,7 +48,7 @@ const UserlistModal = (props: {
       setTitle('팔로잉');
     }
     axiosInstance
-      .post('/gateway/ffl/getuserlist', {
+      .post('/ffl/getuserlist', {
         id: props.targetId,
         type: props.type,
         page,
@@ -66,7 +65,7 @@ const UserlistModal = (props: {
         console.log(data);
 
         if (data.userList.length < pageLen) {
-          //gateway에서 10개씩 보내줌.
+          // gateway/에서 10개씩 보내줌.
           setHasMore(false);
         }
 

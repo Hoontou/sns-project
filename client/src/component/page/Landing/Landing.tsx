@@ -45,7 +45,7 @@ const Landing = () => {
 
   const getPost = () => {
     setSpin(true);
-    axiosInstance.post('gateway/landing', { page }).then((res) => {
+    axiosInstance.post('/landing', { page }).then((res) => {
       const {
         last3daysPosts,
       }: {
@@ -74,13 +74,13 @@ const Landing = () => {
       setUserId(authRes.userId);
 
       getPost();
-      axiosInstance.get('/gateway/alert/checkHasNewAlert').then((res) => {
+      axiosInstance.get('/alert/checkHasNewAlert').then((res) => {
         const { hasNewAlert }: { hasNewAlert: boolean } = res.data;
 
         setHasNewAlert(hasNewAlert);
       });
 
-      axiosInstance.get('/gateway/dm/checkHasNewMessage').then((res) => {
+      axiosInstance.get('/dm/checkHasNewMessage').then((res) => {
         const { hasNewMessage }: { hasNewMessage: boolean } = res.data;
 
         setHasNewMessage(hasNewMessage);

@@ -53,7 +53,7 @@ const HighlightCocommentPage = () => {
   /**코멘트 가져오기 */
   const getComment = async () => {
     axiosInstance
-      .post('/gateway/post/getHighlightCocomment', {
+      .post('/post/getHighlightCocomment', {
         cocommentId,
       })
       .then((res) => {

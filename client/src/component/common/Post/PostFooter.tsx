@@ -68,7 +68,7 @@ const PostFooter = (props: {
       liked: !postContent.liked,
     });
     axiosInstance
-      .post('/gateway/ffl/addLike', {
+      .post('/ffl/addLike', {
         postId: props.postId,
         postOwnerUserId: props.postFooterContent.userId,
       })
@@ -82,7 +82,7 @@ const PostFooter = (props: {
   };
   const removeLike = () => {
     axiosInstance
-      .post('/gateway/ffl/removelike', {
+      .post('/ffl/removelike', {
         postId: props.postId,
       })
       .then(() => {

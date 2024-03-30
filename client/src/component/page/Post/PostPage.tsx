@@ -38,7 +38,7 @@ const PostPage = () => {
 
     //메타데이터 가져오기
     axiosInstance
-      .post('/gateway/metadata/getMetadataWithPostFooter', {
+      .post('/metadata/getMetadataWithPostFooter', {
         postId,
       })
       .then((res) => {

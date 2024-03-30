@@ -56,7 +56,7 @@ const FollowTab = (props: {
   const getCountByUsername = () => {
     //유저에 요청
     axiosInstance
-      .post('/gateway/user/getFollowCount', { username: props.target })
+      .post('/user/getFollowCount', { username: props.target })
       .then((res) => {
         const result: { follower: number; following: number; userId: string } =
           res.data;
@@ -138,7 +138,7 @@ export const FollowListPannel = (props: {
     setFirstReq(false);
 
     axiosInstance
-      .post('/gateway/ffl/getuserlist', {
+      .post('/ffl/getuserlist', {
         id: props.targetUserId,
         type: props.index === 0 ? 'follower' : 'following',
         page,

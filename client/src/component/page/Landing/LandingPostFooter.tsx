@@ -31,7 +31,7 @@ const LandingPostFooter = (props: {
       liked: !postContent.liked,
     });
     axiosInstance
-      .post('/gateway/ffl/addLike', {
+      .post('/ffl/addLike', {
         userId: props.userId,
         postId: props.postId,
       })
@@ -45,7 +45,7 @@ const LandingPostFooter = (props: {
   };
   const removeLike = () => {
     axiosInstance
-      .post('/gateway/ffl/removelike', {
+      .post('/ffl/removelike', {
         userId: props.userId,
         postId: props.postId,
       })

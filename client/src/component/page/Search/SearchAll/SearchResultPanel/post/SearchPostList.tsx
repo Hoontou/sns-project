@@ -39,7 +39,7 @@ const SearchPostList = (props: { searchString?: string; userId: string }) => {
     setSpin(true);
     try {
       await axiosInstance
-        .post('/gateway/post/searchpostsbysearchstring', {
+        .post('/post/searchpostsbysearchstring', {
           searchString: props.searchString,
           page,
         })

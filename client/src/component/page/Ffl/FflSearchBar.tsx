@@ -26,7 +26,7 @@ const FflSearchBar = (props: {
 
   const requestSearch = () => {
     axiosInstance
-      .post('/gateway/ffl/searchUserFfl', {
+      .post('/ffl/searchUserFfl', {
         target: props.targetUserId,
         type: props.type,
         searchString: searchRequestString,

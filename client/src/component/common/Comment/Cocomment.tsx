@@ -23,7 +23,7 @@ const Cocomment = (props: {
   const [likesCount, setLikesCount] = useState<number>(0);
 
   const addLike = () => {
-    axiosInstance.post('/gateway/ffl/addcocommentlike', {
+    axiosInstance.post('/ffl/addcocommentlike', {
       cocommentId: props.content.cocommentId,
     });
     setLiked(!liked);
@@ -32,7 +32,7 @@ const Cocomment = (props: {
   };
 
   const removeLike = () => {
-    axiosInstance.post('/gateway/ffl/removecocommentlike', {
+    axiosInstance.post('/ffl/removecocommentlike', {
       cocommentId: props.content.cocommentId,
     });
     setLiked(!liked);

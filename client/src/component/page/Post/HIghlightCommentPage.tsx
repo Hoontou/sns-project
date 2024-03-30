@@ -29,7 +29,7 @@ const HighlightCommentPage = () => {
   const getComment = async () => {
     setSpin(true);
     axiosInstance
-      .post('/gateway/post/getcomment', {
+      .post('/post/getcomment', {
         commentId,
       })
       .then((res) => {
@@ -67,7 +67,7 @@ const HighlightCommentPage = () => {
     index: number
   ): Promise<number> => {
     return axiosInstance
-      .post('/gateway/post/getcocommentlist', {
+      .post('/post/getcocommentlist', {
         commentId,
         page,
       })

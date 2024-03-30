@@ -5,7 +5,7 @@ import {
   PostFooterContent,
 } from 'sns-interfaces/client.interface';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { useState, useEffect } from 'react';
 
 import { VscArrowLeft } from 'react-icons/vsc';
 import sample1 from '../../../asset/sample1.jpg';
@@ -133,7 +133,7 @@ const LandingComment = (props: {
 
     setPending(true);
     axiosInstance
-      .post('/gateway/post/getcommentlist', {
+      .post('/post/getcommentlist', {
         postId: props.postFooterContent._id,
         page,
       })
@@ -174,7 +174,7 @@ const LandingComment = (props: {
     index: number
   ): Promise<number> => {
     return axiosInstance
-      .post('/gateway/post/getcocommentlist', {
+      .post('/post/getcocommentlist', {
         commentId,
         page,
       })
@@ -208,7 +208,7 @@ const LandingComment = (props: {
     //3. 타입에 따라 댓글리스트에 푸시
     if (submitForm.type === 'cocomment') {
       //대댓작성 request
-      axiosInstance.post('/gateway/post/addcocomment', {
+      axiosInstance.post('/post/addcocomment', {
         cocomment: submitingComment,
         commentId: submitForm.commentId,
         commentOwnerUserId: submitForm.commentOwnerUserId,
@@ -216,7 +216,7 @@ const LandingComment = (props: {
 
       //내 username, img 가져온다.
       const { img, username, userId } = await axiosInstance
-        .get('/gateway/user/getusernamewithimg')
+        .get('/user/getusernamewithimg')
         .then((res) => {
           const data: { img: string; username: string; userId: string } =
             res.data;
@@ -252,7 +252,7 @@ const LandingComment = (props: {
     }
     if (submitForm.type === 'comment') {
       //댓 작성 request
-      axiosInstance.post('/gateway/post/addcomment', {
+      axiosInstance.post('/post/addcomment', {
         comment: submitingComment,
         postId: props.postFooterContent._id,
         postOwnerUserId: props.postFooterContent.userId,
@@ -260,7 +260,7 @@ const LandingComment = (props: {
 
       //내 username, img 가져온다.
       const { img, username, userId } = await axiosInstance
-        .get('/gateway/user/getusernamewithimg')
+        .get('/user/getusernamewithimg')
         .then((res) => {
           const data: { img: string; username: string; userId: string } =
             res.data;

@@ -42,7 +42,7 @@ const Post = (props: {
     window.history.pushState(null, document.title, window.location.href);
 
     axiosInstance
-      .post('/gateway/postfooter', {
+      .post('/postfooter', {
         postId: props.metadata._id,
         targetId: props.metadata.userId,
       })

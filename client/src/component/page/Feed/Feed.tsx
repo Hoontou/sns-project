@@ -38,7 +38,7 @@ const Feed = () => {
 
   useEffect(() => {
     //타겟유저네임만 보내면, 가져와야할게 내정보인지 남의정보인지 판단.
-    axiosInstance.post('/gateway/userinfo', { targetUsername }).then((res) => {
+    axiosInstance.post('/userinfo', { targetUsername }).then((res) => {
       const data:
         | {
             userinfo: UserInfo;

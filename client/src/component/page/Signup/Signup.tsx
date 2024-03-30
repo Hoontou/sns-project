@@ -39,7 +39,7 @@ const Signup = () => {
     }; //나중에 main-back의 DTO에 부합하지 않으면 모달로 오류뱉어야함
     //유저네임 4~10개
     //비번은 영어랑숫자만 4~20개 (현재는,)
-    axiosInstance.post('/gateway/auth/signup', signUpForm).then((res) => {
+    axiosInstance.post('/auth/signup', signUpForm).then((res) => {
       if (res.data.success === true) {
         setOpenBackSpin(false);
         alert('계정 등록 성공');

@@ -25,7 +25,7 @@ export const UserPanel = (props: TabPanelProps) => {
 
   const searchUsersBySearchString = () => {
     return axiosInstance
-      .post('/gateway/user/searchusersbysearchstring', {
+      .post('/user/searchusersbysearchstring', {
         searchString,
         page,
       })

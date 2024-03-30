@@ -22,7 +22,7 @@ const LikesPanel = (props: {
   /**post가져오기 */
   const getPost = async () => {
     await axiosInstance
-      .post('/gateway/metadata/getMetadatasOrderByLikes', {
+      .post('/metadata/getMetadatasOrderByLikes', {
         page,
       })
       .then((res) => {

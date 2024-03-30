@@ -33,7 +33,7 @@ const Signin = () => {
       email,
       password,
     };
-    axiosInstance.post('/gateway/auth/signin', signInForm).then((res) => {
+    axiosInstance.post('/auth/signin', signInForm).then((res) => {
       const result: AuthResultRes = res.data;
       if (result.success === true) {
         navigate('/');

@@ -57,14 +57,14 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
     setSpin(true);
     try {
       await axiosInstance
-        .post('/gateway/metadata/getmetadatas', {
+        .post('/metadata/getmetadatas', {
           userId: props.targetId === undefined ? props.userId : props.targetId,
           page,
         })
         .then((res) => {
           const metadatas: Metadata[] = res.data.metadatas;
           if (metadatas.length < pageItemLen) {
-            //gateway에서 9개씩 보내줌.
+            // gateway/에서 9개씩 보내줌.
             setEnablingGetMoreButton(false);
           }
           setPosts([...posts, ...metadatas]);

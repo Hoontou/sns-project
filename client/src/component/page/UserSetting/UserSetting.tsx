@@ -31,7 +31,7 @@ const UserSetting = () => {
     setSpin(true);
 
     axiosInstance
-      .post('/gateway/user/changeusername', { userId, username })
+      .post('/user/changeusername', { userId, username })
       .then((res) => {
         setSpin(false);
         const result: { success: boolean; exist?: boolean } = res.data;
@@ -54,7 +54,7 @@ const UserSetting = () => {
     setSpin(true);
 
     axiosInstance
-      .post('/gateway/user/changeintroducename', { userId, introduceName })
+      .post('/user/changeintroducename', { userId, introduceName })
       .then((res) => {
         setSpin(false);
         const result: { success: boolean; exist?: boolean } = res.data;
@@ -87,22 +87,20 @@ const UserSetting = () => {
       return;
     }
 
-    axiosInstance
-      .post('/gateway/user/changeintro', { userId, intro })
-      .then((res) => {
-        setSpin(false);
-        const { success } = res.data;
-        if (success === false) {
-          alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해 주세요.');
-          return;
-        }
-        navigate('/feed');
+    axiosInstance.post('/user/changeintro', { userId, intro }).then((res) => {
+      setSpin(false);
+      const { success } = res.data;
+      if (success === false) {
+        alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해 주세요.');
         return;
-      });
+      }
+      navigate('/feed');
+      return;
+    });
   };
 
   useEffect(() => {
-    axiosInstance.post('/gateway/userinfo').then((res) => {
+    axiosInstance.post('/userinfo').then((res) => {
       const data:
         | {
             userinfo: UserInfo;

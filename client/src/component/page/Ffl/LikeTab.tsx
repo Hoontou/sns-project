@@ -33,7 +33,7 @@ const LikeTab = (props: { targetPost: string | undefined }) => {
 
   const getUserList = () => {
     axiosInstance
-      .post('/gateway/ffl/getuserlist', {
+      .post('/ffl/getuserlist', {
         id: props.targetPost,
         type: 'like',
         page,

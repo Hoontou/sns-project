@@ -14,7 +14,7 @@ const ButtonsUnderUserInfo = (props: {
   const onClickFollow = async () => {
     if (followed === false) {
       //팔로우 추가
-      await axiosInstance.post('/gateway/ffl/addfollow', {
+      await axiosInstance.post('/ffl/addfollow', {
         userTo: props.users.userTo,
         userFrom: props.users.userFrom,
       });
@@ -24,7 +24,7 @@ const ButtonsUnderUserInfo = (props: {
       return;
     }
     //팔로우 삭제
-    await axiosInstance.post('/gateway/ffl/removefollow', {
+    await axiosInstance.post('/ffl/removefollow', {
       userTo: props.users.userTo,
       userFrom: props.users.userFrom,
     });
@@ -34,7 +34,7 @@ const ButtonsUnderUserInfo = (props: {
 
   const requestChatRoomId = async () => {
     const result: { data: { chatRoomId: number } } = await axiosInstance.post(
-      '/gateway/dm/requestChatRoomId',
+      '/dm/requestChatRoomId',
       {
         chatTargetUserId: props.users.userTo,
       }

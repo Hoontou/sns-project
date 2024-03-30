@@ -51,7 +51,7 @@ const CommentItem = (props: {
   };
 
   const addLike = () => {
-    axiosInstance.post('/gateway/ffl/addcommentlike', {
+    axiosInstance.post('/ffl/addcommentlike', {
       commentId: props.content.commentId,
     });
     setLiked(!liked);
@@ -60,7 +60,7 @@ const CommentItem = (props: {
   };
 
   const removeLike = () => {
-    axiosInstance.post('/gateway/ffl/removecommentlike', {
+    axiosInstance.post('/ffl/removecommentlike', {
       commentId: props.content.commentId,
     });
     setLiked(!liked);

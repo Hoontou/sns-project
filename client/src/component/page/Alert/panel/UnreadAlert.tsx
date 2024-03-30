@@ -32,66 +32,64 @@ const UnReadAlertPanel = (props: {
   >(undefined);
 
   const getUnreadAlerts = () => {
-    axiosInstance
-      .post('/gateway/alert/getUnreadAlert', { page })
-      .then((res) => {
-        const data: {
-          unreadAlerts: {
-            _id: string;
-            content: AlertContentUnion & {
-              userinfo: { username: string; img: string };
-              img?: string;
-            };
-            read: boolean;
-            createdAt: Date;
-          }[];
-        } = res.data;
+    axiosInstance.post('/alert/getUnreadAlert', { page }).then((res) => {
+      const data: {
+        unreadAlerts: {
+          _id: string;
+          content: AlertContentUnion & {
+            userinfo: { username: string; img: string };
+            img?: string;
+          };
+          read: boolean;
+          createdAt: Date;
+        }[];
+      } = res.data;
 
-        if (data.unreadAlerts.length < AlertPageLen) {
-          setHasMore(false);
+      if (data.unreadAlerts.length < AlertPageLen) {
+        setHasMore(false);
+      }
+
+      setPage(page + 1);
+      const origin = alerts === undefined ? [] : [...alerts];
+      setAlerts([...origin, ...data.unreadAlerts]);
+
+      const tmpAlerts = data.unreadAlerts;
+
+      //알람 가져온 후, 포스트 관련 알람이면 미리보기 이미지 가져옴
+      tmpAlerts.map(async (item, index) => {
+        if (
+          item.content.type === 'follow' ||
+          item.content.type === 'cocomment'
+        ) {
+          return;
         }
 
-        setPage(page + 1);
-        const origin = alerts === undefined ? [] : [...alerts];
-        setAlerts([...origin, ...data.unreadAlerts]);
-
-        const tmpAlerts = data.unreadAlerts;
-
-        //알람 가져온 후, 포스트 관련 알람이면 미리보기 이미지 가져옴
-        tmpAlerts.map(async (item, index) => {
-          if (
-            item.content.type === 'follow' ||
-            item.content.type === 'cocomment'
-          ) {
-            return;
-          }
-
-          if (item.content.type === 'tag' && item.content.where !== 'post') {
-            return;
-          }
-
-          const postId =
-            item.content.type === 'tag'
-              ? item.content.whereId
-              : item.content.postId;
-
-          axiosInstance
-            .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
-            .then((res) => {
-              const result: {
-                metadatas: MetadataDto[];
-              } = res.data;
-              const img = result.metadatas[0].files[0];
-              tmpAlerts[index].content.img = `${requestUrl}/${postId}/${img}`;
-            });
+        if (item.content.type === 'tag' && item.content.where !== 'post') {
           return;
-        });
+        }
 
-        //도저히 게시물 사진 채우는게 안되서 오만짓 다하다가 이상한 형태로 구현했음
-        setTimeout(() => {
-          setAlerts([...origin, ...tmpAlerts]);
-        }, 500);
+        const postId =
+          item.content.type === 'tag'
+            ? item.content.whereId
+            : item.content.postId;
+
+        axiosInstance
+          .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
+          .then((res) => {
+            const result: {
+              metadatas: MetadataDto[];
+            } = res.data;
+            const img = result.metadatas[0].files[0];
+            tmpAlerts[index].content.img = `${requestUrl}/${postId}/${img}`;
+          });
+        return;
       });
+
+      //도저히 게시물 사진 채우는게 안되서 오만짓 다하다가 이상한 형태로 구현했음
+      setTimeout(() => {
+        setAlerts([...origin, ...tmpAlerts]);
+      }, 500);
+    });
   };
 
   useEffect(() => {
@@ -101,7 +99,7 @@ const UnReadAlertPanel = (props: {
   }, [props.value]);
 
   const sendAlertReadSignal = (alert_id: string) => {
-    return axiosInstance.post('/gateway/alert/readAlert', { alert_id });
+    return axiosInstance.post('/alert/readAlert', { alert_id });
   };
 
   const renderAlerts = alerts?.map((item, index) => {
@@ -140,7 +138,7 @@ const UnReadAlertPanel = (props: {
     if (item.content.type === 'like') {
       const postId = item.content.postId;
       // axiosInstance
-      //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
+      //   .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
       //   .then((res) => {
       //     const result: {
       //       metadatas: MetadataDto[];
@@ -196,7 +194,7 @@ const UnReadAlertPanel = (props: {
       const postId = item.content.postId;
       const commentId = item.content.commentId;
       // axiosInstance
-      //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
+      //   .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
       //   .then((res) => {
       //     const result: {
       //       metadatas: MetadataDto[];
@@ -353,7 +351,7 @@ const UnReadAlertPanel = (props: {
       if (item.content.where === 'post') {
         const postId = item.content.whereId;
         // axiosInstance
-        //   .post('/gateway/metadata/getMetadatasByPostId', { _ids: [postId] })
+        //   .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
         //   .then((res) => {
         //     const result: {
         //       metadatas: MetadataDto[];
