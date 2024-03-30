@@ -1,5 +1,7 @@
 // https://www.npmjs.com/package/@elastic/elasticsearch
 //공식문서 참고
+
+//7.17.0버전 코드임, aws 버전과 맞추기 위해 내렸음
 import { Client } from '@elastic/elasticsearch';
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -59,7 +61,7 @@ export class SearchService implements OnModuleInit {
       .index({
         index: this.SnsPostsIndex,
         id: postDto.postId,
-        document: postDoc,
+        body: postDoc,
       })
       .then(() => {
         //삽입 후 tags가 있다면, 순회하면서 엘라스틱에서 존재하는 태그인지 체크
@@ -84,14 +86,16 @@ export class SearchService implements OnModuleInit {
         this.elasticClient.update({
           index: this.SnsTagsIndex,
           id: tag,
-          script: {
-            //https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/update_examples.html
-            //integer값을 증가시키는법
-            lang: 'painless',
-            source: 'ctx._source.count++',
+          body: {
+            script: {
+              //https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/update_examples.html
+              //integer값을 증가시키는법
+              lang: 'painless',
+              source: 'ctx._source.count++',
+            },
           },
         });
-        return res.found; //여기서는 true 리턴
+        return res.body.found; //여기서는 true 리턴
       })
       .catch((err) => {
         console.log(`${tag} tag is missing, create tag DOC`);
@@ -100,7 +104,7 @@ export class SearchService implements OnModuleInit {
         this.elasticClient.index({
           index: this.SnsTagsIndex,
           id: tag,
-          document: {
+          body: {
             tagName: tag,
             count: 1,
           },
@@ -123,45 +127,37 @@ export class SearchService implements OnModuleInit {
       },
     });
 
-    const tagList = result.hits.hits.map((item) => {
+    const tagList = result.body.hits.hits.map((item) => {
       return item._source;
     }) as { tagName: string; count: number }[];
 
     return tagList;
   }
 
-  async getPostsIdsByHashtag(data: {
-    hashtag: string;
-    page: number;
-  }): Promise<{ searchSuccess: boolean; _ids: string[]; count: number }> {
+  async getPostsIdsByHashtag(data) {
     const pageSize = 12; // 페이지당 수
 
-    const tagInfo = (
-      data.page === 0
-        ? await this.elasticClient
-            .get({
-              index: this.SnsTagsIndex,
-              id: data.hashtag,
-            })
-            .then((res) => {
-              return res._source;
-            })
-            .catch(() => {
-              //찾기실패
-              return undefined;
-            })
-        : //첫번째 요청인지 페이지 보고 알아낸 후, 두번째 요청부터는 검색안함
-          { tagName: data.hashtag, count: 0 }
-    ) as { tagName: string; count: number } | undefined;
-
-    // const tagInfo =
-    //   data.page === 0
-    //     ? await this.searchHashtag({ hashtag: data.hashtag })
-    //     : { tagName: data.hashtag, count: 0 };
+    let tagInfo;
+    if (data.page === 0) {
+      try {
+        const res = await this.elasticClient.get({
+          index: this.SnsTagsIndex,
+          id: data.hashtag,
+        });
+        tagInfo = res.body._source;
+      } catch (error) {
+        // 찾기실패
+        tagInfo = undefined;
+      }
+    } else {
+      // 첫번째 요청인지 페이지 보고 알아낸 후, 두번째 요청부터는 검색안함
+      tagInfo = { tagName: data.hashtag, count: 0 };
+    }
 
     if (tagInfo === undefined) {
       return { searchSuccess: false, _ids: [], count: 0 };
     }
+
     const result = await this.elasticClient.search({
       index: this.SnsPostsIndex,
       body: {
@@ -172,22 +168,20 @@ export class SearchService implements OnModuleInit {
             tags: data.hashtag,
           },
         },
-        // sort: [
-        //   {
-        //     createdAt: {
-        //       order: 'asc', // 내림차순으로 정렬 (가장 최근 것이 먼저)
-        //     },
-        //   },
-        // ],
       },
     });
-    console.log(result.hits.hits);
 
-    const postIdList: string[] = result.hits.hits.map((item) => {
+    console.log(result.body.hits.hits);
+
+    const postIdList = result.body.hits.hits.map((item) => {
       return item._id;
     });
 
-    return { _ids: postIdList, count: tagInfo.count, searchSuccess: true };
+    return {
+      _ids: postIdList,
+      count: tagInfo.count,
+      searchSuccess: true,
+    };
   }
 
   async searchPostIdsBySearchString(data: {
@@ -216,9 +210,8 @@ export class SearchService implements OnModuleInit {
         // ],
       },
     });
-    console.log(result.hits.hits);
 
-    const postIdList: string[] = result.hits.hits.map((item) => {
+    const postIdList: string[] = result.body.hits.hits.map((item) => {
       return item._id;
     });
 
@@ -250,46 +243,47 @@ export class SearchService implements OnModuleInit {
       },
     });
 
-    const searchedTagList = result.hits.hits.map((item) => {
+    const searchedTagList = result.body.hits.hits.map((item) => {
       return item._source;
     }) as { tagName: string; count: number }[];
 
     return { searchedTags: searchedTagList };
   }
 
-  async deletePost(data: { postId: string }) {
+  async deletePost(data) {
     try {
-      const targetDoc: any = await this.elasticClient.get({
+      const { body: targetDoc } = await this.elasticClient.get({
         index: this.SnsPostsIndex,
         id: data.postId,
       });
-      //get 실패했으면 에러떠서 catch로 간다.
 
-      const tags: string | undefined = targetDoc._source.tags;
-      //1. 검색용 데이터를 postIndex에서 삭제
+      const tags = targetDoc._source.tags;
+      // 1. 검색용 데이터를 postIndex에서 삭제
       await this.elasticClient.delete({
         index: this.SnsPostsIndex,
         id: data.postId,
       });
 
-      //2. 검색용 데이터에 tag가 있다면 해당 tag의 카운터 decre
-      if (tags === undefined) {
-        //태그없으면 걍 리턴
-        return;
+      // 2. 검색용 데이터에 tag가 있다면 해당 tag의 카운터 decre
+      if (tags !== undefined) {
+        const tagList = tags.split(' ');
+        for (const item of tagList) {
+          await this.elasticClient.updateByQuery({
+            index: this.SnsTagsIndex,
+            body: {
+              script: {
+                source: 'ctx._source.count--',
+                lang: 'painless',
+              },
+              query: {
+                term: {
+                  tagName: item,
+                },
+              },
+            },
+          });
+        }
       }
-      tags.split(' ').forEach((item) => {
-        return this.elasticClient.update({
-          index: this.SnsTagsIndex,
-          id: item,
-          script: {
-            //https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/update_examples.html
-            //integer값을 증가시키는법
-            lang: 'painless',
-            source: 'ctx._source.count--',
-          },
-        });
-      });
-      //이건좀 헤비한 작업같은데..
     } catch (error) {
       console.log('elastic에서 post정보 삭제중 에러, 아마 정보가 없을거임');
       console.log(error);
@@ -297,29 +291,29 @@ export class SearchService implements OnModuleInit {
   }
 
   async init() {
-    //이미 있는지 체크
-    const indexExistCheck1: boolean = await this.elasticClient.indices.exists({
+    // 이미 있는지 체크
+    const indexExistCheck1 = await this.elasticClient.indices.exists({
       index: this.SnsPostsIndex,
     });
-    const indexExistCheck2: boolean = await this.elasticClient.indices.exists({
+    const indexExistCheck2 = await this.elasticClient.indices.exists({
       index: this.SnsTagsIndex,
     });
 
-    if (indexExistCheck1 === true && indexExistCheck2 === true) {
+    if (indexExistCheck1.body === true && indexExistCheck2.body === true) {
       return;
     }
 
-    //인덱스 생성, user인덱스는 몽고 타입 그대로 엘라스틱에 넣어도 되서 필요없다.
-    //user인덱스는 monstache가 해준다.
-    //monstache가 엄청좋은데? 라고 생각했는데, 검색에 필요한 데이터를 따로
-    //가공해서 엘라스틱에 넣어야 하면 역시 업데이트쿼리를 내가 날려줘야하네..
+    // 인덱스 생성, user인덱스는 몽고 타입 그대로 엘라스틱에 넣어도 되서 필요없다.
+    // user인덱스는 monstache가 해준다.
+    // monstache가 엄청좋은데? 라고 생각했는데, 검색에 필요한 데이터를 따로
+    // 가공해서 엘라스틱에 넣어야 하면 역시 업데이트쿼리를 내가 날려줘야하네..
     try {
       await this.elasticClient.indices.create({
         index: this.SnsPostsIndex,
         body: {
           mappings: {
             properties: {
-              //postId: { type: 'text' },
+              // postId: { type: 'text' },
               title: { type: 'text' },
               tags: { type: 'text' },
             },
@@ -338,12 +332,12 @@ export class SearchService implements OnModuleInit {
         },
       });
 
-      console.log(`Index created:${this.SnsPostsIndex}, ${this.SnsTagsIndex}`);
+      console.log(`Index created: ${this.SnsPostsIndex}, ${this.SnsTagsIndex}`);
     } catch (error) {
       console.log(
-        `Error creating index:${this.SnsPostsIndex} , ${this.SnsTagsIndex}`,
+        `Error creating index: ${this.SnsPostsIndex}, ${this.SnsTagsIndex}`,
       );
-      console.log(error);
+      console.log(error.meta.body.error);
     }
   }
 
@@ -385,7 +379,7 @@ export class SearchService implements OnModuleInit {
       },
     });
 
-    const userInfoList = result.hits.hits.map((item) => {
+    const userInfoList = result.body.hits.hits.map((item) => {
       return item._source;
     }) as {
       username: string;
@@ -421,7 +415,7 @@ export class SearchService implements OnModuleInit {
       },
     });
 
-    const resultList = result.hits.hits.map((item) => {
+    const resultList = result.body.hits.hits.map((item) => {
       return item._source;
     }) as SearchedUser[] | SearchedHashtag[];
 
