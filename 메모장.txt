@@ -401,3 +401,14 @@ useragent, ip 등등 싹다 활용해서 하나의 기기에서만 로그인 가
 까지 하면,
 
 만족할만한 sns프로젝트 완성.
+
+
+03.31
+db 쓰면서 느낀점 적었었는데 여기로 옮겨놨음
+
+postgres와의 연결이 개발 초기에는 typeorm으로 했지만, 하면 할수록 답답해서 sql이 주를 이룸.
+
+mongodb와 elastic을 연동해주는 monstache를 사용해 봤지만,
+mongodb doc의 원본 그대로 elastic에서 필요한 경우가 적었음.
+
+결국 직접 파싱해서 넣기도 했음.
