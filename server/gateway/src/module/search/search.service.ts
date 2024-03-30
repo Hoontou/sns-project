@@ -1,7 +1,7 @@
 // https://www.npmjs.com/package/@elastic/elasticsearch
 //공식문서 참고
 
-//7.17.0버전 코드임, aws 버전과 맞추기 위해 내렸음
+//7.13.0버전 코드임, aws 버전과 맞추기 위해 내렸음
 import { Client } from '@elastic/elasticsearch';
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -22,10 +22,10 @@ export class SearchService implements OnModuleInit {
 
   constructor() {
     this.elasticClient = new Client({
-      node: 'https://search-sns-domain-djhp3vxvpedpp3n6vc23d5lzxe.ap-northeast-2.es.amazonaws.com',
+      node: 'http://elasticsearch:9200',
       auth: {
-        username: 'hoontou',
-        password: '1206Hoon!',
+        username: 'elastic',
+        password: 'elastic',
       },
     });
   }
