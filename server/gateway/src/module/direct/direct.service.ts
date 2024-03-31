@@ -70,8 +70,8 @@ export class DirectService {
 
       return chatRoom;
     } catch (error) {
-      console.log('err while registering user--------');
-      console.log(error);
+      this.logger.error('err while registering user--------');
+      this.logger.error(error);
 
       return emptyChatRoom;
     }
@@ -158,7 +158,7 @@ export class DirectService {
         isRead: sendedMessage.isRead,
       });
     } catch (error) {
-      console.log('sending message failed');
+      this.logger.error('sending message failed');
       data.socket.emit('sendingFailed', { tmpId: data.messageForm.tmpId });
     }
   }

@@ -87,7 +87,6 @@ export class DirectGateway implements OnGatewayConnection {
 
     //4. dm 나가기
     socket.on('disconnecting', () => {
-      // console.log(reason);
       this.directService.exitDirect(userId);
     });
   }

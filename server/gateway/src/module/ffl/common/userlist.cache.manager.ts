@@ -20,7 +20,7 @@ class CacheManager {
     userList: userinfo[];
     target: string;
   }) {
-    console.log(`load to ${data.type} conatiner, target is ${data.target}`);
+    // console.log(`load to ${data.type} conatiner, target is ${data.target}`);
 
     //타입에 따라 적재
     if (data.type === 'follower') {
@@ -42,7 +42,7 @@ class CacheManager {
     target: string;
     searchString: string;
   }): userinfo[] | undefined {
-    console.log(`get from ${data.type} conatiner, target is ${data.target}`);
+    // console.log(`get from ${data.type} conatiner, target is ${data.target}`);
 
     if (data.type === 'follower') {
       return this.followerContainer[data.target];
@@ -58,7 +58,7 @@ class CacheManager {
     type: 'follower' | 'following' | 'like';
     target: string;
   }) {
-    console.log(`remove from ${data.type} conatiner, target is ${data.target}`);
+    // console.log(`remove from ${data.type} conatiner, target is ${data.target}`);
 
     if (data.type === 'follower') {
       delete this.followerContainer[data.target];

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { crypter } from '../../../common/crypter';
@@ -11,6 +11,8 @@ import { cacheManager, userinfo } from '../common/userlist.cache.manager';
 
 @Injectable()
 export class FollowCollection {
+  private logger = new Logger(FollowCollection.name);
+
   constructor(
     @InjectModel('follow')
     private followModel: Model<FollowSchemaDefinition>,
@@ -39,10 +41,10 @@ export class FollowCollection {
     return newOne
       .save()
       .then(() => {
-        console.log('follow stored in mongo successfully');
+        // this.logger.debug('follow stored in mongo successfully');
       })
       .catch(() => {
-        console.log('err when storing follow in mongo');
+        this.logger.error('err when storing follow in mongo');
       });
   }
 
@@ -53,10 +55,10 @@ export class FollowCollection {
         userFrom: crypter.decrypt(data.userFrom),
       })
       .then(() => {
-        console.log('follow canceled');
+        // this.logger.debug('follow canceled');
       })
       .catch(() => {
-        console.log('err when canceling follow in mongo');
+        this.logger.error('err when canceling follow in mongo');
       });
   }
 
@@ -96,7 +98,7 @@ export class FollowCollection {
     });
 
     if (userList === undefined) {
-      console.log(`missing from ${type} container, loading requested`);
+      // this.logger.debug(`missing from ${type} container, loading requested`);
 
       //캐시에 없다면 디비에서 가져온다
       const tmpAllUserList: userinfo[] = await this.followModel
@@ -120,7 +122,7 @@ export class FollowCollection {
       //prefix find 해서 리턴
       return findMatchingIndices(tmpAllUserList, data.searchString);
     }
-    console.log('list is existed, no db request');
+    // this.logger.debug('list is existed, no db request');
 
     return findMatchingIndices(userList, data.searchString);
   }
@@ -141,7 +143,7 @@ export class FollowCollection {
     });
 
     if (userList === undefined) {
-      console.log(`missing from ${type} container, loading requested`);
+      // this.logger.debug(`missing from ${type} container, loading requested`);
 
       //캐시에 없다면 디비에서 가져온다
       const tmpAllUserList: userinfo[] = await this.followModel
@@ -166,7 +168,7 @@ export class FollowCollection {
       return findMatchingIndices(tmpAllUserList, data.searchString);
     }
 
-    console.log('list is existed, no db request');
+    // this.logger.debug('list is existed, no db request');
     return findMatchingIndices(userList, data.searchString);
   }
 }

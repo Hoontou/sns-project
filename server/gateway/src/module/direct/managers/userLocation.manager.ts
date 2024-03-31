@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class UserLocationManager {
+  private logger = new Logger(UserLocationManager.name);
   private container: Map<number, number | 'inbox' | undefined>;
   constructor() {
     this.container = new Map();
@@ -29,9 +30,9 @@ export class UserLocationManager {
 
   checkManager() {
     setInterval(() => {
-      console.log('checking chat room container --------');
-      console.log(this.container);
-      console.log('---------------------------');
+      this.logger.debug('checking chat room container --------');
+      this.logger.debug(this.container);
+      this.logger.debug('---------------------------');
     }, 5000);
   }
 }

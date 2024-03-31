@@ -97,8 +97,6 @@ export class AlertService {
       };
     });
 
-    console.log(result.length);
-
     return { allAlerts: result };
   }
 
@@ -122,7 +120,6 @@ export class AlertService {
     const userIds = await this.userCollection.findUserIdsByUsernames(
       data.usernames,
     );
-    console.log(userIds);
 
     return Promise.all(
       userIds.map((item) => {

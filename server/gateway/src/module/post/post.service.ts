@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { CommentItemContent, UploadMessage } from 'sns-interfaces';
 import {
   CocommentContent,
@@ -14,31 +14,12 @@ import { CocommentDto, CommentDto, PostDto } from './dto/post.dto';
 import { AlertDto, UserTagAlertReqForm } from 'sns-interfaces/alert.interface';
 import { AlertService } from '../alert/alert.service';
 import { SearchService } from '../search/search.service';
-
-type HandleUserTagReqBody = {
-  //유저태그 추출할 텍스트
-  text: string;
-  type: 'post' | 'comment' | 'cocomment';
-  whereId: number | string;
-  userId: number;
-};
-
-export type AddLikeType = AddLikePost | AddLikeComment | AddLikeCocomment;
-export interface AddLikePost {
-  postId: string;
-  type: 'post';
-}
-export interface AddLikeComment {
-  commentId: number;
-  type: 'comment';
-}
-export interface AddLikeCocomment {
-  cocommentId: number;
-  type: 'cocomment';
-}
+import { HandleUserTagReqBody, AddLikeType } from './interface';
 
 @Injectable()
 export class PostService {
+  private logger = new Logger(PostService.name);
+
   constructor(
     @Inject(forwardRef(() => FflService))
     private fflService: FflService,
@@ -310,9 +291,8 @@ export class PostService {
   //게시물에 달린 댓, 대댓, 거기붙은 좋아요 추후 삭제
   deletePost(body: { postId: string }, req) {
     //pgdg에서 포스트삭제
-    this.postRepo.postTable.db.delete(body.postId).then((res) => {
-      console.log(res);
-    });
+    this.postRepo.postTable.db.delete(body.postId);
+
     //엘라스틱에서 포스트삭제, 태그카운트 감소
     this.searchService.deletePost(body);
 
@@ -363,7 +343,7 @@ export class PostService {
 
       return { postFooterContent, userId: data.userId };
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
 
       return { postFooterContent: undefined, userId: data.userId };
     }

@@ -46,10 +46,10 @@ export class PostTable {
       })
       .execute()
       .then(() => {
-        this.logger.log('post stored in pgdb successfully');
+        // this.logger.debug('post stored in pgdb successfully');
       })
       .catch((err) => {
-        console.log('err when insert post table, at post.repo.ts', err);
+        this.logger.error('err when insert post table, at post.repo.ts', err);
         throw new Error(err);
       });
   }
@@ -65,10 +65,10 @@ export class PostTable {
       .where('id = :id', { id: postId })
       .execute()
       .then(() => {
-        this.logger.log('comment stored in pgdb successfully');
+        // this.logger.debug('comment stored in pgdb successfully');
       })
       .catch((err) => {
-        console.log('err when insert post table, at post.repo.ts', err);
+        this.logger.error('err when insert post table, at post.repo.ts', err);
       });
   }
 
@@ -81,10 +81,10 @@ export class PostTable {
       .where('id = :id', { id: postId })
       .execute()
       .then(() => {
-        this.logger.log('post deleteed in pgdb successfully');
+        // this.logger.debug('post deleteed in pgdb successfully');
       })
       .catch((err) => {
-        console.log('err when delete post, at post.repo.ts', err);
+        this.logger.error('err when delete post, at post.repo.ts', err);
       });
   }
 
@@ -98,10 +98,10 @@ export class PostTable {
       .where('id = :id', { id: data.postId })
       .execute()
       .then(() => {
-        this.logger.log('like added');
+        // this.logger.debug('like added');
       })
       .catch((err) => {
-        console.log('err when add like, at post.repo.ts', err);
+        this.logger.error('err when add like, at post.repo.ts', err);
       });
   }
 
@@ -115,10 +115,10 @@ export class PostTable {
       .where('id = :id', { id: data.postId })
       .execute()
       .then(() => {
-        this.logger.log('like removed');
+        // this.logger.debug('like removed');
       })
       .catch((err) => {
-        console.log('err when remove like, at post.repo.ts', err);
+        this.logger.error('err when remove like, at post.repo.ts', err);
       });
   }
 

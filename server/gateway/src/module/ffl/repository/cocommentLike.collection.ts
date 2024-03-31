@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { crypter } from '../../../common/crypter';
@@ -6,6 +6,7 @@ import { CocommentLikeSchemaDefinition } from './schema/cocommentLike.schema';
 
 @Injectable()
 export class CocommentLikeCollection {
+  private logger = new Logger(CocommentLikeCollection.name);
   constructor(
     @InjectModel('cocommentlike')
     private cocommentLikeModel: Model<CocommentLikeSchemaDefinition>,
@@ -21,10 +22,10 @@ export class CocommentLikeCollection {
     return newOne
       .save()
       .then(() => {
-        console.log('cocomment like stored in mongo successfully');
+        // this.logger.debug('cocomment like stored in mongo successfully');
       })
       .catch(() => {
-        console.log('err when storing cocomment like in mongo');
+        this.logger.error('err when storing cocomment like in mongo');
       });
   }
 
@@ -35,10 +36,10 @@ export class CocommentLikeCollection {
         cocommentId: data.cocommentId,
       })
       .then(() => {
-        console.log('cocomment like removed');
+        // this.logger.debug('cocomment like removed');
       })
       .catch(() => {
-        console.log('err when canceling cocomment like in mongo');
+        this.logger.error('err when canceling cocomment like in mongo');
       });
   }
 

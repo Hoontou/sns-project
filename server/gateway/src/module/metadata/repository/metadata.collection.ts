@@ -50,7 +50,6 @@ export class MetadataCollection {
     const userIds = data.userIds?.map((i) => {
       return crypter.decrypt(i);
     });
-    // console.log(userIds);
 
     const metadatas = (await this.metadataModel
       //3일 안으로, 10개씩
@@ -87,8 +86,10 @@ export class MetadataCollection {
     const newOne = await new this.metadataModel(metadataDto);
     await newOne
       .save()
-      .then(() => console.log('meatadata stored in mongo successfully'))
-      .catch(() => console.log('err when storing metadata in mongo'));
+      .then(() => {
+        // this.logger.debug('meatadata stored in mongo successfully');
+      })
+      .catch(() => this.logger.error('err when storing metadata in mongo'));
     //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
     return newOne;
   }

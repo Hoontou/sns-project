@@ -6,11 +6,6 @@ import { crypter } from 'src/common/crypter';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('/tst')
-  tst(@Req() req) {
-    console.log(req.user);
-  }
-
   @Post('/changeusername')
   async changeUsername(
     @Body() body: { userId: string; username: string },

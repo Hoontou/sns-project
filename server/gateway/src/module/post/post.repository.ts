@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PostContent } from 'sns-interfaces/client.interface';
 import { crypter } from 'src/common/crypter';
 import { PostDto, CommentDto, CocommentDto } from './dto/post.dto';
@@ -8,6 +8,8 @@ import { PostTable } from './repository/post.table';
 
 @Injectable()
 export class PostRepository {
+  private logger = new Logger(PostRepository.name);
+
   constructor(
     public readonly postTable: PostTable,
     public readonly commentTable: CommentTable,
@@ -36,7 +38,7 @@ export class PostRepository {
     const post = await this.postTable.getPost(postId);
 
     if (post === undefined) {
-      console.log('Err while getPost at post.repo.ts, must be not found');
+      this.logger.error('Err while getPost at post.repo.ts, must be not found');
       throw new NotFoundException();
     }
 

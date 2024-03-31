@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { crypter } from '../../../common/crypter';
@@ -6,6 +6,7 @@ import { CommentLikeSchemaDefinition } from './schema/commentLike.schema';
 
 @Injectable()
 export class CommentLikeCollection {
+  private logger = new Logger(CommentLikeCollection.name);
   constructor(
     @InjectModel('commentlike')
     private commentLikeModel: Model<CommentLikeSchemaDefinition>,
@@ -20,10 +21,10 @@ export class CommentLikeCollection {
     return newOne
       .save()
       .then(() => {
-        console.log('comment like stored in mongo successfully');
+        // this.logger.debug('comment like stored in mongo successfully');
       })
       .catch(() => {
-        console.log('err when storing comment like in mongo');
+        this.logger.error('err when storing comment like in mongo');
       });
     //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
   }
@@ -35,10 +36,10 @@ export class CommentLikeCollection {
         commentId: data.commentId,
       })
       .then(() => {
-        console.log('comment like removed');
+        // this.logger.debug('comment like removed');
       })
       .catch(() => {
-        console.log('err when canceling comment like in mongo');
+        this.logger.error('err when canceling comment like in mongo');
       });
   }
 

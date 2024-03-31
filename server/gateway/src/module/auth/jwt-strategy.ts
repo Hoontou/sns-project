@@ -12,11 +12,7 @@ const tokenExtractor = (req): string => {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger('AuthGuard');
-  // constructor(private userTable: UserTable) {
-  constructor(
-    // @Inject(forwardRef(() => UserRepository))
-    private userRepo: UserRepository,
-  ) {
+  constructor(private userRepo: UserRepository) {
     super({
       secretOrKey: JwtSecret,
       jwtFromRequest: tokenExtractor,

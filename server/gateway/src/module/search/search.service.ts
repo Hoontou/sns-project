@@ -4,7 +4,7 @@
 //7.13.0버전 코드임, aws 버전과 맞추기 위해 내렸음
 import { Client } from '@elastic/elasticsearch';
 
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PostDto } from '../post/dto/post.dto';
 import {
   SearchedHashtag,
@@ -21,6 +21,7 @@ const NODE_ENV = process.env.NODE_ENV;
 
 @Injectable()
 export class SearchService implements OnModuleInit {
+  private logger = new Logger(SearchService.name);
   private readonly elasticClient: Client;
   private readonly SnsPostsIndex = 'sns.posts';
   private readonly SnsTagsIndex = 'sns.tags';
@@ -83,7 +84,6 @@ export class SearchService implements OnModuleInit {
         id: tag,
       })
       .then((res) => {
-        console.log(`${tag} tag is exist, count ++`);
         //2-1. 존재하는 태그면 count 증가
         this.elasticClient.update({
           index: this.SnsTagsIndex,
@@ -100,7 +100,7 @@ export class SearchService implements OnModuleInit {
         return res.body.found; //여기서는 true 리턴
       })
       .catch((err) => {
-        console.log(`${tag} tag is missing, create tag DOC`);
+        this.logger.error(`${tag} tag is missing, create tag DOC`);
 
         //2-2. 존재하지 않으면 새로운 DOC 추가, missing하면 err뱉어내서 여기로 옴
         this.elasticClient.index({
@@ -172,8 +172,6 @@ export class SearchService implements OnModuleInit {
         },
       },
     });
-
-    console.log(result.body.hits.hits);
 
     const postIdList = result.body.hits.hits.map((item) => {
       return item._id;
@@ -287,8 +285,10 @@ export class SearchService implements OnModuleInit {
         }
       }
     } catch (error) {
-      console.log('elastic에서 post정보 삭제중 에러, 아마 정보가 없을거임');
-      console.log(error);
+      this.logger.error(
+        'elastic에서 post정보 삭제중 에러, 아마 정보가 없을거임',
+      );
+      this.logger.error(error);
     }
   }
 
@@ -333,13 +333,11 @@ export class SearchService implements OnModuleInit {
           },
         },
       });
-
-      console.log(`Index created: ${this.SnsPostsIndex}, ${this.SnsTagsIndex}`);
     } catch (error) {
-      console.log(
+      this.logger.error(
         `Error creating index: ${this.SnsPostsIndex}, ${this.SnsTagsIndex}`,
       );
-      console.log(error.meta.body.error);
+      this.logger.error(error.meta.body.error);
     }
   }
 

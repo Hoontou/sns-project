@@ -125,7 +125,7 @@ export class AuthService {
       await this.userRepo.signUp(user);
       return { success: true };
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return { success: false, msg: 'DB insert err' };
     }
   }
@@ -141,7 +141,7 @@ export class AuthService {
 
       //refresh필요하다면? 토큰재발급해서 담아준다.
       if (authDto.refresh === true) {
-        this.logger.log('regenerate accessToekn');
+        // this.logger.debug('regenerate accessToekn');
         user.accessToken = await this.jwtService.sign({
           email: authInfo.email,
         });
@@ -149,7 +149,7 @@ export class AuthService {
 
       return user;
     } catch (err) {
-      console.log(err);
+      this.logger.error(err);
       this.logger.error('Auth failed');
       return { success: false };
     }
@@ -172,7 +172,7 @@ export class AuthService {
     if (user && (await bcrypt.compare(password, user.password))) {
       //로그인 성공한 상태이고 이제 JWT를 생성해야함. Secret + Patload(페이로드는 중요정보 넣지마라.)
       const accessToken = await this.jwtService.sign({ email });
-      this.logger.log(`{id: ${user.id} Login`);
+      // this.logger.debug(`{id: ${user.id} Login`);
       return {
         accessToken,
         userId: crypter.encrypt(user.id),

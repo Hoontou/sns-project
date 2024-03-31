@@ -16,14 +16,14 @@ export class SearchGateway implements OnGatewayConnection {
   server: Server;
 
   async handleConnection(socket: Socket) {
-    this.logger.debug('search socket connected');
+    // this.logger.debug('search socket connected');
 
     socket.on('searchUserOrHashtag', (data: { searchString: string }) => {
       this.searchService
         .searchUserOrHashtag(data.searchString)
         .then((result) => {
-          this.logger.debug('live search result');
-          this.logger.debug(result);
+          // this.logger.debug('live search result');
+          // this.logger.debug(result);
           return socket.emit('searchUserOrHashtagResult', result);
         });
     });

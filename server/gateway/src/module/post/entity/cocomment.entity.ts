@@ -6,8 +6,6 @@ import {
   CreateDateColumn,
   //JoinColumn,
   ManyToOne,
-  JoinColumn,
-  OneToOne,
 } from 'typeorm';
 import { Comment } from './comment.entity';
 import { User } from '../../user/entity/user.entity';

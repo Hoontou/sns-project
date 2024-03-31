@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { crypter } from '../../../common/crypter';
@@ -8,6 +8,7 @@ import { findMatchingIndices } from './follow.cellection';
 import { MetadataDto } from '../../../module/metadata/repository/metadata.collection';
 @Injectable()
 export class PostLikeCollection {
+  private logger = new Logger(PostLikeCollection.name);
   constructor(
     @InjectModel('like')
     public readonly postLikeModel: Model<PostLikeSchemaDefinition>,
@@ -21,10 +22,10 @@ export class PostLikeCollection {
     return newOne
       .save()
       .then(() => {
-        console.log('like stored in mongo successfully');
+        // this.logger.debug('like stored in mongo successfully');
       })
       .catch(() => {
-        console.log('err when storing like in mongo');
+        this.logger.error('err when storing like in mongo');
       });
   }
 
@@ -35,10 +36,10 @@ export class PostLikeCollection {
         postId: data.postId,
       })
       .then(() => {
-        console.log('like removed');
+        // this.logger.debug('like removed');
       })
       .catch(() => {
-        console.log('err when canceling like in mongo');
+        this.logger.error('err when canceling like in mongo');
       });
   }
 
@@ -70,7 +71,7 @@ export class PostLikeCollection {
     });
 
     if (userList === undefined) {
-      console.log(`missing from ${type} container, loading requested`);
+      // this.logger.debug(`missing from ${type} container, loading requested`);
 
       //캐시에 없다면 디비에서 가져온다
       const tmpAllUserList: userinfo[] = await this.postLikeModel
@@ -94,7 +95,7 @@ export class PostLikeCollection {
       //prefix find 해서 리턴
       return findMatchingIndices(tmpAllUserList, data.searchString);
     }
-    console.log('list is existed, no db request');
+    // this.logger.debug('list is existed, no db request');
 
     return findMatchingIndices(userList, data.searchString);
   }

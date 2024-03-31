@@ -1,6 +1,6 @@
 import * as CryptoJS from 'crypto-js';
 
-export const JwtSecret = 'HowCuteMyCheeze';
+export const JwtSecret = process.env.JWT_SECRET || 'HowCuteMyCheeze';
 
 class Crypto {
   constructor(private secret) {
@@ -31,4 +31,6 @@ class Crypto {
   }
 }
 
-export const crypter = new Crypto('2e47f242a46d13eeb22aabc01d5e5d05');
+export const crypter = new Crypto(
+  process.env.CRYPTO_SECRET || '2e47f242a46d13eeb22aabc01d5e5d05',
+);

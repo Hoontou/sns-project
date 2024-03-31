@@ -7,8 +7,6 @@ import {
   //JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
-  JoinColumn,
 } from 'typeorm';
 import { Post } from './post.entity';
 import { Cocomment } from './cocomment.entity';

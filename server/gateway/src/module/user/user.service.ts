@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { UserInfoBody } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import { UserRepository } from './user.repo';
@@ -7,6 +7,7 @@ import { SearchedUser } from '../search/types/search.types';
 
 @Injectable()
 export class UserService {
+  private logger = new Logger(UserService.name);
   constructor(
     private userRepo: UserRepository,
     private searchService: SearchService,
@@ -35,7 +36,7 @@ export class UserService {
           : await this.userRepo.getUserinfoByUsername(body.targetUsername);
 
       if (result === undefined) {
-        console.log('getUserinfo is null, err at user.repo.ts');
+        this.logger.error('getUserinfo is null, err at user.repo.ts');
         throw new NotFoundException();
       }
 
@@ -45,7 +46,7 @@ export class UserService {
         success: true,
       };
     } catch (err) {
-      console.log(err);
+      this.logger.error(err);
       return { success: false };
     }
   }
@@ -86,7 +87,7 @@ export class UserService {
       | undefined = await this.userRepo.getUsernameWithImgList(userIds);
 
     if (result === undefined) {
-      console.log('getUsernameWithImgList is null, err at user.repo.ts');
+      this.logger.error('getUsernameWithImgList is null, err at user.repo.ts');
       throw new NotFoundException();
     }
     const tmp = result.map((item) => {
@@ -105,11 +106,11 @@ export class UserService {
       await this.userRepo.changeUsername(body);
       return { success: true };
     } catch (error) {
-      console.log('user -> user.service.ts -> changeUsername 에서 err');
-      console.log(error);
+      this.logger.error('user -> user.service.ts -> changeUsername 에서 err');
+      this.logger.error(error);
       if (error.code === '23505' || error.codeName === 'DuplicateKey') {
         //유니크 중복 코드, 앞에껀 postgres, 뒤에껀 mongo 코드임
-        console.log('username 중복');
+        this.logger.error('username 중복');
         return { success: false, exist: true };
       }
 
@@ -122,8 +123,8 @@ export class UserService {
       await this.userRepo.changeIntro(body);
       return { success: true };
     } catch (err) {
-      console.log('user -> user.service.ts -> changeIntro 에서 err');
-      console.log(err);
+      this.logger.error('user -> user.service.ts -> changeIntro 에서 err');
+      this.logger.error(err);
       return { success: false };
     }
   }
@@ -136,8 +137,10 @@ export class UserService {
       await this.userRepo.changeIntroduceName(body);
       return { success: true };
     } catch (error) {
-      console.log('user -> user.service.ts -> changeIntroduceName 에서 err');
-      console.log(error);
+      this.logger.error(
+        'user -> user.service.ts -> changeIntroduceName 에서 err',
+      );
+      this.logger.error(error);
       return { success: false };
     }
   }
@@ -161,7 +164,7 @@ export class UserService {
     const result = await this.userRepo.getUserinfoByUsername(body.username);
 
     if (!result) {
-      console.log('getUserinfo is null, err at user.repo.ts');
+      this.logger.error('getUserinfo is null, err at user.repo.ts');
       throw new NotFoundException();
     }
 

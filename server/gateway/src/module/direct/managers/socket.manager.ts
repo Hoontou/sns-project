@@ -4,11 +4,12 @@
 //   connAt: Date;
 // }
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 
 @Injectable()
 export class SocketManager {
+  private logger = new Logger(SocketManager.name);
   private container: Map<number, Socket | undefined>;
   constructor() {
     this.container = new Map();
@@ -29,9 +30,9 @@ export class SocketManager {
 
   checkManager() {
     setInterval(() => {
-      console.log('checking socket container --------');
-      console.log(this.container);
-      console.log('---------------------------');
+      this.logger.debug('checking socket container --------');
+      this.logger.debug(this.container);
+      this.logger.debug('---------------------------');
     }, 5000);
   }
 }

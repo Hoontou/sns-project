@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { pgdb } from '../../../configs/postgres';
 import { ChatRoomSchemaType } from './schema/chatRoom.schema';
 
@@ -19,6 +19,7 @@ export interface ChatRoom {
 
 @Injectable()
 export class MessageRepository {
+  private logger = new Logger(MessageRepository.name);
   private readonly pgClient;
   constructor() {
     this.pgClient = pgdb.client;
@@ -110,8 +111,8 @@ export class MessageRepository {
       await this.pgClient.query(query1);
       await this.pgClient.query(query2);
     } catch (error) {
-      console.log('err while create tables on dm server');
-      console.log(error);
+      this.logger.error('err while create tables on dm server');
+      this.logger.error(error);
     }
   }
 }
