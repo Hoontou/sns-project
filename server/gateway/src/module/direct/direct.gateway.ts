@@ -9,7 +9,7 @@ import { crypter } from '../../common/crypter';
 import { DirectService } from './direct.service';
 import { ChatRoomSchemaType } from './repository/schema/chatRoom.schema';
 
-@WebSocketGateway({ namespace: 'direct', cors: { origin: '*' } })
+@WebSocketGateway({ cors: { origin: '*' } })
 export class DirectGateway implements OnGatewayConnection {
   private readonly logger = new Logger(DirectGateway.name);
   constructor(private directService: DirectService) {}
