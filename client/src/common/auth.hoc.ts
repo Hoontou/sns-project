@@ -7,8 +7,6 @@ export const authHoc = async (): Promise<AuthResultRes> => {
     return await axiosInstance.get('/auth/auth').then((res) => {
       return res.data;
     });
-    // localStorage.setItem('userId', authRes.userId); //AES로 암호화 된 id 원래(int)
-    // localStorage.setItem('username', authRes.username);
   } catch {
     return { success: false };
   }

@@ -10,10 +10,6 @@ import { axiosInstance } from '../../../App';
 export const renderTitle = (title: string) => {
   const tmp = title.split(/(#\S+|@\S+)/).filter((part) => part.trim() !== '');
 
-  //  const tmp = title
-  // .split(/(#[\w가-힣]+|@[\w가-힣]+)/)
-  // .filter((part) => part.trim() !== '');
-
   return tmp.map((item, index) => {
     if (item.at(0) === '@') {
       return (
@@ -54,7 +50,6 @@ const PostFooter = (props: {
   setOpenComment: Dispatch<SetStateAction<boolean>>;
   postFooterContent: PostFooterContent;
 }) => {
-  const navigate = useNavigate();
   const [openUserList, setOpenUserList] = useState<boolean>(false);
   //얕은복사로 붙여넣기
   const [postContent, setContent] = useState<PostFooterContent>({

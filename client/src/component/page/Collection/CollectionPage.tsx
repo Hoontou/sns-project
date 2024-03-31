@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { emptyMetadata, Metadata } from '../../common/Post/Postlist';
+import { emptyMetadata } from '../../common/Post/Postlist';
 import { PageItemLen } from '../Search/MainPageTab/MainTab';
 import { Box, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
@@ -11,14 +11,15 @@ import { useNavigate } from 'react-router-dom';
 import { Typography } from 'antd';
 import Navbar from '../../common/Navbar/Navbar';
 import { axiosInstance } from '../../../App';
+import { MetadataSchemaType } from 'sns-interfaces';
 const { Title } = Typography;
 
 const CollectionPage = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string>('');
-  const [posts, setPosts] = useState<Metadata[]>([]);
+  const [posts, setPosts] = useState<MetadataSchemaType[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedItem, setItem] = useState<Metadata>(emptyMetadata);
+  const [selectedItem, setItem] = useState<MetadataSchemaType>(emptyMetadata);
   const [page, setPage] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
@@ -29,7 +30,7 @@ const CollectionPage = () => {
         page,
       })
       .then((res) => {
-        const metadatas: Metadata[] = res.data.metadatas;
+        const metadatas: MetadataSchemaType[] = res.data.metadatas;
         if (metadatas.length < PageItemLen) {
           //gateway에서 9개씩 보내줌.
           setHasMore(false);

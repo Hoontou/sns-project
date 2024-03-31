@@ -28,7 +28,7 @@ const LandingComment = (props: {
   index: number;
   createdAt: string;
   userId: string;
-  openCo(index: number): void;
+  openComment(index: number): void;
   postFooterContent: PostFooterContent;
 }) => {
   const navigate = useNavigate();
@@ -323,7 +323,7 @@ const LandingComment = (props: {
                 left: '1rem',
               }}
               onClick={() => {
-                props.openCo(-1);
+                props.openComment(-1);
               }}
             />
             <span>댓글</span>

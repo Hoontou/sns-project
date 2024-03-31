@@ -2,19 +2,17 @@ import { useState, useEffect } from 'react';
 import Slider from '../Slider';
 import PostFooter from './PostFooter';
 import { requestUrl } from '../../../common/etc';
-import { Metadata } from './Postlist';
 import Comment from '../Comment/Comment';
-import { emptyPostFooterContent } from './post.interfaces';
 import { useNavigate } from 'react-router-dom';
 import sample1 from '../../../asset/sample1.jpg';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { Avatar } from '@mui/material';
 import PostMenu from './PostMenu';
 import { axiosInstance } from '../../../App';
+import { MetadataSchemaType } from 'sns-interfaces';
 
-// export
 const Post = (props: {
-  metadata: Metadata;
+  metadata: MetadataSchemaType;
   userId: string;
   postFooterContent: PostFooterContent;
 }) => {
@@ -48,7 +46,6 @@ const Post = (props: {
       })
       .then((res) => {
         const data: PostFooterContent = res.data;
-        console.log(data);
         setPostFooterContent({ ...data });
         setFulfilled(true);
       });

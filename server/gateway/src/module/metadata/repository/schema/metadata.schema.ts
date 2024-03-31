@@ -25,6 +25,7 @@ export const MetadataSchema = SchemaFactory.createForClass(
 );
 
 export interface MetadataSchemaType {
+  _id: string;
   userId: string;
   files: string[];
   createdAt: string;

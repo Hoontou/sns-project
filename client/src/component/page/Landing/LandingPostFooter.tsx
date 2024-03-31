@@ -15,7 +15,7 @@ const LandingPostFooter = (props: {
   createdAt: string;
   userId: string;
   postFooterContent: PostFooterContent;
-  openCo(index: number): void;
+  openComment(index: number): void;
 }) => {
   const navigate = useNavigate();
   const [openUserList, setOpenUserList] = useState<boolean>(false);
@@ -81,7 +81,7 @@ const LandingPostFooter = (props: {
           fontSize='30px'
           style={{ marginRight: '0.5rem' }}
           onClick={() => {
-            props.openCo(props.index);
+            props.openComment(props.index);
           }}
         />
         {postContent.likesCount === 0 ? (
@@ -124,7 +124,7 @@ const LandingPostFooter = (props: {
               fontSize: '0.8rem',
             }}
             onClick={() => {
-              props.openCo(props.index);
+              props.openComment(props.index);
             }}
           >
             댓글 {props.postFooterContent.commentCount}개 보기

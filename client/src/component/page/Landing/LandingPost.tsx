@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { requestUrl } from '../../../common/etc';
-import { Metadata, emptyMetadata } from '../../common/Post/Postlist';
+import { emptyMetadata } from '../../common/Post/Postlist';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
 import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
 import { useNavigate } from 'react-router-dom';
@@ -9,17 +9,18 @@ import { Avatar } from '@mui/material';
 import Slider from '../../common/Slider';
 import LandingPostFooter from './LandingPostFooter';
 import { LandingContent } from './interface';
+import { MetadataSchemaType } from 'sns-interfaces';
 
 const LandingPost = (props: {
   index: number;
   post: LandingContent;
   userId: string;
-  openCo(index: number): void;
+  openComment(index: number): void;
 }) => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [images, setImages] = useState<string[]>([]);
-  const [metadata, setMetadata] = useState<Metadata>(emptyMetadata);
+  const [metadata, setMetadata] = useState<MetadataSchemaType>(emptyMetadata);
   const [postFooterContent, setPostFooterContent] = useState<PostFooterContent>(
     emptyPostFooterContent
   );
@@ -77,7 +78,7 @@ const LandingPost = (props: {
           postId={metadata._id}
           createdAt={metadata.createdAt}
           userId={props.userId}
-          openCo={props.openCo}
+          openComment={props.openComment}
           postFooterContent={postFooterContent}
         />
       )}

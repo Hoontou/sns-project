@@ -77,17 +77,7 @@ const CommentInput = (props: {
 
     //해시태그 추출
 
-    // const tmp = splitTitle(e.target.value);
-    // 이거 필요한가? 안필요할듯
-    // 입력받은 값에 태그가 없으면 빈리스트로 갈아끼우고 리턴
-    // if (tmp.length === 0) {
-    //   props.setSearchbarDisplay(false);
-    //   setTags([]);
-    //   return;
-    // }
-
     //태그 있으면 실시간 검색을 위해 변경된 태그를 찾는다
-    console.log('변경점?', diff);
 
     if (diff === undefined || diff.changedTag === undefined) {
       //태그수정을 안했거나, 태그를 없앤경우 그냥 상태만 저장 후 리턴
@@ -109,8 +99,6 @@ const CommentInput = (props: {
 
     //태그서치언더바의 content를 클릭하면 변경중이었던 태그를 수정해야함.
 
-    //상태저장
-    // setTags(tmp);
     return;
   };
 
@@ -121,13 +109,10 @@ const CommentInput = (props: {
   ): { changedTag: string | undefined } | undefined => {
     const splitedOriginal = splitTitle(original);
     const splitedTmp = splitTitle(tmp);
-    console.log(splitedOriginal);
-    console.log(splitedTmp);
 
     //해시태그 삭제한 경우, 수정한 경우, 수정이 없는경우
     //1. 두개의 길이가 다르면, 바로그냥 리턴 -> 삭제한경우, 막 추가한 경우
     if (splitedTmp.length !== splitedOriginal.length) {
-      console.log(false);
       props.setSearchbarDisplay(false);
       return undefined;
     }
@@ -165,33 +150,14 @@ const CommentInput = (props: {
     const splitedTitle = text
       .split(/(#\S+|@\S+)/)
       .filter((part) => part.trim() !== '');
-    // const splitedTitle = text
-    // .split(/(#\S+|@\S+)/)
-    // .filter((part) => part.trim() !== '');
+
     return splitedTitle;
   };
 
-  // useEffect(() => {
-  //   console.log(tags);
-  // }, [tags]);
-
   /**클릭된 태그를 title에 갈아끼우는 함수 */
   const replaceTagToTitle = (tag: string) => {
-    // const tmpList = [...tags];
-    // tmpList[indexOfTargetTag] = tag;
-
-    // const splitedTitle = props.title
-    //   .split(/(#[\w가-힣]+|@[\w가-힣]+)/)
-    //   .filter((part) => part.trim() !== '');
-
     const splitedTitle = splitTitle(props.submitingComment);
 
-    // const tmp = splitedTitle.map((item) => {
-    //   if (selectedTag === item) {
-    //     return tag;
-    //   }
-    //   return item;
-    // });
     splitedTitle[targetTagIndex] = tag;
 
     props.setSubmitingComment(splitedTitle.join(' '));

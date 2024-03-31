@@ -89,7 +89,6 @@ const Comment = (props: {
     }
 
     timeoutId = setTimeout(() => {
-      console.log('send search string :', searchRequestString);
       //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
       if (searchBarDisplay === false) {
         setSearchbarDisplay(true);

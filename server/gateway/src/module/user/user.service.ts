@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SearchedUser } from 'sns-interfaces/grpc.interfaces';
 import { UserInfoBody } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import { UserRepository } from './user.repo';
 import { SearchService } from '../search/search.service';
+import { SearchedUser } from '../search/types/search.types';
 
 @Injectable()
 export class UserService {

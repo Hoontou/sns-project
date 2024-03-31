@@ -17,7 +17,7 @@ const Landing = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(0);
   const [spin, setSpin] = useState<boolean>(false);
-  const [openComment, setOpenComment] = useState<boolean>(false);
+  const [isCommentOpen, setIsCommentOpen] = useState<boolean>(false);
   const [posts, setPosts] = useState<LandingContent[]>([]);
   const [userId, setUserId] = useState<string>('');
   const [targetPostIndex, setTargetPostIndex] = useState<number>(999);
@@ -31,15 +31,15 @@ const Landing = () => {
   const [hasNewAlert, setHasNewAlert] = useState<boolean>(false);
   const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
 
-  const openCo = (index: number) => {
+  const openComment = (index: number) => {
     if (index === -1) {
-      setOpenComment(false);
+      setIsCommentOpen(false);
       return;
     }
     setPostToComment(posts[index]);
     setTargetPostIndex(index);
     setCreatedAtToComment(posts[index].createdAt);
-    setOpenComment(!openComment);
+    setIsCommentOpen(!isCommentOpen);
     return;
   };
 
@@ -86,12 +86,25 @@ const Landing = () => {
         setHasNewMessage(hasNewMessage);
       });
     });
+
+    //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
+    const handleBack = (event: PopStateEvent) => {
+      setIsCommentOpen(false);
+    };
+
+    //뒤로가기 event리스너 등록
+    window.addEventListener('popstate', handleBack);
+
+    return () => {
+      //이게 꼭 있어야한단다. 창 나갈때 반환인가?
+      window.removeEventListener('popstate', handleBack);
+    };
   }, []);
 
   const renderPosts = posts.map((i, index) => {
     return (
       <LandingPost
-        openCo={openCo}
+        openComment={openComment}
         key={`landing-${index}`}
         index={index}
         post={i}
@@ -163,11 +176,11 @@ const Landing = () => {
           {/* scrollThreshold={'90%'} 페이지 얼만큼 내려오면 다음거 불러올건지 설정 */}
           <div>{renderPosts}</div>
         </InfiniteScroll>
-        {openComment && (
+        {isCommentOpen && (
           <Modal
-            open={openComment}
+            open={isCommentOpen}
             onClose={() => {
-              setOpenComment(false);
+              setIsCommentOpen(false);
             }}
           >
             <Box sx={{ bgcolor: 'white', width: '100%', height: '100%' }}>
@@ -176,7 +189,7 @@ const Landing = () => {
                 createdAt={createdAtToComment}
                 postFooterContent={postToComment}
                 userId={userId}
-                openCo={openCo}
+                openComment={openComment}
               />
             </Box>
           </Modal>

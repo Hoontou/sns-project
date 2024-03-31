@@ -23,12 +23,7 @@ const CommentItem = (props: {
     index: number
   ): Promise<number>;
 }) => {
-  console.log(props.content);
   const navigate = useNavigate();
-  // const [content, setContent] = useState<CommentItemContent>({
-  //   ...props.content,
-  // });
-
   const [pending, setPending] = useState<boolean>(false);
   const [openCocomment, setOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
@@ -83,9 +78,6 @@ const CommentItem = (props: {
       />
     );
   });
-
-  console.log(props.userId);
-  console.log(props.content.userId);
 
   return (
     <>
@@ -144,7 +136,6 @@ const CommentItem = (props: {
                 fontSize: '0.7rem',
               }}
             >
-              {/* {props.content.createdAt} */}
               {getElapsedTimeString(props.content.createdAt)}
             </span>
             <div style={{ fontSize: '0.9rem' }}>

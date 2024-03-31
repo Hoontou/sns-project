@@ -1,22 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Box, Button, Grid, Modal } from '@mui/material';
+import { Box, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
 import Post from './Post';
 import { emptyPostFooterContent } from './post.interfaces';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { axiosInstance } from '../../../App';
+import { MetadataSchemaType } from 'sns-interfaces';
 
 export interface MetadataDto {
   _id: string;
   userId: string;
   files: string[];
-} //sns-interfaces에 있는걸 쓰려고 했는데 리액트에서 자체적으로 _id에서 _를 빼버리고 id로 만들어버림.
-//그래서 그냥 여기다 새로정의
-
-export interface Metadata extends MetadataDto {
-  createdAt: string;
 }
-export const emptyMetadata: Metadata = {
+
+export const emptyMetadata: MetadataSchemaType = {
   _id: '',
   userId: '',
   files: [''],
@@ -29,9 +26,9 @@ export const pageItemLen = 12;
 //내 포스트를 가져오면 됨.
 const Postlist = (props: { userId: string; targetId?: string }) => {
   const [spin, setSpin] = useState<boolean>(true);
-  const [posts, setPosts] = useState<Metadata[]>([]);
+  const [posts, setPosts] = useState<MetadataSchemaType[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedItem, setItem] = useState<Metadata>(emptyMetadata);
+  const [selectedItem, setItem] = useState<MetadataSchemaType>(emptyMetadata);
   const [page, setPage] = useState<number>(0);
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
@@ -62,7 +59,7 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
           page,
         })
         .then((res) => {
-          const metadatas: Metadata[] = res.data.metadatas;
+          const metadatas: MetadataSchemaType[] = res.data.metadatas;
           if (metadatas.length < pageItemLen) {
             // gateway/에서 9개씩 보내줌.
             setEnablingGetMoreButton(false);

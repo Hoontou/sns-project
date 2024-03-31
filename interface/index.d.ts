@@ -1,3 +1,13 @@
+//--------------아래는 배포전 새로 등록한,
+
+export interface MetadataSchemaType {
+  _id: string;
+  userId: string;
+  files: string[];
+  createdAt: string;
+}
+
+//------------------------------여기까지
 //메타데이터 DTO 정의
 export interface MetadataDto {
   id: string;

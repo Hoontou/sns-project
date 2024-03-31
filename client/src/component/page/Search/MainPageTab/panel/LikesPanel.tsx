@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { emptyMetadata, Metadata } from '../../../../common/Post/Postlist';
+import { emptyMetadata } from '../../../../common/Post/Postlist';
 import { axiosInstance } from '../../../../../App';
 import { PageItemLen } from '../MainTab';
 import { Box, Grid, Modal } from '@mui/material';
@@ -7,15 +7,16 @@ import { requestUrl } from '../../../../../common/etc';
 import { emptyPostFooterContent } from '../../../../common/Post/post.interfaces';
 import Post from '../../../../common/Post/Post';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { MetadataSchemaType } from 'sns-interfaces';
 
 const LikesPanel = (props: {
   userId: string;
   index: number;
   targetIndex: number;
 }) => {
-  const [posts, setPosts] = useState<Metadata[]>([]);
+  const [posts, setPosts] = useState<MetadataSchemaType[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedItem, setItem] = useState<Metadata>(emptyMetadata);
+  const [selectedItem, setItem] = useState<MetadataSchemaType>(emptyMetadata);
   const [page, setPage] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
@@ -26,7 +27,7 @@ const LikesPanel = (props: {
         page,
       })
       .then((res) => {
-        const metadatas: Metadata[] = res.data.metadatas;
+        const metadatas: MetadataSchemaType[] = res.data.metadatas;
         if (metadatas.length < PageItemLen) {
           //gateway에서 9개씩 보내줌.
           setHasMore(false);
