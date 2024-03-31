@@ -32,10 +32,10 @@ export const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// export const axiosUploadInstance = axios.create({
-//   baseURL: '/upload',
-//   withCredentials: true,
-// });
+export const axiosUploadInstance = axios.create({
+  baseURL: '/upload',
+  withCredentials: true,
+});
 
 function App() {
   return (
