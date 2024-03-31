@@ -65,6 +65,7 @@ server.post(
   { preHandler: [uploadToMemory, preParser] }, //순서대로 미들웨어 호출됨.
   //클라이언트로 온 파일을 memory에 임시저장, req로 온 정보들을 파싱하는 미들웨어
   async (req: UploadRequest, reply) => {
+    console.log('get req');
     // azure에 업로드, 주석만 없애면 정삭적 작동함. 지금은 돈나가니까 주석
     // 진행상황 콘솔출력은 함수안에 다 해놨음
     try {

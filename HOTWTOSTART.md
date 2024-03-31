@@ -68,4 +68,4 @@ upload에서
 1. elasticsearch-urls
 2. elasticsearch-user, password
 
-작성
+작성, 한번작성한것을 production 디렉터리에 넣어놨음.
