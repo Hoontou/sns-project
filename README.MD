@@ -76,7 +76,7 @@ postgres -> AWS RDS
 
 elasticsearch -> AWS Opensearch
 
-mongoDB -> atlas
+mongoDB -> atlas를 하려고 했지만 클러스터 돈아까워서 ec2에 올렸음
 
 ### 프로젝트 실행은 HOWTOSTART.md
 

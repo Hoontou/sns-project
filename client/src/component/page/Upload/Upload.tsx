@@ -117,7 +117,7 @@ const Upload = () => {
     formData.append('title', JSON.stringify({ title }));
     formData.append('alert_id', JSON.stringify({ alert_id: genObjectId() })); //게시물 업로드중 알람을 위한 Id
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
-    if (process.env.NODE_ENV) {
+    if (process.env.NODE_ENV === 'development') {
       await axiosUploadInstance //업로드 서버로 보낸다.
         .post('/uploadtolocal', formData);
     } else {
@@ -134,6 +134,9 @@ const Upload = () => {
 
   //뒤로가기로 검색모달 끄는 useEffect
   useEffect(() => {
+    axiosUploadInstance //업로드 서버로 보낸다.
+      .get('/');
+
     // authHoc().then((authRes) => {
     //   if (authRes.success === false) {
     //     alert('Err while Authentication, need login');

@@ -55,9 +55,8 @@ gateway에서
 4. AWS_POSTGRES_HOST
 5. AWS_POSTGRES_USERNAME
 6. AWS_POSTGRES_PASSWORD
-7. MONGO_URI
-8. JWT_SECRET
-9. CRYPTO_SECRET
+7. JWT_SECRET
+8. CRYPTO_SECRET
 
 upload에서
 
@@ -66,8 +65,7 @@ upload에서
 
 그다음 db/mons.config.toml에서
 
-1. mongo-url
-2. elasticsearch-urls
-3. elasticsearch-user, password
+1. elasticsearch-urls
+2. elasticsearch-user, password
 
 작성
