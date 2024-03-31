@@ -13,6 +13,7 @@ import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../../common/SearchResultModal';
 import { axiosUploadInstance } from '../../../App';
 import { SearchResult } from '../Search/interface';
+import axios from 'axios';
 
 export const titleLen = 80;
 
@@ -118,11 +119,11 @@ const Upload = () => {
     formData.append('alert_id', JSON.stringify({ alert_id: genObjectId() })); //게시물 업로드중 알람을 위한 Id
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     if (process.env.NODE_ENV === 'development') {
-      await axiosUploadInstance //업로드 서버로 보낸다.
-        .post('/uploadtolocal', formData);
+      await axios //업로드 서버로 보낸다.
+        .post('/upload/uploadtolocal', formData);
     } else {
-      await axiosUploadInstance //업로드 서버로 보낸다.
-        .post('/uploadtoazure', formData);
+      await axios //업로드 서버로 보낸다.
+        .post('/upload/uploadtoazure', formData);
     }
 
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
@@ -134,8 +135,8 @@ const Upload = () => {
 
   //뒤로가기로 검색모달 끄는 useEffect
   useEffect(() => {
-    axiosUploadInstance //업로드 서버로 보낸다.
-      .get('/');
+    axios //업로드 서버로 보낸다.
+      .get('/upload');
 
     // authHoc().then((authRes) => {
     //   if (authRes.success === false) {
