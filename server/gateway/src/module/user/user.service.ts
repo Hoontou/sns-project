@@ -1,9 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { UserInfoBody } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import { UserRepository } from './user.repo';
 import { SearchService } from '../search/search.service';
 import { SearchedUser } from '../search/types/search.types';
+import { UserInfoBody } from './interface';
 
 @Injectable()
 export class UserService {

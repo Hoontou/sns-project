@@ -86,6 +86,7 @@ export class AlertService {
         .sort({ _id: -1 });
 
     const result = allAlerts.map((i) => {
+      //id를 내보내지 마
       delete i._doc.content.userId;
       delete i._doc.userId;
       return {
@@ -116,7 +117,6 @@ export class AlertService {
   }
 
   async saveTagAlert(data: UserTagAlertReqForm) {
-    //usernames로 userId찾아온다
     const userIds = await this.userCollection.findUserIdsByUsernames(
       data.usernames,
     );

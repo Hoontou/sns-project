@@ -85,6 +85,7 @@ export class ChatRoomManager {
 
     //pop해온 정보 풀어서 넣고 리턴
     const tmp = chatRooms.map((i) => {
+      //id는 내보내지 마
       delete i._doc.ownerUserId;
       delete i._doc.chatWithUserId;
 

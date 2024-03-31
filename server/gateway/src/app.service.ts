@@ -7,18 +7,7 @@ import { crypter } from './common/crypter';
 import { PostFooterContent, UserInfo } from 'sns-interfaces/client.interface';
 import { LandingContent } from './app.controller';
 import { ReqUser } from 'sns-interfaces';
-
-/**내 정보로 접근시 userId가 내 아이디, 상대정보로 접근시 myId가 내 아이디임. */
-export type UserInfoBody = MyInfoData | UserInfoData;
-interface MyInfoData {
-  type: 'myInfo';
-  userId: string;
-}
-interface UserInfoData {
-  type: 'otherInfo';
-  targetUsername: string;
-  myId: string;
-}
+import { UserInfoBody } from './module/user/interface';
 
 @Injectable()
 //AppService의 메서드 이름은 client의 페이지 이름과 매칭
