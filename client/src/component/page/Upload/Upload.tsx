@@ -11,8 +11,8 @@ import { AuthResultRes } from 'sns-interfaces';
 import TitleInput from './TitleInput';
 import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../../common/SearchResultModal';
-import { axiosUploadInstance } from '../../../App';
 import { SearchResult } from '../Search/interface';
+import axios from 'axios';
 
 export const titleLen = 80;
 
@@ -43,7 +43,7 @@ const Upload = () => {
   //소켓연결 함수, 자식인 titleInput에서 실행함
   const connectSocket = () => {
     if (searchSocket === undefined) {
-      const socket = io('/socket/search');
+      const socket = io('http://localhost:4000/search');
       socket.on('searchUserOrHashtagResult', (data: SearchResult) => {
         setSearchResult(data);
         //데이터 가져왔으면 스핀멈춘다
@@ -118,11 +118,11 @@ const Upload = () => {
     formData.append('alert_id', JSON.stringify({ alert_id: genObjectId() })); //게시물 업로드중 알람을 위한 Id
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     if (process.env.NODE_ENV === 'development') {
-      await axiosUploadInstance //업로드 서버로 보낸다.
-        .post('/uploadtolocal', formData);
+      await axios //업로드 서버로 보낸다.
+        .post('/upload/uploadtolocal', formData);
     } else {
-      await axiosUploadInstance //업로드 서버로 보낸다.
-        .post('/uploadtoazure', formData);
+      await axios //업로드 서버로 보낸다.
+        .post('/upload/uploadtoazure', formData);
     }
 
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
@@ -134,9 +134,7 @@ const Upload = () => {
 
   //뒤로가기로 검색모달 끄는 useEffect
   useEffect(() => {
-    axiosUploadInstance //업로드 서버로 보낸다.
-      .get('/');
-
+    console.log(process.env.NODE_ENV);
     authHoc().then((authRes) => {
       if (authRes.success === false) {
         alert('Err while Authentication, need login');

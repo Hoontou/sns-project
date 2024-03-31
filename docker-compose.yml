@@ -4,13 +4,12 @@ services:
     image: client
     build:
       context: ./client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: client
     volumes:
       - ./client/src:/usr/src/app/src:z
       - ./client/public:/usr/src/app/public:z
-    ports:
-      - '3001:3000'
+
     environment:
       - NODE_ENV=development
 
@@ -39,6 +38,7 @@ services:
       - '4001:80'
     environment:
       - NODE_ENV=development
+      - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=snsupload;AccountKey=HlOXNf3LOx7nzTHawQQtCCuAQZ0/mMT32yF73YZykRXGsZTUOfsO6CuL25MIjNG5/r0OHcOpU0zO+AStAMadrg==;EndpointSuffix=core.windows.net
 
   monstache:
     restart: always

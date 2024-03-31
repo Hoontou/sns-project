@@ -21,7 +21,6 @@ export class LoggingInterceptor implements NestInterceptor {
     const now = Date.now();
     const ipAddress =
       req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(ipAddress);
     this.logger.log(
       `${method} ${url}: ${context.getClass().name} ${
         context.getHandler().name
@@ -33,7 +32,7 @@ export class LoggingInterceptor implements NestInterceptor {
         const response = context.switchToHttp().getResponse();
         const { statusCode } = response;
         this.logger.log(
-          `${method} ${url} ${statusCode}: ${Date.now() - now}ms`,
+          `${ipAddress} ${method} ${url} ${statusCode}: ${Date.now() - now}ms`,
         );
 
         this.logger.debug('Response:', res);
