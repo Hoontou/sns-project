@@ -62,6 +62,7 @@ gateway에서
 upload에서
 
 1. AZURE_STORAGE_CONNECTION_STRING
+2. CRYPTO_SECRET
 
 그다음 db/mons.config.toml에서
 
