@@ -2,23 +2,10 @@ import { useEffect, useState } from 'react';
 import { Box, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../common/etc';
 import Post from './Post';
-import { emptyPostFooterContent } from './post.interfaces';
+import { emptyMetadata, emptyPostFooterContent } from './post.interfaces';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { axiosInstance } from '../../../App';
 import { MetadataSchemaType } from 'sns-interfaces';
-
-export interface MetadataDto {
-  _id: string;
-  userId: string;
-  files: string[];
-}
-
-export const emptyMetadata: MetadataSchemaType = {
-  _id: '',
-  userId: '',
-  files: [''],
-  createdAt: '',
-};
 
 export const pageItemLen = 12;
 

@@ -18,7 +18,6 @@ const MainSearchPage = () => {
         return;
       }
       setUserId(authRes.userId);
-      // setUsername(authRes.username !== undefined ? authRes.username : '');
     });
   }, [navigate]);
 

@@ -1,4 +1,3 @@
-import { SearchedHashtag, SearchedUser } from '../../../../Upload/Upload';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { List, ListItem } from '@mui/material';

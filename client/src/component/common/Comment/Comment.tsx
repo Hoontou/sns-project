@@ -17,12 +17,12 @@ import {
   SubmitForm,
   defaultCocommentItemContent,
   defaultCommentItemContent,
-} from './etc';
-import { SearchResult } from '../../page/Upload/Upload';
+} from './interface';
 import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../SearchResultModal';
 import { renderTitle } from '../Post/PostFooter';
 import { axiosInstance } from '../../../App';
+import { SearchResult } from '../../page/Search/interface';
 
 const Comment = (props: {
   createdAt: string;

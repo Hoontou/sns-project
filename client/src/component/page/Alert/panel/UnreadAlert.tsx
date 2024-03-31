@@ -137,15 +137,6 @@ const UnReadAlertPanel = (props: {
     //좋아요 알림
     if (item.content.type === 'like') {
       const postId = item.content.postId;
-      // axiosInstance
-      //   .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
-      //   .then((res) => {
-      //     const result: {
-      //       metadatas: MetadataDto[];
-      //     } = res.data;
-      //     const img = result.metadatas[0].files[0];
-      //     imgs[index] = `${requestUrl}/${postId}/${img}`;
-      //   });
 
       return (
         <ListItem
@@ -193,15 +184,6 @@ const UnReadAlertPanel = (props: {
     if (item.content.type === 'comment') {
       const postId = item.content.postId;
       const commentId = item.content.commentId;
-      // axiosInstance
-      //   .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
-      //   .then((res) => {
-      //     const result: {
-      //       metadatas: MetadataDto[];
-      //     } = res.data;
-      //     const img = result.metadatas[0].files[0];
-      //     imgs[index] = `${requestUrl}/${postId}/${img}`;
-      //   });
 
       return (
         <ListItem
@@ -350,15 +332,6 @@ const UnReadAlertPanel = (props: {
       }
       if (item.content.where === 'post') {
         const postId = item.content.whereId;
-        // axiosInstance
-        //   .post('/metadata/getMetadatasByPostId', { _ids: [postId] })
-        //   .then((res) => {
-        //     const result: {
-        //       metadatas: MetadataDto[];
-        //     } = res.data;
-        //     const img = result.metadatas[0].files[0];
-        //     imgs[index] = `${requestUrl}/${postId}/${img}`;
-        //   });
 
         return (
           <ListItem

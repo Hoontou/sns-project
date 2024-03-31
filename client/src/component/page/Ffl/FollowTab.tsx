@@ -152,7 +152,6 @@ export const FollowListPannel = (props: {
             introduceName: string;
           }[];
         } = res.data;
-        console.log(data);
 
         if (data.userList.length < pageLen) {
           setHasMore(false);

@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Box, Button, Grid, Modal } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Metadata, emptyMetadata } from '../../../SearchPostList';
-import { emptyPostFooterContent } from '../../../../../common/Post/post.interfaces';
+import {
+  emptyMetadata,
+  emptyPostFooterContent,
+} from '../../../../../common/Post/post.interfaces';
 import Spinner from '../../../../../../common/Spinner';
 import Post from '../../../../../common/Post/Post';
 import { requestUrl } from '../../../../../../common/etc';
 import { pageItemLen } from '../../../../../common/Post/Postlist';
 import { axiosInstance } from '../../../../../../App';
+import { MetadataSchemaType } from 'sns-interfaces';
 
 const SearchPostList = (props: { searchString?: string; userId: string }) => {
   const [spin, setSpin] = useState<boolean>(true);
-  const [posts, setPosts] = useState<Metadata[]>([]);
+  const [posts, setPosts] = useState<MetadataSchemaType[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedItem, setItem] = useState<Metadata>(emptyMetadata);
+  const [selectedItem, setItem] = useState<MetadataSchemaType>(emptyMetadata);
   const [page, setPage] = useState<number>(0);
   const [enablingGetMoreButton, setEnablingGetMoreButton] =
     useState<boolean>(true);
@@ -45,7 +48,7 @@ const SearchPostList = (props: { searchString?: string; userId: string }) => {
         })
         .then((res) => {
           const data: {
-            metadatas: Metadata[];
+            metadatas: MetadataSchemaType[];
           } = res.data;
 
           //2. 무한스크롤 핸들링

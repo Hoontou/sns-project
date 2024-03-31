@@ -12,27 +12,9 @@ import TitleInput from './TitleInput';
 import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../../common/SearchResultModal';
 import { axiosUploadInstance } from '../../../App';
+import { SearchResult } from '../Search/interface';
 
 export const titleLen = 80;
-
-/**검색결과로 가져오는 정보*/
-export type SearchResult = SearchedUser | SearchedHashtag;
-export interface SearchedUser {
-  type: 'user';
-  resultList: {
-    username: string;
-    img: string;
-    introduceName: string;
-    introduce: string;
-  }[];
-}
-export interface SearchedHashtag {
-  type: 'hashtag';
-  resultList: {
-    tagName: string;
-    count: number;
-  }[];
-}
 
 const Upload = () => {
   const navigate = useNavigate();
@@ -186,7 +168,6 @@ const Upload = () => {
     }
 
     timeoutId = setTimeout(() => {
-      console.log('send search string :', searchRequestString);
       //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
       if (searchBarDisplay === false) {
         setSearchbarDisplay(true);

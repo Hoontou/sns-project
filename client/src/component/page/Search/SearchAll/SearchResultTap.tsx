@@ -1,6 +1,5 @@
 import { Box, Tab, Tabs } from '@mui/material';
 import { Dispatch, useState } from 'react';
-import { Height } from '@mui/icons-material';
 import SearchBar from '../SearchBar';
 import { UserPanel } from './SearchResultPanel/user/UserPanel';
 import { PostPanel } from './SearchResultPanel/post/PostPanel';

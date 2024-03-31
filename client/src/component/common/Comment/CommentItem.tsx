@@ -6,7 +6,7 @@ import sample1 from '../../../asset/sample1.jpg';
 import { getElapsedTimeString } from '../../../common/date.parser';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Cocomment from './Cocomment';
-import { CommentItems, SubmitForm } from './etc';
+import { CommentItems, SubmitForm } from './interface';
 import { renderTitle } from '../Post/PostFooter';
 import CommentMenu from './CommentMenu';
 import { axiosInstance } from '../../../App';

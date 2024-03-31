@@ -36,7 +36,6 @@ const UserSetting = () => {
         setSpin(false);
         const result: { success: boolean; exist?: boolean } = res.data;
         if (result.success === false) {
-          console.log(result);
           alert(
             result.exist === true
               ? '이미 존재하는 이름이에요. 다른 이름으로 시도해주세요.'
@@ -58,11 +57,9 @@ const UserSetting = () => {
       .then((res) => {
         setSpin(false);
         const result: { success: boolean; exist?: boolean } = res.data;
-        console.log(res.data);
         if (result.success === false) {
-          console.log(result);
           alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해주세요.');
-
+          navigate('/feed');
           return;
         }
         navigate('/feed');
@@ -92,6 +89,8 @@ const UserSetting = () => {
       const { success } = res.data;
       if (success === false) {
         alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해 주세요.');
+        navigate('/feed');
+
         return;
       }
       navigate('/feed');
@@ -109,8 +108,6 @@ const UserSetting = () => {
             success: true;
           }
         | { success: false } = res.data;
-
-      // console.log(data);
 
       //username 찾기실패
       if (data.success === false) {

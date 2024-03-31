@@ -57,7 +57,6 @@ const HighlightCocommentPage = () => {
         cocommentId,
       })
       .then((res) => {
-        console.log(res.data);
         const result: {
           commentItem: CommentItemContent[];
           cocommentItem: CocommentContent[];

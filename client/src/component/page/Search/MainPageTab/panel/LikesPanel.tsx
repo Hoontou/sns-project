@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { emptyMetadata } from '../../../../common/Post/Postlist';
 import { axiosInstance } from '../../../../../App';
 import { PageItemLen } from '../MainTab';
 import { Box, Grid, Modal } from '@mui/material';
 import { requestUrl } from '../../../../../common/etc';
-import { emptyPostFooterContent } from '../../../../common/Post/post.interfaces';
+import {
+  emptyMetadata,
+  emptyPostFooterContent,
+} from '../../../../common/Post/post.interfaces';
 import Post from '../../../../common/Post/Post';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { MetadataSchemaType } from 'sns-interfaces';

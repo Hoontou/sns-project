@@ -15,14 +15,14 @@ import {
   SubmitForm,
   defaultCocommentItemContent,
   defaultCommentItemContent,
-} from '../../common/Comment/etc';
+} from '../../common/Comment/interface';
 import { CommentItemContent } from 'sns-interfaces';
 import CommentItem from '../../common/Comment/CommentItem';
 import CommentInput from '../../common/Comment/CommentInput';
-import { SearchResult } from '../Upload/Upload';
 import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../../common/SearchResultModal';
 import { axiosInstance } from '../../../App';
+import { SearchResult } from '../Search/interface';
 
 const LandingComment = (props: {
   index: number;
@@ -89,7 +89,6 @@ const LandingComment = (props: {
     }
 
     timeoutId = setTimeout(() => {
-      console.log('send search string :', searchRequestString);
       //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
       if (searchBarDisplay === false) {
         setSearchbarDisplay(true);

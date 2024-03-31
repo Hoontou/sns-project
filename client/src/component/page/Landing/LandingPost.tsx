@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { requestUrl } from '../../../common/etc';
-import { emptyMetadata } from '../../common/Post/Postlist';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
-import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
+import {
+  emptyMetadata,
+  emptyPostFooterContent,
+} from '../../common/Post/post.interfaces';
 import { useNavigate } from 'react-router-dom';
 import sample1 from '../../../asset/sample1.jpg';
 import { Avatar } from '@mui/material';

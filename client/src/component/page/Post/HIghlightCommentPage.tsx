@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft } from 'react-icons/vsc';
-import { CommentItems, SubmitForm } from '../../common/Comment/etc';
+import { CommentItems, SubmitForm } from '../../common/Comment/interface';
 import CommentItem from '../../common/Comment/CommentItem';
 import { axiosInstance } from '../../../App';
 
@@ -33,7 +33,6 @@ const HighlightCommentPage = () => {
         commentId,
       })
       .then((res) => {
-        console.log(res.data);
         const result: {
           commentItem: CommentItemContent[];
           userId: string;

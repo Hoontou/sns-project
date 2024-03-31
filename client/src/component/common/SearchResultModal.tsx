@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Spinner from '../../common/Spinner';
-import { SearchResult } from '../page/Upload/Upload';
 import { Avatar, List, ListItem, ListItemAvatar } from '@mui/material';
 import sample from '../../asset/sample1.jpg';
 import { requestUrl } from '../../common/etc';
+import { SearchResult } from '../page/Search/interface';
 
 const modalStyle: React.CSSProperties = {
   position: 'fixed',
@@ -12,7 +12,6 @@ const modalStyle: React.CSSProperties = {
   width: '100%',
   height: '25%', // 화면 높이의 20%
   background: 'white',
-  // display: 'flex',
   alignItems: 'center',
   zIndex: '999',
   overflow: 'auto',
@@ -28,7 +27,6 @@ const SearchResultModal = (props: {
     if (props.searchResult === undefined) {
       return;
     }
-    console.log(props.searchResult);
   }, [props.searchResult]);
 
   //창 켜져있을때 뒤로가기 누르면 창꺼짐

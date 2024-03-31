@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { Avatar, List, ListItem, ListItemAvatar } from '@mui/material';
 import sample from '../../../asset/sample1.jpg';
 import { requestUrl } from '../../../common/etc';
-import { SearchResult } from '../Upload/Upload';
 import Spinner from '../../../common/Spinner';
 import { useNavigate } from 'react-router-dom';
 import { primaryColor } from '../../../App';
+import { SearchResult } from './interface';
 
 const MainSearchResultModal = (props: {
   spin: boolean;
@@ -18,7 +18,6 @@ const MainSearchResultModal = (props: {
     if (props.searchResult === undefined) {
       return;
     }
-    console.log(props.searchResult);
   }, [props.searchResult]);
 
   //창 켜져있을때 뒤로가기 누르면 창꺼짐

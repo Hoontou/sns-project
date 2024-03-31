@@ -9,7 +9,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sample from '../../asset/sample1.jpg';
 import { requestUrl } from '../../common/etc';
-// import InfiniteScroll from 'react-infinite-scroll-component';
 import Spinner from '../../common/Spinner';
 import { axiosInstance, primaryColor } from '../../App';
 
@@ -62,7 +61,6 @@ const UserlistModal = (props: {
             introduceName: string;
           }[];
         } = res.data;
-        console.log(data);
 
         if (data.userList.length < pageLen) {
           // gateway/에서 10개씩 보내줌.

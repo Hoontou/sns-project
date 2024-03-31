@@ -1,18 +1,16 @@
 import { useState, useEffect, Dispatch, ChangeEvent } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { Socket, io } from 'socket.io-client';
-import { SearchResult } from '../Upload/Upload';
 import { InputAdornment, OutlinedInput } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import MainSearchResultModal from './MainSearchModal';
-import { useNavigate } from 'react-router-dom';
+import { SearchResult } from './interface';
 
 const SearchBar = (props: {
   setOpenSearchModal: Dispatch<React.SetStateAction<boolean>>;
   openSearchModal: boolean;
   defaultValue?: string;
 }) => {
-  const navigate = useNavigate();
   const [searchSocket, setSearchSocket] = useState<Socket | undefined>(
     undefined
   );
@@ -43,7 +41,6 @@ const SearchBar = (props: {
   };
 
   const onStringHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
     setSearchRequestString(e.target.value);
   };
 
@@ -109,7 +106,6 @@ const SearchBar = (props: {
       }
 
       timeoutId = setTimeout(() => {
-        console.log('send search string :', tmpString);
         //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
 
         setSearchBarSpin(true);

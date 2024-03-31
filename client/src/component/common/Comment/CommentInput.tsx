@@ -15,7 +15,7 @@ import {
   ChangeEvent,
   forwardRef,
 } from 'react';
-import { SubmitForm } from './etc';
+import { SubmitForm } from './interface';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(

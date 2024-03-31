@@ -9,20 +9,20 @@ import { useState, useEffect } from 'react';
 import { CommentItemContent } from 'sns-interfaces';
 import { VscArrowLeft } from 'react-icons/vsc';
 import sample1 from '../../../asset/sample1.jpg';
-import { SearchResult } from '../../page/Upload/Upload';
 import { Socket, io } from 'socket.io-client';
 import {
   CommentItems,
   SubmitForm,
   defaultCocommentItemContent,
   defaultCommentItemContent,
-} from '../../common/Comment/etc';
+} from '../../common/Comment/interface';
 import CommentItem from '../../common/Comment/CommentItem';
 import { renderTitle } from '../../common/Post/PostFooter';
 import CommentInput from '../../common/Comment/CommentInput';
 import SearchResultModal from '../../common/SearchResultModal';
 import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
 import { axiosInstance } from '../../../App';
+import { SearchResult } from '../Search/interface';
 
 const CommentPage = () => {
   const { postId } = useParams(); //url에서 가져온 username
@@ -90,7 +90,6 @@ const CommentPage = () => {
     }
 
     timeoutId = setTimeout(() => {
-      console.log('send search string :', searchRequestString);
       //창띄우고 스핀돌리고, 데이터 받아왔으면 스핀멈추고(이건 socket.on에서 수행)
       if (searchBarDisplay === false) {
         setSearchbarDisplay(true);
@@ -133,7 +132,6 @@ const CommentPage = () => {
           postFooterContent: PostFooterContent | undefined;
           userId: string;
         } = res.data;
-        console.log(result);
 
         if (result.postFooterContent === undefined) {
           return;
@@ -253,19 +251,7 @@ const CommentPage = () => {
         cocommentId: Date.now(),
       };
 
-      //해당하는 댓글의 대댓에 추가후
-      // const tmpItems = [...commentItems];
-      // tmpItems[submitForm.index].cocomments = [
-      //   newCocomment,
-      //   ...tmpItems[submitForm.index].cocomments,
-      // ];
-      // //tmp로 갈아끼우기
-      // setCommentItems(tmpItems);
-
-      //위는 원본을 복사 후 갈아끼워서 setState하는 코드.
-      //위가 안전할듯. 근데 그냥 아래가 작동이 simple할듯?
       commentItems[submitForm.index].cocomments.unshift(newCocomment);
-      // commentItems[submitForm.index].cocommentCount += 1;
 
       //섭밋폼 디폴트로 세팅
       setSubmitFormToDefault();

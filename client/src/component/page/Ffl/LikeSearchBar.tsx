@@ -42,7 +42,6 @@ const LikeSearchBar = (props: {
   useEffect(() => {
     //글자없어지면 검색결과 삭제
     if (searchRequestString.length === 0) {
-      console.log('clear');
       props.setSearchResult(undefined);
       return;
     }

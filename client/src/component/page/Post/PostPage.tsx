@@ -8,14 +8,17 @@ import PostMenu from '../../common/Post/PostMenu';
 import Slider from '../../common/Slider';
 import PostFooter from '../../common/Post/PostFooter';
 import Comment from '../../common/Comment/Comment';
-import { Metadata, emptyMetadata } from '../Search/SearchPostList';
-import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
+import {
+  emptyMetadata,
+  emptyPostFooterContent,
+} from '../../common/Post/post.interfaces';
 import Navbar from '../../common/Navbar/Navbar';
 import { axiosInstance } from '../../../App';
-// export
+import { MetadataSchemaType } from 'sns-interfaces';
+
 const PostPage = () => {
   const { postId } = useParams(); //url에서 가져온 username
-  const [metadata, setMetadata] = useState<Metadata>(emptyMetadata);
+  const [metadata, setMetadata] = useState<MetadataSchemaType>(emptyMetadata);
   const [userId, setUserId] = useState<string>('');
 
   const navigate = useNavigate();
@@ -44,7 +47,7 @@ const PostPage = () => {
       .then((res) => {
         const result:
           | {
-              metadata: Metadata;
+              metadata: MetadataSchemaType;
               userId: string;
               postFooter: PostFooterContent;
             }
@@ -59,9 +62,7 @@ const PostPage = () => {
         setPostFooterContent(result.postFooter);
         setFulfilled(true);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
   useEffect(() => {
     const modyfiedUrl = metadata.files.map((i: string) => {

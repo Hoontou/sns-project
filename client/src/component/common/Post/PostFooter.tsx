@@ -1,7 +1,6 @@
 import { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { VscComment, VscHeart, VscHeartFilled } from 'react-icons/vsc';
 import { PostFooterContent } from 'sns-interfaces/client.interface';
-import { useNavigate } from 'react-router-dom';
 import { getElapsedTimeString } from '../../../common/date.parser';
 import UserlistModal from '../UserlistModal';
 import { axiosInstance } from '../../../App';
