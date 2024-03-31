@@ -38,7 +38,7 @@ services:
       - '4001:80'
     environment:
       - NODE_ENV=development
-      - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=snsupload;AccountKey=HlOXNf3LOx7nzTHawQQtCCuAQZ0/mMT32yF73YZykRXGsZTUOfsO6CuL25MIjNG5/r0OHcOpU0zO+AStAMadrg==;EndpointSuffix=core.windows.net
+      - AZURE_STORAGE_CONNECTION_STRING=
 
   monstache:
     restart: always
