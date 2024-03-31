@@ -120,10 +120,10 @@ const Upload = () => {
     formData.append('userId', JSON.stringify({ userId: authRes.userId }));
     if (process.env.NODE_ENV === 'development') {
       await axios //업로드 서버로 보낸다.
-        .post('/upload/uploadtolocal', formData);
+        .post('http://localhost:4001/uploadtolocal', formData);
     } else {
       await axios //업로드 서버로 보낸다.
-        .post('/upload/uploadtoazure', formData);
+        .post('http://localhost:4001/uploadtoazure', formData);
     }
 
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
@@ -136,15 +136,15 @@ const Upload = () => {
   //뒤로가기로 검색모달 끄는 useEffect
   useEffect(() => {
     axios //업로드 서버로 보낸다.
-      .get('/upload');
+      .get('http://localhost:4001/');
 
-    // authHoc().then((authRes) => {
-    //   if (authRes.success === false) {
-    //     alert('Err while Authentication, need login');
-    //     navigate('/signin');
-    //     return;
-    //   }
-    // });
+    authHoc().then((authRes) => {
+      if (authRes.success === false) {
+        alert('Err while Authentication, need login');
+        navigate('/signin');
+        return;
+      }
+    });
 
     //뒤로가기버튼 시 모달끄기, 모달창 안에 histroy.pushState 해놔야함.
     const handleBack = (event: PopStateEvent) => {

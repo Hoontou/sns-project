@@ -18,6 +18,7 @@ export class DirectGateway implements OnGatewayConnection {
   server: Server;
 
   async handleConnection(socket: Socket) {
+    this.logger.debug('direct socket connected');
     const userId = Number(
       crypter.decrypt(socket.handshake.headers.userid as string),
     );

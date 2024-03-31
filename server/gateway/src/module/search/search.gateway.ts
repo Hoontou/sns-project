@@ -16,6 +16,8 @@ export class SearchGateway implements OnGatewayConnection {
   server: Server;
 
   async handleConnection(socket: Socket) {
+    this.logger.debug('search socket connected');
+
     // this.logger.debug('search socket connected');
 
     socket.on('searchUserOrHashtag', (data: { searchString: string }) => {
