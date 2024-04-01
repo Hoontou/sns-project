@@ -52,7 +52,7 @@ const InBox = () => {
       }
       setMyUsername(res.username);
 
-      const socket = io('http://localhost:4000/direct', {
+      const socket = io('/direct', {
         extraHeaders: {
           userid: res.userId,
           location: 'inbox',
