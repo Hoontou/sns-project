@@ -68,7 +68,7 @@ const CommentPage = () => {
   //소켓연결 함수, 자식인 titleInput에서 실행함
   const connectSocket = () => {
     if (searchSocket === undefined) {
-      const socket = io('http://localhost:4000/search');
+      const socket = io('/search');
       socket.on('searchUserOrHashtagResult', (data: SearchResult) => {
         setSearchResult(data);
         //데이터 가져왔으면 스핀멈춘다

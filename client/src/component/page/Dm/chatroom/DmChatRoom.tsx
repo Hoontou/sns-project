@@ -91,7 +91,7 @@ const DmChatRoom = () => {
         return;
       }
 
-      const socket = io('http://localhost:4000/direct', {
+      const socket = io('/direct', {
         extraHeaders: {
           userid: res.userId,
           location: chatRoomId === undefined ? '' : chatRoomId,

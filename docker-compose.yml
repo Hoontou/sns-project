@@ -1,5 +1,19 @@
 version: '3'
 services:
+  client:
+    image: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: client
+    volumes:
+      - ./client/src:/usr/src/app/src:z
+      - ./client/public:/usr/src/app/public:z
+    ports:
+      - '3001:3000'
+    environment:
+      - NODE_ENV=development
+
   gateway:
     image: gateway
     build:
