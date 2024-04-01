@@ -135,8 +135,6 @@ const Upload = () => {
 
   //뒤로가기로 검색모달 끄는 useEffect
   useEffect(() => {
-    axiosUploadInstance.get('/');
-
     authHoc().then((authRes) => {
       if (authRes.success === false) {
         alert('Err while Authentication, need login');

@@ -32,11 +32,6 @@ server.register(fastifyStatic, {
   prefix: '/files/', // optional: default '/'
 });
 
-server.get('/', (req, reply) => {
-  console.log('hi');
-  return;
-});
-
 //나중에 기존프사 삭제하는 기능 추가해야함.
 //로컬에 업로드
 server.post(
