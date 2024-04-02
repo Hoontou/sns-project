@@ -12,7 +12,6 @@ import TitleInput from './TitleInput';
 import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../../common/SearchResultModal';
 import { SearchResult } from '../Search/interface';
-import axios from 'axios';
 import { axiosUploadInstance } from '../../../App';
 
 export const titleLen = 80;
@@ -103,6 +102,7 @@ const Upload = () => {
     const authRes: AuthResultRes = await authHoc();
     if (authRes.success === false) {
       //인증실패
+
       alert('Err while Authentication, need login');
       navigate('/signin');
       return;
@@ -137,7 +137,7 @@ const Upload = () => {
   useEffect(() => {
     authHoc().then((authRes) => {
       if (authRes.success === false) {
-        alert('Err while Authentication, need login');
+        alert(authRes.msg);
         navigate('/signin');
         return;
       }

@@ -40,7 +40,6 @@ export class AuthService {
     }
 
     try {
-      console.log(1);
       //토큰검사 후 이메일 가져옴
       const jwtResult: {
         userId: number;
@@ -83,13 +82,13 @@ export class AuthService {
       res.clearCookie('Authorization');
       res.clearCookie('originCode');
 
-      if (err === '1') {
+      if (err.message === '1') {
         return {
           success: false,
           msg: '로그인 정보가 바뀌었어요. 다시 로그인 해주세요.',
         };
       }
-      return { success: false };
+      return { success: false, msg: '인증에 실패했어요.' };
     }
   }
   async authForMiddleware(
@@ -124,13 +123,13 @@ export class AuthService {
       res.clearCookie('Authorization');
       res.clearCookie('originCode');
 
-      if (err === '1') {
+      if (err.message === '1') {
         return {
           success: false,
           msg: '로그인 정보가 바뀌었어요. 다시 로그인 해주세요.',
         };
       }
-      return { success: false };
+      return { success: false, msg: '인증에 실패했어요.' };
     }
   }
 

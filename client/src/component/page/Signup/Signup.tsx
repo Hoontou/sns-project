@@ -12,11 +12,19 @@ import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../../../App';
 
+export const isValidEmail = (email: string) => {
+  // 이메일 형식의 정규식
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // 주어진 이메일이 정규식과 일치하는지 확인하여 true 또는 false 반환
+  return emailPattern.test(email);
+};
+
 const Signup = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('hoontou@gmail.com');
-  const [password, setPassword] = useState('test');
-  const [username, setUsername] = useState('hoontou');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
 
   const onEmailHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -31,14 +39,31 @@ const Signup = () => {
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    //유저네임 4~10개
+    if (username.length > 10 || username.length < 4) {
+      alert('username이 짧거나 길어요.');
+      return;
+    }
+    //비번은 영어랑숫자만 4~10개 (현재는,)
+
+    if (password.length > 10 || password.length < 4) {
+      alert('password가 짧거나 길어요.');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      alert('이메일 형식이 아니에요.');
+      return;
+    }
+
     setOpenBackSpin(true);
     const signUpForm: SignUpDto = {
       email,
       password,
       username,
     }; //나중에 main-back의 DTO에 부합하지 않으면 모달로 오류뱉어야함
-    //유저네임 4~10개
-    //비번은 영어랑숫자만 4~20개 (현재는,)
+
     axiosInstance.post('/auth/signup', signUpForm).then((res) => {
       if (res.data.success === true) {
         setOpenBackSpin(false);
@@ -78,7 +103,7 @@ const Signup = () => {
             <TextField
               sx={{ m: 1, width: '30ch' }}
               id='standard-basic'
-              label='Username'
+              label='Username, 4~10 word'
               variant='standard'
               onChange={onUsernameHandler}
             />
@@ -98,7 +123,7 @@ const Signup = () => {
             <TextField
               sx={{ m: 1, width: '30ch' }}
               id='standard-basic'
-              label='Password'
+              label='Password, 4~10 word'
               variant='standard'
               onChange={onPasswordHandler}
               type='password'

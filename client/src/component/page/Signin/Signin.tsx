@@ -11,11 +11,12 @@ import {
 import { authHoc } from '../../../common/auth.hoc';
 import Navbar from '../../common/Navbar/Navbar';
 import { axiosInstance } from '../../../App';
+import { isValidEmail } from '../Signup/Signup';
 
 const Signin = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('hoontou@gmail.com');
-  const [password, setPassword] = useState('test');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
 
   const onEmailHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +28,15 @@ const Signin = () => {
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!isValidEmail(email)) {
+      alert('이메일 형식이 아니에요.');
+      return;
+    }
+
+    if (password === '') {
+      return;
+    }
 
     setOpenBackSpin(true);
     const signInForm: SignInDto = {
