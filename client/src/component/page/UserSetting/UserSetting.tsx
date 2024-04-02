@@ -115,14 +115,10 @@ const UserSetting = () => {
         navigate('/');
         return;
       }
-      //인증에 실패했거나, 또는 내꺼가 아니거나, 이면 튕긴다.
-      if (
-        data.reqUser.success === false ||
-        data.reqUser.username !== data.userinfo.username
-      ) {
+
+      if (data.reqUser.success === false) {
         alert('auth failed.');
-        //쿠키 다날리는 기능 추가해야함
-        navigate('/signup');
+        navigate('/signin');
         return;
       }
 
