@@ -6,8 +6,6 @@ import { MetadataService } from './module/metadata/metadata.service';
 import { crypter } from './common/crypter';
 import { PostFooterContent, UserInfo } from 'sns-interfaces/client.interface';
 import { LandingContent } from './app.controller';
-import { ReqUser } from 'sns-interfaces';
-import { UserInfoBody } from './module/user/interface';
 
 @Injectable()
 //AppService의 메서드 이름은 client의 페이지 이름과 매칭
@@ -72,54 +70,55 @@ export class AppService {
   async userInfo(
     @Req() req,
 
-    targetUsername: string,
+    targetUsername: string | undefined,
   ): Promise<
     | {
         userinfo: UserInfo;
         type: 'otherInfo' | 'myInfo';
-        reqUser: ReqUser;
+        reqUserId: string;
         success: true;
       }
     | { success: false }
   > {
-    const reqData: UserInfoBody =
-      //내 auth정보랑 가져올 유저이름이랑 같으면 내정보 가져오기임
-      req.user.username === targetUsername
-        ? { type: 'myInfo', userId: req.user.userId }
-        : {
-            type: 'otherInfo',
-            targetUsername: targetUsername,
-            myId: req.user.userId,
-          };
-
     // 일단 정보 가져옴.
-    const userinfo = await this.userService.getUserinfo(reqData);
+    const userinfo = targetUsername
+      ? await this.userService.getUserinfoByUsername(targetUsername)
+      : await this.userService.getUserinfoById(req.user.userId);
 
-    if (userinfo.success === false) {
+    if (userinfo === undefined) {
       //실패했으면 바로 리턴.
-      return userinfo;
+      return { success: false };
     }
 
+    const tmpInfo = {
+      ...userinfo,
+      userId: crypter.encrypt(userinfo.id),
+      id: undefined,
+    };
+
     // 팔로우 체크할 필요없으면 그냥 펄스넣어서 리턴.
-    if (reqData.type === 'myInfo') {
+    if (userinfo.id === req.user.userId) {
       return {
         success: true,
-        userinfo: { ...userinfo, followed: false },
-        type: reqData.type,
-        reqUser: req.user,
+        userinfo: {
+          ...tmpInfo,
+          followed: false,
+        },
+        type: 'myInfo',
+        reqUserId: crypter.encrypt(req.user.userId),
       };
     }
 
     //팔로우체크후 리턴, 여기까지왔으면 아래는 진짜 아이디만 들어감.
     const { followed } = await this.fflService.checkFollowed({
-      userTo: String(userinfo.userId), //상대를 내가 팔로우했나?
-      userFrom: reqData.myId,
+      userTo: String(userinfo.id), //상대를 내가 팔로우했나?
+      userFrom: String(req.user.userId),
     });
     return {
       success: true,
-      userinfo: { ...userinfo, followed },
-      type: reqData.type,
-      reqUser: req.user,
+      userinfo: { ...tmpInfo, followed },
+      type: 'otherInfo',
+      reqUserId: crypter.encrypt(req.user.userId),
     };
   }
 

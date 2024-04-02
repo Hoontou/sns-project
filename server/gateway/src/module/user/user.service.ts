@@ -3,7 +3,6 @@ import { crypter } from 'src/common/crypter';
 import { UserRepository } from './user.repo';
 import { SearchService } from '../search/search.service';
 import { SearchedUser } from '../search/types/search.types';
-import { UserInfoBody } from './interface';
 
 @Injectable()
 export class UserService {
@@ -12,44 +11,6 @@ export class UserService {
     private userRepo: UserRepository,
     private searchService: SearchService,
   ) {}
-
-  async getUserinfo(body: UserInfoBody): Promise<
-    | {
-        userId: string;
-        success: true;
-        following: number;
-        follower: number;
-        postcount: number;
-        img: string;
-        introduce: string;
-        username: string;
-        introduceName: string;
-      }
-    | { success: false }
-  > {
-    //userId는 userinfo를 찾아서 올 아이디.
-    //myId는 다른유저의 피드로 접근했을 시 다른유저를 팔로우했는지 찾을 용도.
-    try {
-      const result =
-        body.type === 'myInfo'
-          ? await this.userRepo.getUserinfoById(crypter.decrypt(body.userId))
-          : await this.userRepo.getUserinfoByUsername(body.targetUsername);
-
-      if (result === undefined) {
-        this.logger.error('getUserinfo is null, err at user.repo.ts');
-        throw new NotFoundException();
-      }
-
-      return {
-        ...result,
-        userId: crypter.encrypt(result.id),
-        success: true,
-      };
-    } catch (err) {
-      this.logger.error(err);
-      return { success: false };
-    }
-  }
 
   async getUsernameWithImg(userId: string): Promise<{
     username: string;
@@ -177,5 +138,12 @@ export class UserService {
 
   decreatePostCount(data: { postId: string; userId: string }) {
     return this.userRepo.decreasePostCount(data);
+  }
+  getUserinfoByUsername(username) {
+    return this.userRepo.getUserinfoByUsername(username);
+  }
+
+  getUserinfoById(userId) {
+    return this.userRepo.getUserinfoById(userId);
   }
 }

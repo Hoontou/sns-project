@@ -5,7 +5,6 @@ import './UserSetting.css';
 import ChangeImg from './ChangeImg';
 import Navbar from '../../common/Navbar/Navbar';
 import { UserInfo } from 'sns-interfaces/client.interface';
-import { ReqUser } from 'sns-interfaces';
 import { axiosInstance } from '../../../App';
 
 const UserSetting = () => {
@@ -104,21 +103,15 @@ const UserSetting = () => {
         | {
             userinfo: UserInfo;
             type: 'otherInfo' | 'myInfo';
-            reqUser: ReqUser;
+            reqUserId: string;
             success: true;
           }
         | { success: false } = res.data;
 
       //username 찾기실패
       if (data.success === false) {
-        alert('not found user');
+        alert('access denied');
         navigate('/');
-        return;
-      }
-
-      if (data.reqUser.success === false) {
-        alert('auth failed.');
-        navigate('/signin');
         return;
       }
 
@@ -126,7 +119,7 @@ const UserSetting = () => {
       setImg(data.userinfo.img);
       setIntro(data.userinfo.introduce);
       setUsername(data.userinfo.username);
-      setUserId(data.reqUser.userId);
+      setUserId(data.reqUserId);
       setIntroduceName(data.userinfo.introduceName);
       setSpin(false);
     });

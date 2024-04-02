@@ -53,9 +53,10 @@ const UserinfoMenu = () => {
         <MenuItem onClick={handleClose}>
           <span
             onClick={() => {
-              cookies.remove('createdAt');
+              cookies.remove('originCode');
               cookies.remove('Authorization');
               navigate('/signin');
+              return;
             }}
           >
             로그아웃

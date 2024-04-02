@@ -2,7 +2,6 @@ import { Body, Controller, Post, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { PostFooterContent, UserInfo } from 'sns-interfaces/client.interface';
 import { crypter } from './common/crypter';
-import { ReqUser } from 'sns-interfaces';
 
 export interface LandingContent {
   userId: string;
@@ -43,17 +42,12 @@ export class AppController {
     | {
         userinfo: UserInfo;
         type: 'otherInfo' | 'myInfo';
-        reqUser: ReqUser;
+        reqUserId: string;
         success: true;
       }
     | { success: false }
   > {
-    return this.appService.userInfo(
-      req,
-      body.targetUsername === undefined
-        ? req.user.username
-        : body.targetUsername,
-    );
+    return this.appService.userInfo(req, body.targetUsername);
   }
 
   @Post('/postfooter')

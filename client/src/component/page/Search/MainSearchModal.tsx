@@ -7,6 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import { primaryColor } from '../../../App';
 import { SearchResult } from './interface';
 
+export const removeHashIfFirst = (str: string) => {
+  if (str.charAt(0) === '#') {
+    return str.slice(1);
+  } else {
+    return str;
+  }
+};
+
 const MainSearchResultModal = (props: {
   spin: boolean;
   searchResult: SearchResult | undefined;
@@ -156,7 +164,7 @@ const MainSearchResultModal = (props: {
         >
           <span
             onClick={() => {
-              navigate(`/search/all/${props.searchString}`);
+              navigate(`/search/all/${removeHashIfFirst(props.searchString)}`);
             }}
           >
             더 찾아보기

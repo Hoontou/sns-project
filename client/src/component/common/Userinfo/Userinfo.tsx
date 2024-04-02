@@ -12,13 +12,11 @@ import ButtonsUnderUserInfo from './ButtonsUnderUserInfo';
 const Userinfo = (props: {
   spin: boolean;
   userinfo: UserInfo;
-  authinfo: ReqUser;
+  reqUserId: string;
   feedType: 'otherInfo' | 'myInfo' | null;
 }) => {
   const [follower, setFollower] = useState<number>(0);
 
-  const authUserId =
-    props.authinfo.success === true ? props.authinfo.userId : '';
   const addFollower = (num: number) => {
     setFollower(follower + num);
   };
@@ -66,7 +64,9 @@ const Userinfo = (props: {
               follower={follower}
               following={props.userinfo.following}
               userId={
-                props.feedType === 'myInfo' ? authUserId : props.userinfo.userId
+                props.feedType === 'myInfo'
+                  ? props.reqUserId
+                  : props.userinfo.userId
               }
               targetUsername={props.userinfo.username}
             />
@@ -85,7 +85,7 @@ const Userinfo = (props: {
           followed={props.userinfo.followed}
           users={{
             userTo: props.userinfo.userId,
-            userFrom: authUserId,
+            userFrom: props.reqUserId,
           }}
         />
       )}

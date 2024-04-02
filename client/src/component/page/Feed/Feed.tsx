@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ReqUser } from 'sns-interfaces';
 import { UserInfo } from 'sns-interfaces/client.interface';
 import Userinfo from '../../common/Userinfo/Userinfo';
 import Postlist from '../../common/Post/Postlist';
@@ -27,12 +26,7 @@ const Feed = () => {
   const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const { targetUsername } = useParams(); //url에서 가져온 username
-  const [authinfo, setAuthinfo] = useState<ReqUser>({
-    success: true,
-    userId: '',
-    username: '',
-    introduceName: '',
-  });
+  const [reqUserId, setReqUserId] = useState<string>('');
   const [userinfo, setUserinfo] = useState<UserInfo>(emptyUserInfo);
   const [feedType, setFeedType] = useState<'otherInfo' | 'myInfo'>('otherInfo');
 
@@ -43,22 +37,19 @@ const Feed = () => {
         | {
             userinfo: UserInfo;
             type: 'otherInfo' | 'myInfo';
-            reqUser: ReqUser;
+            reqUserId: string;
             success: true;
           }
         | { success: false } = res.data;
 
-      //username 찾기실패 or auth실패
       if (data.success === false) {
-        alert(`not exist username or auth err`);
+        alert('access denied');
         navigate('/');
         return;
       }
 
-      console.log(data);
-
       //이제 가져온 데이터 state에 채워넣기 시작
-      setAuthinfo(data.reqUser);
+      setReqUserId(data.reqUserId);
       setUserinfo(data.userinfo);
       setFeedType(data.type);
       setSpin(false);
@@ -77,7 +68,7 @@ const Feed = () => {
           <div style={{ width: '95%', margin: '0.7rem auto' }}>
             <Userinfo
               spin={spin}
-              authinfo={authinfo}
+              reqUserId={reqUserId}
               userinfo={userinfo}
               feedType={feedType}
             />
@@ -85,10 +76,7 @@ const Feed = () => {
 
           <hr></hr>
 
-          <Postlist
-            userId={authinfo.success ? authinfo.userId : ''}
-            targetId={userinfo.userId}
-          />
+          <Postlist userId={reqUserId} targetId={userinfo.userId} />
 
           {/* 내브바 밖으로 빼면 feedType이 나중에 업데이트 돼서 
           내브바상태 업데이트 안됌 */}

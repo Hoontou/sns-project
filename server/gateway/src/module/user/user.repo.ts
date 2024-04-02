@@ -71,6 +71,10 @@ export class UserRepository {
     `;
     const result = await pgdb.client.query(query);
 
+    if (result.rows.length === 0) {
+      return undefined;
+    }
+
     return { ...result.rows[0], introduceName: result.rows[0].introduce_name };
   }
 
@@ -85,6 +89,10 @@ export class UserRepository {
     WHERE ui.username = '${username}';
     `;
     const result = await pgdb.client.query(query);
+
+    if (result.rows.length === 0) {
+      return undefined;
+    }
     return { ...result.rows[0], introduceName: result.rows[0].introduce_name };
   }
 
