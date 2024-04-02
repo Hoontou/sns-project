@@ -41,7 +41,7 @@
     "pg": "^8.11.3",
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.8.1",
-    "sns-interfaces": "^1.0.98",
+    "sns-interfaces": "^1.0.99",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {

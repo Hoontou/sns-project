@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { crypter } from 'src/common/crypter';
 
 @Controller('user')
 export class UserController {
@@ -33,9 +32,7 @@ export class UserController {
     img: string;
     userId: number;
   }> {
-    return this.userService.getUsernameWithImg(
-      crypter.decrypt(req.user.userId),
-    );
+    return this.userService.getUsernameWithImg(req.user.userId);
   }
 
   @Post('/searchusersbysearchstring')

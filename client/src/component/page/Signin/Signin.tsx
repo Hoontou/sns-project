@@ -34,14 +34,15 @@ const Signin = () => {
       password,
     };
     axiosInstance.post('/auth/signin', signInForm).then((res) => {
-      const result: AuthResultRes = res.data;
+      const result: { success: true } | { success: false; msg: string } =
+        res.data;
       if (result.success === true) {
         navigate('/');
         return;
       }
       if (result.success === false) {
         setOpenBackSpin(false);
-        alert('login failed');
+        alert(`login failed, ${result.msg}`);
       }
     });
   };

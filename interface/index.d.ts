@@ -41,6 +41,7 @@ export interface AuthSuccess {
 }
 export interface AuthFail {
   success: false;
+  msg?: string;
 }
 
 // export type PostMessage = PostDto | CommentDto | CocommentDto;

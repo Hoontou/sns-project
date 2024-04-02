@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserinfoTable } from './repository/userinfo.table';
 import { UsernumsTable } from './repository/usernums.table';
 import { UserTable } from './repository/user.table';
@@ -24,6 +24,8 @@ export interface GetUserInfoData {
 
 @Injectable()
 export class UserRepository {
+  private logger = new Logger(UserRepository.name);
+
   constructor(
     public readonly userTable: UserTable,
     public readonly userinfoTable: UserinfoTable,
@@ -92,6 +94,20 @@ export class UserRepository {
     SELECT ui.username, ui.img, ui.introduce_name
     FROM public.userinfo AS ui
     WHERE ui."userId" = ${userId};
+    `;
+    const result = await pgdb.client.query(query);
+
+    return { ...result.rows[0] };
+  }
+
+  async getUserIdWithUsernameByEmail(
+    email: string,
+  ): Promise<{ username: string; id: number } | undefined> {
+    const query = `
+    SELECT ui.username, u.id
+    FROM public.user AS u
+    JOIN public.userinfo AS ui ON ui."userId" = u.id
+    WHERE u.email = '${email}';
     `;
     const result = await pgdb.client.query(query);
 

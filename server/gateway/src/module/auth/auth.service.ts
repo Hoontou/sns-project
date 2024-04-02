@@ -1,69 +1,137 @@
-import { Injectable, Logger, Req, Res } from '@nestjs/common';
 import {
-  AuthDto,
+  Injectable,
+  Logger,
+  NotFoundException,
+  Req,
+  Res,
+} from '@nestjs/common';
+import {
   AuthResultRes,
   AuthSuccess,
   SignInDto,
   SignUpDto,
 } from 'sns-interfaces';
-import { checkNeedRefresh } from 'src/common/checkneedrefresh';
 import { UserRepository } from '../user/user.repo';
 import { JwtService } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt-strategy';
 import { User } from '../user/entity/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { crypter } from '../../common/crypter';
+import { StateManager } from './manager/state.manager';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private month = 30 * 24 * 60 * 60 * 1000;
+  private week = 7 * 24 * 60 * 60 * 1000;
 
   constructor(
     private userRepo: UserRepository,
     private jwtService: JwtService,
-    private jwtStrategy: JwtStrategy,
+    private stateManager: StateManager,
   ) {}
 
   async auth(@Req() req, @Res() res): Promise<AuthResultRes> {
     const accessToken: string | undefined = req.cookies['Authorization'];
-    const createdAt: string | undefined = req.cookies['createdAt'];
+    const originCode: string | undefined = req.cookies['originCode'];
+
     //위 둘중 하나라도 없으면 튕긴다.
-    if (accessToken === undefined || createdAt === undefined) {
+    if (!accessToken || !originCode) {
       return { success: false };
     }
 
-    const authInfo: AuthResultRes = await this.jwtCheck({
-      accessToken,
-      refresh: checkNeedRefresh(createdAt), //Need refresh?
-    });
+    try {
+      console.log(1);
+      //토큰검사 후 이메일 가져옴
+      const jwtResult: {
+        userId: number;
+        email: string;
+        iat: string;
+        exp: string;
+      } = await this.jwtService.verify(accessToken);
 
-    //리프레시 토큰이 담겨왔으면 쿠키 다시세팅
-    if (authInfo.success === true && authInfo.accessToken !== undefined) {
-      res.cookie('Authorization', authInfo.accessToken, {
-        httpOnly: false,
-        maxAge: this.month,
-      });
-      res.cookie('createdAt', new Date(), {
-        httpOnly: false,
-        maxAge: this.month,
-      });
-      delete authInfo.accessToken; //쿠키에 담았으니까 리턴값에서는 지워준다.
+      if (this.stateManager.getState(jwtResult.userId) !== originCode) {
+        throw new Error('1');
+      }
+
+      //가져온 이메일로 유저정보 요청
+      const { userId, username } = await this.checkUserExist(jwtResult.email);
+
+      const authInfo: AuthSuccess = {
+        userId,
+        username,
+        success: true,
+      };
+
+      if (checkNeedRefresh(Number(jwtResult.iat))) {
+        const token = await this.jwtService.sign({
+          email: jwtResult.email,
+        });
+
+        authInfo.accessToken = token;
+        res.cookie('Authorization', token, {
+          httpOnly: false,
+          maxAge: this.week,
+        });
+        res.cookie('originCode', originCode, {
+          httpOnly: false,
+          maxAge: this.week,
+        });
+      }
+
+      return authInfo;
+    } catch (err) {
+      res.clearCookie('Authorization');
+      res.clearCookie('originCode');
+
+      if (err === '1') {
+        return {
+          success: false,
+          msg: '로그인 정보가 바뀌었어요. 다시 로그인 해주세요.',
+        };
+      }
+      return { success: false };
     }
-    return authInfo;
   }
-
-  //미들웨어를 위한 메서드임. 리프레시 기능 삭제
-  async authMiddleware(@Req() req): Promise<AuthResultRes> {
+  async authForMiddleware(
+    @Req() req,
+    @Res() res,
+  ): Promise<
+    { success: true; userId: number } | { success: false; msg?: string }
+  > {
     const accessToken: string | undefined = req.cookies['Authorization'];
-    if (accessToken === undefined) {
+    const originCode: string | undefined = req.cookies['originCode'];
+
+    //위 둘중 하나라도 없으면 튕긴다.
+    if (!accessToken || !originCode) {
       return { success: false };
     }
-    const authInfo: AuthResultRes = await this.jwtCheck({
-      accessToken,
-      refresh: false,
-    });
-    return authInfo;
+
+    try {
+      //토큰검사 후 이메일 가져옴
+      const jwtResult: {
+        userId: number;
+        email: string;
+        iat: string;
+        exp: string;
+      } = await this.jwtService.verify(accessToken);
+
+      if (this.stateManager.getState(jwtResult.userId) !== originCode) {
+        throw new Error('1');
+      }
+
+      return { userId: jwtResult.userId, success: true };
+    } catch (err) {
+      res.clearCookie('Authorization');
+      res.clearCookie('originCode');
+
+      if (err === '1') {
+        return {
+          success: false,
+          msg: '로그인 정보가 바뀌었어요. 다시 로그인 해주세요.',
+        };
+      }
+      return { success: false };
+    }
   }
 
   async signIn(
@@ -72,28 +140,28 @@ export class AuthService {
   ): Promise<
     | {
         success: true;
-        userId: string;
-        accessToken?: string;
       }
-    | { success: false }
+    | { success: false; msg: string }
   > {
-    const authInfo = await this.generateToken(signInDto);
+    const result = await this.checkPasswordAndgenToken(signInDto);
 
-    if (authInfo.success === true) {
-      // const maxAgeInSeconds = 30 * 24 * 60 * 60; // 30일을 초 단위로 계산
-      // const maxAgeInMilliseconds = maxAgeInSeconds * 1000; // 밀리초로 변환
-      //로그인 플래그 성공이면 쿠키에 담아서 보낸다.
-      res.cookie('Authorization', authInfo.accessToken, {
-        httpOnly: false,
-        maxAge: this.month,
-      });
-      res.cookie('createdAt', new Date(), {
-        httpOnly: false,
-        maxAge: this.month,
-      });
-      delete authInfo.accessToken; //쿠키에 담았으니까 지워준다.
+    if (result.success === false) {
+      return result;
     }
-    return authInfo;
+
+    const userOriginCode = new Types.ObjectId().toString();
+    this.stateManager.setState(result.userId, userOriginCode);
+
+    res.cookie('Authorization', result.accessToken, {
+      httpOnly: false,
+      maxAge: this.week,
+    });
+    res.cookie('originCode', userOriginCode, {
+      httpOnly: false,
+      maxAge: this.week,
+    });
+
+    return { success: true };
   }
 
   async signUp(signUpDto: SignUpDto): Promise<{
@@ -130,56 +198,58 @@ export class AuthService {
     }
   }
 
-  async jwtCheck(authDto: AuthDto): Promise<AuthResultRes> {
-    try {
-      //토큰검사 후 이메일 가져옴
-      const authInfo: { email: string; iat: string; exp: string } =
-        await this.jwtService.verify(authDto.accessToken);
-
-      //가져온 이메일로 유저정보 요청
-      const user: AuthSuccess = await this.jwtStrategy.validate(authInfo.email);
-
-      //refresh필요하다면? 토큰재발급해서 담아준다.
-      if (authDto.refresh === true) {
-        // this.logger.debug('regenerate accessToekn');
-        user.accessToken = await this.jwtService.sign({
-          email: authInfo.email,
-        });
-      }
-
-      return user;
-    } catch (err) {
-      this.logger.error(err);
-      this.logger.error('Auth failed');
-      return { success: false };
-    }
-  }
-
-  async generateToken(signinDto: SignInDto): Promise<
+  async checkPasswordAndgenToken(signinDto: SignInDto): Promise<
     | {
         success: true;
-        userId: string;
         accessToken?: string;
+        userId: number;
       }
-    | { success: false }
+    | { success: false; msg: string }
   > {
     const { email, password } = signinDto;
 
     const user: User | null = await this.userRepo.userTable.db.findOne({
       where: { email },
     });
-    //성공시
-    if (user && (await bcrypt.compare(password, user.password))) {
+
+    if (user === null) {
+      return { success: false, msg: 'account not exist' };
+    }
+
+    if (await bcrypt.compare(password, user.password)) {
       //로그인 성공한 상태이고 이제 JWT를 생성해야함. Secret + Patload(페이로드는 중요정보 넣지마라.)
-      const accessToken = await this.jwtService.sign({ email });
+      const accessToken = await this.jwtService.sign({
+        email,
+        userId: user.id,
+      });
       // this.logger.debug(`{id: ${user.id} Login`);
       return {
         accessToken,
-        userId: crypter.encrypt(user.id),
         success: true,
+        userId: user.id,
       };
     }
-    //실패시
-    return { success: false };
+    return { success: false, msg: 'passowrd incorrected' };
+  }
+
+  async checkUserExist(email): Promise<{ userId: string; username: string }> {
+    const result = await this.userRepo.getUserIdWithUsernameByEmail(email);
+    if (result === undefined) {
+      throw new NotFoundException('user not found');
+    }
+
+    return {
+      userId: crypter.encrypt(result.id),
+      username: result.username,
+    };
   }
 }
+
+const checkNeedRefresh = (unixTime: number): boolean => {
+  //쿠키생성 하루 * 6가 지났으면 새로 JWT발급받고 생성시간 업데이트해서 날린다.
+  const dayDifference = Math.floor(
+    (new Date().getTime() - new Date(unixTime * 1000).getTime()) /
+      (1000 * 60 * 60 * 24),
+  );
+  return dayDifference > 6 ? true : false;
+};

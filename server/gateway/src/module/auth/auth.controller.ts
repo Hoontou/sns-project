@@ -20,10 +20,8 @@ export class AuthController {
   ): Promise<
     | {
         success: true;
-        userId: string;
-        accessToken?: string;
       }
-    | { success: false }
+    | { success: false; msg: string }
   > {
     return this.authService.signIn(signInDto, res);
   }
