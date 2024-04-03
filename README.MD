@@ -76,7 +76,9 @@ postgres -> AWS RDS
 
 elasticsearch -> AWS Opensearch
 
-mongoDB -> atlas를 하려고 했지만 클러스터 돈아까워서 ec2에 올렸음
+mongoDB -> atlas에 올리려 했지만 클러스터 돈아까워서 ec2에 올렸음
+
+사진 storage는 ms azure 저장소 사용.
 
 ### 프로젝트 실행은 HOWTOSTART.md
 

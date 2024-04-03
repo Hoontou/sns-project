@@ -6,6 +6,7 @@ import ChangeImg from './ChangeImg';
 import Navbar from '../../common/Navbar/Navbar';
 import { UserInfo } from 'sns-interfaces/client.interface';
 import { axiosInstance } from '../../../App';
+import { containsHangul } from '../Signup/Signup';
 
 const UserSetting = () => {
   const navigate = useNavigate();
@@ -27,9 +28,15 @@ const UserSetting = () => {
 
   /**username수정요청 보내는 */
   const submitUsername = () => {
+    console.log(username);
     //유저네임 4~10개
-    if (username.length > 10 || username.length < 4) {
+    if (username.length > 10 || username.length < 3) {
       alert('username이 짧거나 길어요.');
+      return;
+    }
+
+    if (containsHangul(username)) {
+      alert('username에 한글이 있어요.');
       return;
     }
 
@@ -55,8 +62,8 @@ const UserSetting = () => {
 
   /**introduceName수정요청 보내는 */
   const submitIntroduceName = () => {
-    //유저네임 4~10개
-    if (introduceName.length > 10 || introduceName.length < 4) {
+    //유저네임 3~10개
+    if (introduceName.length > 10 || introduceName.length < 3) {
       alert('소개 이름이 짧거나 길어요.');
       return;
     }
@@ -153,7 +160,7 @@ const UserSetting = () => {
           <ChangeImg img={img} />
           <hr></hr>
           <div>
-            <p>계정 이름. 영어만, 4~10자 입력가능</p>
+            <p>계정 이름. 영어만, 3~10자 입력가능</p>
 
             <TextField
               sx={{ m: 1, width: '30ch' }}
@@ -181,7 +188,7 @@ const UserSetting = () => {
           <hr></hr>
 
           <div>
-            <p>소개 이름. 4~10자 입력가능</p>
+            <p>소개 이름. 3~10자 입력가능</p>
 
             <TextField
               sx={{ m: 1, width: '30ch' }}

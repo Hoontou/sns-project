@@ -12,6 +12,10 @@ import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../../../App';
 
+export const containsHangul = (str: string) => {
+  return /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(str);
+};
+
 export const isValidEmail = (email: string) => {
   // 이메일 형식의 정규식
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,9 +44,14 @@ const Signup = () => {
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //유저네임 4~10개
-    if (username.length > 10 || username.length < 4) {
+    //유저네임 3~10개
+    if (username.length > 10 || username.length < 3) {
       alert('username이 짧거나 길어요.');
+      return;
+    }
+
+    if (containsHangul(username)) {
+      alert('username에 한글이 있어요.');
       return;
     }
     //비번은 영어랑숫자만 4~10개 (현재는,)
@@ -94,7 +103,7 @@ const Signup = () => {
       style={{ width: '90%', margin: '1.5rem auto' }}
     >
       <div>계정 등록</div>
-      username은 영어만, 비밀번호는 영어와 숫자만 가능.
+      username은 영어만 가능해요.
       <div>실제 계정을 입력하지 마세요.</div>
       <hr></hr>
       <form onSubmit={onSubmitHandler}>
@@ -103,7 +112,7 @@ const Signup = () => {
             <TextField
               sx={{ m: 1, width: '30ch' }}
               id='standard-basic'
-              label='Username, 4~10 word'
+              label='Username, 3~10 word'
               variant='standard'
               onChange={onUsernameHandler}
             />
