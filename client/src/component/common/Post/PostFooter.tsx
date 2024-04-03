@@ -56,6 +56,7 @@ const PostFooter = (props: {
   });
 
   const addLike = () => {
+    console.log(props.postFooterContent.userId);
     setContent({
       ...postContent,
       likesCount: postContent.likesCount + 1,

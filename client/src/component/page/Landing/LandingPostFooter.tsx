@@ -32,8 +32,8 @@ const LandingPostFooter = (props: {
     });
     axiosInstance
       .post('/ffl/addLike', {
-        userId: props.userId,
         postId: props.postId,
+        postOwnerUserId: props.postFooterContent.userId,
       })
       .then(() => {
         setContent({

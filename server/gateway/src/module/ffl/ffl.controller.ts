@@ -27,7 +27,7 @@ export class FflController {
   ) {
     return this.fflService.addLike({
       postId: body.postId,
-      userId: req.user.userId,
+      userId: String(req.user.userId),
       postOwnerUserId: body.postOwnerUserId,
     });
   }

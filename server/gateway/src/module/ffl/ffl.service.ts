@@ -83,6 +83,8 @@ export class FflService {
     postId: string;
     postOwnerUserId: string;
   }) {
+    console.log(body);
+
     const { liked } = await this.checkLiked(body);
     //좋아요 안돼있으면 좋아요 누름
 
@@ -90,12 +92,12 @@ export class FflService {
       return;
     }
 
-    if (body.userId !== body.postOwnerUserId) {
+    if (body.userId !== crypter.decrypt(body.postOwnerUserId)) {
       const alertForm: AlertDto = {
         userId: Number(crypter.decrypt(body.postOwnerUserId)),
         content: {
           type: 'like',
-          userId: Number(crypter.decrypt(body.userId)),
+          userId: Number(body.userId),
           postId: body.postId,
         },
       };
