@@ -27,6 +27,12 @@ const UserSetting = () => {
 
   /**username수정요청 보내는 */
   const submitUsername = () => {
+    //유저네임 4~10개
+    if (username.length > 10 || username.length < 4) {
+      alert('username이 짧거나 길어요.');
+      return;
+    }
+
     setSpin(true);
 
     axiosInstance
@@ -49,6 +55,12 @@ const UserSetting = () => {
 
   /**introduceName수정요청 보내는 */
   const submitIntroduceName = () => {
+    //유저네임 4~10개
+    if (introduceName.length > 10 || introduceName.length < 4) {
+      alert('소개 이름이 짧거나 길어요.');
+      return;
+    }
+
     setSpin(true);
 
     axiosInstance
