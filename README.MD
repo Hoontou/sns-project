@@ -1,3 +1,5 @@
+creamisbeast.xyz
+
 # sns 프로젝트
 
 인스타그램을 클론코딩 하는 느낌으로 sns을 만들어보자.
