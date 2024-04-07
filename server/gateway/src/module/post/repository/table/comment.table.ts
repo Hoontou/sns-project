@@ -1,11 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { Comment } from '../entity/comment.entity';
-import { CommentDto } from '../dto/post.dto';
 import { crypter } from 'src/common/crypter';
 import { CommentItemContent } from 'sns-interfaces';
-import { pgdb } from '../../../configs/postgres';
+import { CommentDto } from '../../dto/post.dto';
+import { Comment } from '../entity/comment.entity';
+import { pgdb } from '../../../../configs/postgres';
 
 @Injectable()
 export class CommentTable {
@@ -35,7 +35,7 @@ export class CommentTable {
     return row;
   }
 
-  addCocomment(commentId: number) {
+  addCocommentCount(commentId: number) {
     return this.db.increment({ id: commentId }, 'cocommentcount', 1);
   }
 

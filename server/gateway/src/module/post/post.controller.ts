@@ -3,6 +3,7 @@ import { PostService } from './post.service';
 import { CommentItemContent } from 'sns-interfaces';
 import { CocommentContent } from 'sns-interfaces/client.interface';
 import { MetadataDto } from '../metadata/repository/metadata.collection';
+import { ExReq } from '../auth/auth.middleware';
 
 @Controller('post')
 export class PostController {
@@ -11,7 +12,7 @@ export class PostController {
   @Post('/addcomment')
   addComment(
     @Body() body: { postId: string; comment: string; postOwnerUserId: string },
-    @Req() req,
+    @Req() req: ExReq,
   ) {
     return this.postService.addComment({ ...body, userId: req.user.userId });
   }
@@ -88,13 +89,6 @@ export class PostController {
   @Post('/searchpostsbysearchstring')
   searchPostsByString(@Body() body: { searchString: string; page: number }) {
     return this.postService.searchPostsBySearchString(body);
-  }
-
-  @Post('/searchHashtagsBySearchString')
-  searchHashtagsBySearchString(
-    @Body() body: { searchString: string; page: number },
-  ) {
-    return this.postService.searchHashtagsBySearchString(body);
   }
 
   @Post('/deletePost')

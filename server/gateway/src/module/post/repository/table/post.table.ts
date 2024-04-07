@@ -1,10 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
-import { Post } from '../entity/post.entity';
-import { PostDto } from '../dto/post.dto';
 import { crypter } from 'src/common/crypter';
-import { pgdb } from '../../../configs/postgres';
+import { Post } from '../entity/post.entity';
+import { pgdb } from 'src/configs/postgres';
+import { PostDto } from '../../dto/post.dto';
 
 @Injectable()
 export class PostTable {
@@ -55,7 +55,7 @@ export class PostTable {
   }
 
   //코멘트 작성되서 카운트 증가
-  addComment(postId: string) {
+  addCommentCount(postId: string) {
     return this.db
       .createQueryBuilder()
       .update(Post)

@@ -2,7 +2,7 @@ import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from './auth.service';
 
-interface Req extends Request {
+export interface ExReq extends Request {
   user: { userId: number };
 }
 
@@ -14,7 +14,7 @@ export class AuthMiddleware implements NestMiddleware {
   private logger = new Logger(AuthMiddleware.name);
   constructor(private authService: AuthService) {}
 
-  async use(req: Req, res: Response, next: NextFunction) {
+  async use(req: ExReq, res: Response, next: NextFunction) {
     const authResult = await this.authService.authForMiddleware(req, res);
 
     if (authResult.success == true) {

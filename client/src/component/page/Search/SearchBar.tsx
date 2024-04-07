@@ -3,7 +3,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Socket, io } from 'socket.io-client';
 import { InputAdornment, OutlinedInput } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
-import MainSearchResultModal from './MainSearchModal';
+import MainSearchResultModal, { removeHashIfFirst } from './MainSearchModal';
 import { SearchResult } from './interface';
 
 const SearchBar = (props: {
@@ -174,7 +174,9 @@ const SearchBar = (props: {
         onChange={onStringHandler}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            window.location.replace(`/search/all/${searchRequestString}`);
+            window.location.replace(
+              `/search/all/${removeHashIfFirst(searchRequestString)}`
+            );
           }
         }}
       />

@@ -1,14 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { Cocomment } from '../entity/cocomment.entity';
-import { CocommentDto } from '../dto/post.dto';
 import { crypter } from 'src/common/crypter';
 import { CocommentContent } from 'sns-interfaces/client.interface';
 import { pgdb } from 'src/configs/postgres';
+import { Cocomment } from '../entity/cocomment.entity';
+import { CocommentDto } from '../../dto/post.dto';
 
 @Injectable()
-export class CoCommentTable {
+export class CocommentTable {
   constructor(
     @InjectRepository(Cocomment)
     public db: Repository<Cocomment>,

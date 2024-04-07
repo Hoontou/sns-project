@@ -22,7 +22,7 @@ export const TagPanel = (props: TabPanelProps) => {
 
   const searchTagsBySearchString = () => {
     return axiosInstance
-      .post('/post/searchhashtagsbysearchstring', {
+      .post('/search/searchhashtagsbysearchstring', {
         searchString,
         page,
       })

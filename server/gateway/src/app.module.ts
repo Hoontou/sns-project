@@ -20,6 +20,7 @@ import { DirectController } from './module/direct/direct.controller';
 import { DirectModule } from './module/direct/direct.module';
 import { SearchModule } from './module/search/search.module';
 import { UploadModule } from './module/upload/upload.module';
+import { SearchController } from './module/search/search.controller';
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://mgdb:27017/sns';
 const NODE_ENV = process.env.NODE_ENV;
@@ -57,6 +58,7 @@ export class AppModule implements NestModule {
         FflController,
         UserController,
         DirectController,
+        SearchController,
       );
   }
 }

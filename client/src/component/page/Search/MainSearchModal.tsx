@@ -8,7 +8,7 @@ import { primaryColor } from '../../../App';
 import { SearchResult } from './interface';
 
 export const removeHashIfFirst = (str: string) => {
-  if (str.charAt(0) === '#') {
+  if (str.charAt(0) === '#' || str.charAt(0) === '@') {
     return str.slice(1);
   } else {
     return str;

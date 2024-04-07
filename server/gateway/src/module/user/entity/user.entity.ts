@@ -9,9 +9,9 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Userinfo } from './userinfo.entity';
-import { Post } from '../../post/entity/post.entity';
-import { Cocomment } from '../../post/entity/cocomment.entity';
-import { Comment } from '../../post/entity/comment.entity';
+import { Post } from '../../post/repository/entity/post.entity';
+import { Cocomment } from '../../post/repository/entity/cocomment.entity';
+import { Comment } from '../../post/repository/entity/comment.entity';
 
 @Entity()
 export class User extends BaseEntity {

@@ -8,6 +8,7 @@ import {
 import { crypter } from 'src/common/crypter';
 import { AlertCollection } from './repository/alert.collection';
 import { UserCollection } from '../user/repository/user.collection';
+import { HandleUserTagReqBody } from '../post/interface';
 
 export interface FianlAlertType {
   _id: string;
@@ -126,5 +127,27 @@ export class AlertService {
         return this.saveAlert({ userId: item, content: data.content });
       }),
     );
+  }
+
+  sendUserTagAlertIfExist(body: HandleUserTagReqBody) {
+    //title로부터 유저태그만을 추출
+    const usertags = body.text.match(/@\S+/g)?.map((item) => {
+      return item.substring(1);
+    });
+
+    if (usertags === undefined) {
+      return;
+    }
+
+    const alertForm: UserTagAlertReqForm = {
+      usernames: [...new Set(usertags)],
+      content: {
+        type: 'tag',
+        where: body.type,
+        whereId: body.whereId,
+        userId: body.userId,
+      },
+    };
+    return this.saveTagAlert(alertForm);
   }
 }
