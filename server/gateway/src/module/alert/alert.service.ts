@@ -19,8 +19,6 @@ export interface FianlAlertType {
   createdAt: Date;
 }
 
-const pageLen = 20;
-
 @Injectable()
 export class AlertService {
   constructor(
@@ -47,15 +45,7 @@ export class AlertService {
     userId: string;
   }): Promise<{ unreadAlerts: FianlAlertType[] }> {
     const unreadAlerts: { [key: string]: any } =
-      await this.alertCollection.alertModel
-        .find({
-          userId: Number(crypter.decrypt(data.userId)),
-          read: false,
-        })
-        .populate('userPop')
-        .skip(data.page * pageLen)
-        .limit(pageLen)
-        .sort({ _id: -1 });
+      await this.alertCollection.getUnreadAlerts(data.page, data.userId);
 
     const result = unreadAlerts.map((i) => {
       delete i._doc.content.userId;
@@ -77,14 +67,7 @@ export class AlertService {
     userId: string;
   }): Promise<{ allAlerts: FianlAlertType[] }> {
     const allAlerts: { [key: string]: any } =
-      await this.alertCollection.alertModel
-        .find({
-          userId: Number(crypter.decrypt(data.userId)),
-        })
-        .populate('userPop')
-        .skip(data.page * pageLen)
-        .limit(pageLen)
-        .sort({ _id: -1 });
+      await this.alertCollection.getAllAlerts(data.page, data.userId);
 
     const result = allAlerts.map((i) => {
       //id를 내보내지 마

@@ -38,7 +38,8 @@ export class CocommentTable {
     page: number,
   ): Promise<CocommentContent[]> {
     const limit = 10;
-    const query = `SELECT
+    const query = `
+    SELECT
     C.id AS "cocommentId",
     C.cocomment,
     C.createdat AS "createdAt",
@@ -46,16 +47,11 @@ export class CocommentTable {
     C.likes AS "likesCount",
     A.username,
     A.img
-    FROM
-    (
-      SELECT * FROM public.cocomment 
-      WHERE cocomment."commentId" = ${commentId}
-      ORDER BY createdAt DESC
-      LIMIT ${limit} OFFSET ${page * limit}
-      ) AS C
-    JOIN public.userinfo AS A
-    ON C."userId" = A."userId"
-    ORDER BY createdAt DESC;
+    FROM public.cocomment AS C
+    JOIN public.userinfo AS A ON C."userId" = A."userId"
+    WHERE C."commentId" = ${commentId}
+    ORDER BY C.createdAt DESC
+    LIMIT ${limit} OFFSET ${page * limit};
     `;
 
     return (await pgdb.client.query(query)).rows;
@@ -64,23 +60,20 @@ export class CocommentTable {
   async getCocomment(data: {
     cocommentId: number;
   }): Promise<{ cocommentItem: CocommentContent | undefined }> {
-    const query = `SELECT
+    const query = `
+    SELECT
     C.id AS "cocommentId",
     C.cocomment,
     C.createdat AS "createdAt",
     C."userId",
     C.likes AS "likesCount",
-    C."commentId" AS "commentId",
+    C."commentId",
     A.username,
     A.img
-    FROM
-    (
-      SELECT * FROM public.cocomment 
-      WHERE public.cocomment.id = ${data.cocommentId}
-      ) AS C
-    JOIN public.userinfo AS A
-    ON C."userId" = A."userId"
-    ORDER BY createdAt DESC;
+    FROM public.cocomment AS C
+    JOIN public.userinfo AS A ON C."userId" = A."userId"
+    WHERE C.id = ${data.cocommentId}
+    ORDER BY C.createdAt DESC;
     `;
     const result = await pgdb.client.query(query);
     const rows: {

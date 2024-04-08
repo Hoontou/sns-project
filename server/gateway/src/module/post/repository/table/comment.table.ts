@@ -62,16 +62,11 @@ export class CommentTable {
     C.cocommentcount AS "cocommentCount",
     A.username,
     A.img
-    FROM
-    (
-      SELECT * FROM public.comment 
-      WHERE comment."postId" = '${postId}'
-      ORDER BY createdAt DESC
-      LIMIT ${limit} OFFSET ${page * limit}
-      ) AS C
-    JOIN public.userinfo AS A
-    ON C."userId" = A."userId"
-    ORDER BY createdAt DESC;
+    FROM public.comment AS C
+    JOIN public.userinfo AS A ON C."userId" = A."userId"
+    WHERE C."postId" = '${postId}'
+    ORDER BY C.createdAt DESC
+    LIMIT ${limit} OFFSET ${page * limit};
     `;
 
     return (await pgdb.client.query(query)).rows;
@@ -91,14 +86,11 @@ export class CommentTable {
     C."postId" AS "postId",
     A.username,
     A.img
-    FROM
-    (
-      SELECT * FROM public.comment 
-      WHERE comment.id = '${data.commentId}'
-      ) AS C
-    JOIN public.userinfo AS A
-    ON C."userId" = A."userId"
-    ORDER BY createdAt DESC;
+    FROM public.comment AS C
+    JOIN public.userinfo AS A ON C."userId" = A."userId"
+    WHERE C.id = '${data.commentId}'
+    ORDER BY 
+    C.createdAt DESC;
     `;
     const result = await pgdb.client.query(query);
     const rows: CommentItemContent[] = result.rows;

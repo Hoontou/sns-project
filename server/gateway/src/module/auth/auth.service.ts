@@ -107,12 +107,7 @@ export class AuthService {
 
     try {
       //토큰검사 후 이메일 가져옴
-      const jwtResult: {
-        userId: number;
-        email: string;
-        iat: string;
-        exp: string;
-      } = await this.jwtService.verify(accessToken);
+      const jwtResult = await this.jwtService.verify(accessToken);
 
       if (this.stateManager.getState(jwtResult.userId) !== originCode) {
         throw new Error('1');
