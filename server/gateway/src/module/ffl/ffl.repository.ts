@@ -1,10 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { CocommentLikeSchemaDefinition } from './repository/schema/cocommentLike.schema';
-import { CommentLikeSchemaDefinition } from './repository/schema/commentLike.schema';
-import { FollowSchemaDefinition } from './repository/schema/follow.schema';
-import { PostLikeSchemaDefinition } from './repository/schema/postLike.schema';
 import { crypter } from '../../common/crypter';
 import { FollowCollection } from './repository/follow.cellection';
 import { PostLikeCollection } from './repository/postLike.collection';
@@ -14,10 +8,6 @@ export class FflRepository {
   constructor(
     private postLikeCollection: PostLikeCollection,
     private followCollection: FollowCollection,
-    @InjectModel('commentlike')
-    private commentLikeModel: Model<CommentLikeSchemaDefinition>,
-    @InjectModel('cocommentlike')
-    private cocommentLikeModel: Model<CocommentLikeSchemaDefinition>,
   ) {}
 
   async getUserIds(data: {

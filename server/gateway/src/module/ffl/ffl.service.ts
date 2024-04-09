@@ -83,8 +83,6 @@ export class FflService {
     postId: string;
     postOwnerUserId: string;
   }) {
-    console.log(body);
-
     const { liked } = await this.checkLiked(body);
     //좋아요 안돼있으면 좋아요 누름
 

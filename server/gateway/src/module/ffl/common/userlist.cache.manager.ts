@@ -5,14 +5,22 @@ export interface userinfo {
 }
 
 interface Container {
-  [key: string]: userinfo[];
+  [key: string]: { userList: userinfo[]; timer: NodeJS.Timeout };
 }
 
 class CacheManager {
-  private followerContainer: Container = {};
-  private followingContainer: Container = {};
-  private likeContainer: Container = {};
-  private removeCount = 6000; //60초
+  private containers: { [key: string]: Container } = {
+    follower: {},
+    following: {},
+    like: {},
+  };
+  private removeCount = 30000; // 30초
+
+  // constructor() {
+  //   setInterval(() => {
+  //     console.log(this.containers);
+  //   }, 10000);
+  // }
 
   /**캐시에 적재 */
   loadUserList(data: {
@@ -20,53 +28,34 @@ class CacheManager {
     userList: userinfo[];
     target: string;
   }) {
-    // console.log(`load to ${data.type} conatiner, target is ${data.target}`);
+    // console.log(`캐시적재,  ${data.type} container, target is ${data.target}`);
 
-    //타입에 따라 적재
-    if (data.type === 'follower') {
-      this.followerContainer[data.target] = data.userList;
-    }
-    if (data.type === 'following') {
-      this.followingContainer[data.target] = data.userList;
-    }
-    this.likeContainer[data.target] = data.userList;
-
-    //삭제카운트 돌리기.
-    setTimeout(() => {
-      this.removeUserList(data);
-    }, this.removeCount);
+    this.containers[data.type][data.target] = {
+      userList: data.userList,
+      timer: setTimeout(() => {
+        delete this.containers[data.type][data.target];
+      }, this.removeCount),
+    };
   }
+
   /**캐시에서 가져오기 */
   getUserList(data: {
     type: 'follower' | 'following' | 'like';
     target: string;
     searchString: string;
   }): userinfo[] | undefined {
-    // console.log(`get from ${data.type} conatiner, target is ${data.target}`);
+    const container = this.containers[data.type][data.target];
 
-    if (data.type === 'follower') {
-      return this.followerContainer[data.target];
+    if (container) {
+      //clear함수로 안없애주면 이전타이머 안없어짐
+      clearTimeout(container.timer);
+      container.timer = setTimeout(() => {
+        delete this.containers[data.type][data.target];
+      }, this.removeCount);
+      return container.userList;
     }
-    if (data.type === 'following') {
-      return this.followingContainer[data.target];
-    }
-    return this.likeContainer[data.target];
-  }
 
-  /**캐시에서 삭제 */
-  removeUserList(data: {
-    type: 'follower' | 'following' | 'like';
-    target: string;
-  }) {
-    // console.log(`remove from ${data.type} conatiner, target is ${data.target}`);
-
-    if (data.type === 'follower') {
-      delete this.followerContainer[data.target];
-    }
-    if (data.type === 'following') {
-      delete this.followingContainer[data.target];
-    }
-    delete this.likeContainer[data.target];
+    return undefined;
   }
 }
 

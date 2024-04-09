@@ -4,5 +4,5 @@ WORKDIR /usr/src/app
 COPY *.json ./
 RUN npm i 
 
-#COPY ./ ./
+COPY ./ ./
 CMD npm run start:dev
