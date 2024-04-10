@@ -130,6 +130,7 @@ export class FflService {
     //1 먼저 userId들을 가져옴
     const { userIds }: { userIds: string[] } =
       await this.fflRepository.getUserIds(body);
+
     if (userIds.length === 0) {
       //1.1 없으면 빈리스트 리턴
       return { userList: [] };

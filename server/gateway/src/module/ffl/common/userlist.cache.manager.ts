@@ -36,6 +36,8 @@ class CacheManager {
         delete this.containers[data.type][data.target];
       }, this.removeCount),
     };
+
+    return;
   }
 
   /**캐시에서 가져오기 */
@@ -44,18 +46,19 @@ class CacheManager {
     target: string;
     searchString: string;
   }): userinfo[] | undefined {
-    const container = this.containers[data.type][data.target];
+    const target = this.containers[data.type][data.target];
 
-    if (container) {
-      //clear함수로 안없애주면 이전타이머 안없어짐
-      clearTimeout(container.timer);
-      container.timer = setTimeout(() => {
-        delete this.containers[data.type][data.target];
-      }, this.removeCount);
-      return container.userList;
+    if (!target) {
+      return undefined;
     }
 
-    return undefined;
+    //타이머 다시돌리고 리스트 리턴
+    //clear함수로 안없애주면 이전타이머 안없어짐
+    clearTimeout(target.timer);
+    target.timer = setTimeout(() => {
+      delete this.containers[data.type][data.target];
+    }, this.removeCount);
+    return target.userList;
   }
 }
 

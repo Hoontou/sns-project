@@ -1,16 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { AlertContentUnion } from 'sns-interfaces/alert.interface';
+import { UserSchemaDefinition } from 'src/module/user/schema/user.schema';
 
 export type AlertDocument = HydratedDocument<AlertSchemaDefinition>;
 
 @Schema()
 export class AlertSchemaDefinition {
+  @Prop({ default: new Types.ObjectId() })
+  _id: Types.ObjectId;
+
   @Prop({ required: true })
   userId: number;
 
   @Prop({ required: true, type: Object })
-  content: object;
+  content: AlertContentUnion;
 
   @Prop({ default: false })
   read: boolean;
@@ -32,10 +36,6 @@ AlertSchema.virtual('userPop', {
   justOne: true,
 });
 
-export interface AlertSchemaType {
-  _id?: string;
-  userId: number;
-  content: AlertContentUnion;
-  createdAt: Date;
-  read: boolean;
+export interface AlertSchemaExecPop extends AlertSchemaDefinition {
+  userPop?: UserSchemaDefinition;
 }

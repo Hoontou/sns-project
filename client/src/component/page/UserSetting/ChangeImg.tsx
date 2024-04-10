@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Backdrop, Button, CircularProgress } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthResultRes } from 'sns-interfaces';
@@ -15,6 +15,7 @@ const ChangeImg = (props: { img: string }) => {
   const [selectedImgUrl, setSelectedImgUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const [showingImg, setShowingImg] = useState<string>('');
+  const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
 
   /**사진 한개만 선택했는지 체크하는 */
   const checkFileCount = (e: ChangeEvent<HTMLFormElement>) => {
@@ -50,6 +51,8 @@ const ChangeImg = (props: { img: string }) => {
       return;
     }
 
+    setOpenBackSpin(true);
+
     //보내기전 리사이징, 인증
     const contents: File[] | false = await resizer([file]); //리사이저로 복사배열보내고 리사이징배열 받는다.
     if (contents === false) {
@@ -84,8 +87,8 @@ const ChangeImg = (props: { img: string }) => {
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
     //벗어나도 되면 그냥 알람MSA에 Id 보내고 페이지 벗어나자.
     //then을 안받아도 되게 느슨한 연결로 만들어 보자.
-    alert('file sending succeed');
-    navigate('/feed');
+    alert('수정요청을 보냈어요. 반영까지 시간이 걸릴 수 있어요.');
+    setOpenBackSpin(false);
   };
 
   useEffect(() => {
@@ -139,6 +142,14 @@ const ChangeImg = (props: { img: string }) => {
           </Button>
         </form>
       </div>
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackSpin}
+      >
+        <div>사진을 처리중....&nbsp;&nbsp;&nbsp;</div>
+        <CircularProgress color='inherit' />
+      </Backdrop>
     </>
   );
 };

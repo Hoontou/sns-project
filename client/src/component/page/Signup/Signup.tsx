@@ -12,17 +12,17 @@ import { authHoc } from '../../../common/auth.hoc';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../../../App';
 
-export const containsHangul = (str: string) => {
-  return /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(str);
-};
-
-export const isValidEmail = (email: string) => {
-  // 이메일 형식의 정규식
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  // 주어진 이메일이 정규식과 일치하는지 확인하여 true 또는 false 반환
-  return emailPattern.test(email);
-};
+export interface ValidationFailedErr {
+  response: {
+    data: {
+      error: string;
+      message: string[];
+      statusCode: number;
+    };
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -44,28 +44,6 @@ const Signup = () => {
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //유저네임 3~10개
-    if (username.length > 10 || username.length < 3) {
-      alert('username이 짧거나 길어요.');
-      return;
-    }
-
-    if (containsHangul(username)) {
-      alert('username에 한글이 있어요.');
-      return;
-    }
-    //비번은 영어랑숫자만 4~10개 (현재는,)
-
-    if (password.length > 10 || password.length < 4) {
-      alert('password가 짧거나 길어요.');
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      alert('이메일 형식이 아니에요.');
-      return;
-    }
-
     setOpenBackSpin(true);
     const signUpForm: SignUpDto = {
       email,
@@ -73,19 +51,25 @@ const Signup = () => {
       username,
     }; //나중에 main-back의 DTO에 부합하지 않으면 모달로 오류뱉어야함
 
-    axiosInstance.post('/auth/signup', signUpForm).then((res) => {
-      if (res.data.success === true) {
-        setOpenBackSpin(false);
-        alert('계정 등록 성공');
-        navigate('/signin');
+    axiosInstance
+      .post('/auth/signup', signUpForm)
+      .then((res) => {
+        if (res.data.success === true) {
+          alert('계정 등록 성공');
+          setOpenBackSpin(false);
+          navigate('/signin');
+          return;
+        }
+        if (res.data.success === false) {
+          alert(`${res.data.msg}, signup failed`);
+          setOpenBackSpin(false);
+        }
         return;
-      }
-      if (res.data.success === false) {
+      })
+      .catch((err: ValidationFailedErr) => {
+        alert(err.response.data.message.join(' '));
         setOpenBackSpin(false);
-        alert(`${res.data.msg}, signup failed`);
-      }
-      return;
-    });
+      });
   };
   useEffect(() => {
     authHoc().then((authRes) => {
@@ -132,7 +116,7 @@ const Signup = () => {
             <TextField
               sx={{ m: 1, width: '30ch' }}
               id='standard-basic'
-              label='Password, 4~10 word'
+              label='Password, 4~20 word'
               variant='standard'
               onChange={onPasswordHandler}
               type='password'

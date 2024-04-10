@@ -1,21 +1,28 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, TextField } from '@mui/material';
+import { Backdrop, Button, CircularProgress, TextField } from '@mui/material';
 import './UserSetting.css';
 import ChangeImg from './ChangeImg';
 import Navbar from '../../common/Navbar/Navbar';
 import { UserInfo } from 'sns-interfaces/client.interface';
 import { axiosInstance } from '../../../App';
-import { containsHangul } from '../Signup/Signup';
+import { ValidationFailedErr } from '../Signup/Signup';
 
 const UserSetting = () => {
   const navigate = useNavigate();
-  const [spin, setSpin] = useState<boolean>(true);
+  const [isFulfilled, setIsFulfilled] = useState<boolean>(true);
   const [img, setImg] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [intro, setIntro] = useState<string>('');
-  const [userId, setUserId] = useState<string>('');
   const [introduceName, setIntroduceName] = useState<string>('');
+  const [initialInfo, setInitialInfo] = useState<{
+    username: string;
+    intro: string;
+    introduceName: string;
+  }>({ username: '', intro: '', introduceName: '' });
+  const [userId, setUserId] = useState<string>('');
+  const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
+
   const onUsernameHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.currentTarget.value);
   };
@@ -28,24 +35,17 @@ const UserSetting = () => {
 
   /**username수정요청 보내는 */
   const submitUsername = () => {
-    console.log(username);
-    //유저네임 4~10개
-    if (username.length > 10 || username.length < 3) {
-      alert('username이 짧거나 길어요.');
+    if (username === initialInfo?.username) {
+      alert('수정할게 없어요.');
       return;
     }
 
-    if (containsHangul(username)) {
-      alert('username에 한글이 있어요.');
-      return;
-    }
-
-    setSpin(true);
+    setOpenBackSpin(true);
 
     axiosInstance
       .post('/user/changeusername', { userId, username })
       .then((res) => {
-        setSpin(false);
+        setOpenBackSpin(false);
         const result: { success: boolean; exist?: boolean } = res.data;
         if (result.success === false) {
           alert(
@@ -55,55 +55,73 @@ const UserSetting = () => {
           );
           return;
         }
-        navigate('/feed');
+
+        setInitialInfo({ ...initialInfo, username });
+        alert('수정 완료');
+        return;
+      })
+      .catch((err: ValidationFailedErr) => {
+        alert(err.response.data.message.join(' '));
+        setOpenBackSpin(false);
+
         return;
       });
   };
 
   /**introduceName수정요청 보내는 */
   const submitIntroduceName = () => {
-    //유저네임 3~10개
-    if (introduceName.length > 10 || introduceName.length < 3) {
-      alert('소개 이름이 짧거나 길어요.');
+    if (introduceName === initialInfo?.introduceName) {
+      alert('수정할게 없어요.');
       return;
     }
 
-    setSpin(true);
+    setOpenBackSpin(true);
 
     axiosInstance
       .post('/user/changeintroducename', { userId, introduceName })
       .then((res) => {
-        setSpin(false);
+        setOpenBackSpin(false);
         const result: { success: boolean; exist?: boolean } = res.data;
         if (result.success === false) {
           alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해주세요.');
           navigate('/feed');
           return;
         }
-        navigate('/feed');
+        setInitialInfo({ ...initialInfo, introduceName });
+        alert('수정 완료');
+        return;
+      })
+      .catch((err: ValidationFailedErr) => {
+        alert(err.response.data.message.join(' '));
+        setOpenBackSpin(false);
         return;
       });
   };
 
   /**introduce 수정 요청 보내는 */
   const submitIntro = () => {
-    setSpin(true);
+    if (intro === initialInfo?.intro) {
+      alert('수정할게 없어요.');
+      return;
+    }
+
+    setOpenBackSpin(true);
     //소개글 양식체크
     const len = intro.split('\n').length;
     if (len > 3) {
       alert('소개글이 세줄이 넘어요.');
-      setSpin(false);
+      setOpenBackSpin(false);
       return;
     }
     if (intro.length - len * 2 > 50) {
       //안정확함.
       alert('소개글이 50글자가 넘어요');
-      setSpin(false);
+      setOpenBackSpin(false);
       return;
     }
 
     axiosInstance.post('/user/changeintro', { userId, intro }).then((res) => {
-      setSpin(false);
+      setOpenBackSpin(false);
       const { success } = res.data;
       if (success === false) {
         alert('서버문제로 바꾸기 실패했어요. 나중에 다시 시도해 주세요.');
@@ -111,7 +129,9 @@ const UserSetting = () => {
 
         return;
       }
-      navigate('/feed');
+      alert('수정 완료');
+      setInitialInfo({ ...initialInfo, intro });
+
       return;
     });
   };
@@ -140,14 +160,19 @@ const UserSetting = () => {
       setUsername(data.userinfo.username);
       setUserId(data.reqUserId);
       setIntroduceName(data.userinfo.introduceName);
-      setSpin(false);
+      setIsFulfilled(false);
+      setInitialInfo({
+        username,
+        intro,
+        introduceName,
+      });
     });
   }, []);
 
   return (
     <>
-      {spin && 'waiting...'}
-      {!spin && (
+      {isFulfilled && 'waiting...'}
+      {!isFulfilled && (
         <div
           className='text-center'
           style={{
@@ -160,7 +185,7 @@ const UserSetting = () => {
           <ChangeImg img={img} />
           <hr></hr>
           <div>
-            <p>계정 이름. 영어만, 3~10자 입력가능</p>
+            <p>계정 이름. 영어랑 숫자만, 3~10자 입력가능</p>
 
             <TextField
               sx={{ m: 1, width: '30ch' }}
@@ -188,7 +213,7 @@ const UserSetting = () => {
           <hr></hr>
 
           <div>
-            <p>소개 이름. 3~10자 입력가능</p>
+            <p>소개 이름. 특수문자 불가능, 최대 10자 입력가능</p>
 
             <TextField
               sx={{ m: 1, width: '30ch' }}
@@ -250,6 +275,14 @@ const UserSetting = () => {
           </div>
         </div>
       )}
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackSpin}
+      >
+        <div>수정 요청중....&nbsp;&nbsp;&nbsp;</div>
+        <CircularProgress color='inherit' />
+      </Backdrop>
       <Navbar value={4} />
     </>
   );

@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
+import { IntroduceUsernameDto, UsernameDto } from './dto/changeInfo.dto';
 
 @Controller('user')
 export class UserController {
@@ -7,7 +15,7 @@ export class UserController {
 
   @Post('/changeusername')
   async changeUsername(
-    @Body() body: { userId: string; username: string },
+    @Body(ValidationPipe) body: UsernameDto,
   ): Promise<{ success: boolean; exist?: boolean }> {
     return this.userService.changeUsername(body);
   }
@@ -21,7 +29,7 @@ export class UserController {
 
   @Post('/changeintroducename')
   async changeIntroduceName(
-    @Body() body: { userId: string; introduceName: string },
+    @Body(ValidationPipe) body: IntroduceUsernameDto,
   ): Promise<{ success: boolean }> {
     return this.userService.changeIntroduceName(body);
   }

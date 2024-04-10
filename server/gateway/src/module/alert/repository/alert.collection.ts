@@ -33,7 +33,7 @@ export class AlertCollection {
     return newOne;
   }
 
-  getAllAlerts(userId, page) {
+  getAllAlerts(userId: string, page: number) {
     return this.alertModel
       .find({
         userId: Number(crypter.decrypt(userId)),
@@ -45,7 +45,7 @@ export class AlertCollection {
       .sort({ _id: -1 });
   }
 
-  getUnreadAlerts(userId, page) {
+  getUnreadAlerts(userId: string, page: number) {
     return this.alertModel
       .find({
         userId: Number(crypter.decrypt(userId)),
@@ -53,6 +53,7 @@ export class AlertCollection {
       .populate('userPop')
       .skip(page * pageLen)
       .limit(pageLen)
-      .sort({ _id: -1 });
+      .sort({ _id: -1 })
+      .lean();
   }
 }

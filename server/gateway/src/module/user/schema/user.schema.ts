@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type UserDocument = HydratedDocument<UserSchemaDefinition>;
 
 @Schema()
 export class UserSchemaDefinition {
+  @Prop({ default: new Types.ObjectId() })
+  _id: Types.ObjectId;
+
   @Prop({ required: true, unique: true, index: true })
   userId: number;
 
@@ -23,10 +26,11 @@ export class UserSchemaDefinition {
 
 export const UserSchema = SchemaFactory.createForClass(UserSchemaDefinition);
 
-export interface UserSchemaType {
-  userId: number;
-  username: string;
-  introduce: string;
-  introduceName: string;
-  img: string;
-}
+// export interface UserSchemaType {
+//   _id: Types.ObjectId;
+//   userId: number;
+//   username: string;
+//   introduce: string;
+//   introduceName: string;
+//   img: string;
+// }

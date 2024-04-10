@@ -14,7 +14,7 @@ import { axiosInstance, primaryColor } from '../../App';
 
 type ListType = 'like' | 'follower' | 'following';
 
-const pageLen = 15;
+const pageLen = 5;
 
 /**좋아요, 팔로워, 팔로잉 한 유저리스트 보는 컴포넌트 */
 const UserlistModal = (props: {
@@ -63,7 +63,7 @@ const UserlistModal = (props: {
         } = res.data;
 
         if (data.userList.length < pageLen) {
-          // gateway/에서 10개씩 보내줌.
+          // gateway/에서 5개씩 보내줌.
           setHasMore(false);
         }
 

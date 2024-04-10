@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { UserSchemaDefinition, UserSchemaType } from '../schema/user.schema';
+import { UserSchemaDefinition } from '../schema/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -13,7 +13,7 @@ export class UserCollection {
   createUser(data: {
     username: string;
     userId: number;
-  }): Promise<UserSchemaType> {
+  }): Promise<UserSchemaDefinition> {
     const createdUser = new this.userModel(data);
     return createdUser.save();
   }

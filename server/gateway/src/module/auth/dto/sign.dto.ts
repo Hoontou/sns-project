@@ -13,17 +13,26 @@ export class SignInDto {
   email: string;
 
   @IsNotEmpty()
-  @MinLength(4)
-  @MaxLength(20)
-  @Matches(/^[a-zA-Z0-9]*$/, {
-    message: 'passwoard only accepts eng, num',
-  }) //영어랑 숫자만 가능하다는 뜻.
+  @MinLength(4, {
+    message: '비밀번호가 4글자 이상 필요해요.',
+  })
+  @MaxLength(20, {
+    message: '비밀번호가 20글자를 초과했어요.',
+  })
+  @Matches(/^[^\s]*$/)
   password: string;
 }
 
 export class SignUpDto extends SignInDto {
   @IsNotEmpty()
-  @MinLength(4)
-  @MaxLength(10)
+  @MinLength(3, {
+    message: 'username이 3글자 이상 필요해요.',
+  })
+  @MaxLength(10, {
+    message: 'username이 10글자를 초과했어요.',
+  })
+  @Matches(/^[a-zA-Z0-9]*$/, {
+    message: 'username에는 영어와 숫자만 가능해요.',
+  })
   username: string;
 }

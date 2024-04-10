@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type PostLikeDocument = HydratedDocument<PostLikeSchemaDefinition>;
 
 @Schema()
 export class PostLikeSchemaDefinition {
+  @Prop({ default: new Types.ObjectId() })
+  _id: Types.ObjectId;
+
   @Prop({ required: true })
   userId: string;
 
@@ -31,8 +34,3 @@ PostLikeSchema.virtual('getMetadata', {
   foreignField: '_id',
   justOne: true,
 });
-
-export interface PostLikeSchemaType {
-  userId: string;
-  postId: string;
-}

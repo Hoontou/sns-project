@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type FollowDocument = HydratedDocument<FollowSchemaDefinition>;
 
 @Schema()
 export class FollowSchemaDefinition {
+  @Prop({ default: new Types.ObjectId() })
+  _id: Types.ObjectId;
+
   @Prop({ required: true })
   userTo: number;
 
@@ -38,8 +41,3 @@ FollowSchema.virtual(UserFromPopulate, {
   foreignField: 'userId', // collections에서 참조할 필드
   justOne: true, // 하나만 반환하는지 여부
 });
-
-export interface FollowSchemaType {
-  userTo: number;
-  userFrom: number;
-}

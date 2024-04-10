@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Logger, Post, Req, Res } from '@nestjs/common';
-import { SignInDto, SignUpDto } from 'sns-interfaces';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Req,
+  Res,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { SignInDto, SignUpDto } from './dto/sign.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +23,7 @@ export class AuthController {
 
   @Post('/signin')
   async signIn(
-    @Body() signInDto: SignInDto,
+    @Body(ValidationPipe) signInDto: SignInDto,
     @Res({ passthrough: true }) res,
     //네스트.com에서는 Response 타입 붙이라고 하는데? 붙이면 쿠키타입이 없다고 나옴. TS버전문제인가
   ): Promise<
@@ -28,7 +37,7 @@ export class AuthController {
 
   @Post('/signup')
   async signUp(
-    @Body()
+    @Body(ValidationPipe)
     signUpDto: SignUpDto,
   ): Promise<{ success: boolean; msg?: string }> {
     return this.authService.signUp(signUpDto);

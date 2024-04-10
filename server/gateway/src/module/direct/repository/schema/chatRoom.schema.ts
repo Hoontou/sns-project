@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export interface ChatRoomSchemaType {
   _id?: string;
@@ -34,6 +34,9 @@ export type ChatRoomDocument = HydratedDocument<ChatRoomSchemaDefinition>;
 
 @Schema()
 export class ChatRoomSchemaDefinition {
+  @Prop({ default: new Types.ObjectId() })
+  _id: Types.ObjectId;
+
   @Prop({ required: true })
   chatRoomId: number;
 

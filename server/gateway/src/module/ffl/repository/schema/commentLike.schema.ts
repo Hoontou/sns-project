@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type CommentLikeDocument = HydratedDocument<CommentLikeSchemaDefinition>;
 
 @Schema()
 export class CommentLikeSchemaDefinition {
+  @Prop({ default: new Types.ObjectId() })
+  _id: Types.ObjectId;
+
   @Prop({ required: true })
   userId: string;
 
@@ -24,8 +27,3 @@ CommentLikeSchema.index(
   { unique: true },
 );
 CommentLikeSchema.index({ userId: 1, commentId: 1 }, { unique: true });
-
-export interface CommentLikeSchemaType {
-  userId: string;
-  commentId: number;
-}

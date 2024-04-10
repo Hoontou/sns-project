@@ -11,7 +11,7 @@ import {
 import { authHoc } from '../../../common/auth.hoc';
 import Navbar from '../../common/Navbar/Navbar';
 import { axiosInstance } from '../../../App';
-import { isValidEmail } from '../Signup/Signup';
+import { ValidationFailedErr } from '../Signup/Signup';
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -29,32 +29,29 @@ const Signin = () => {
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!isValidEmail(email)) {
-      alert('이메일 형식이 아니에요.');
-      return;
-    }
-
-    if (password === '') {
-      return;
-    }
-
     setOpenBackSpin(true);
     const signInForm: SignInDto = {
       email,
       password,
     };
-    axiosInstance.post('/auth/signin', signInForm).then((res) => {
-      const result: { success: true } | { success: false; msg: string } =
-        res.data;
-      if (result.success === true) {
-        navigate('/');
-        return;
-      }
-      if (result.success === false) {
+    axiosInstance
+      .post('/auth/signin', signInForm)
+      .then((res) => {
+        const result: { success: true } | { success: false; msg: string } =
+          res.data;
+        if (result.success === true) {
+          navigate('/');
+          return;
+        }
+        if (result.success === false) {
+          setOpenBackSpin(false);
+          alert(`login failed, ${result.msg}`);
+        }
+      })
+      .catch((err: ValidationFailedErr) => {
+        alert(err.response.data.message.join(' '));
         setOpenBackSpin(false);
-        alert(`login failed, ${result.msg}`);
-      }
-    });
+      });
   };
 
   useEffect(() => {

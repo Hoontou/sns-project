@@ -5,15 +5,16 @@ import {
   UploadAlertDto,
   UserTagAlertReqForm,
 } from 'sns-interfaces/alert.interface';
-import { crypter } from 'src/common/crypter';
+import { crypter } from '../../common/crypter';
 import { AlertCollection } from './repository/alert.collection';
 import { UserCollection } from '../user/repository/user.collection';
 import { HandleUserTagReqBody } from '../post/interface';
+import { AlertSchemaExecPop } from './repository/schema/alert.schema';
 
 export interface FianlAlertType {
   _id: string;
   content: AlertContentUnion & {
-    userinfo: { username: string; img: string };
+    userinfo: { username?: string; img?: string };
   };
   read: boolean;
   createdAt: Date;
@@ -44,18 +45,21 @@ export class AlertService {
     page: number;
     userId: string;
   }): Promise<{ unreadAlerts: FianlAlertType[] }> {
-    const unreadAlerts: { [key: string]: any } =
-      await this.alertCollection.getUnreadAlerts(data.page, data.userId);
+    const unreadAlerts: AlertSchemaExecPop[] =
+      await this.alertCollection.getUnreadAlerts(data.userId, data.page);
+    console.log(unreadAlerts);
 
     const result = unreadAlerts.map((i) => {
-      delete i._doc.content.userId;
-      delete i._doc.userId;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { _id, content, userId, userPop, ...rest } = i;
+
       return {
-        ...i._doc,
+        ...rest,
         content: {
-          ...i._doc.content,
-          userinfo: { username: i.userPop.username, img: i.userPop.img },
+          ...content,
+          userinfo: { username: userPop?.username, img: userPop?.img },
         },
+        _id: _id.toString(),
       };
     });
 
@@ -67,9 +71,9 @@ export class AlertService {
     userId: string;
   }): Promise<{ allAlerts: FianlAlertType[] }> {
     const allAlerts: { [key: string]: any } =
-      await this.alertCollection.getAllAlerts(data.page, data.userId);
+      await this.alertCollection.getAllAlerts(data.userId, data.page);
 
-    const result = allAlerts.map((i) => {
+    const result: FianlAlertType[] = allAlerts.map((i) => {
       //id를 내보내지 마
       delete i._doc.content.userId;
       delete i._doc.userId;
