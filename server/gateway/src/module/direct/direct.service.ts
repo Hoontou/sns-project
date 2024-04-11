@@ -3,13 +3,13 @@ import { ChatRoomManager } from './managers/chatRoom.manager';
 import { MessageManager } from './managers/message.manager';
 import { SocketManager } from './managers/socket.manager';
 import { UserLocationManager } from './managers/userLocation.manager';
-import { crypter } from '../../common/crypter';
 import {
-  ChatRoomSchemaType,
+  ChatRoomSchemaDefinition,
   emptyChatRoom,
 } from './repository/schema/chatRoom.schema';
 import { Socket } from 'socket.io';
 import { DirectMessage } from './repository/message.repository';
+import { ChatRoomSchemaDefinitionExecPop } from './repository/schema/chatRoom.schema';
 
 @Injectable()
 export class DirectService {
@@ -22,13 +22,18 @@ export class DirectService {
     private userLocationManager: UserLocationManager,
   ) {}
 
-  requestChatRoomId(data: { userId: string; chatTargetUserId: string }) {
+  requestChatRoomId(data: {
+    userId: number;
+    chatTargetUserId: string;
+  }): Promise<{
+    chatRoomId: number;
+  }> {
     return this.chatRoomManager.requestChatRoomId(data);
   }
 
-  async checkHasNewMessage(data: { userId: string }) {
+  async checkHasNewMessage(data: { userId: number }) {
     const hasNewMessage = await this.chatRoomManager.checkHasNewMessage(
-      Number(crypter.decrypt(data.userId)),
+      data.userId,
     );
 
     return { hasNewMessage };
@@ -38,43 +43,55 @@ export class DirectService {
     userId: number;
     userLocation: string | 'inbox';
     socket: Socket;
-  }): Promise<ChatRoomSchemaType> {
+  }): Promise<ChatRoomSchemaDefinitionExecPop> {
     const { userId, userLocation, socket } = data;
 
+    //유저 등록 시도
     try {
       if (userLocation === 'inbox') {
-        //inbox에 들어왔으면 바로 등록
+        //register to inbox
+        //inbox에 들어왔으면 바로 등록후 리턴
         this.userLocationManager.enterInbox(userId);
         this.socketManager.setSock(userId, socket);
         return emptyChatRoom;
       }
 
-      //) location 매니저에 chatroomId 등록 전 chatRoom 소유권 체크
-      const { ownerCheckResult, chatRoom } =
-        await this.chatRoomManager.checkChatRoomOwner({
-          chatRoomId: Number(userLocation),
-          userId: userId,
-        });
-
-      //1-2) check실패, 유저 내보내기
-      if (ownerCheckResult === false) {
-        //클라이언트로 faild 시그널 보냄
-        socket.emit('cannotEnter');
-        socket.disconnect();
-        throw new Error(`user is not owner of chatroom ${userLocation}`);
-      }
-
-      //2-2) check통과, 매니저에 등록, 이후 처리
-      this.userLocationManager.enterChatRoom(userId, Number(userLocation));
-      this.socketManager.setSock(userId, socket);
-
-      return chatRoom;
+      return this.registerToChatRoom(data);
     } catch (error) {
       this.logger.error('err while registering user--------');
       this.logger.error(error);
 
       return emptyChatRoom;
     }
+  }
+
+  private async registerToChatRoom(data: {
+    userId: number;
+    userLocation: string | 'inbox';
+    socket: Socket;
+  }) {
+    const { userId, userLocation, socket } = data;
+
+    //) location 매니저에 chatroomId 등록 전 chatRoom 소유권 체크
+    const { ownerCheckResult, chatRoom } =
+      await this.chatRoomManager.checkChatRoomOwner({
+        chatRoomId: Number(userLocation),
+        userId: userId,
+      });
+
+    //1-2) check실패, 유저 내보내기
+    if (ownerCheckResult === false) {
+      //클라이언트로 faild 시그널 보냄
+      socket.emit('cannotEnter');
+      socket.disconnect();
+      throw new Error(`user is not owner of chatroom ${userLocation}`);
+    }
+
+    //2-2) check통과, 매니저에 등록, 이후 처리
+    this.userLocationManager.enterChatRoom(userId, Number(userLocation));
+    this.socketManager.setSock(userId, socket);
+
+    return chatRoom;
   }
 
   exitDirect(userId: number) {
@@ -98,7 +115,7 @@ export class DirectService {
       content: string;
       tmpId: number;
     };
-    chatRoom: ChatRoomSchemaType; // ?로 해놨지만 사실 항상 채워져있음
+    chatRoom: ChatRoomSchemaDefinition; // ?로 해놨지만 사실 항상 채워져있음
     socket: Socket;
   }) {
     try {
@@ -118,12 +135,14 @@ export class DirectService {
         });
 
       //2 몽고 chatroom 업데이트
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { myChatRoom, friendsChatRoom } =
         await this.chatRoomManager.updateChatRoom({
           ...data,
           isRead: friendsState === data.chatRoom.chatRoomId ? true : false,
         });
 
+      //3 친구가 접속중? 실시간알림 전송
       if (friendsState === 'inbox') {
         const friendsSocket = this.socketManager.getSock(
           data.chatRoom.chatWithUserId,
@@ -152,7 +171,7 @@ export class DirectService {
         });
       }
 
-      //이후 본인한테도 실시간 정보 보냄
+      //4 이후 본인한테도 실시간 정보 보냄
       data.socket.emit('sendingSuccess', {
         tmpId: data.messageForm.tmpId,
         isRead: sendedMessage.isRead,
@@ -165,7 +184,7 @@ export class DirectService {
 
   async getMessages(
     socket: Socket,
-    chatRoom: ChatRoomSchemaType,
+    chatRoom: ChatRoomSchemaDefinition,
     startAt?: number,
   ) {
     const messages = await this.messageManager.getMessages(
@@ -181,9 +200,10 @@ export class DirectService {
       };
     });
     socket.emit('getMessages', { messages: tmp });
+    return;
   }
 
-  readMessages(chatRoom: ChatRoomSchemaType) {
+  readMessages(chatRoom: ChatRoomSchemaDefinition) {
     //안읽은 메세지 읽음처리
     this.messageManager.readMessages(chatRoom);
     this.chatRoomManager.readMessages(chatRoom);

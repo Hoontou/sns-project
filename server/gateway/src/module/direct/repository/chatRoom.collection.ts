@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
+  ChatRoomDocument,
   ChatRoomSchemaDefinition,
-  ChatRoomSchemaType,
+  ChatRoomSchemaDefinitionExecPop,
 } from './schema/chatRoom.schema';
 import { pgdb } from '../../../configs/postgres';
 
@@ -12,7 +13,7 @@ export class ChatRoomCollection {
   private readonly pgClient;
   constructor(
     @InjectModel('chatroom')
-    public readonly chatRoomModel: Model<ChatRoomSchemaDefinition>,
+    private readonly chatRoomModel: Model<ChatRoomDocument>,
   ) {
     this.pgClient = pgdb.client;
   }
@@ -20,21 +21,23 @@ export class ChatRoomCollection {
   async getChatRoomByUserIds(data: {
     ownerUserId: number;
     chatWithUserId: number;
-  }) {
+  }): Promise<ChatRoomSchemaDefinition | null> {
     return this.chatRoomModel.findOne({
       ownerUserId: data.ownerUserId,
       chatWithUserId: data.chatWithUserId,
     });
   }
-  async getChatRoomByRoomId(data: { ownerUserId: number; chatRoomId: number }) {
-    const chatRoom: unknown = await this.chatRoomModel
+  async getChatRoomByRoomId(data: {
+    ownerUserId: number;
+    chatRoomId: number;
+  }): Promise<ChatRoomSchemaDefinitionExecPop | null> {
+    return this.chatRoomModel
       .findOne({
         ownerUserId: data.ownerUserId,
         chatRoomId: data.chatRoomId,
       })
       .populate('userPop')
-      .exec();
-    return chatRoom as ChatRoomSchemaType;
+      .lean();
   }
 
   async createChatRoom(data: {
@@ -45,7 +48,7 @@ export class ChatRoomCollection {
       'INSERT INTO chatrooms DEFAULT VALUES RETURNING *;',
     );
 
-    const newChatRoomId = insertResult.rows[0].id;
+    const newChatRoomId: number = insertResult.rows[0].id;
 
     await this.chatRoomModel.create([
       {
@@ -64,10 +67,13 @@ export class ChatRoomCollection {
   }
 
   async updateChatRoomAndReturn(data: {
-    chatRoom: ChatRoomSchemaType;
+    chatRoom: ChatRoomSchemaDefinition;
     messageForm: { messageType: 'text' | 'photo'; content: string };
     isRead: boolean;
-  }) {
+  }): Promise<{
+    myChatRoom: ChatRoomSchemaDefinition | null;
+    friendsChatRoom: ChatRoomSchemaDefinitionExecPop | null;
+  }> {
     const lastUpdatedAt = Date.now();
     //내 챗룸에서
     //마지막말, 마지막 업데이트, 토탈 챗 갯수
@@ -115,12 +121,15 @@ export class ChatRoomCollection {
           { new: true },
         )
         .populate('userPop')
-        .exec(),
+        .lean(),
     ]);
     return { myChatRoom, friendsChatRoom };
   }
 
-  getChatRoomsByUserIdWithUserPop(userId: number, page: number) {
+  getChatRoomsByUserIdWithUserPop(
+    userId: number,
+    page: number,
+  ): Promise<ChatRoomSchemaDefinitionExecPop[]> {
     const size = 12;
     return this.chatRoomModel
       .find({ ownerUserId: userId })
@@ -128,11 +137,13 @@ export class ChatRoomCollection {
       .sort({ lastUpdatedAt: -1 })
       .skip(page * size)
       .limit(size)
-      .exec();
+      .lean();
   }
 
-  readMessages(chatRoom: ChatRoomSchemaType) {
-    this.chatRoomModel
+  readMessages(
+    chatRoom: ChatRoomSchemaDefinition,
+  ): Promise<ChatRoomSchemaDefinition | null> {
+    return this.chatRoomModel
       .findOneAndUpdate(
         {
           _id: chatRoom._id,
@@ -146,11 +157,11 @@ export class ChatRoomCollection {
 
   async getLastUpdatedChatRoom(
     userId: number,
-  ): Promise<ChatRoomSchemaType | null> {
+  ): Promise<ChatRoomSchemaDefinition | null> {
     return this.chatRoomModel
       .findOne({ ownerUserId: userId })
       .sort({ lastUpdatedAt: -1 })
       .limit(1)
-      .exec() as any;
+      .exec();
   }
 }

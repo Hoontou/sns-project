@@ -15,8 +15,8 @@ import { ValidationFailedErr } from '../Signup/Signup';
 
 const Signin = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('hoontou@gmail.com');
+  const [password, setPassword] = useState('popo8959');
   const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
 
   const onEmailHandler = (e: ChangeEvent<HTMLInputElement>) => {

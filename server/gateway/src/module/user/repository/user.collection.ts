@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { UserSchemaDefinition } from '../schema/user.schema';
+import { UserDocument, UserSchemaDefinition } from '../schema/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class UserCollection {
   private logger = new Logger('UserCollection');
-  constructor(
-    @InjectModel('user') private userModel: Model<UserSchemaDefinition>,
-  ) {}
+  constructor(@InjectModel('user') private userModel: Model<UserDocument>) {}
 
   createUser(data: {
     username: string;

@@ -22,7 +22,7 @@ export class MetadataService {
   ) {}
 
   async getMetadatas(body: { userId: string; page: number }): Promise<{
-    metadatas: (MetadataDto & { createdAt: string })[];
+    metadatas: MetadataDto[];
   }> {
     const { metadatas } = await this.metadataCollection.getMetadatas(body);
     if (metadatas.length === 0) {

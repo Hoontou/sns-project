@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class StateManager {
-  private container: Map<number, string>;
-  constructor() {
-    this.container = new Map();
-  }
+  private container: Map<number, string> = new Map();
 
   setState(userId, objId) {
     return this.container.set(userId, objId);

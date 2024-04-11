@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { pgdb } from '../../../configs/postgres';
-import { ChatRoomSchemaType } from './schema/chatRoom.schema';
+import { ChatRoomSchemaDefinition } from './schema/chatRoom.schema';
 
 export interface DirectMessage {
   id: number;
@@ -55,7 +55,10 @@ export class MessageRepository {
     }
   }
 
-  async getMessages(chatRomId: number, startAt?: number) {
+  async getMessages(
+    chatRomId: number,
+    startAt?: number,
+  ): Promise<DirectMessage[]> {
     const limit = 40;
 
     const query = startAt
@@ -75,7 +78,7 @@ export class MessageRepository {
     return result.rows;
   }
 
-  readMessages(chatRoom: ChatRoomSchemaType) {
+  readMessages(chatRoom: ChatRoomSchemaDefinition) {
     //상대가 말한 메세지를 읽음처리
     const query1 = `
     UPDATE messages

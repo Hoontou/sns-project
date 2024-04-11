@@ -424,3 +424,33 @@ mongodb doc의 원본 그대로 elastic에서 필요한 경우가 적었음.
 아니면 우선 4번부터 하고 나서 나머지 하는게 나을수도?
 
 정도를 고민중임.
+
+04.11
+지금 몽고 재정비 중이다. 지금보니 개판인 부분이 꽤많다.
+
+모놀리틱으로 전환후,
+몽고디비에 userinfo가 있을 필요가 없어보임. 없애버리면
+monstache로 없어져야해서 더 lite해질 수 있기도 한데.
+이전에는 서비스간 왔다갔다가 힘들어서 그랬는데, 지금은 감당가능함.
+물론 population을 없애고 postgres한테 요청하는거라
+DB request를 한번 더 해야하긴함. -> 좀더 고민해보니 이거 그냥 문장으로 아무생각없이 보면
+별거아닌거 같은데 ㅋㅋㅋㅋㅋㅋ
+
+alert같은 경우 content내부에 userinfo 긁어오기 위한 userId가 위치함.
+그래서 postgres에 재귀적 요청을 하는게 편함.(사람이 코드짜기가.)
+그게 싫으면 alert싹 돌면서 id만 추출해서 리스트로 postgres에 넘겨야함.
+-> 이건 schema 다시짜는게 나은듯. 지금 문제점도, alert이 누구 owner인지,
+누가 alert을 발생시켰는지 구분없이 그냥 userId로 적어놨고, content안에 있으면
+알림 발생시킨 사람, content밖에 있으면 주인Id로 구분하는데, 모호하긴함.
+
+근데 이렇게 content밖으로 빼낸다 해도? 그냥 alert싹돌면서 id 추출해야하는건 변함없음.
+그냥 deps가 한개 줄어들뿐(alert.content.userId) -> (alerts.whoSendId)
+또 추후 추가할 사람이 보낸 알림이 아니라면????? postgres로 infoList.length와 
+alerts.length가 달라진다면 또 불편한 코드가 된다. pop의 경우? 없으면 Doc | undefined이 되서
+타입체크로 쉽게 되는데..
+
+편리한 population, 쉬운 직관적인 코드 vs 데이터 일관성, 중복데이터 저장
+좌측 -> 알림을 볼 때 마다 일어남, 요구사항 변경가능성 다분함.
+우측 -> 유저정보가 바뀔때 마다 일어남, 요구사항 왠만해선 안변함.
+
+을 생각했을때 아직은 population을 위해 몽고에 유저정보 위치하는게 맞다.

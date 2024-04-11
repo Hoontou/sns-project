@@ -4,6 +4,12 @@ export interface userinfo {
   introduceName: string;
 }
 
+export const defaultUserinfo: Readonly<userinfo> = {
+  username: '',
+  img: '',
+  introduceName: '',
+};
+
 interface Container {
   [key: string]: { userList: userinfo[]; timer: NodeJS.Timeout };
 }

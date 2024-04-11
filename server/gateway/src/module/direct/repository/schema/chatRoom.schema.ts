@@ -1,26 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { UserSchemaDefinition } from '../../../user/schema/user.schema';
 
-export interface ChatRoomSchemaType {
-  _id?: string;
-  chatRoomId: number;
-  lastTalk: string;
-  lastUpdatedAt: Date;
-  ownerUserId: number;
-  chatWithUserId: number;
-  newChatCount: number;
-  totalChatCount: number;
-  userPop?: {
-    _id: string;
-    userId: number;
-    username: string;
-    introduce: string;
-    introduceName: string;
-    img: string;
-  };
-}
-
-export const emptyChatRoom: ChatRoomSchemaType = {
+export const emptyChatRoom: Readonly<ChatRoomSchemaDefinition> = {
+  _id: new Types.ObjectId(),
   chatRoomId: 0,
   lastTalk: '',
   lastUpdatedAt: new Date(),
@@ -34,36 +17,33 @@ export type ChatRoomDocument = HydratedDocument<ChatRoomSchemaDefinition>;
 
 @Schema()
 export class ChatRoomSchemaDefinition {
-  @Prop({ default: new Types.ObjectId() })
   _id: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Number })
   chatRoomId: number;
 
-  @Prop({ default: '' })
+  @Prop({ default: '', type: String })
   lastTalk: string;
 
-  @Prop({ default: Date.now })
+  @Prop({ default: Date.now, type: Date })
   lastUpdatedAt: Date;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Number })
   ownerUserId: number;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Number })
   chatWithUserId: number;
 
-  @Prop({ default: 0 })
+  @Prop({ default: 0, type: Number })
   newChatCount: number;
 
-  @Prop({ default: 0 })
+  @Prop({ default: 0, type: Number })
   totalChatCount: number;
 }
 
 export const ChatRoomSchema = SchemaFactory.createForClass(
   ChatRoomSchemaDefinition,
 );
-
-ChatRoomSchema.index({ chatRoomId: 1 });
 ChatRoomSchema.index({ ownerUserId: 1, chatWithUserId: 1 });
 
 ChatRoomSchema.virtual('userPop', {
@@ -72,3 +52,8 @@ ChatRoomSchema.virtual('userPop', {
   foreignField: 'userId',
   justOne: true,
 });
+
+export interface ChatRoomSchemaDefinitionExecPop
+  extends ChatRoomSchemaDefinition {
+  userPop?: UserSchemaDefinition;
+}

@@ -3,13 +3,13 @@ import { UserService } from '../user/user.service';
 import { crypter } from 'src/common/crypter';
 import { AlertDto } from 'sns-interfaces/alert.interface';
 import { UserRepository } from '../user/user.repo';
-import { FollowCollection } from './repository/follow.cellection';
 import { PostLikeCollection } from './repository/postLike.collection';
 import { PostService } from '../post/post.service';
 import { FflRepository } from './ffl.repository';
 import { CommentLikeCollection } from './repository/commentLike.collection';
 import { CocommentLikeCollection } from './repository/cocommentLike.collection';
 import { AlertService } from '../alert/alert.service';
+import { FollowCollection } from './repository/follow.collection';
 @Injectable()
 export class FflService {
   private logger = new Logger(FflService.name);
@@ -36,30 +36,30 @@ export class FflService {
 
   async addFollow(body: { userTo: string; userFrom: string }) {
     const { followed } = await this.checkFollowed(body);
-    //팔로우 안돼있으면 팔로우함
-    if (followed === false) {
-      const alertForm: AlertDto = {
-        userId: Number(crypter.decrypt(body.userTo)),
-        content: {
-          type: 'follow',
-          userId: Number(crypter.decrypt(body.userFrom)),
-        },
-      };
-      this.alertService.saveAlert(alertForm);
-      this.followCollection.addFollow(body);
-      this.userRepository.addFollow(body);
+    if (followed) {
       return;
     }
+    //팔로우 안돼있으면 팔로우함
+    const alertForm: AlertDto = {
+      userId: Number(crypter.decrypt(body.userTo)),
+      content: {
+        type: 'follow',
+        userId: Number(crypter.decrypt(body.userFrom)),
+      },
+    };
+    this.alertService.saveAlert(alertForm);
+    this.followCollection.addFollow(body);
+    this.userRepository.addFollow(body);
     return;
   }
   async removeFollow(body: { userTo: string; userFrom: string }) {
     const { followed } = await this.checkFollowed(body);
-    //팔로우 돼 있으면 팔로우 취소
-    if (followed === true) {
-      this.userRepository.removeFollow(body);
-      this.followCollection.removeFollow(body);
+    if (!followed) {
       return;
     }
+    //팔로우 돼 있으면 팔로우 취소
+    this.userRepository.removeFollow(body);
+    this.followCollection.removeFollow(body);
     return;
   }
 

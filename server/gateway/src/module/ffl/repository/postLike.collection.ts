@@ -2,24 +2,38 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { crypter } from '../../../common/crypter';
-import { PostLikeSchemaDefinition } from './schema/postLike.schema';
-import { cacheManager, userinfo } from '../common/userlist.cache.manager';
-import { findMatchingIndices } from './follow.cellection';
-import { MetadataDto } from '../../../module/metadata/repository/metadata.collection';
+import {
+  MetadataPop,
+  PostLikeDocument,
+  PostLikeSchemaDefinitionExecPop,
+  UserPop,
+} from './schema/postLike.schema';
+import {
+  cacheManager,
+  defaultUserinfo,
+  userinfo,
+} from '../common/userlist.cache.manager';
+import { findMatchingIndices } from './follow.collection';
+import {
+  emptyMetadata,
+  MetadataDto,
+} from '../../../module/metadata/repository/metadata.collection';
 @Injectable()
 export class PostLikeCollection {
   private logger = new Logger(PostLikeCollection.name);
   constructor(
     @InjectModel('like')
-    public readonly postLikeModel: Model<PostLikeSchemaDefinition>,
-  ) {}
+    public readonly postLikeModel: Model<PostLikeDocument>,
+  ) {
+    this.getMyLikes({ userId: '1', page: 0 });
+  }
 
   addLike(data: { userId: string; postId: string }) {
     const newOne = new this.postLikeModel({
       userId: crypter.decrypt(data.userId),
       postId: data.postId,
     });
-    return newOne
+    newOne
       .save()
       .then(() => {
         // this.logger.debug('like stored in mongo successfully');
@@ -27,10 +41,11 @@ export class PostLikeCollection {
       .catch(() => {
         this.logger.error('err when storing like in mongo');
       });
+    return;
   }
 
   removeLike(data: { userId: string; postId: string }) {
-    return this.postLikeModel
+    this.postLikeModel
       .findOneAndDelete({
         userId: crypter.decrypt(data.userId),
         postId: data.postId,
@@ -41,6 +56,7 @@ export class PostLikeCollection {
       .catch(() => {
         this.logger.error('err when canceling like in mongo');
       });
+    return;
   }
 
   async getUserIds(postId: string, page: number): Promise<string[]> {
@@ -70,34 +86,40 @@ export class PostLikeCollection {
       searchString: data.searchString,
     });
 
-    if (userList === undefined) {
-      // this.logger.debug(`missing from ${type} container, loading requested`);
-
-      //캐시에 없다면 디비에서 가져온다
-      const tmpAllUserList: userinfo[] = await this.postLikeModel
-        .find({ postId: data.targetPostId })
-        .populate('getUserId')
-        .exec()
-        .then((res) => {
-          return res.map((item: any) => {
-            return {
-              ...item.getUserId._doc,
-            };
-          });
-        });
-
-      //가져온거 캐시에 등록
-      cacheManager.loadUserList({
-        type,
-        userList: tmpAllUserList,
-        target: data.targetPostId,
-      });
-      //prefix find 해서 리턴
-      return findMatchingIndices(tmpAllUserList, data.searchString);
+    if (userList) {
+      // this.logger.debug('list is existed, no db request');
+      return findMatchingIndices(userList, data.searchString);
     }
-    // this.logger.debug('list is existed, no db request');
 
-    return findMatchingIndices(userList, data.searchString);
+    // this.logger.debug(`missing from ${type} container, loading requested`);
+    //캐시에 없다면 디비에서 가져온다
+    const tmpAllUserList: userinfo[] = await this.postLikeModel
+      .find({ postId: data.targetPostId })
+      .populate(UserPop)
+      .lean()
+      .then((res) => {
+        return res.map((item: PostLikeSchemaDefinitionExecPop) => {
+          const userinfo = item.userPop
+            ? {
+                username: item.userPop.username,
+                img: item.userPop.img,
+                introduceName: item.userPop.introduceName,
+              }
+            : defaultUserinfo;
+          //하지만, 데이터가 제대로 들어가있으면 default값이 들어가는일은 없을거임.
+
+          return userinfo;
+        });
+      });
+
+    //가져온거 캐시에 등록
+    cacheManager.loadUserList({
+      type,
+      userList: tmpAllUserList,
+      target: data.targetPostId,
+    });
+    //prefix find 해서 리턴
+    return findMatchingIndices(tmpAllUserList, data.searchString);
   }
 
   async getMyLikes(data: { userId: string; page: number }) {
@@ -106,15 +128,24 @@ export class PostLikeCollection {
       .find({
         userId: crypter.decrypt(data.userId),
       })
-      .populate('getMetadata')
+      .populate(MetadataPop)
       .sort({ _id: -1 })
       .limit(len)
       .skip(len * data.page)
-      .exec();
+      .lean();
 
-    const tmp = _ids.map((i) => {
-      return i.$getPopulatedDocs()[0] as unknown;
-    }) as MetadataDto[];
+    const tmp: MetadataDto[] = _ids.map(
+      (i: PostLikeSchemaDefinitionExecPop) => {
+        const metadata: MetadataDto = i.metadataPop
+          ? {
+              ...i.metadataPop,
+              _id: i.metadataPop._id.toString(),
+            }
+          : emptyMetadata;
+
+        return metadata;
+      },
+    );
 
     return tmp;
   }

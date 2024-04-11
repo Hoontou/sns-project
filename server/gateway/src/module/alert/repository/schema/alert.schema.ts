@@ -5,29 +5,32 @@ import { UserSchemaDefinition } from 'src/module/user/schema/user.schema';
 
 export type AlertDocument = HydratedDocument<AlertSchemaDefinition>;
 
+//지금 좀 모호하다.
+//userId가 아닌 owenerId
+//content안의 userId를 밖으로 빼내서 누가보낸 알림인지 표시하는게 맞다..
 @Schema()
 export class AlertSchemaDefinition {
-  @Prop({ default: new Types.ObjectId() })
   _id: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Number })
   userId: number;
 
   @Prop({ required: true, type: Object })
   content: AlertContentUnion;
 
-  @Prop({ default: false })
+  @Prop({ default: false, type: Boolean })
   read: boolean;
 
-  @Prop({ default: Date.now })
+  @Prop({ default: Date.now, type: Date })
   createdAt: Date;
 }
 
 export const AlertSchema = SchemaFactory.createForClass(AlertSchemaDefinition);
 
-AlertSchema.index({
-  userId: 1,
-});
+// AlertSchema.index({
+//   userId: 1,
+//   content: 1,
+// });
 
 AlertSchema.virtual('userPop', {
   ref: 'user',
@@ -36,6 +39,6 @@ AlertSchema.virtual('userPop', {
   justOne: true,
 });
 
-export interface AlertSchemaExecPop extends AlertSchemaDefinition {
+export interface AlertSchemaDefinitionExecPop extends AlertSchemaDefinition {
   userPop?: UserSchemaDefinition;
 }

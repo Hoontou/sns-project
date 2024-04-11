@@ -5,16 +5,18 @@ import {
   UploadAlertDto,
   UserTagAlertReqForm,
 } from 'sns-interfaces/alert.interface';
-import { crypter } from '../../common/crypter';
 import { AlertCollection } from './repository/alert.collection';
 import { UserCollection } from '../user/repository/user.collection';
 import { HandleUserTagReqBody } from '../post/interface';
-import { AlertSchemaExecPop } from './repository/schema/alert.schema';
+import {
+  AlertSchemaDefinition,
+  AlertSchemaDefinitionExecPop,
+} from './repository/schema/alert.schema';
 
 export interface FianlAlertType {
   _id: string;
   content: AlertContentUnion & {
-    userinfo: { username?: string; img?: string };
+    userinfo?: { username: string; img: string };
   };
   read: boolean;
   createdAt: Date;
@@ -28,65 +30,32 @@ export class AlertService {
   ) {}
 
   async checkHasNewAlert(data: {
-    userId: string;
+    userId: number;
   }): Promise<{ hasNewAlert: boolean }> {
-    const unreadAlerts = await this.alertCollection.alertModel
-      .find({
-        userId: Number(crypter.decrypt(data.userId)),
-        read: false,
-      })
-      .limit(1)
-      .sort({ _id: -1 });
+    const lastUnreadAlert: AlertSchemaDefinition | null =
+      await this.alertCollection.getLastUnreadAlert(data.userId);
 
-    return { hasNewAlert: unreadAlerts[0] === undefined ? false : true };
+    return { hasNewAlert: lastUnreadAlert ? true : false };
   }
 
   async getUnreadAlert(data: {
     page: number;
-    userId: string;
+    userId: number;
   }): Promise<{ unreadAlerts: FianlAlertType[] }> {
-    const unreadAlerts: AlertSchemaExecPop[] =
+    const unreadAlerts: AlertSchemaDefinitionExecPop[] =
       await this.alertCollection.getUnreadAlerts(data.userId, data.page);
-    console.log(unreadAlerts);
 
-    const result = unreadAlerts.map((i) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { _id, content, userId, userPop, ...rest } = i;
-
-      return {
-        ...rest,
-        content: {
-          ...content,
-          userinfo: { username: userPop?.username, img: userPop?.img },
-        },
-        _id: _id.toString(),
-      };
-    });
-
-    return { unreadAlerts: result };
+    return { unreadAlerts: this.parseAlertsToFinal(unreadAlerts) };
   }
 
   async getAllAlert(data: {
     page: number;
-    userId: string;
+    userId: number;
   }): Promise<{ allAlerts: FianlAlertType[] }> {
-    const allAlerts: { [key: string]: any } =
+    const allAlerts: AlertSchemaDefinitionExecPop[] =
       await this.alertCollection.getAllAlerts(data.userId, data.page);
 
-    const result: FianlAlertType[] = allAlerts.map((i) => {
-      //id를 내보내지 마
-      delete i._doc.content.userId;
-      delete i._doc.userId;
-      return {
-        ...i._doc,
-        content: {
-          ...i._doc.content,
-          userinfo: { username: i.userPop.username, img: i.userPop.img },
-        },
-      };
-    });
-
-    return { allAlerts: result };
+    return { allAlerts: this.parseAlertsToFinal(allAlerts) };
   }
 
   async readAlert(data: { alert_id: string }) {
@@ -135,6 +104,30 @@ export class AlertService {
         userId: body.userId,
       },
     };
-    return this.saveTagAlert(alertForm);
+    this.saveTagAlert(alertForm);
+
+    return;
+  }
+
+  private parseAlertsToFinal(
+    alerts: AlertSchemaDefinitionExecPop[],
+  ): FianlAlertType[] {
+    return alerts.map((i) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { _id, content, userId, userPop, ...rest } = i;
+      const userinfo = userPop && {
+        username: userPop.username,
+        img: userPop.img,
+      };
+
+      return {
+        ...rest,
+        content: {
+          ...content,
+          userinfo,
+        },
+        _id: _id.toString(),
+      };
+    });
   }
 }

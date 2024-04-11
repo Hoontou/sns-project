@@ -7,7 +7,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { crypter } from '../../common/crypter';
 import { DirectService } from './direct.service';
-import { ChatRoomSchemaType } from './repository/schema/chatRoom.schema';
+import { ChatRoomSchemaDefinitionExecPop } from './repository/schema/chatRoom.schema';
 
 @WebSocketGateway({ namespace: 'direct', cors: { origin: '*' } })
 export class DirectGateway implements OnGatewayConnection {
@@ -19,29 +19,30 @@ export class DirectGateway implements OnGatewayConnection {
 
   async handleConnection(socket: Socket) {
     this.logger.debug('direct socket connected');
-    const userId = Number(
+    const decUserId = Number(
       crypter.decrypt(socket.handshake.headers.userid as string),
     );
     const userLocation = socket.handshake.headers.location as string | 'inbox';
 
     //유저 등록하고 위치한 chatroom 정보 가져오기
     //inbox면 empty값임.
-    const chatRoom: ChatRoomSchemaType = await this.directService.registerUser({
-      userId,
-      userLocation,
-      socket,
-    });
+    const chatRoom: ChatRoomSchemaDefinitionExecPop =
+      await this.directService.registerUser({
+        userId: decUserId,
+        userLocation,
+        socket,
+      });
 
     //등록완료 후 데이터전송
 
     //챗룸들어왔으면 누구랑 dm하는지 정보전송, 안읽은 메세지 읽음처리
     if (userLocation !== 'inbox') {
       //3-1) 상대 userinfo 전송
-      const friendsInfo = {
-        username: chatRoom.userPop?.username,
-        introduce: chatRoom.userPop?.introduce,
-        introduceName: chatRoom.userPop?.introduceName,
-        img: chatRoom.userPop?.img,
+      const friendsInfo = chatRoom.userPop && {
+        username: chatRoom.userPop.username,
+        introduce: chatRoom.userPop.introduce,
+        introduceName: chatRoom.userPop.introduceName,
+        img: chatRoom.userPop.img,
       };
       socket.emit('getFriendsInfo', { friendsInfo });
 
@@ -63,7 +64,7 @@ export class DirectGateway implements OnGatewayConnection {
     //2-2. inbox 입장
     //2) 내 채팅방 긁어와서 클라이언트에 전송
     socket.on('getInbox', (data: { page: number }) => {
-      return this.directService.getDataForInbox(userId, data.page, socket);
+      return this.directService.getDataForInbox(decUserId, data.page, socket);
     });
 
     //3. dm 전송
@@ -88,7 +89,7 @@ export class DirectGateway implements OnGatewayConnection {
 
     //4. dm 나가기
     socket.on('disconnecting', () => {
-      this.directService.exitDirect(userId);
+      this.directService.exitDirect(decUserId);
     });
   }
 }

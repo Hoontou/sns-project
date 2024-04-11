@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { MessageRepository } from '../repository/message.repository';
-import { ChatRoomSchemaType } from '../repository/schema/chatRoom.schema';
+import { ChatRoomSchemaDefinition } from '../repository/schema/chatRoom.schema';
 
 @Injectable()
 export class MessageManager {
   constructor(private messageRepository: MessageRepository) {}
 
   sendMessage(data: {
-    chatRoom: ChatRoomSchemaType;
+    chatRoom: ChatRoomSchemaDefinition;
     messageForm: {
       messageType: 'text' | 'photo';
       content: string;
@@ -44,7 +44,7 @@ export class MessageManager {
     return messages;
   }
 
-  readMessages(chatRoom: ChatRoomSchemaType) {
+  readMessages(chatRoom: ChatRoomSchemaDefinition) {
     return this.messageRepository.readMessages(chatRoom);
   }
 }

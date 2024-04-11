@@ -6,25 +6,16 @@ export type CocommentLikeDocument =
 
 @Schema()
 export class CocommentLikeSchemaDefinition {
-  @Prop({ default: new Types.ObjectId() })
   _id: Types.ObjectId;
 
-  @Prop({ required: true })
-  userId: string;
+  @Prop({ required: true, type: Number })
+  userId: number;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Number })
   cocommentId: number;
 }
 
 export const CocommentLikeSchema = SchemaFactory.createForClass(
   CocommentLikeSchemaDefinition,
-);
-
-CocommentLikeSchema.index(
-  {
-    cocommentId: 1,
-    userId: 1,
-  },
-  { unique: true },
 );
 CocommentLikeSchema.index({ userId: 1, cocommentId: 1 }, { unique: true });

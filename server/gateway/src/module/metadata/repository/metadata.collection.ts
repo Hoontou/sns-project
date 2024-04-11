@@ -1,22 +1,32 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { MetadataSchemaDefinition } from './schema/metadata.schema';
+import {
+  MetadataDocument,
+  MetadataSchemaDefinition,
+} from './schema/metadata.schema';
 import { crypter } from '../../../common/crypter';
 
 export interface MetadataDto {
   _id: string;
-  userId: string;
+  userId: number | string;
   files: string[];
-  createdAt: string;
+  createdAt: string | Date;
 }
+
+export const emptyMetadata: Readonly<MetadataDto> = {
+  _id: '',
+  userId: 0,
+  files: [],
+  createdAt: '',
+};
 
 @Injectable()
 export class MetadataCollection {
   private logger = new Logger(MetadataCollection.name);
   constructor(
     @InjectModel('metadata')
-    public readonly metadataModel: Model<MetadataSchemaDefinition>,
+    public readonly metadataModel: Model<MetadataDocument>,
   ) {}
 
   async getMetadatas(data: { userId: string; page: number }) {
@@ -27,12 +37,16 @@ export class MetadataCollection {
       })
       .sort({ _id: -1 })
       .limit(len)
-      .skip(data.page * len);
+      .skip(data.page * len)
+      .lean();
 
-    const tmp = metadatas.map((item: any) => {
-      item.userId = crypter.encrypt(item.userId);
-      return item;
-    }) as MetadataDto[];
+    const tmp = metadatas.map((item: MetadataSchemaDefinition) => {
+      return {
+        ...item,
+        userId: crypter.encrypt(item.userId),
+        _id: item._id.toString(),
+      };
+    });
 
     return {
       metadatas: tmp,

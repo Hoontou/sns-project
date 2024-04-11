@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { crypter } from '../../../common/crypter';
-import { CommentLikeSchemaDefinition } from './schema/commentLike.schema';
+import { CommentLikeDocument } from './schema/commentLike.schema';
 
 @Injectable()
 export class CommentLikeCollection {
   private logger = new Logger(CommentLikeCollection.name);
   constructor(
     @InjectModel('commentlike')
-    private commentLikeModel: Model<CommentLikeSchemaDefinition>,
+    private commentLikeModel: Model<CommentLikeDocument>,
   ) {}
 
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
@@ -18,7 +18,7 @@ export class CommentLikeCollection {
       userId: crypter.decrypt(data.userId),
       commentId: data.commentId,
     });
-    return newOne
+    newOne
       .save()
       .then(() => {
         // this.logger.debug('comment like stored in mongo successfully');
@@ -27,10 +27,12 @@ export class CommentLikeCollection {
         this.logger.error('err when storing comment like in mongo');
       });
     //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
+
+    return;
   }
 
   removeCommentLike(data: { userId: string; commentId: number }) {
-    return this.commentLikeModel
+    this.commentLikeModel
       .findOneAndDelete({
         userId: crypter.decrypt(data.userId),
         commentId: data.commentId,
@@ -41,6 +43,7 @@ export class CommentLikeCollection {
       .catch(() => {
         this.logger.error('err when canceling comment like in mongo');
       });
+    return;
   }
 
   async getCommentLiked(data: { commentIdList: number[]; userId: string }) {

@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { crypter } from '../../common/crypter';
-import { FollowCollection } from './repository/follow.cellection';
+import { FollowCollection } from './repository/follow.collection';
 import { PostLikeCollection } from './repository/postLike.collection';
 
 @Injectable()

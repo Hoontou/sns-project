@@ -1,7 +1,8 @@
 import { crypter } from 'src/common/crypter';
 import { ChatRoomCollection } from '../repository/chatRoom.collection';
 import {
-  ChatRoomSchemaType,
+  ChatRoomSchemaDefinition,
+  ChatRoomSchemaDefinitionExecPop,
   emptyChatRoom,
 } from '../repository/schema/chatRoom.schema';
 import { Injectable } from '@nestjs/common';
@@ -11,10 +12,10 @@ export class ChatRoomManager {
   constructor(private readonly chatRoomCollection: ChatRoomCollection) {}
 
   async requestChatRoomId(data: {
-    userId: string;
+    userId: number;
     chatTargetUserId: string;
   }): Promise<{ chatRoomId: number }> {
-    const ownerUserId = Number(crypter.decrypt(data.userId));
+    const ownerUserId = data.userId;
     const chatWithUserId = Number(crypter.decrypt(data.chatTargetUserId));
 
     const chatRoom = await this.chatRoomCollection.getChatRoomByUserIds({
@@ -38,7 +39,7 @@ export class ChatRoomManager {
     userId: number;
   }): Promise<{
     ownerCheckResult: boolean;
-    chatRoom: ChatRoomSchemaType;
+    chatRoom: ChatRoomSchemaDefinition;
   }> {
     const chatRoom = await this.chatRoomCollection.getChatRoomByRoomId({
       ownerUserId: data.userId,
@@ -52,7 +53,7 @@ export class ChatRoomManager {
   }
 
   async updateChatRoom(data: {
-    chatRoom: ChatRoomSchemaType;
+    chatRoom: ChatRoomSchemaDefinition;
     messageForm: { messageType: 'text' | 'photo'; content: string };
     isRead: boolean;
   }) {
@@ -77,7 +78,7 @@ export class ChatRoomManager {
   }
 
   async getMyChatRooms(userId: number, page: number) {
-    const chatRooms: { [key: string]: any }[] =
+    const chatRooms: ChatRoomSchemaDefinitionExecPop[] =
       await this.chatRoomCollection.getChatRoomsByUserIdWithUserPop(
         userId,
         page,
@@ -85,20 +86,21 @@ export class ChatRoomManager {
 
     //pop해온 정보 풀어서 넣고 리턴
     const tmp = chatRooms.map((i) => {
-      //id는 내보내지 마
-      delete i._doc.ownerUserId;
-      delete i._doc.chatWithUserId;
+      //Id삭제위해
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { ownerUserId, chatWithUserId, userPop, ...rest } = i;
+      const chatWithUserInfo = userPop && { ...userPop, userId: undefined };
 
       return {
-        ...i._doc,
-        chatWithUserInfo: { ...i.userPop._doc, userId: undefined },
+        ...rest,
+        chatWithUserInfo,
       };
     });
 
     return tmp;
   }
 
-  readMessages(chatRoom: ChatRoomSchemaType) {
+  readMessages(chatRoom: ChatRoomSchemaDefinition) {
     return this.chatRoomCollection.readMessages(chatRoom);
   }
 

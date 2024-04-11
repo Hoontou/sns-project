@@ -5,26 +5,18 @@ export type MetadataDocument = HydratedDocument<MetadataSchemaDefinition>;
 
 @Schema()
 export class MetadataSchemaDefinition {
-  @Prop({ default: new Types.ObjectId() })
   _id: Types.ObjectId;
 
-  @Prop({ required: true })
-  userId: string;
+  @Prop({ required: true, type: Number })
+  userId: number;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: [String] })
   files: string[];
 
-  @Prop({ default: Date.now })
+  @Prop({ default: Date.now, type: Date })
   createdAt: Date;
 }
 
 export const MetadataSchema = SchemaFactory.createForClass(
   MetadataSchemaDefinition,
 );
-
-export interface MetadataSchemaType {
-  _id: string;
-  userId: string;
-  files: string[];
-  createdAt: string;
-}
