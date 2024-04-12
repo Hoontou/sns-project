@@ -51,7 +51,7 @@ export class UserCollection {
     );
   }
 
-  async findUserIdsByUsernames(usernames: string[]): Promise<number[]> {
+  async getUserIdsByUsernames(usernames: string[]): Promise<number[]> {
     const result = await this.userModel.find({
       username: { $in: usernames },
     });

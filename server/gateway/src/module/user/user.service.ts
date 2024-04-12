@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { crypter } from 'src/common/crypter';
 import { UserRepository } from './user.repo';
+import { UploadMessage } from 'sns-interfaces';
 
 @Injectable()
 export class UserService {
@@ -127,5 +128,30 @@ export class UserService {
 
   getUserinfoById(userId) {
     return this.userRepo.getUserinfoById(userId);
+  }
+
+  getUserIdsByUsernames(usernames: string[]) {
+    return this.userRepo.getUserIdsByUsernames(usernames);
+  }
+
+  increaseFollowCount(data: { userTo: number; userFrom: number }) {
+    return this.userRepo.increaseFollowCount(data);
+  }
+
+  decreaseFollowCount(data: { userTo: number; userFrom: number }) {
+    return this.userRepo.decreaseFollowCount(data);
+  }
+
+  increasePostCount(data: UploadMessage) {
+    return this.userRepo.increasePostCount(data);
+  }
+
+  decreasePostCount(data: { userId: string }) {
+    return this.userRepo.decreasePostCount(data);
+  }
+
+  changeImg(data: { userId: string; img: string }) {
+    this.userRepo.changeImg(data);
+    return;
   }
 }

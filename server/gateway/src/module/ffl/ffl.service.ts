@@ -2,7 +2,6 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { crypter } from 'src/common/crypter';
 import { AlertDto } from 'sns-interfaces/alert.interface';
-import { UserRepository } from '../user/user.repo';
 import { PostLikeCollection } from './repository/postLike.collection';
 import { PostService } from '../post/post.service';
 import { FflRepository } from './ffl.repository';
@@ -16,7 +15,6 @@ export class FflService {
 
   constructor(
     private userService: UserService,
-    private userRepository: UserRepository,
     private fflRepository: FflRepository,
     private followCollection: FollowCollection,
     private postLikeCollection: PostLikeCollection,
@@ -52,7 +50,7 @@ export class FflService {
     };
     this.alertService.saveAlert(alertForm);
     this.followCollection.addFollow(form);
-    this.userRepository.addFollow(form);
+    this.userService.increaseFollowCount(form);
     return;
   }
   async removeFollow(body: { userTo: string; userFrom: number }) {
@@ -64,7 +62,7 @@ export class FflService {
       return;
     }
     //팔로우 돼 있으면 팔로우 취소
-    this.userRepository.removeFollow(form);
+    this.userService.decreaseFollowCount(form);
     this.followCollection.removeFollow(form);
     return;
   }

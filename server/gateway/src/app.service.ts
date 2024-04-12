@@ -18,9 +18,7 @@ export class AppService {
     private postService: PostService,
     @Inject(forwardRef(() => MetadataService))
     private metadataService: MetadataService,
-  ) {
-    this.landing(1, 0);
-  }
+  ) {}
 
   /**랜딩페이지, 팔로우목록의 최근 3일 포스트를 가져온다. */
   async landing(userId: number, page: number) {

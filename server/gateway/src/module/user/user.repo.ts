@@ -185,16 +185,20 @@ export class UserRepository {
     });
   }
 
-  addFollow(data: { userTo: number; userFrom: number }) {
-    return this.usernumsTable.addFollow(data);
+  increaseFollowCount(data: { userTo: number; userFrom: number }) {
+    return this.usernumsTable.increaseFollowCount(data);
   }
-  removeFollow(data: { userTo: number; userFrom: number }) {
-    return this.usernumsTable.removeFollow(data);
+  decreaseFollowCount(data: { userTo: number; userFrom: number }) {
+    return this.usernumsTable.decreaseFollowCount(data);
   }
-  addPostCount(data: UploadMessage) {
-    return this.usernumsTable.addPostCount(data);
+  increasePostCount(data: UploadMessage) {
+    return this.usernumsTable.increasePostCount(data);
   }
   decreasePostCount(data: { userId: string }) {
     return this.usernumsTable.decreasePostCount(data);
+  }
+
+  getUserIdsByUsernames(usernames: string[]) {
+    return this.userCollection.getUserIdsByUsernames(usernames);
   }
 }

@@ -13,7 +13,7 @@ export class UsernumsTable {
     @InjectRepository(Usernums)
     public readonly db: Repository<Usernums>,
   ) {}
-  async addFollow(data: { userTo: number; userFrom: number }) {
+  async increaseFollowCount(data: { userTo: number; userFrom: number }) {
     const queryTo = `
     UPDATE public.usernums
     SET follower = follower + 1
@@ -31,7 +31,7 @@ export class UsernumsTable {
     ]);
   }
 
-  async removeFollow(data: { userTo: number; userFrom: number }) {
+  async decreaseFollowCount(data: { userTo: number; userFrom: number }) {
     const queryTo = `
     UPDATE public.usernums
     SET follower = follower- 1
@@ -49,7 +49,7 @@ export class UsernumsTable {
     ]);
   }
 
-  async addPostCount(content: UploadMessage) {
+  async increasePostCount(content: UploadMessage) {
     const query = `
     UPDATE public.usernums
     SET postcount = postcount + 1

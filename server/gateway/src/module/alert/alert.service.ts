@@ -6,13 +6,13 @@ import {
   UserTagAlertReqForm,
 } from 'sns-interfaces/alert.interface';
 import { AlertCollection } from './repository/alert.collection';
-import { UserCollection } from '../user/repository/user.collection';
 import { HandleUserTagReqBody } from '../post/interface';
 import {
   AlertSchemaDefinition,
   AlertSchemaDefinitionExecPop,
 } from './repository/schema/alert.schema';
 import { crypter } from 'src/common/crypter';
+import { UserService } from '../user/user.service';
 
 export interface FianlAlertType {
   _id: string;
@@ -26,7 +26,7 @@ export interface FianlAlertType {
 @Injectable()
 export class AlertService {
   constructor(
-    private userCollection: UserCollection,
+    private userService: UserService,
     private alertCollection: AlertCollection,
   ) {}
 
@@ -75,7 +75,7 @@ export class AlertService {
   }
 
   async saveTagAlert(data: UserTagAlertReqForm) {
-    const userIds = await this.userCollection.findUserIdsByUsernames(
+    const userIds = await this.userService.getUserIdsByUsernames(
       data.usernames,
     );
 

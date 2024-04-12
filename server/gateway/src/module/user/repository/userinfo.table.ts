@@ -51,4 +51,19 @@ export class UserinfoTable {
 
     return pgdb.client.query(query);
   }
+
+  async getUserIdsByUsernames(usernames: string[]) {
+    const parsedString = "'" + usernames.join("', '") + "'";
+    console.log(parsedString);
+    const query = `
+    SELECT ui."userId"
+    FROM public.userinfo AS ui
+    WHERE ui.username IN (${parsedString});
+    `;
+
+    const result = await pgdb.client.query(query);
+    console.log(result.rows);
+
+    return result.rows;
+  }
 }
