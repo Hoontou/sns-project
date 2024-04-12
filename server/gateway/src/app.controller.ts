@@ -1,7 +1,6 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { AppService } from './app.service';
-import { PostFooterContent, UserInfo } from 'sns-interfaces/client.interface';
-import { crypter } from './common/crypter';
+import { UserInfo } from 'sns-interfaces/client.interface';
 import { ExReq } from './module/auth/auth.middleware';
 
 export interface LandingContent {
@@ -49,18 +48,5 @@ export class AppController {
     | { success: false }
   > {
     return this.appService.userInfo(req.user.userId, body.targetUsername);
-  }
-
-  @Post('/postfooter')
-  /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 댓글수 리턴해야함. */
-  async postFooter(
-    @Body() body: { postId: string; targetId: string },
-    @Req() req: ExReq,
-  ): Promise<PostFooterContent> {
-    return this.appService.postFooter({
-      ...body,
-      userId: req.user.userId,
-      targetUserId: crypter.decrypt(body.targetId),
-    });
   }
 }

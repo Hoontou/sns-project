@@ -46,7 +46,7 @@ export class AppService {
 
     const postFooter: PostFooterContent[] = await Promise.all(
       metadatas.map((i) => {
-        return this.postFooter({
+        return this.postService.getPostFooter({
           userId,
           postId: i._id,
           targetUserId: Number(i.userId),
@@ -120,27 +120,6 @@ export class AppService {
       userinfo: { ...tmpInfo, followed },
       type: 'otherInfo',
       reqUserId: encryptedMyUserId,
-    };
-  }
-
-  /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 작정자 정보 */
-  async postFooter(body: {
-    userId: number;
-    postId: string;
-    targetUserId: number;
-  }): Promise<PostFooterContent> {
-    //좋아요 체크, post정보, 작성자 정보 가져오기
-    const [liked, postContent, userInfo] = await Promise.all([
-      this.fflService.checkLiked({ userId: body.userId, postId: body.postId }),
-      this.postService.getPost(body.postId),
-      this.userService.getUsernameWithImg(body.targetUserId), //작성자 정보
-    ]);
-
-    return {
-      ...liked,
-      ...postContent,
-      ...userInfo,
-      userId: crypter.encrypt(userInfo.userId),
     };
   }
 }

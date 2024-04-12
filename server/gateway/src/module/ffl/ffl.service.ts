@@ -15,7 +15,6 @@ export class FflService {
   private logger = new Logger(FflService.name);
 
   constructor(
-    @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private userRepository: UserRepository,
     private fflRepository: FflRepository,
@@ -23,6 +22,7 @@ export class FflService {
     private postLikeCollection: PostLikeCollection,
     private commentLikeCollection: CommentLikeCollection,
     private cocommentLikeCollection: CocommentLikeCollection,
+    @Inject(forwardRef(() => PostService))
     private postService: PostService,
     private alertService: AlertService,
   ) {}

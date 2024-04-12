@@ -11,6 +11,7 @@ import { UserService } from '../../../module/user/user.service';
 import { crypter } from '../../../common/crypter';
 import { UploadMessage } from 'sns-interfaces';
 import { AlertService } from '../../../module/alert/alert.service';
+import { FflService } from 'src/module/ffl/ffl.service';
 
 @Injectable()
 export class PostManager {
@@ -23,6 +24,8 @@ export class PostManager {
     private searchService: SearchService,
     private userService: UserService,
     private alertService: AlertService,
+    @Inject(forwardRef(() => FflService))
+    private fflService: FflService,
   ) {}
 
   getPost(postId: string): Promise<PostContent> {
@@ -163,5 +166,26 @@ export class PostManager {
 
   removeLike(data: { postId: string; type: 'post' }) {
     return this.postRepository.postTable.removeLike(data);
+  }
+
+  /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 작정자 정보 */
+  async getPostFooter(body: {
+    userId: number;
+    postId: string;
+    targetUserId: number;
+  }): Promise<PostFooterContent> {
+    //좋아요 체크, post정보, 작성자 정보 가져오기
+    const [liked, postContent, userInfo] = await Promise.all([
+      this.fflService.checkLiked({ userId: body.userId, postId: body.postId }),
+      this.getPost(body.postId),
+      this.userService.getUsernameWithImg(body.targetUserId), //작성자 정보
+    ]);
+
+    return {
+      ...liked,
+      ...postContent,
+      ...userInfo,
+      userId: crypter.encrypt(userInfo.userId),
+    };
   }
 }

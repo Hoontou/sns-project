@@ -1,5 +1,4 @@
 import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
-import { AppService } from 'src/app.service';
 import { crypter } from 'src/common/crypter';
 import {
   MetadataCollection,
@@ -14,9 +13,8 @@ export class MetadataService {
   private logger = new Logger(MetadataService.name);
 
   constructor(
-    @Inject(forwardRef(() => AppService))
-    private appService: AppService,
     private metadataCollection: MetadataCollection,
+    @Inject(forwardRef(() => PostService))
     private postService: PostService,
     private fflService: FflService,
   ) {}
@@ -61,7 +59,7 @@ export class MetadataService {
 
     const metadata = result.metadatas[0];
 
-    const postFooter = await this.appService.postFooter({
+    const postFooter = await this.postService.getPostFooter({
       userId: data.userId,
       postId: data.postId,
       targetUserId: crypter.decrypt(metadata.userId),

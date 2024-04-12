@@ -1,9 +1,13 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CommentItemContent } from 'sns-interfaces';
-import { CocommentContent } from 'sns-interfaces/client.interface';
+import {
+  CocommentContent,
+  PostFooterContent,
+} from 'sns-interfaces/client.interface';
 import { MetadataDto } from '../metadata/repository/metadata.collection';
 import { ExReq } from '../auth/auth.middleware';
+import { crypter } from 'src/common/crypter';
 
 @Controller('post')
 export class PostController {
@@ -111,6 +115,19 @@ export class PostController {
     return this.postService.getCommentPageContent({
       postId: body.postId,
       userId: req.user.userId,
+    });
+  }
+
+  @Post('/postfooter')
+  /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 댓글수 리턴해야함. */
+  async postFooter(
+    @Body() body: { postId: string; targetId: string },
+    @Req() req: ExReq,
+  ): Promise<PostFooterContent> {
+    return this.postService.getPostFooter({
+      ...body,
+      userId: req.user.userId,
+      targetUserId: crypter.decrypt(body.targetId),
     });
   }
 }

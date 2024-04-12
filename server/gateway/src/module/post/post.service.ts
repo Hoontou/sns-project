@@ -109,4 +109,12 @@ export class PostService {
   async getPostIdsOrderByLikes(data: { page: number }) {
     return this.postManager.getPostIdsOrderByLikes(data);
   }
+
+  getPostFooter(data: {
+    userId: number;
+    postId: string;
+    targetUserId: number;
+  }) {
+    return this.postManager.getPostFooter(data);
+  }
 }
