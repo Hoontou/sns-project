@@ -83,10 +83,7 @@ const Userinfo = (props: {
         <ButtonsUnderUserInfo
           addFollower={addFollower}
           followed={props.userinfo.followed}
-          users={{
-            userTo: props.userinfo.userId,
-            userFrom: props.reqUserId,
-          }}
+          infoOwnerId={props.userinfo.userId}
         />
       )}
     </div>

@@ -97,7 +97,7 @@ export class UserRepository {
   }
 
   /**몽고로 대체 가능 */
-  async getUsernameWithImg(userId: string): Promise<Userinfo | undefined> {
+  async getUsernameWithImg(userId: number): Promise<Userinfo | undefined> {
     const query = `
     SELECT ui.username, ui.img, ui.introduce_name
     FROM public.userinfo AS ui
@@ -123,7 +123,7 @@ export class UserRepository {
   }
 
   /**몽고로 대체 가능 곧 수정할 예정 */
-  async getUsernameWithImgList(userIds: string[]): Promise<
+  async getUsernameWithImgList(userIds: number[]): Promise<
     | {
         username: string;
         img: string;
@@ -185,10 +185,10 @@ export class UserRepository {
     });
   }
 
-  addFollow(data: { userTo: string; userFrom: string }) {
+  addFollow(data: { userTo: number; userFrom: number }) {
     return this.usernumsTable.addFollow(data);
   }
-  removeFollow(data: { userTo: string; userFrom: string }) {
+  removeFollow(data: { userTo: number; userFrom: number }) {
     return this.usernumsTable.removeFollow(data);
   }
   addPostCount(data: UploadMessage) {

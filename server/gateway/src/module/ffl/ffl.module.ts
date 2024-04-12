@@ -24,7 +24,7 @@ import { FollowCollection } from './repository/follow.collection';
       { name: 'cocommentlike', schema: CocommentLikeSchema },
     ]),
     forwardRef(() => PostModule),
-    UserModule,
+    forwardRef(() => UserModule),
     AlertModule,
   ],
   controllers: [FflController],

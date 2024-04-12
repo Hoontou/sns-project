@@ -165,13 +165,24 @@ export class ElasticIndex {
     });
   }
 
-  searchUserByString(page, searchString) {
+  async searchUserByString(
+    page,
+    searchString,
+  ): Promise<
+    {
+      userId: number;
+      username: string;
+      introduce: string;
+      img: string;
+      introduceName: string;
+    }[]
+  > {
     const pageSize = 20; // 페이지당 수
 
     const string = searchString + '*';
 
     //와일드카드(프리픽스랑 비슷한듯)로 검색을 여러필드에서 수행함
-    return this.client.search({
+    const result = await this.client.search({
       index: this.SnsUsersIndex,
       body: {
         from: page * pageSize, // 시작 인덱스 계산
@@ -199,6 +210,18 @@ export class ElasticIndex {
         },
       },
     });
+
+    const userList: {
+      userId: number;
+      username: string;
+      introduce: string;
+      img: string;
+      introduceName: string;
+    }[] = result.body.hits.hits.map((item) => {
+      return item._source;
+    });
+
+    return userList;
   }
 
   searchUsername(size: number, searchString: string) {

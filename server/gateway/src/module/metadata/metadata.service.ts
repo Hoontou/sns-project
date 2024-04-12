@@ -32,7 +32,7 @@ export class MetadataService {
   }
 
   async getMetadatasLast3Day(data: {
-    userIds: string[];
+    userIds: number[];
     page: number;
   }): Promise<{
     metadatas: MetadataDto[];
@@ -50,7 +50,7 @@ export class MetadataService {
     return this.metadataCollection.getMetadatasByPostId(data._ids);
   }
 
-  async getMetadataWithPostFooter(data: { postId: string; userId: string }) {
+  async getMetadataWithPostFooter(data: { postId: string; userId: number }) {
     const result = await this.metadataCollection.getMetadatasByPostId([
       data.postId,
     ]);
@@ -64,7 +64,7 @@ export class MetadataService {
     const postFooter = await this.appService.postFooter({
       userId: data.userId,
       postId: data.postId,
-      targetId: crypter.decrypt(metadata.userId),
+      targetUserId: crypter.decrypt(metadata.userId),
     });
 
     return { metadata, userId: data.userId, postFooter };
@@ -108,7 +108,7 @@ export class MetadataService {
     return { metadatas: sorted };
   }
 
-  async getMyCollection(data: { page: number; userId: string }) {
+  async getMyCollection(data: { page: number; userId: number }) {
     const myCollections = await this.fflService.getMyLikes(data);
 
     return { metadatas: myCollections };

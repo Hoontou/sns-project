@@ -6,7 +6,7 @@ import { axiosInstance } from '../../../App';
 const ButtonsUnderUserInfo = (props: {
   addFollower(num: number): void;
   followed: boolean;
-  users: { userTo: string; userFrom: string };
+  infoOwnerId: string;
 }) => {
   const navigate = useNavigate();
   const [followed, setFollowed] = useState<boolean>(props.followed);
@@ -15,8 +15,7 @@ const ButtonsUnderUserInfo = (props: {
     if (followed === false) {
       //팔로우 추가
       await axiosInstance.post('/ffl/addfollow', {
-        userTo: props.users.userTo,
-        userFrom: props.users.userFrom,
+        userTo: props.infoOwnerId,
       });
       //부모 컴포넌트의 follow숫자 수정함수
       props.addFollower(1);
@@ -25,8 +24,7 @@ const ButtonsUnderUserInfo = (props: {
     }
     //팔로우 삭제
     await axiosInstance.post('/ffl/removefollow', {
-      userTo: props.users.userTo,
-      userFrom: props.users.userFrom,
+      userTo: props.infoOwnerId,
     });
     props.addFollower(-1);
     setFollowed(!followed);
@@ -36,7 +34,7 @@ const ButtonsUnderUserInfo = (props: {
     const result: { data: { chatRoomId: number } } = await axiosInstance.post(
       '/dm/requestChatRoomId',
       {
-        chatTargetUserId: props.users.userTo,
+        chatTargetUserId: props.infoOwnerId,
       }
     );
 

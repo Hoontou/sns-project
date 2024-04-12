@@ -1,7 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { crypter } from 'src/common/crypter';
 import { CommentItemContent } from 'sns-interfaces';
 import { CommentDto } from '../../dto/post.dto';
 import { Comment } from '../entity/comment.entity';
@@ -19,7 +18,7 @@ export class CommentTable {
 
     const query = `INSERT INTO public.comment(
       comment, "userId", "postId")
-      VALUES ('${comment}', '${crypter.decrypt(userId)}', '${postId}')
+      VALUES ('${comment}', '${userId}', '${postId}')
       RETURNING *;`;
     const result = await pgdb.client.query(query);
 

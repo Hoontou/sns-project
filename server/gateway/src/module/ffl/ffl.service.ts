@@ -15,6 +15,7 @@ export class FflService {
   private logger = new Logger(FflService.name);
 
   constructor(
+    @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private userRepository: UserRepository,
     private fflRepository: FflRepository,
@@ -22,64 +23,67 @@ export class FflService {
     private postLikeCollection: PostLikeCollection,
     private commentLikeCollection: CommentLikeCollection,
     private cocommentLikeCollection: CocommentLikeCollection,
-    @Inject(forwardRef(() => PostService))
     private postService: PostService,
     private alertService: AlertService,
   ) {}
 
   async checkFollowed(body: {
-    userTo: string;
-    userFrom: string;
+    userTo: number;
+    userFrom: number;
   }): Promise<{ followed: boolean }> {
     return this.followCollection.checkFollowed(body);
   }
 
-  async addFollow(body: { userTo: string; userFrom: string }) {
-    const { followed } = await this.checkFollowed(body);
+  async addFollow(body: { userTo: string; userFrom: number }) {
+    const userTo = crypter.decrypt(body.userTo);
+    const form = { userTo, userFrom: body.userFrom };
+
+    const { followed } = await this.checkFollowed(form);
     if (followed) {
       return;
     }
     //팔로우 안돼있으면 팔로우함
     const alertForm: AlertDto = {
-      userId: Number(crypter.decrypt(body.userTo)),
+      userId: userTo,
       content: {
         type: 'follow',
-        userId: Number(crypter.decrypt(body.userFrom)),
+        userId: body.userFrom,
       },
     };
     this.alertService.saveAlert(alertForm);
-    this.followCollection.addFollow(body);
-    this.userRepository.addFollow(body);
+    this.followCollection.addFollow(form);
+    this.userRepository.addFollow(form);
     return;
   }
-  async removeFollow(body: { userTo: string; userFrom: string }) {
-    const { followed } = await this.checkFollowed(body);
+  async removeFollow(body: { userTo: string; userFrom: number }) {
+    const userTo = crypter.decrypt(body.userTo);
+    const form = { userTo, userFrom: body.userFrom };
+
+    const { followed } = await this.checkFollowed(form);
     if (!followed) {
       return;
     }
     //팔로우 돼 있으면 팔로우 취소
-    this.userRepository.removeFollow(body);
-    this.followCollection.removeFollow(body);
+    this.userRepository.removeFollow(form);
+    this.followCollection.removeFollow(form);
     return;
   }
 
   async checkLiked(body: {
-    userId: string;
+    userId: number;
     postId: string;
   }): Promise<{ liked: boolean }> {
     //userId, postId
     //userId가 postId에 좋아요 눌렀는지 가져와야함.
-    const decUserId = crypter.decrypt(body.userId);
     const liked: unknown[] = await this.postLikeCollection.postLikeModel.find({
-      userId: decUserId,
-      postId: body.postId,
+      ...body,
     });
 
     return { liked: liked.length === 0 ? false : true };
   }
 
   async addLike(body: {
-    userId: string;
+    userId: number;
     postId: string;
     postOwnerUserId: string;
   }) {
@@ -109,7 +113,7 @@ export class FflService {
     return;
   }
 
-  async removeLike(body: { userId: string; postId: string }) {
+  async removeLike(body: { userId: number; postId: string }) {
     const { liked } = await this.checkLiked(body);
     //좋아요 돼 있으면 좋아요 취소
     if (liked === true) {
@@ -121,14 +125,14 @@ export class FflService {
   }
 
   async getUserList(body: {
-    id: string;
+    id: string | number;
     type: 'like' | 'follower' | 'following'; //어떤 유저리스트를 요청하는지
     page: number;
   }): Promise<{
     userList: { userId: string; img: string; username: string }[];
   }> {
     //1 먼저 userId들을 가져옴
-    const { userIds }: { userIds: string[] } =
+    const { userIds }: { userIds: number[] } =
       await this.fflRepository.getUserIds(body);
 
     if (userIds.length === 0) {
@@ -154,7 +158,31 @@ export class FflService {
     };
   }
 
-  async addCommentLike(body: { userId: string; commentId: number }) {
+  async getAllFollowingUserlistByUserId(userId: number) {
+    //1 먼저 userId들을 가져옴
+    const userIds: number[] =
+      await this.fflRepository.getAllFollowingUserIdListByUserId(userId);
+
+    if (userIds.length === 0) {
+      //1.1 없으면 빈리스트 리턴
+      return { userList: [] };
+    }
+
+    //2 id들로 userInfo 가져옴
+    const {
+      userList,
+    }: {
+      userList: {
+        username: string;
+        img: string;
+        userId: number;
+      }[];
+    } = await this.userService.getUsernameWithImgList(userIds);
+
+    return { userList };
+  }
+
+  async addCommentLike(body: { userId: number; commentId: number }) {
     //ffl msa에서 commentId, userId를 commentLikeSchema에 삽입
     this.commentLikeCollection.addCommentLike(body);
     //post msa에서 comment의 likescount 증가
@@ -163,7 +191,7 @@ export class FflService {
     return;
   }
 
-  async removeCommentLike(body: { userId: string; commentId: number }) {
+  async removeCommentLike(body: { userId: number; commentId: number }) {
     //ffl msa에서 commentId, userId를 commentLikeSchema에 삭제
     this.commentLikeCollection.removeCommentLike(body);
     //post msa에서 comment의 likescount 감소
@@ -172,7 +200,7 @@ export class FflService {
     return;
   }
 
-  async addCocommentLike(body: { userId: string; cocommentId: number }) {
+  async addCocommentLike(body: { userId: number; cocommentId: number }) {
     //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삽입
     this.cocommentLikeCollection.addCocommentLike(body);
     //post msa에서 cocomment의 likescount 증가
@@ -181,7 +209,7 @@ export class FflService {
     return;
   }
 
-  async removeCocommentLike(body: { userId: string; cocommentId: number }) {
+  async removeCocommentLike(body: { userId: number; cocommentId: number }) {
     //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삭제
     this.cocommentLikeCollection.removeCocommentLike(body);
     //post msa에서 cocomment의 likescount 감소
@@ -192,7 +220,7 @@ export class FflService {
 
   async getCommentLiked(data: {
     commentIdList: number[];
-    userId: string;
+    userId: number;
   }): Promise<{
     commentLikedList: boolean[];
   }> {
@@ -201,7 +229,7 @@ export class FflService {
 
   async getCocommentLiked(data: {
     cocommentIdList: number[];
-    userId: string;
+    userId: number;
   }): Promise<{
     cocommentLikedList: boolean[];
   }> {
@@ -220,7 +248,7 @@ export class FflService {
     return { userList };
   }
 
-  getMyLikes(data: { userId: string; page: number }) {
+  getMyLikes(data: { userId: number; page: number }) {
     return this.postLikeCollection.getMyLikes(data);
   }
 }

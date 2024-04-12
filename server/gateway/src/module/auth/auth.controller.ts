@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dto/sign.dto';
+import { ExReq } from './auth.middleware';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +18,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Get('/auth') //필요한 파라미터는 없고, signin으로부터 클라이언트가 받은 쿠키안에 토큰 필요
-  async auth(@Req() req, @Res({ passthrough: true }) res) {
+  async auth(@Req() req: ExReq, @Res({ passthrough: true }) res) {
     return this.authService.auth(req, res);
   }
 

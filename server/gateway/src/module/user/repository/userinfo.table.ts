@@ -12,7 +12,7 @@ export class UserinfoTable {
     public readonly db: Repository<Userinfo>,
   ) {}
 
-  changeUsername(data: { userId: string; username: string }) {
+  changeUsername(data: { userId: number; username: string }) {
     const query = `
     UPDATE public.userinfo
     SET username = '${data.username}'
@@ -22,7 +22,7 @@ export class UserinfoTable {
     return pgdb.client.query(query);
   }
 
-  changeIntro(data: { userId: string; intro: string }) {
+  changeIntro(data: { userId: number; intro: string }) {
     const query = `
     UPDATE public.userinfo
     SET introduce = '${data.intro}'
@@ -32,7 +32,7 @@ export class UserinfoTable {
     return pgdb.client.query(query);
   }
 
-  changeIntroduceName(data: { userId: string; introduceName: string }) {
+  changeIntroduceName(data: { userId: number; introduceName: string }) {
     const query = `
     UPDATE public.userinfo
     SET introduce_name = '${data.introduceName}'
@@ -42,7 +42,7 @@ export class UserinfoTable {
     //유저탐색을 위해 엘라스틱에서도 수정
     return pgdb.client.query(query);
   }
-  changeImg(data: { userId: string; img: string }) {
+  changeImg(data: { userId: number; img: string }) {
     const query = `
     UPDATE public.userinfo
     SET img = '${data.img}'

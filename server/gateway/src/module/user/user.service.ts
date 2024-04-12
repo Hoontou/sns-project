@@ -1,18 +1,13 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { crypter } from 'src/common/crypter';
 import { UserRepository } from './user.repo';
-import { SearchService } from '../search/search.service';
-import { SearchedUser } from '../search/types/search.types';
 
 @Injectable()
 export class UserService {
   private logger = new Logger(UserService.name);
-  constructor(
-    private userRepo: UserRepository,
-    private searchService: SearchService,
-  ) {}
+  constructor(private userRepo: UserRepository) {}
 
-  async getUsernameWithImg(userId: string): Promise<{
+  async getUsernameWithImg(userId: number): Promise<{
     username: string;
     img: string;
     userId: number;
@@ -35,7 +30,7 @@ export class UserService {
     };
   }
 
-  async getUsernameWithImgList(userIds: string[]): Promise<{
+  async getUsernameWithImgList(userIds: number[]): Promise<{
     userList: { username: string; img: string; userId: number }[];
   }> {
     const result:
@@ -104,19 +99,6 @@ export class UserService {
       this.logger.error(error);
       return { success: false };
     }
-  }
-
-  async searchUsersBySearchString(body: {
-    searchString: string;
-    page: number;
-  }): Promise<{ userList: SearchedUser[] }> {
-    const { userList } =
-      await this.searchService.searchUsersBySearchString(body);
-
-    if (userList === undefined) {
-      return { userList: [] };
-    }
-    return { userList };
   }
 
   //api재사용한다. 나중에 새로 만들어서 쓰는게 좋을듯

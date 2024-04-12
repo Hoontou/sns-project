@@ -7,6 +7,7 @@ class Crypto {
   public encrypt(value: string | number): string {
     if (Number.isNaN(Number(value))) {
       console.log('Already encrypted value');
+      console.trace();
       return String(value);
     }
 
@@ -16,16 +17,17 @@ class Crypto {
     return encrypted;
   }
 
-  public decrypt(value: string | number): string {
+  public decrypt(value: string | number): number {
     if (!Number.isNaN(Number(value))) {
       console.log('Already decrypted value');
-      return String(value);
+      console.trace();
+      return Number(value);
     }
 
     const decrypted = CryptoJS.AES.decrypt(String(value), this.secret, {
       iv: this.secret,
     });
-    return decrypted.toString(CryptoJS.enc.Utf8);
+    return Number(decrypted.toString(CryptoJS.enc.Utf8));
   }
 }
 

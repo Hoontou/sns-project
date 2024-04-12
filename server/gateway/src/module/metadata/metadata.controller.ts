@@ -1,5 +1,7 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { MetadataService } from './metadata.service';
+import { ExReq } from '../auth/auth.middleware';
+import { MetadataDto } from './repository/metadata.collection';
 
 @Controller('metadata')
 export class MetadataController {
@@ -11,7 +13,11 @@ export class MetadataController {
   }
 
   @Post('/getMetadatasOrderByDate')
-  getMetadatasOrderBy(@Body() body: { by: 'last' | 'first'; page: number }) {
+  getMetadatasOrderBy(
+    @Body() body: { by: 'last' | 'first'; page: number },
+  ): Promise<{
+    metadatas: MetadataDto[];
+  }> {
     return this.metadataService.getMetadatasOrderByDate(body);
   }
 
@@ -21,7 +27,10 @@ export class MetadataController {
   }
 
   @Post('/getMetadataWithPostFooter')
-  getMetadataWithPostFooter(@Body() body: { postId: string }, @Req() req) {
+  getMetadataWithPostFooter(
+    @Body() body: { postId: string },
+    @Req() req: ExReq,
+  ) {
     return this.metadataService.getMetadataWithPostFooter({
       postId: body.postId,
       userId: req.user.userId,
@@ -34,7 +43,7 @@ export class MetadataController {
   }
 
   @Post('/getMyCollections')
-  getMyCollection(@Body() body: { page: number }, @Req() req) {
+  getMyCollection(@Body() body: { page: number }, @Req() req: ExReq) {
     return this.metadataService.getMyCollection({
       ...body,
       userId: req.user.userId,

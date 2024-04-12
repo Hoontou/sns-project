@@ -21,22 +21,22 @@ export class PostService {
     return this.postManager.getPost(postId);
   }
 
-  async getCommentList(body: { postId: string; page: number }, userId: string) {
+  async getCommentList(body: { postId: string; page: number }, userId: number) {
     return this.commentManager.getCommentList(body, userId);
   }
 
-  async getComment(data: { userId: string; commentId: number }) {
+  async getComment(data: { userId: number; commentId: number }) {
     return this.commentManager.getComment(data);
   }
 
   async getCocommentList(
     body: { commentId: number; page: number },
-    userId: string,
+    userId: number,
   ): Promise<{ cocommentItem: CocommentContent[] }> {
     return this.cocommentManager.getCocommentList(body, userId);
   }
 
-  async getHighlightCocomment(body: { cocommentId: number; userId: string }) {
+  async getHighlightCocomment(body: { cocommentId: number; userId: number }) {
     return this.cocommentManager.getHighlightCocomment(body);
   }
 
@@ -50,7 +50,7 @@ export class PostService {
 
   async getPostsByHashtag(
     data: { hashtag: string; page: number },
-    userId: string,
+    userId: number,
   ) {
     return this.postManager.getPostsByHashtag(data, userId);
   }
@@ -74,7 +74,7 @@ export class PostService {
     return this.cocommentManager.deleteCocomment(body);
   }
 
-  async getCommentPageContent(data: { postId: string; userId: string }) {
+  async getCommentPageContent(data: { postId: string; userId: number }) {
     return this.postManager.getCommentPageContent(data);
   }
 

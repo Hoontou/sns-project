@@ -16,7 +16,7 @@ export class UserCollection {
     return createdUser.save();
   }
 
-  changeUsername(data: { username: string; userId: string }) {
+  changeUsername(data: { username: string; userId: number }) {
     return this.userModel.findOneAndUpdate(
       {
         userId: Number(data.userId),
@@ -25,7 +25,7 @@ export class UserCollection {
     );
   }
 
-  changeIntro(data: { userId: string; intro: string }) {
+  changeIntro(data: { userId: number; intro: string }) {
     return this.userModel.findOneAndUpdate(
       {
         userId: Number(data.userId),
@@ -33,7 +33,7 @@ export class UserCollection {
       { $set: { introduce: data.intro } },
     );
   }
-  changeIntroduceName(data: { userId: string; introduceName: string }) {
+  changeIntroduceName(data: { userId: number; introduceName: string }) {
     return this.userModel.findOneAndUpdate(
       {
         userId: Number(data.userId),
@@ -42,7 +42,7 @@ export class UserCollection {
     );
   }
 
-  changeImg(data: { userId: string; img: string }) {
+  changeImg(data: { userId: number; img: string }) {
     return this.userModel.findOneAndUpdate(
       {
         userId: Number(data.userId),

@@ -24,11 +24,9 @@ export class PostLikeCollection {
   constructor(
     @InjectModel('like')
     public readonly postLikeModel: Model<PostLikeDocument>,
-  ) {
-    this.getMyLikes({ userId: '1', page: 0 });
-  }
+  ) {}
 
-  addLike(data: { userId: string; postId: string }) {
+  addLike(data: { userId: number; postId: string }) {
     const newOne = new this.postLikeModel({
       userId: crypter.decrypt(data.userId),
       postId: data.postId,
@@ -44,7 +42,7 @@ export class PostLikeCollection {
     return;
   }
 
-  removeLike(data: { userId: string; postId: string }) {
+  removeLike(data: { userId: number; postId: string }) {
     this.postLikeModel
       .findOneAndDelete({
         userId: crypter.decrypt(data.userId),
@@ -59,7 +57,7 @@ export class PostLikeCollection {
     return;
   }
 
-  async getUserIds(postId: string, page: number): Promise<string[]> {
+  async getUserIds(postId: string, page: number): Promise<number[]> {
     const pageLen = 5;
     const userIds =
       page === -1
@@ -71,7 +69,7 @@ export class PostLikeCollection {
             .exec();
 
     return userIds.map((item) => {
-      return String(item.userId);
+      return item.userId;
     });
   }
 
@@ -122,11 +120,11 @@ export class PostLikeCollection {
     return findMatchingIndices(tmpAllUserList, data.searchString);
   }
 
-  async getMyLikes(data: { userId: string; page: number }) {
+  async getMyLikes(data: { userId: number; page: number }) {
     const len = 12;
     const _ids = await this.postLikeModel
       .find({
-        userId: crypter.decrypt(data.userId),
+        userId: data.userId,
       })
       .populate(MetadataPop)
       .sort({ _id: -1 })
@@ -140,6 +138,7 @@ export class PostLikeCollection {
           ? {
               ...i.metadataPop,
               _id: i.metadataPop._id.toString(),
+              userId: crypter.encrypt(i.userId),
             }
           : emptyMetadata;
 

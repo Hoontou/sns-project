@@ -1,39 +1,35 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { FflService } from './ffl.service';
+import { ExReq } from '../auth/auth.middleware';
 
 @Controller('ffl')
 export class FflController {
   constructor(private fflService: FflService) {}
 
-  @Get('/tst')
-  tst(@Req() req) {
-    console.log(req.user);
-  }
-
   @Post('/addfollow')
-  async addFollow(@Body() body: { userTo: string; userFrom: string }) {
-    return this.fflService.addFollow(body);
+  async addFollow(@Body() body: { userTo: string }, @Req() req: ExReq) {
+    return this.fflService.addFollow({ ...body, userFrom: req.user.userId });
   }
 
   @Post('/removefollow')
-  async removeFollow(@Body() body: { userTo: string; userFrom: string }) {
-    return this.fflService.removeFollow(body);
+  async removeFollow(@Body() body: { userTo: string }, @Req() req: ExReq) {
+    return this.fflService.removeFollow({ ...body, userFrom: req.user.userId });
   }
 
   @Post('/addlike')
   async addLike(
     @Body() body: { postId: string; postOwnerUserId: string },
-    @Req() req,
+    @Req() req: ExReq,
   ) {
     return this.fflService.addLike({
       postId: body.postId,
-      userId: String(req.user.userId),
+      userId: req.user.userId,
       postOwnerUserId: body.postOwnerUserId,
     });
   }
 
   @Post('/removelike')
-  async removeLike(@Body() body: { postId: string }, @Req() req) {
+  async removeLike(@Body() body: { postId: string }, @Req() req: ExReq) {
     return this.fflService.removeLike({
       postId: body.postId,
       userId: req.user.userId,
@@ -41,7 +37,7 @@ export class FflController {
   }
 
   @Post('/addcommentlike')
-  async addCommentLike(@Body() body: { commentId: number }, @Req() req) {
+  async addCommentLike(@Body() body: { commentId: number }, @Req() req: ExReq) {
     return this.fflService.addCommentLike({
       commentId: body.commentId,
       userId: req.user.userId,
@@ -51,7 +47,7 @@ export class FflController {
   @Post('/removecommentlike')
   async removeCommentLike(
     @Body() body: { commentId: number; userId: string },
-    @Req() req,
+    @Req() req: ExReq,
   ) {
     return this.fflService.removeCommentLike({
       commentId: body.commentId,
@@ -60,7 +56,10 @@ export class FflController {
   }
 
   @Post('/addcocommentlike')
-  async addCocommentLike(@Body() body: { cocommentId: number }, @Req() req) {
+  async addCocommentLike(
+    @Body() body: { cocommentId: number },
+    @Req() req: ExReq,
+  ) {
     return this.fflService.addCocommentLike({
       cocommentId: body.cocommentId,
       userId: req.user.userId,
@@ -68,7 +67,10 @@ export class FflController {
   }
 
   @Post('/removecocommentlike')
-  async removeCocommentLike(@Body() body: { cocommentId: number }, @Req() req) {
+  async removeCocommentLike(
+    @Body() body: { cocommentId: number },
+    @Req() req: ExReq,
+  ) {
     return this.fflService.removeCocommentLike({
       cocommentId: body.cocommentId,
       userId: req.user.userId,

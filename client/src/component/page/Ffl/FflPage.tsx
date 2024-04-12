@@ -1,6 +1,8 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import FollowTab from './FollowTab';
 import LikeTab from './LikeTab';
+import { useEffect } from 'react';
+import { authHoc } from '../../../common/auth.hoc';
 
 export interface TabPanelProps {
   children?: React.ReactNode;
@@ -18,6 +20,7 @@ export function a11yProps(index: number) {
 
 export const FflPage = () => {
   const { target, type } = useParams();
+  const navigate = useNavigate();
 
   const title = () => {
     if (type === 'like') {
@@ -25,6 +28,16 @@ export const FflPage = () => {
     }
     return target;
   };
+
+  useEffect(() => {
+    authHoc().then((authRes) => {
+      if (authRes.success === false) {
+        alert('Err while Authentication, need login');
+        navigate('/signin');
+        return;
+      }
+    });
+  }, []);
 
   return (
     <div>

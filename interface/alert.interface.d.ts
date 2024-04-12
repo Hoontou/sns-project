@@ -38,7 +38,7 @@ interface CommentAlert {
   type: 'comment';
   postId: string;
   commentId: number;
-  userId: number;
+  userId: number | string;
 }
 
 //누가 어떤댓글에 어떤대댓을 달았나
@@ -46,13 +46,13 @@ interface CocommentAlert {
   type: 'cocomment';
   commentId: number;
   cocommentId: number;
-  userId: number;
+  userId: number | string;
 }
 
 //누가 나를 팔로우했나
 interface FollowAlert {
   type: 'follow';
-  userId: number; //팔로우 누른 사람들, 최대 세명? 두명까지 생각중
+  userId: number | string; //팔로우 누른 사람들, 최대 세명? 두명까지 생각중
 }
 
 //누가 나를 어디에 태그했나
@@ -60,13 +60,13 @@ interface TagAlert {
   type: 'tag';
   where: 'comment' | 'cocomment' | 'post';
   whereId: string | number;
-  userId: number;
+  userId: number | string;
 }
 
 //누가 어떤게시물에 좋아요 했나
 interface LikeAlert {
   type: 'like';
-  userId: number; //좋아요 누른 사람들, 최대 세명? 두명까지 생각중
+  userId: number | string; //좋아요 누른 사람들, 최대 세명? 두명까지 생각중
   postId: string;
 }
 

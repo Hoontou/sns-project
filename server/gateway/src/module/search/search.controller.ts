@@ -11,4 +11,11 @@ export class SearchController {
   ) {
     return this.searchService.searchHashtagsBySearchString(body);
   }
+
+  @Post('/searchusersbysearchstring')
+  searchUsersBySearchString(
+    @Body() body: { searchString: string; page: number },
+  ) {
+    return this.searchService.searchUsersBySearchString(body);
+  }
 }

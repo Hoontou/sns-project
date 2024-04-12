@@ -10,11 +10,7 @@ import sample from '../../../../asset/sample1.jpg';
 import { AlertPageLen } from '../Alert';
 import { axiosInstance } from '../../../../App';
 
-const UnReadAlertPanel = (props: {
-  index: number;
-  value: number;
-  userId: string;
-}) => {
+const UnReadAlertPanel = (props: { index: number; value: number }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);

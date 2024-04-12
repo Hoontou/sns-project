@@ -21,7 +21,7 @@ export class PostController {
   addCocomment(
     @Body()
     body: { commentId: number; cocomment: string; commentOwnerUserId: string },
-    @Req() req,
+    @Req() req: ExReq,
   ) {
     return this.postService.addCocomment({ ...body, userId: req.user.userId });
   }
@@ -29,14 +29,14 @@ export class PostController {
   @Post('/getcommentlist')
   getCommentList(
     @Body() body: { postId: string; page: number },
-    @Req() req,
+    @Req() req: ExReq,
   ): Promise<{ commentItem: CommentItemContent[] }> {
     return this.postService.getCommentList(body, req.user.userId);
   }
   @Post('/getcomment')
   getComment(
     @Body() body: { commentId: number },
-    @Req() req,
+    @Req() req: ExReq,
   ): Promise<{
     commentItem: CommentItemContent[] | undefined;
     userId: string;
@@ -51,7 +51,7 @@ export class PostController {
   @Post('/getcocommentlist')
   getCocommentList(
     @Body() body: { commentId: number; page: number },
-    @Req() req,
+    @Req() req: ExReq,
   ): Promise<{ cocommentItem: CocommentContent[] }> {
     return this.postService.getCocommentList(body, req.user.userId);
   }
@@ -59,7 +59,7 @@ export class PostController {
   @Post('/getHighlightCocomment')
   getHighlightCocomment(
     @Body() body: { cocommentId: number },
-    @Req() req,
+    @Req() req: ExReq,
   ): Promise<{
     cocommentItem: CocommentContent[];
     commentItem: CommentItemContent[];
@@ -73,7 +73,7 @@ export class PostController {
   @Post('/getpostsbyhashtag')
   getPostsByHashtag(
     @Body() body: { hashtag: string; page: number },
-    @Req() req,
+    @Req() req: ExReq,
   ): Promise<
     | {
         metadatas: MetadataDto[];
@@ -92,7 +92,7 @@ export class PostController {
   }
 
   @Post('/deletePost')
-  deletePost(@Body() body: { postId: string }, @Req() req) {
+  deletePost(@Body() body: { postId: string }, @Req() req: ExReq) {
     return this.postService.deletePost(body, req);
   }
 
@@ -107,7 +107,7 @@ export class PostController {
   }
 
   @Post('/getCommentPageContent')
-  getCommentPageContent(@Body() body: { postId: string }, @Req() req) {
+  getCommentPageContent(@Body() body: { postId: string }, @Req() req: ExReq) {
     return this.postService.getCommentPageContent({
       postId: body.postId,
       userId: req.user.userId,

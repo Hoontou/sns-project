@@ -4,6 +4,7 @@ import { authHoc } from '../../../common/auth.hoc';
 import AllAlertPanel from './panel/AllAlertPanel';
 import UnReadAlertPanel from './panel/UnreadAlert';
 import Navbar from '../../common/Navbar/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 export const AlertPageLen = 20;
 
@@ -15,15 +16,22 @@ function a11yProps(index: number) {
 }
 
 const AlertComponent = () => {
+  const navigate = useNavigate();
+
   const [tabIndex, setTabIndex] = useState<number>(0);
-  const [userId, setUserId] = useState<string>('');
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
 
   useEffect(() => {
-    authHoc();
+    authHoc().then((authRes) => {
+      if (authRes.success === false) {
+        alert('Err while Authentication, need login');
+        navigate('/signin');
+        return;
+      }
+    });
   }, []);
 
   return (
@@ -38,8 +46,8 @@ const AlertComponent = () => {
         <Tab label={`안 읽은 알림`} {...a11yProps(0)} />
         <Tab label={`전체 알림`} {...a11yProps(1)} />
       </Tabs>
-      <UnReadAlertPanel index={0} value={tabIndex} userId={userId} />
-      <AllAlertPanel index={1} value={tabIndex} userId={userId} />
+      <UnReadAlertPanel index={0} value={tabIndex} />
+      <AllAlertPanel index={1} value={tabIndex} />
 
       <div style={{ paddingTop: '4rem' }}>
         <Navbar value={0} />

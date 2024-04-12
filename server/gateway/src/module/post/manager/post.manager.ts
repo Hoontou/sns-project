@@ -34,7 +34,7 @@ export class PostManager {
 
   async getPostsByHashtag(
     data: { hashtag: string; page: number },
-    userId: string,
+    userId: number,
   ) {
     //1 post에 해시태그로 게시글id 가져오기
     const { _ids, count, searchSuccess } =
@@ -50,9 +50,19 @@ export class PostManager {
     });
 
     if (metadatas === undefined) {
-      return { metadatas: [], totalPostCount: count, searchSuccess, userId };
+      return {
+        metadatas: [],
+        totalPostCount: count,
+        searchSuccess,
+        userId: crypter.encrypt(userId),
+      };
     }
-    return { metadatas, totalPostCount: count, searchSuccess, userId };
+    return {
+      metadatas,
+      totalPostCount: count,
+      searchSuccess,
+      userId: crypter.encrypt(userId),
+    };
   }
 
   async searchPostsBySearchString(data: {
@@ -102,7 +112,7 @@ export class PostManager {
     return this.postRepository.decrementCommentCount(postId);
   }
 
-  async getCommentPageContent(data: { postId: string; userId: string }) {
+  async getCommentPageContent(data: { postId: string; userId: number }) {
     try {
       const postContent = await this.getPost(data.postId);
       const postOwnerInfo = await this.userService.getUsernameWithImg(

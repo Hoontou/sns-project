@@ -13,19 +13,16 @@ export class UsernumsTable {
     @InjectRepository(Usernums)
     public readonly db: Repository<Usernums>,
   ) {}
-  async addFollow(data: { userTo: string; userFrom: string }) {
-    const to = crypter.decrypt(data.userTo);
-    const from = crypter.decrypt(data.userFrom);
-
+  async addFollow(data: { userTo: number; userFrom: number }) {
     const queryTo = `
     UPDATE public.usernums
     SET follower = follower + 1
-    WHERE "userId" = ${to};
+    WHERE "userId" = ${data.userTo};
     `;
     const queryFrom = `
     UPDATE public.usernums
     SET following = following + 1
-    WHERE "userId" = ${from};
+    WHERE "userId" = ${data.userFrom};
     `;
 
     return Promise.all([
@@ -34,19 +31,16 @@ export class UsernumsTable {
     ]);
   }
 
-  async removeFollow(data: { userTo: string; userFrom: string }) {
-    const to = crypter.decrypt(data.userTo);
-    const from = crypter.decrypt(data.userFrom);
-
+  async removeFollow(data: { userTo: number; userFrom: number }) {
     const queryTo = `
     UPDATE public.usernums
     SET follower = follower- 1
-    WHERE "userId" = ${to};
+    WHERE "userId" = ${data.userTo};
     `;
     const queryFrom = `
     UPDATE public.usernums
     SET following = following - 1
-    WHERE "userId" = ${from};
+    WHERE "userId" = ${data.userFrom};
     `;
 
     return Promise.all([

@@ -21,7 +21,7 @@ export class CocommentManager {
 
   async getCocommentList(
     body: { commentId: number; page: number },
-    userId: string,
+    userId: number,
   ): Promise<{ cocommentItem: CocommentContent[] }> {
     //1 commentId로 대댓 가져옴
     const cocomments: CocommentContent[] =
@@ -51,7 +51,7 @@ export class CocommentManager {
     return { cocommentItem };
   }
 
-  async getHighlightCocomment(body: { cocommentId: number; userId: string }) {
+  async getHighlightCocomment(body: { cocommentId: number; userId: number }) {
     //1 commentId로 대댓 가져옴
     const { cocommentItem } =
       await this.cocommentRepository.cocommentTable.getCocomment(body);

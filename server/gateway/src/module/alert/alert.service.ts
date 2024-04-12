@@ -12,6 +12,7 @@ import {
   AlertSchemaDefinition,
   AlertSchemaDefinitionExecPop,
 } from './repository/schema/alert.schema';
+import { crypter } from 'src/common/crypter';
 
 export interface FianlAlertType {
   _id: string;
@@ -113,6 +114,7 @@ export class AlertService {
     alerts: AlertSchemaDefinitionExecPop[],
   ): FianlAlertType[] {
     return alerts.map((i) => {
+      //userId는 내보내지 않음. client본인의 userId임
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { _id, content, userId, userPop, ...rest } = i;
       const userinfo = userPop && {
@@ -125,6 +127,8 @@ export class AlertService {
         content: {
           ...content,
           userinfo,
+          //보낸사람의 Id 암호화
+          userId: content.userId ? crypter.encrypt(content.userId) : '',
         },
         _id: _id.toString(),
       };

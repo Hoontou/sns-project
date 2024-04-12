@@ -137,22 +137,28 @@ export class SearchService {
   async searchUsersBySearchString(data: {
     searchString: string;
     page: number;
-  }) {
-    const result = await this.elasticIndex.searchUserByString(
-      data.page,
-      data.searchString,
-    );
-
-    const userInfoList = result.body.hits.hits.map((item) => {
-      return item._source;
-    }) as {
+  }): Promise<{
+    userList: {
       username: string;
       introduce: string;
       img: string;
       introduceName: string;
     }[];
+  }> {
+    const userList = await this.elasticIndex.searchUserByString(
+      data.page,
+      data.searchString,
+    );
 
-    return { userList: userInfoList };
+    if (userList.length === 0) {
+      return { userList: [] };
+    }
+
+    return {
+      userList: userList.map((i) => {
+        return { ...i, userId: undefined };
+      }),
+    };
   }
 
   async searchUserOrHashtag(string: string): Promise<SearchResult> {

@@ -18,7 +18,7 @@ export class CommentManager {
     private postManager: PostManager,
   ) {}
 
-  async getCommentList(body: { postId: string; page: number }, userId: string) {
+  async getCommentList(body: { postId: string; page: number }, userId: number) {
     //1 id로 코멘트 다 가져옴
     const comments: CommentItemContent[] =
       await this.commentRepository.getCommentList(body);
@@ -48,14 +48,14 @@ export class CommentManager {
     return { commentItem };
   }
 
-  async getComment(data: { userId: string; commentId: number }) {
+  async getComment(data: { userId: number; commentId: number }) {
     const { commentItem } =
       await this.commentRepository.commentTable.getComment(data);
 
     if (commentItem === undefined) {
       return {
         commentItem: [],
-        userId: data.userId,
+        userId: crypter.encrypt(data.userId),
       };
     }
 
@@ -72,7 +72,7 @@ export class CommentManager {
           liked: commentLikedList[0],
         },
       ],
-      userId: data.userId,
+      userId: crypter.encrypt(data.userId),
     };
   }
 

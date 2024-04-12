@@ -23,27 +23,25 @@ export class FollowCollection {
     private followModel: Model<FollowDocument>,
   ) {}
 
-  async checkFollowed(data: { userTo: string; userFrom: string }): Promise<{
+  async checkFollowed(data: { userTo: number; userFrom: number }): Promise<{
     followed: boolean;
   }> {
     //myId가 userId를 팔로우했는지 가져와야함.
     //userFrom: myId, userTo: userId
-    const decUserTo = crypter.decrypt(data.userTo);
-    const decUserFrom = crypter.decrypt(data.userFrom);
 
     const followed: unknown[] = await this.followModel.find({
-      userTo: decUserTo,
-      userFrom: decUserFrom,
+      userTo: data.userTo,
+      userFrom: data.userFrom,
     });
 
     //팔로우 찾은게 없으면 false 있으면 true
     return { followed: followed.length === 0 ? false : true };
   }
 
-  addFollow(data: { userTo: string; userFrom: string }) {
+  addFollow(data: { userTo: number; userFrom: number }) {
     const newOne = new this.followModel({
-      userTo: crypter.decrypt(data.userTo),
-      userFrom: crypter.decrypt(data.userFrom),
+      userTo: data.userTo,
+      userFrom: data.userFrom,
     });
     newOne
       .save()
@@ -58,11 +56,11 @@ export class FollowCollection {
     return;
   }
 
-  removeFollow(data: { userTo: string; userFrom: string }) {
+  removeFollow(data: { userTo: number; userFrom: number }) {
     this.followModel
       .findOneAndDelete({
-        userTo: crypter.decrypt(data.userTo),
-        userFrom: crypter.decrypt(data.userFrom),
+        userTo: data.userTo,
+        userFrom: data.userFrom,
       })
       .then(() => {
         // this.logger.debug('follow canceled');
@@ -75,26 +73,27 @@ export class FollowCollection {
   }
 
   async getUserIds(
-    userId: string,
+    userId: number,
     type: 'follower' | 'following',
     page: number,
-  ): Promise<string[]> {
+  ): Promise<number[]> {
     const pageLen = 15;
-    const userIds =
-      page === -1
-        ? await this.followModel.find(
-            type === 'follower' ? { userTo: userId } : { userFrom: userId },
-          )
-        : await this.followModel
-            .find(
-              type === 'follower' ? { userTo: userId } : { userFrom: userId },
-            )
-            .skip(page * pageLen)
-            .limit(pageLen)
-            .exec();
+    const userIds = await this.followModel
+      .find(type === 'follower' ? { userTo: userId } : { userFrom: userId })
+      .skip(page * pageLen)
+      .limit(pageLen)
+      .exec();
 
     return userIds.map((item) => {
-      return type === 'follower' ? String(item.userFrom) : String(item.userTo);
+      return type === 'follower' ? item.userFrom : item.userTo;
+    });
+  }
+
+  async getAllFollowingUserIdListByUserId(userId: number): Promise<number[]> {
+    const userIds = await this.followModel.find({ userFrom: userId });
+
+    return userIds.map((item) => {
+      return item.userTo;
     });
   }
 

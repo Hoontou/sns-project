@@ -13,7 +13,7 @@ export class CommentLikeCollection {
   ) {}
 
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
-  addCommentLike(data: { userId: string; commentId: number }) {
+  addCommentLike(data: { userId: number; commentId: number }) {
     const newOne = new this.commentLikeModel({
       userId: crypter.decrypt(data.userId),
       commentId: data.commentId,
@@ -31,7 +31,7 @@ export class CommentLikeCollection {
     return;
   }
 
-  removeCommentLike(data: { userId: string; commentId: number }) {
+  removeCommentLike(data: { userId: number; commentId: number }) {
     this.commentLikeModel
       .findOneAndDelete({
         userId: crypter.decrypt(data.userId),
@@ -46,25 +46,43 @@ export class CommentLikeCollection {
     return;
   }
 
-  async getCommentLiked(data: { commentIdList: number[]; userId: string }) {
+  async getCommentLiked(data: { commentIdList: number[]; userId: number }) {
     //각각의 댓글에 좋아요 눌렀는지 체크
     const likedList = await this.commentLikeModel
       .find({
         commentId: { $in: data.commentIdList },
-        userId: `${crypter.decrypt(data.userId)}`,
+        userId: data.userId,
       })
+      .sort({ commentId: -1 })
       .exec();
 
-    //false를 갯수만큼 채우고
-    const commentLikedList = Array(data.commentIdList.length).fill(false);
-
-    //item이 존재한다면 true로 변경
-    for (const i of likedList) {
-      commentLikedList[data.commentIdList.indexOf(i.commentId)] = true;
+    if (likedList.length === 0) {
+      return {
+        commentLikedList: Array(data.commentIdList.length).fill(false),
+      };
     }
 
-    return {
-      commentLikedList,
-    };
+    //투포인터로 밀고가면서 좋아요 체크결과 맞으면 true
+    let tmpIndex: number = 0;
+    const tmp = [...data.commentIdList].map((i) => {
+      if (i === likedList[tmpIndex].commentId) {
+        tmpIndex += 1;
+        return true;
+      }
+      return false;
+    });
+    return { commentLikedList: tmp };
+
+    // //false를 갯수만큼 채우고
+    // const commentLikedList = Array(data.commentIdList.length).fill(false);
+
+    // //item이 존재한다면 true로 변경
+    // for (const i of likedList) {
+    //   commentLikedList[data.commentIdList.indexOf(i.commentId)] = true;
+    // }
+
+    // return {
+    //   commentLikedList,
+    // };
   }
 }

@@ -54,44 +54,51 @@ export class MetadataCollection {
   }
 
   async getMetadatasLast3Day(data: {
-    userIds: string[];
+    userIds: number[];
     page: number;
   }): Promise<{ metadatas: MetadataDto[] }> {
     const len = 10; //가져올 갯수
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3); //3일전 까지의 게시물
 
-    const userIds = data.userIds?.map((i) => {
-      return crypter.decrypt(i);
-    });
-
-    const metadatas = (await this.metadataModel
+    const metadatas: MetadataSchemaDefinition[] = await this.metadataModel
       //3일 안으로, 10개씩
       .find({
-        userId: { $in: userIds },
+        userId: { $in: data.userIds },
         createdAt: { $gte: threeDaysAgo },
       })
       .sort({ _id: -1 })
       .limit(len)
       .skip(data.page * len)
-      .exec()) as any;
-
-    const tmp: MetadataDto[] = metadatas;
-
-    return { metadatas: tmp };
-  }
-
-  async getMetadatasByPostId(_ids: string[]) {
-    const metadatas: MetadataDto[] = (await this.metadataModel
-      .find({
-        _id: { $in: _ids },
-      })
-      .sort({ _id: -1 })) as any;
+      .lean();
 
     return {
       metadatas: metadatas.map((item) => {
-        item.userId = crypter.encrypt(item.userId);
-        return item;
+        return {
+          ...item,
+          _id: item._id.toString(),
+        };
+      }),
+    };
+  }
+
+  async getMetadatasByPostId(
+    _ids: string[],
+  ): Promise<{ metadatas: MetadataDto[] }> {
+    const metadatas: MetadataSchemaDefinition[] = await this.metadataModel
+      .find({
+        _id: { $in: _ids },
+      })
+      .sort({ _id: -1 })
+      .lean();
+
+    return {
+      metadatas: metadatas.map((item) => {
+        return {
+          ...item,
+          userId: crypter.encrypt(item.userId),
+          _id: item._id.toString(),
+        };
       }),
     };
   }
@@ -114,12 +121,18 @@ export class MetadataCollection {
       .find()
       .sort({ _id: data.by === 'last' ? -1 : 1 })
       .limit(len)
-      .skip(data.page * len);
+      .skip(data.page * len)
+      .lean();
 
-    const tmp = metadatas.map((item: any) => {
-      item.userId = crypter.encrypt(item.userId);
-      return item;
-    }) as MetadataDto[];
+    const tmp: MetadataDto[] = metadatas.map(
+      (item: MetadataSchemaDefinition) => {
+        return {
+          ...item,
+          userId: crypter.encrypt(item.userId),
+          _id: item._id.toString(),
+        };
+      },
+    );
 
     return {
       metadatas: tmp,

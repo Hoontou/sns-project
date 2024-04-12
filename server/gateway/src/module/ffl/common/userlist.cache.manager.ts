@@ -32,7 +32,7 @@ class CacheManager {
   loadUserList(data: {
     type: 'follower' | 'following' | 'like';
     userList: userinfo[];
-    target: string;
+    target: number | string;
   }) {
     // console.log(`캐시적재,  ${data.type} container, target is ${data.target}`);
 
@@ -49,7 +49,7 @@ class CacheManager {
   /**캐시에서 가져오기 */
   getUserList(data: {
     type: 'follower' | 'following' | 'like';
-    target: string;
+    target: number | string;
     searchString: string;
   }): userinfo[] | undefined {
     const target = this.containers[data.type][data.target];

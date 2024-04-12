@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { IntroduceUsernameDto, UsernameDto } from './dto/changeInfo.dto';
+import { ExReq } from '../auth/auth.middleware';
 
 @Controller('user')
 export class UserController {
@@ -35,19 +36,12 @@ export class UserController {
   }
 
   @Get('/getusernamewithimg')
-  async getUsernameWithImg(@Req() req): Promise<{
+  async getUsernameWithImg(@Req() req: ExReq): Promise<{
     username: string;
     img: string;
     userId: number;
   }> {
     return this.userService.getUsernameWithImg(req.user.userId);
-  }
-
-  @Post('/searchusersbysearchstring')
-  searchUsersBySearchString(
-    @Body() body: { searchString: string; page: number },
-  ) {
-    return this.userService.searchUsersBySearchString(body);
   }
 
   @Post('/getFollowCount')
