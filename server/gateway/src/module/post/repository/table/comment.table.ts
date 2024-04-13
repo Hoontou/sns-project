@@ -34,15 +34,15 @@ export class CommentTable {
     return row;
   }
 
-  addCocommentCount(commentId: number) {
+  increaseCocommentCount(commentId: number) {
     return this.db.increment({ id: commentId }, 'cocommentcount', 1);
   }
 
-  addLike(data: { commentId: number }) {
+  increaseLikeCount(data: { commentId: number }) {
     return this.db.increment({ id: data.commentId }, 'likes', 1);
   }
 
-  removeLike(data: { commentId: number }) {
+  decreaseLikeCount(data: { commentId: number }) {
     return this.db.decrement({ id: data.commentId }, 'likes', 1);
   }
 

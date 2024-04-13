@@ -9,6 +9,7 @@ import { VscArrowLeft } from 'react-icons/vsc';
 import { CommentItems, SubmitForm } from '../../common/Comment/interface';
 import CommentItem from '../../common/Comment/CommentItem';
 import { axiosInstance } from '../../../App';
+import { authHoc } from '../../../common/auth.hoc';
 
 const HighlightCommentPage = () => {
   const { commentId } = useParams(); //url에서 가져온 username
@@ -56,6 +57,14 @@ const HighlightCommentPage = () => {
   };
 
   useEffect(() => {
+    authHoc().then((res) => {
+      if (res.success === false) {
+        alert('Err while Authentication, need login');
+        navigate('/signin');
+        return;
+      }
+    });
+
     getComment();
   }, []);
 

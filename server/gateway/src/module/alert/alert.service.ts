@@ -65,13 +65,14 @@ export class AlertService {
       { read: true },
     );
   }
-  async deleteAlert(data: { alert_id: string }) {
+  deleteAlert(data: { alert_id: string }) {
     this.alertCollection.alertModel.deleteOne({ _id: data.alert_id });
     return;
   }
 
   saveAlert(alertDto: AlertDto | UploadAlertDto) {
-    return this.alertCollection.saveAlert(alertDto);
+    this.alertCollection.saveAlert(alertDto);
+    return;
   }
 
   async saveTagAlert(data: UserTagAlertReqForm) {
@@ -79,11 +80,12 @@ export class AlertService {
       data.usernames,
     );
 
-    return Promise.all(
+    Promise.all(
       userIds.map((item) => {
         return this.saveAlert({ userId: item, content: data.content });
       }),
     );
+    return;
   }
 
   sendUserTagAlertIfExist(body: HandleUserTagReqBody) {

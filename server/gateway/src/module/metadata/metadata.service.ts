@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { crypter } from 'src/common/crypter';
 import {
   MetadataCollection,
@@ -14,7 +14,6 @@ export class MetadataService {
 
   constructor(
     private metadataCollection: MetadataCollection,
-    @Inject(forwardRef(() => PostService))
     private postService: PostService,
     private fflService: FflService,
   ) {}
@@ -96,7 +95,9 @@ export class MetadataService {
     return { metadatas };
   }
 
-  async getMetadatasOrderByLikes(body: { page: number }) {
+  async getMetadatasOrderByLikes(body: { page: number }): Promise<{
+    metadatas: (MetadataDto | undefined)[];
+  }> {
     const { _ids } = await this.postService.getPostIdsOrderByLikes(body);
     const { metadatas } = await this.getMetadatasByPostId({ _ids });
 
@@ -106,7 +107,9 @@ export class MetadataService {
     return { metadatas: sorted };
   }
 
-  async getMyCollection(data: { page: number; userId: number }) {
+  async getMyCollection(data: { page: number; userId: number }): Promise<{
+    metadatas: MetadataDto[];
+  }> {
     const myCollections = await this.fflService.getMyLikes(data);
 
     return { metadatas: myCollections };

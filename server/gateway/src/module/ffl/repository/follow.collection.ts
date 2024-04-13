@@ -49,7 +49,7 @@ export class FollowCollection {
         this.logger.debug('follow stored in mongo successfully');
       })
       .catch((err) => {
-        console.log(err);
+        this.logger.error(err);
         this.logger.error('err when storing follow in mongo');
       });
 

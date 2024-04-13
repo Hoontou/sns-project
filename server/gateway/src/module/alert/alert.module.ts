@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AlertService } from './alert.service';
 import { AlertController } from './alert.controller';
 import { AlertCollection } from './repository/alert.collection';
@@ -9,7 +9,7 @@ import { UserModule } from '../user/user.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'alert', schema: AlertSchema }]),
-    UserModule,
+    forwardRef(() => UserModule),
   ],
   controllers: [AlertController],
   providers: [AlertService, AlertCollection, MessageRepository],

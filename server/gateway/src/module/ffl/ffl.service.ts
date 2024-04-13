@@ -9,6 +9,7 @@ import { CommentLikeCollection } from './repository/commentLike.collection';
 import { CocommentLikeCollection } from './repository/cocommentLike.collection';
 import { AlertService } from '../alert/alert.service';
 import { FollowCollection } from './repository/follow.collection';
+import { PostLikeSchemaDefinition } from './repository/schema/postLike.schema';
 @Injectable()
 export class FflService {
   private logger = new Logger(FflService.name);
@@ -73,9 +74,10 @@ export class FflService {
   }): Promise<{ liked: boolean }> {
     //userId, postId
     //userId가 postId에 좋아요 눌렀는지 가져와야함.
-    const liked: unknown[] = await this.postLikeCollection.postLikeModel.find({
-      ...body,
-    });
+    const liked: PostLikeSchemaDefinition[] =
+      await this.postLikeCollection.postLikeModel.find({
+        ...body,
+      });
 
     return { liked: liked.length === 0 ? false : true };
   }
@@ -106,7 +108,7 @@ export class FflService {
     }
 
     //ffl에 Doc추가, post에 likesCount증가
-    this.postService.addLike({ type: 'post', postId: body.postId });
+    this.postService.increaseLikeCount({ type: 'post', postId: body.postId });
     this.postLikeCollection.addLike(body);
     return;
   }
@@ -116,7 +118,7 @@ export class FflService {
     //좋아요 돼 있으면 좋아요 취소
     if (liked === true) {
       this.postLikeCollection.removeLike(body);
-      this.postService.removeLike({ type: 'post', postId: body.postId });
+      this.postService.decreaseLikeCount({ type: 'post', postId: body.postId });
       return;
     }
     return;
@@ -184,7 +186,7 @@ export class FflService {
     //ffl msa에서 commentId, userId를 commentLikeSchema에 삽입
     this.commentLikeCollection.addCommentLike(body);
     //post msa에서 comment의 likescount 증가
-    this.postService.addLike({ type: 'comment', ...body });
+    this.postService.increaseLikeCount({ type: 'comment', ...body });
 
     return;
   }
@@ -193,7 +195,7 @@ export class FflService {
     //ffl msa에서 commentId, userId를 commentLikeSchema에 삭제
     this.commentLikeCollection.removeCommentLike(body);
     //post msa에서 comment의 likescount 감소
-    this.postService.removeLike({ type: 'comment', ...body });
+    this.postService.decreaseLikeCount({ type: 'comment', ...body });
 
     return;
   }
@@ -202,7 +204,7 @@ export class FflService {
     //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삽입
     this.cocommentLikeCollection.addCocommentLike(body);
     //post msa에서 cocomment의 likescount 증가
-    this.postService.addLike({ type: 'cocomment', ...body });
+    this.postService.increaseLikeCount({ type: 'cocomment', ...body });
 
     return;
   }
@@ -211,7 +213,7 @@ export class FflService {
     //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삭제
     this.cocommentLikeCollection.removeCocommentLike(body);
     //post msa에서 cocomment의 likescount 감소
-    this.postService.removeLike({ type: 'cocomment', ...body });
+    this.postService.decreaseLikeCount({ type: 'cocomment', ...body });
 
     return;
   }

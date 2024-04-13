@@ -14,15 +14,15 @@ export class CommentRepository {
     //코멘트 테이블에 코멘트 삽입
     return this.commentTable.addComment(data);
   }
-  async addCocommentCount(data: CocommentDto) {
+  async increaseCocommentCount(data: CocommentDto) {
     //comment에다가 대댓글 카운터 증가.
-    return this.commentTable.addCocommentCount(data.commentId);
+    return this.commentTable.increaseCocommentCount(data.commentId);
   }
 
   deleteComment(commentId: string) {
     return this.commentTable.db.delete(commentId);
   }
-  decrementCocommentCount(commentId: string) {
+  decreaseCocommentCount(commentId: string) {
     return this.commentTable.db.decrement(
       { id: Number(commentId) },
       'cocommentcount',

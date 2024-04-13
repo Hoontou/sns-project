@@ -5,6 +5,7 @@ import {
   SearchedUser,
   SearchResult,
   SnsPostsDocType,
+  SnsTagsDocType,
 } from './types/search.types';
 import { ElasticIndex } from './elastic.index';
 
@@ -36,12 +37,16 @@ export class SearchService {
       postDoc.tags = tmp.join(' ');
     }
 
-    //검색기능에 올리는건 후순위 작업이니 await 안함
-    return this.elasticIndex.insertPostDoc(postDto.postId, postDoc);
+    this.elasticIndex.insertPostDoc(postDto.postId, postDoc);
+    return;
   }
 
-  async getPostsIdsByHashtag(data: { hashtag: string; page: number }) {
-    const tagInfo =
+  async getPostsIdsByHashtag(data: { hashtag: string; page: number }): Promise<{
+    _ids: string[];
+    count: number;
+    searchSuccess: boolean;
+  }> {
+    const tagInfo: SnsTagsDocType =
       data.page === 0
         ? await this.elasticIndex.getTagById(data.hashtag)
         : { tagName: data.hashtag, count: 0 };
@@ -55,7 +60,7 @@ export class SearchService {
       data.hashtag,
     );
 
-    const postIdList = result.body.hits.hits.map((item) => {
+    const postIdList: string[] = result.body.hits.hits.map((item) => {
       return item._id;
     });
 
@@ -69,7 +74,9 @@ export class SearchService {
   async searchPostIdsBySearchString(data: {
     searchString: string;
     page: number;
-  }) {
+  }): Promise<{
+    _ids: string[];
+  }> {
     const result = await this.elasticIndex.searchPostsByTitle(
       data.page,
       data.searchString,
@@ -85,7 +92,12 @@ export class SearchService {
   async searchHashtagsBySearchString(data: {
     searchString: string;
     page: number;
-  }) {
+  }): Promise<{
+    searchedTags: {
+      tagName: string;
+      count: number;
+    }[];
+  }> {
     const pageSize = 20;
 
     const result = await this.elasticIndex.searchTags(
@@ -126,6 +138,8 @@ export class SearchService {
           await this.elasticIndex.decrementPostCountOfHashtag(item);
         }
       }
+
+      return;
     } catch (error) {
       this.logger.error(
         'elastic에서 post정보 삭제중 에러, 아마 정보가 없을거임',

@@ -79,7 +79,7 @@ export class CommentManager {
   async addComment(commentDto: CommentDto) {
     const insertedRow = await this.commentRepository.addComment(commentDto);
     //count증가
-    this.postManager.addCommentCount(commentDto);
+    this.postManager.increaseCommentCount(commentDto);
 
     const decUserId = Number(crypter.decrypt(commentDto.userId));
     const decPostOwnerUserId = Number(
@@ -109,27 +109,27 @@ export class CommentManager {
     return this.alertService.saveAlert(alertForm);
   }
 
-  async addCocommentCount(data: CocommentDto) {
+  async increaseCocommentCount(data: CocommentDto) {
     //comment에다가 대댓글 카운터 증가.
-    return this.commentRepository.addCocommentCount(data);
+    return this.commentRepository.increaseCocommentCount(data);
   }
 
   deleteComment(body: { commentId: string; postId: string }) {
     // comment Id로 삭제, post에서 commentCount감소
     this.commentRepository.deleteComment(body.commentId);
-    this.postManager.decrementCommentCount(body.postId);
+    this.postManager.decreaseCommentCount(body.postId);
     return;
   }
 
   decrementCocommentCount(commentId: string) {
-    return this.commentRepository.decrementCocommentCount(commentId);
+    return this.commentRepository.decreaseCocommentCount(commentId);
   }
 
-  addLike(data: { commentId: number; type: 'comment' }) {
-    return this.commentRepository.commentTable.addLike(data);
+  increaseLikeCount(data: { commentId: number; type: 'comment' }) {
+    return this.commentRepository.commentTable.increaseLikeCount(data);
   }
 
-  removeLike(data: { commentId: number; type: 'comment' }) {
-    return this.commentRepository.commentTable.removeLike(data);
+  decreaseLikeCount(data: { commentId: number; type: 'comment' }) {
+    return this.commentRepository.commentTable.decreaseLikeCount(data);
   }
 }

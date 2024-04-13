@@ -88,7 +88,7 @@ export class PostTable {
       });
   }
 
-  addLike(data: { postId: string }) {
+  increaseLikeCount(data: { postId: string }) {
     return this.db
       .createQueryBuilder()
       .update(Post)
@@ -105,7 +105,7 @@ export class PostTable {
       });
   }
 
-  removeLike(data: { postId: string }) {
+  decreaseLikeCount(data: { postId: string }) {
     return this.db
       .createQueryBuilder()
       .update(Post)

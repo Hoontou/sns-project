@@ -10,7 +10,7 @@ import { ValidationFailedErr } from '../Signup/Signup';
 
 const UserSetting = () => {
   const navigate = useNavigate();
-  const [isFulfilled, setIsFulfilled] = useState<boolean>(true);
+  const [isFulfilled, setIsFulfilled] = useState<boolean>(false);
   const [img, setImg] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [intro, setIntro] = useState<string>('');
@@ -35,7 +35,7 @@ const UserSetting = () => {
 
   /**username수정요청 보내는 */
   const submitUsername = () => {
-    if (username === initialInfo?.username) {
+    if (username === initialInfo.username) {
       alert('수정할게 없어요.');
       return;
     }
@@ -70,7 +70,7 @@ const UserSetting = () => {
 
   /**introduceName수정요청 보내는 */
   const submitIntroduceName = () => {
-    if (introduceName === initialInfo?.introduceName) {
+    if (introduceName === initialInfo.introduceName) {
       alert('수정할게 없어요.');
       return;
     }
@@ -100,7 +100,7 @@ const UserSetting = () => {
 
   /**introduce 수정 요청 보내는 */
   const submitIntro = () => {
-    if (intro === initialInfo?.intro) {
+    if (intro === initialInfo.intro) {
       alert('수정할게 없어요.');
       return;
     }
@@ -160,19 +160,19 @@ const UserSetting = () => {
       setUsername(data.userinfo.username);
       setUserId(data.reqUserId);
       setIntroduceName(data.userinfo.introduceName);
-      setIsFulfilled(false);
+      setIsFulfilled(true);
       setInitialInfo({
-        username,
-        intro,
-        introduceName,
+        username: data.userinfo.username,
+        intro: data.userinfo.introduce,
+        introduceName: data.userinfo.introduceName,
       });
     });
   }, []);
 
   return (
     <>
-      {isFulfilled && 'waiting...'}
-      {!isFulfilled && (
+      {!isFulfilled && 'waiting...'}
+      {isFulfilled && (
         <div
           className='text-center'
           style={{

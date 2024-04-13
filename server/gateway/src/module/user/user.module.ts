@@ -29,6 +29,6 @@ import { SearchModule } from '../search/search.module';
     UserCollection,
     UserService,
   ],
-  exports: [UserRepository, UserService, UserCollection],
+  exports: [UserRepository, UserService],
 })
 export class UserModule {}

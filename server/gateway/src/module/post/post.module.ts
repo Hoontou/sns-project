@@ -24,11 +24,11 @@ import { CocommentTable } from './repository/table/cocomment.table';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Post, Comment, Cocomment]),
-    forwardRef(() => FflModule),
-    forwardRef(() => MetadataModule),
-    UserModule,
     AlertModule,
     SearchModule,
+    FflModule,
+    forwardRef(() => MetadataModule),
+    UserModule,
   ],
   controllers: [PostController],
   providers: [

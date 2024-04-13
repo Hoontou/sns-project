@@ -23,6 +23,7 @@ import SearchResultModal from '../../common/SearchResultModal';
 import { emptyPostFooterContent } from '../../common/Post/post.interfaces';
 import { axiosInstance } from '../../../App';
 import { SearchResult } from '../Search/interface';
+import { authHoc } from '../../../common/auth.hoc';
 
 const CommentPage = () => {
   const { postId } = useParams(); //url에서 가져온 username
@@ -179,6 +180,14 @@ const CommentPage = () => {
   };
 
   useEffect(() => {
+    authHoc().then((res) => {
+      if (res.success === false) {
+        alert('Err while Authentication, need login');
+        navigate('/signin');
+        return;
+      }
+    });
+
     //이거 뒤로가기키 두번 눌러야 페이지 뒤로가져서 주석처리했음
     //이거 쓸모없어보이는데 왜 놔뒀는지 기억이 안나서 남겨놨음 뒤로가기 막는거 필요하면 다시 활성화
     // window.history.pushState(null, document.title, window.location.href);

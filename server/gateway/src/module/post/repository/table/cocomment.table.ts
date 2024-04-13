@@ -98,11 +98,11 @@ export class CocommentTable {
         };
   }
 
-  addLike(data: { cocommentId: number }) {
+  increaseLikeCount(data: { cocommentId: number }) {
     return this.db.increment({ id: data.cocommentId }, 'likes', 1);
   }
 
-  removeLike(data: { cocommentId: number }) {
+  decreaseLikeCount(data: { cocommentId: number }) {
     return this.db.decrement({ id: data.cocommentId }, 'likes', 1);
   }
 }

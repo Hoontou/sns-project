@@ -24,15 +24,14 @@ export class PostManager {
     private searchService: SearchService,
     private userService: UserService,
     private alertService: AlertService,
-    @Inject(forwardRef(() => FflService))
     private fflService: FflService,
   ) {}
 
   getPost(postId: string): Promise<PostContent> {
     return this.postRepository.getPost(postId);
   }
-  addCommentCount(data: CommentDto) {
-    return this.postRepository.addCommentCount(data);
+  increaseCommentCount(data: CommentDto) {
+    return this.postRepository.increaseCommentCount(data);
   }
 
   async getPostsByHashtag(
@@ -102,17 +101,15 @@ export class PostManager {
   deletePost(body: { postId: string }, userId) {
     //pgdg에서 포스트삭제
     this.postRepository.postTable.db.delete(body.postId);
-
     //엘라스틱에서 포스트삭제, 태그카운트 감소
     this.searchService.deletePost(body);
-
-    this.userService.decreatePostCount({ ...body, userId });
-
+    this.userService.decreasePostCount({ ...body, userId });
+    //사진url 삭제
     this.metadataService.deleteMetadata(body.postId);
     return;
   }
-  decrementCommentCount(postId) {
-    return this.postRepository.decrementCommentCount(postId);
+  decreaseCommentCount(postId) {
+    return this.postRepository.decreaseCommentCount(postId);
   }
 
   async getCommentPageContent(data: { postId: string; userId: number }) {
@@ -160,12 +157,12 @@ export class PostManager {
     return this.postRepository.getPostIdsOrderByLikes(data.page);
   }
 
-  addLike(data: { postId: string; type: 'post' }) {
-    return this.postRepository.postTable.addLike(data);
+  increaseLikeCount(data: { postId: string; type: 'post' }) {
+    return this.postRepository.postTable.increaseLikeCount(data);
   }
 
-  removeLike(data: { postId: string; type: 'post' }) {
-    return this.postRepository.postTable.removeLike(data);
+  decreaseLikeCount(data: { postId: string; type: 'post' }) {
+    return this.postRepository.postTable.decreaseLikeCount(data);
   }
 
   /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 작정자 정보 */

@@ -119,9 +119,6 @@ export class UserService {
     };
   }
 
-  decreatePostCount(data: { postId: string; userId: string }) {
-    return this.userRepo.decreasePostCount(data);
-  }
   getUserinfoByUsername(username) {
     return this.userRepo.getUserinfoByUsername(username);
   }

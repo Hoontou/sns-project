@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../../common/Navbar/Navbar';
 import SearchPostList from './SearchPostList';
+import { authHoc } from '../../../common/auth.hoc';
 
 //커밋로그
 // 해시태그 검색결과를 프런트로 가져오기까지 완료, 이제 postlist.tsx를 보면서 무한스크롤 등등 비슷하게 구현 시작
@@ -18,6 +19,14 @@ const SearchPostsByHashtagResultPage = () => {
     if (targetHashtag === undefined) {
       navigate('/');
     }
+
+    authHoc().then((res) => {
+      if (res.success === false) {
+        alert('auth failed, need login');
+        navigate('/signin');
+        return;
+      }
+    });
   }, []);
 
   return (

@@ -10,6 +10,7 @@ import CommentMenu from '../../../common/Comment/CommentMenu';
 import { renderTitle } from '../../../common/Post/PostFooter';
 import { getElapsedTimeString } from '../../../../common/date.parser';
 import { axiosInstance } from '../../../../App';
+import { authHoc } from '../../../../common/auth.hoc';
 
 const emptyCommentItemContent: CommentItemContent = {
   liked: false,
@@ -78,6 +79,14 @@ const HighlightCocommentPage = () => {
   };
 
   useEffect(() => {
+    authHoc().then((res) => {
+      if (res.success === false) {
+        alert('Err while Authentication, need login');
+        navigate('/signin');
+        return;
+      }
+    });
+
     getComment();
   }, []);
 

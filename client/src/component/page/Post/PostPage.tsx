@@ -15,6 +15,7 @@ import {
 import Navbar from '../../common/Navbar/Navbar';
 import { axiosInstance } from '../../../App';
 import { MetadataSchemaType } from 'sns-interfaces';
+import { authHoc } from '../../../common/auth.hoc';
 
 const PostPage = () => {
   const { postId } = useParams(); //url에서 가져온 username
@@ -72,6 +73,14 @@ const PostPage = () => {
   }, [metadata]);
 
   useEffect(() => {
+    authHoc().then((res) => {
+      if (res.success === false) {
+        alert('Err while Authentication, need login');
+        navigate('/signin');
+        return;
+      }
+    });
+
     getPost();
 
     setDisplayPostMenu(userId === metadata.userId ? true : false);

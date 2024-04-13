@@ -18,11 +18,11 @@ export class PostRepository {
   addPost(data: PostDto) {
     return this.postTable.addPost(data);
   }
-  addCommentCount(data: CommentDto) {
+  increaseCommentCount(data: CommentDto) {
     return this.postTable.addCommentCount(data.postId);
   }
 
-  decrementCommentCount(postId) {
+  decreaseCommentCount(postId) {
     return this.postTable.db.decrement({ id: postId }, 'commentcount', 1);
   }
 

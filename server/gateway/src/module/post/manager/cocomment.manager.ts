@@ -92,7 +92,7 @@ export class CocommentManager {
   async addCocomment(cocommentDto: CocommentDto) {
     const insertedRow =
       await this.cocommentRepository.addCocomment(cocommentDto);
-    this.commentManager.addCocommentCount(cocommentDto);
+    this.commentManager.increaseCocommentCount(cocommentDto);
 
     const decUserId = Number(crypter.decrypt(cocommentDto.userId));
     const decCommentOwnerUserId = Number(
@@ -130,11 +130,11 @@ export class CocommentManager {
     return;
   }
 
-  addLike(data: { cocommentId: number; type: 'cocomment' }) {
-    return this.cocommentRepository.cocommentTable.addLike(data);
+  increaseLikeCount(data: { cocommentId: number; type: 'cocomment' }) {
+    return this.cocommentRepository.cocommentTable.increaseLikeCount(data);
   }
 
-  removeLike(data: { cocommentId: number; type: 'cocomment' }) {
-    return this.cocommentRepository.cocommentTable.removeLike(data);
+  decreaseLikeCount(data: { cocommentId: number; type: 'cocomment' }) {
+    return this.cocommentRepository.cocommentTable.decreaseLikeCount(data);
   }
 }

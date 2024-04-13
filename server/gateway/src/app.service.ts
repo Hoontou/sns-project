@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserService } from './module/user/user.service';
 import { FflService } from './module/ffl/ffl.service';
 import { PostService } from './module/post/post.service';
@@ -14,14 +14,17 @@ export class AppService {
   constructor(
     private userService: UserService,
     private fflService: FflService,
-    @Inject(forwardRef(() => PostService))
     private postService: PostService,
-    @Inject(forwardRef(() => MetadataService))
     private metadataService: MetadataService,
   ) {}
 
   /**랜딩페이지, 팔로우목록의 최근 3일 포스트를 가져온다. */
-  async landing(userId: number, page: number) {
+  async landing(
+    userId: number,
+    page: number,
+  ): Promise<{
+    last3daysPosts: LandingContent[];
+  }> {
     //가져올게 아무것도 없을 시 metadatas.map 에서 오류남. 추후 수정필요.
     //1 팔로우 목록 가져오기
 

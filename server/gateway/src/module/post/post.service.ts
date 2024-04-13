@@ -78,27 +78,27 @@ export class PostService {
     return this.postManager.getCommentPageContent(data);
   }
 
-  addLike(data: AddLikeType) {
+  increaseLikeCount(data: AddLikeType) {
     if (data.type === 'post') {
-      return this.postManager.addLike(data);
+      return this.postManager.increaseLikeCount(data);
     }
     if (data.type === 'comment') {
-      return this.commentManager.addLike(data);
+      return this.commentManager.increaseLikeCount(data);
     }
     if (data.type === 'cocomment') {
-      return this.cocommentManager.addLike(data);
+      return this.cocommentManager.increaseLikeCount(data);
     }
   }
 
-  removeLike(data: AddLikeType) {
+  decreaseLikeCount(data: AddLikeType) {
     if (data.type === 'post') {
-      return this.postManager.removeLike(data);
+      return this.postManager.decreaseLikeCount(data);
     }
     if (data.type === 'comment') {
-      return this.commentManager.removeLike(data);
+      return this.commentManager.decreaseLikeCount(data);
     }
     if (data.type === 'cocomment') {
-      return this.cocommentManager.removeLike(data);
+      return this.cocommentManager.decreaseLikeCount(data);
     }
   }
 
