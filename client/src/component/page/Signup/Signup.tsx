@@ -31,6 +31,17 @@ const Signup = () => {
   const [username, setUsername] = useState('');
   const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
 
+  const registerTestAccounts = () => {
+    const tmp = ['1', '2', '3', '4', '5', '6'];
+    tmp.forEach((i) => {
+      axiosInstance.post('/auth/signup', {
+        email: i + 'test@gmail.com',
+        username: i + 'test',
+        password: 'test',
+      });
+    });
+  };
+
   const onEmailHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.currentTarget.value);
   };
@@ -43,6 +54,11 @@ const Signup = () => {
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (username === '테스트계정등록') {
+      registerTestAccounts();
+      return;
+    }
 
     setOpenBackSpin(true);
     const signUpForm: SignUpDto = {

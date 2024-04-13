@@ -12,7 +12,7 @@ import { crypter } from 'src/common/crypter';
 import { pgdb } from '../../configs/postgres';
 
 export interface GetUserInfoData {
-  id: number;
+  userId: number;
   follower: number;
   following: number;
   postcount: number;

@@ -93,13 +93,13 @@ export class AppService {
     //my or targets info
     const tmpInfo = {
       ...userinfo,
-      userId: crypter.encrypt(userinfo.id),
+      userId: crypter.encrypt(userinfo.userId),
       id: undefined,
     };
     const encryptedMyUserId = crypter.encrypt(userId);
 
     // 팔로우 체크할 필요없으면 그냥 펄스넣어서 리턴.
-    if (userinfo.id === userId) {
+    if (userinfo.userId === userId) {
       return {
         success: true,
         userinfo: {
@@ -113,7 +113,7 @@ export class AppService {
 
     //팔로우체크후 리턴, 여기까지왔으면 아래는 진짜 아이디만 들어감.
     const { followed } = await this.fflService.checkFollowed({
-      userTo: userinfo.id, //상대를 내가 팔로우했나?
+      userTo: userinfo.userId, //상대를 내가 팔로우했나?
       userFrom: userId,
     });
     return {

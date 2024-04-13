@@ -113,7 +113,7 @@ export class UserService {
     }
 
     return {
-      userId: crypter.encrypt(result.id),
+      userId: crypter.encrypt(result.userId),
       follower: result.follower,
       following: result.following,
     };
