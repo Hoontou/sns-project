@@ -99,6 +99,7 @@ export class ElasticIndex {
       });
   }
 
+  /** 일치하는 태그를 가지고 있는 게시물 검색, 최근삽입 순으로 가져옴*/
   getPostsByHashtag(page: number, hashtag: string) {
     const pageSize = 12; // 페이지당 수
 
@@ -112,10 +113,18 @@ export class ElasticIndex {
             tags: hashtag,
           },
         },
+        sort: [
+          {
+            _doc: {
+              order: 'desc',
+            },
+          },
+        ],
       },
     });
   }
 
+  /**게시글의 title에 string을 접두사로 하는 단어가 있으면 가져옴 */
   searchPostsByTitle(page: number, searchString: string) {
     const pageSize = 12; // 페이지당 수
 
@@ -133,6 +142,7 @@ export class ElasticIndex {
     });
   }
 
+  /**string을 접두사로 하는 태그를 먼저 가져오고, ~string~의 와일드 카드로 가져옴 */
   searchTags(page: number, size: number, searchString: string) {
     return this.client.search({
       index: this.SnsTagsIndex,
@@ -140,8 +150,15 @@ export class ElasticIndex {
         from: page * size, // 시작 인덱스 계산
         size: size,
         query: {
-          prefix: {
-            tagName: searchString,
+          bool: {
+            should: [
+              {
+                prefix: { tagName: searchString },
+              },
+              {
+                wildcard: { tagName: '*' + searchString + '*' },
+              },
+            ],
           },
         },
       },
@@ -165,6 +182,7 @@ export class ElasticIndex {
     });
   }
 
+  /**string을 접두사로 하는 유저를 먼저 가져오고, ~string~의 와일드 카드로 가져옴 */
   async searchUserByString(
     page,
     searchString,
@@ -179,7 +197,7 @@ export class ElasticIndex {
   > {
     const pageSize = 20; // 페이지당 수
 
-    const string = '*' + searchString + '*';
+    const wildString = '*' + searchString + '*';
 
     //와일드카드(프리픽스랑 비슷한듯)로 검색을 여러필드에서 수행함
     //이거 개느릴거같은데??
@@ -192,19 +210,24 @@ export class ElasticIndex {
           bool: {
             should: [
               {
+                prefix: { username: searchString },
+              },
+              {
+                prefix: { introduceName: searchString },
+              },
+              {
                 wildcard: {
-                  username: string,
+                  username: wildString,
                 },
               },
               {
                 wildcard: {
-                  introduceName: string,
+                  introduceName: wildString,
                 },
               },
             ],
           },
         },
-        sort: [{ _score: { order: 'desc' } }],
       },
     });
 
@@ -220,15 +243,22 @@ export class ElasticIndex {
 
     return userList;
   }
-
+  /**searchUserByString메서드와 비슷한데, 유저를 태그할 용도로 쓰이는 메서드라서 username에만 검색함. */
   searchUsername(size: number, searchString: string) {
     return this.client.search({
       index: this.SnsUsersIndex,
       body: {
         size: size,
         query: {
-          prefix: {
-            username: searchString,
+          bool: {
+            should: [
+              {
+                prefix: { username: searchString },
+              },
+              {
+                wildcard: { username: '*' + searchString + '*' },
+              },
+            ],
           },
         },
       },
