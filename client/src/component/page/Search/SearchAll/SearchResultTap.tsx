@@ -45,7 +45,6 @@ export const SearchResultTab = (props: {
         {/* 원래 SearchBar 컴포넌트는 부모에 있었음, props도 단지 searchbar에 넘기기 위해서 받아온것들임 */}
         <div
           style={{
-            margin: '0 auto',
             width: '95%',
             paddingTop: '0.5rem',
           }}

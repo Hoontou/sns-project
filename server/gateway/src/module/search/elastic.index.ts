@@ -179,9 +179,10 @@ export class ElasticIndex {
   > {
     const pageSize = 20; // 페이지당 수
 
-    const string = searchString + '*';
+    const string = '*' + searchString + '*';
 
     //와일드카드(프리픽스랑 비슷한듯)로 검색을 여러필드에서 수행함
+    //이거 개느릴거같은데??
     const result = await this.client.search({
       index: this.SnsUsersIndex,
       body: {
@@ -200,14 +201,10 @@ export class ElasticIndex {
                   introduceName: string,
                 },
               },
-              {
-                wildcard: {
-                  introduce: string,
-                },
-              },
             ],
           },
         },
+        sort: [{ _score: { order: 'desc' } }],
       },
     });
 

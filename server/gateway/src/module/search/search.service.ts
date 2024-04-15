@@ -59,6 +59,7 @@ export class SearchService {
       data.page,
       data.hashtag,
     );
+    console.log(result);
 
     const postIdList: string[] = result.body.hits.hits.map((item) => {
       return item._id;
