@@ -21,7 +21,7 @@ const Signin = () => {
   const tryTestAccount = (target: string) => {
     alert('다른 사용자가 이 계정으로 로그인 시 당신은 로그인 해제됩니다.');
 
-    const testEmail = target + 'test@gmail.com';
+    const testEmail = 'test' + target + '@gmail.com';
     const testPassword = 'test';
 
     axiosInstance
