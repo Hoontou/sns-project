@@ -37,8 +37,8 @@ const Signup = () => {
     );
     tmp.forEach((i) => {
       axiosInstance.post('/auth/signup', {
-        email: i + 'test@gmail.com',
-        username: i + 'test',
+        email: 'test' + i + '@gmail.com',
+        username: 'test' + i,
         password: 'test',
       });
     });
