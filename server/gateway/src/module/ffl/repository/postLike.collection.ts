@@ -14,10 +14,6 @@ import {
   userinfo,
 } from '../common/userlist.cache.manager';
 import { findMatchingIndices } from './follow.collection';
-import {
-  emptyMetadata,
-  MetadataDto,
-} from '../../../module/metadata/repository/metadata.collection';
 @Injectable()
 export class PostLikeCollection {
   private logger = new Logger(PostLikeCollection.name);
@@ -120,9 +116,12 @@ export class PostLikeCollection {
     return findMatchingIndices(tmpAllUserList, data.searchString);
   }
 
-  async getMyLikes(data: { userId: number; page: number }) {
+  async getMyLikes(data: {
+    userId: number;
+    page: number;
+  }): Promise<PostLikeSchemaDefinitionExecPop[]> {
     const len = 12;
-    const _ids = await this.postLikeModel
+    return this.postLikeModel
       .find({
         userId: data.userId,
       })
@@ -131,21 +130,5 @@ export class PostLikeCollection {
       .limit(len)
       .skip(len * data.page)
       .lean();
-
-    const tmp: MetadataDto[] = _ids.map(
-      (i: PostLikeSchemaDefinitionExecPop) => {
-        const metadata: MetadataDto = i.metadataPop
-          ? {
-              ...i.metadataPop,
-              _id: i.metadataPop._id.toString(),
-              userId: crypter.encrypt(i.userId),
-            }
-          : emptyMetadata;
-
-        return metadata;
-      },
-    );
-
-    return tmp;
   }
 }

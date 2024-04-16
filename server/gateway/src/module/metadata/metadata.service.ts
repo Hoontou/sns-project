@@ -7,6 +7,7 @@ import {
 import { UploadMessage } from 'sns-interfaces';
 import { PostService } from '../post/post.service';
 import { FflService } from '../ffl/ffl.service';
+import { PostLikeSchemaDefinitionExecPop } from '../ffl/repository/schema/postLike.schema';
 
 @Injectable()
 export class MetadataService {
@@ -110,8 +111,20 @@ export class MetadataService {
   async getMyCollection(data: { page: number; userId: number }): Promise<{
     metadatas: MetadataDto[];
   }> {
-    const myCollections = await this.fflService.getMyLikes(data);
+    const myLikesPost_ids = await this.fflService.getMyLikes(data);
 
-    return { metadatas: myCollections };
+    const tmp: MetadataDto[] = [];
+
+    myLikesPost_ids.forEach((i: PostLikeSchemaDefinitionExecPop) => {
+      if (i.metadataPop) {
+        tmp.push({
+          ...i.metadataPop,
+          _id: i.metadataPop._id.toString(),
+          userId: crypter.encrypt(i.userId),
+        });
+      }
+    });
+
+    return { metadatas: tmp };
   }
 }
