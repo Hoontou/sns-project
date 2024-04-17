@@ -125,10 +125,10 @@ export class ElasticIndex {
   }
 
   /**게시글의 title에 string을 접두사로 하는 단어가 있으면 가져옴 */
-  searchPostsByTitle(page: number, searchString: string) {
+  async searchPostsByTitle(page: number, searchString: string) {
     const pageSize = 12; // 페이지당 수
 
-    return this.client.search({
+    const res = await this.client.search({
       index: this.SnsPostsIndex,
       body: {
         from: page * pageSize, // 시작 인덱스 계산
@@ -138,11 +138,18 @@ export class ElasticIndex {
             title: searchString,
           },
         },
+        sort: [
+          {
+            _score: { order: 'desc' },
+          },
+        ],
       },
     });
+
+    return res;
   }
 
-  /**string을 접두사로 하는 태그를 먼저 가져오고, ~string~의 와일드 카드로 가져옴 */
+  /**prefix로 우선적으로 찾아보고, size가 남으면 와일드 카드로도 찾아봄*/
   searchTags(page: number, size: number, searchString: string) {
     return this.client.search({
       index: this.SnsTagsIndex,
@@ -241,7 +248,7 @@ export class ElasticIndex {
 
     return userList;
   }
-  /**searchUserByString메서드와 비슷한데, 유저를 태그할 용도로 쓰이는 메서드라서 username에만 검색함. */
+  /**prefix로 우선적으로 찾아보고, size가 남으면 와일드 카드로도 찾아봄*/
   searchUsername(size: number, searchString: string) {
     return this.client.search({
       index: this.SnsUsersIndex,
@@ -298,7 +305,7 @@ export class ElasticIndex {
         body: {
           mappings: {
             properties: {
-              tagName: { type: 'text' },
+              tagName: { type: 'keyword' },
               count: { type: 'integer' },
             },
           },

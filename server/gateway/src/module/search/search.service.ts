@@ -176,7 +176,7 @@ export class SearchService {
   }
 
   async searchUserOrHashtag(string: string): Promise<SearchResult> {
-    const pageSize = 7;
+    const pageSize = 10;
 
     const type = string.at(0);
     const searchString = string.substring(1);
