@@ -134,7 +134,7 @@ export class ElasticIndex {
         from: page * pageSize, // 시작 인덱스 계산
         size: pageSize,
         query: {
-          match: {
+          prefix: {
             title: searchString,
           },
         },
