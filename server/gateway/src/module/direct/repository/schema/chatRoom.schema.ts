@@ -44,7 +44,8 @@ export class ChatRoomSchemaDefinition {
 export const ChatRoomSchema = SchemaFactory.createForClass(
   ChatRoomSchemaDefinition,
 );
-ChatRoomSchema.index({ ownerUserId: 1, chatWithUserId: 1 });
+ChatRoomSchema.index({ chatRoomId: 1 });
+ChatRoomSchema.index({ lastUpdatedAt: 1 });
 
 ChatRoomSchema.virtual('userPop', {
   ref: 'user',

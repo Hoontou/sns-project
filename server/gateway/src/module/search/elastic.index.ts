@@ -166,17 +166,15 @@ export class ElasticIndex {
   }
 
   decrementPostCountOfHashtag(tag: string) {
-    return this.client.updateByQuery({
+    return this.client.update({
       index: this.SnsTagsIndex,
+      id: tag,
       body: {
         script: {
-          source: 'ctx._source.count--',
+          //https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/update_examples.html
+          //integer값을 증가시키는법
           lang: 'painless',
-        },
-        query: {
-          term: {
-            tagName: tag,
-          },
+          source: 'ctx._source.count--',
         },
       },
     });

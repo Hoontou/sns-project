@@ -17,4 +17,3 @@ export class CommentLikeSchemaDefinition {
 export const CommentLikeSchema = SchemaFactory.createForClass(
   CommentLikeSchemaDefinition,
 );
-CommentLikeSchema.index({ userId: 1, commentId: 1 }, { unique: true });
