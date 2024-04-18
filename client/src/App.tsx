@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from 'react-router-dom';
 import Signup from './component/page/Signup/Signup';
 import Signin from './component/page/Signin/Signin';
 import Upload from './component/page/Upload/Upload';
@@ -19,6 +24,7 @@ import InBox from './component/page/Dm/Inbox/DmInbox';
 import DmChatRoom from './component/page/Dm/chatroom/DmChatRoom';
 import CollectionPage from './component/page/Collection/CollectionPage';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 export const history = createBrowserHistory();
 export const primaryColor = '#3f50b5';
@@ -83,10 +89,22 @@ function App() {
           <Route path='/direct/t/:chatRoomId' element={<DmChatRoom />} />
 
           <Route path='/collections' element={<CollectionPage />} />
+
+          <Route path='/*' element={<NoMatch />} />
         </Routes>
       </Router>
     </>
   );
 }
 
+const NoMatch = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    alert('Invalid Access');
+    navigate(-1);
+    return;
+  }, []);
+
+  return <></>;
+};
 export default App;
