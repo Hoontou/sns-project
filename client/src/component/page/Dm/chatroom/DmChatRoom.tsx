@@ -11,6 +11,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { IoArrowDownOutline } from 'react-icons/io5';
 import { Backdrop, CircularProgress } from '@mui/material';
 
+const pageSize = 40; //dm 40개씩 보내줌
+
 const DmChatRoom = () => {
   const navigate = useNavigate();
   const { chatRoomId } = useParams();
@@ -90,93 +92,111 @@ const DmChatRoom = () => {
 
         return;
       }
+      //1. 연결요청
+      const socket = io('/direct');
+      socket.on('disconnect', () => {
+        alert('서버와 연결이 끊어졌어요. 나중에 다시 시도해주세요.');
+        navigate('/');
+        return;
+      });
 
-      const socket = io('/direct', {
-        extraHeaders: {
-          userid: res.userId,
+      //2. 서버에서 핸들러 등록 전 정보요청
+      socket.on('gimmeUrState', (callback) => {
+        return callback({
+          userId: res.userId,
           location: chatRoomId === undefined ? '' : chatRoomId,
-        },
-      });
-
-      //room owner check 실패 시 튕김
-      socket.on('cannotEnter', () => {
-        socket.close();
-        alert('cannot enter chat room');
-        navigate('/direct/inbox');
-        return;
-      });
-
-      socket.on('getFriendsInfo', (data: { friendsInfo: DirectUserInfo }) => {
-        setFriendsInfo(data.friendsInfo);
-      });
-
-      socket.on('getMessages', (data: { messages: DirectMessage[] }) => {
-        if (data.messages.length < 40) {
-          setHasMore(false);
-        }
-
-        if (data.messages.length === 0) {
-          return;
-        }
-
-        setLastId(data.messages[data.messages.length - 1].id - 1);
-
-        setMessages((prevMessages) => {
-          return [...prevMessages, ...data.messages];
         });
       });
 
-      socket.on('receiveNewMessage', (data: { message: DirectMessage }) => {
-        setMessages((prev) => {
-          return [data.message, ...prev];
-        });
-        if (!watchingScrollTarget) {
-          return;
-        }
-
-        if (watchingScrollTarget.scrollTop < -200) {
-          setShowingNewMessageButton(true);
-          return;
-        }
-
-        //맨밑 내려가는거 바로하면 제대로 안가져서 딜레이시킴
-        setTimeout(() => {
-          scrollToBottom();
-        }, 200);
-
-        return;
-      });
-
-      //전송에 성공이든 실패든, signal 받으면 tmpId를 -1로 바꿔야함
-      //tmpId 보고 spinning 돌릴 지 판단.
-      //전송 실패시 글을 '전송실패'로 바꾸기
-      socket.on(
-        'sendingSuccess',
-        (data: { tmpId: number; isRead: boolean }) => {
-          setProcessedMessage({
-            tmpId: data.tmpId,
-            state: 'success',
-            isRead: data.isRead,
-          });
-          return;
-        }
-      );
-      socket.on('sendingFailed', (data: { tmpId: number }) => {
-        setProcessedMessage({ tmpId: data.tmpId, state: 'fail' });
-
-        return;
-      });
-
-      socket.on('readSignal', (data: any) => {
-        setReadSignal(true);
-      });
-
+      //3. 서버는 ready 됐다고 답장온거임
+      //핸들러 등록
       socket.on('init', () => {
         setSocket(socket);
+
+        //room owner check 실패 시 튕김
+        socket.on('cannotEnter', () => {
+          socket.close();
+          alert('cannot enter chat room');
+          navigate('/direct/inbox');
+          return;
+        });
+
+        socket.on('getFriendsInfo', (data: { friendsInfo: DirectUserInfo }) => {
+          setFriendsInfo(data.friendsInfo);
+        });
+
+        socket.on('getMessages', (data: { messages: DirectMessage[] }) => {
+          if (data.messages.length < pageSize) {
+            setHasMore(false);
+          }
+
+          if (data.messages.length === 0) {
+            return;
+          }
+
+          setLastId(data.messages[data.messages.length - 1].id - 1);
+
+          setMessages((prevMessages) => {
+            return [...prevMessages, ...data.messages];
+          });
+        });
+
+        socket.on('receiveNewMessage', (data: { message: DirectMessage }) => {
+          setMessages((prev) => {
+            return [data.message, ...prev];
+          });
+          if (!watchingScrollTarget) {
+            return;
+          }
+
+          if (watchingScrollTarget.scrollTop < -200) {
+            setShowingNewMessageButton(true);
+            return;
+          }
+
+          //맨밑 내려가는거 바로하면 제대로 안가져서 딜레이시킴
+          setTimeout(() => {
+            scrollToBottom();
+          }, 200);
+
+          return;
+        });
+
+        //전송에 성공이든 실패든, signal 받으면 tmpId를 -1로 바꿔야함
+        //tmpId 보고 spinning 돌릴 지 판단.
+        //전송 실패시 글을 '전송실패'로 바꾸기
+        socket.on(
+          'sendingSuccess',
+          (data: { tmpId: number; isRead: boolean }) => {
+            setProcessedMessage({
+              tmpId: data.tmpId,
+              state: 'success',
+              isRead: data.isRead,
+            });
+            return;
+          }
+        );
+        socket.on('sendingFailed', (data: { tmpId: number }) => {
+          setProcessedMessage({ tmpId: data.tmpId, state: 'fail' });
+
+          return;
+        });
+
+        socket.on('readSignal', (data: any) => {
+          setReadSignal(true);
+        });
+
+        socket.on('disconnect', () => {
+          alert('서버와 연결이 끊어졌어요. 나중에 다시 시도해주세요.');
+          navigate('/');
+          return;
+        });
+
+        //핸들러 등록 후 data 요청
+        socket.emit('getFriendsInfo');
+        socket.emit('getMessages', { startAt: lastId });
         setOpenBackSpin(false);
       });
-
-      socket.emit('getMessages', { startAt: lastId });
     });
 
     return () => {

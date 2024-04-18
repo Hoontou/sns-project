@@ -47,7 +47,9 @@ export const ChatRoomSchema = SchemaFactory.createForClass(
 ChatRoomSchema.index({ chatRoomId: 1 });
 ChatRoomSchema.index({ lastUpdatedAt: 1 });
 
-ChatRoomSchema.virtual('userPop', {
+export const UserPop = 'userPop';
+
+ChatRoomSchema.virtual(UserPop, {
   ref: 'user',
   localField: 'chatWithUserId',
   foreignField: 'userId',

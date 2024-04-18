@@ -14,33 +14,70 @@ export class DirectGateway implements OnGatewayConnection {
   private readonly logger = new Logger(DirectGateway.name);
   constructor(private directService: DirectService) {}
 
+  private async initUserState(socket: Socket): Promise<{
+    userId: number;
+    userLocation: string | 'inbox';
+  }> {
+    return new Promise((resolve, reject) => {
+      //3초
+      const timeoutSec = 3000;
+
+      const timer = setTimeout(() => {
+        reject('direct init time out');
+      }, timeoutSec);
+
+      //소켓연결 후 정보요청 보냄
+      socket.emit(
+        'gimmeUrState',
+        (res: { userId: string; location: string | 'inbox' }) => {
+          clearTimeout(timer);
+          resolve({
+            userId: crypter.decrypt(res.userId),
+            userLocation: res.location,
+          });
+        },
+      );
+    });
+  }
+
   @WebSocketServer()
   server: Server;
 
   async handleConnection(socket: Socket) {
     this.logger.debug('direct socket connected');
-    console.log(socket.handshake.headers);
 
-    const decUserId = crypter.decrypt(
-      socket.handshake.headers.userid as string,
+    const { userId, userLocation } = await this.initUserState(socket).catch(
+      (err) => {
+        this.logger.error(err);
+        return { userId: 0, userLocation: '0' };
+      },
     );
-    const userLocation = socket.handshake.headers.location as string | 'inbox';
+
+    //init 타임아웃 시 조기종료
+    if (userId === 0) {
+      this.logger.error('socket disconnected because init timeout');
+      socket.disconnect();
+      return;
+    }
 
     try {
-      //유저 등록하고 위치한 chatroom 정보 가져오기
+      //1.유저 정보요청 보냄
+
+      //2. 유저 등록하고 위치한 chatroom 정보 가져오기
       //inbox면 empty값임.
       const chatRoom: ChatRoomSchemaDefinitionExecPop =
         await this.directService.registerUser({
-          userId: decUserId,
+          userId: userId,
           userLocation,
           socket,
         });
 
-      //등록완료 후 데이터전송
+      //3. 이후 핸들러 등록
 
-      //챗룸들어왔으면 누구랑 dm하는지 정보전송, 안읽은 메세지 읽음처리
-      if (userLocation !== 'inbox') {
-        //3-1) 상대 userinfo 전송
+      /**chatroom에 들어와서 상대 정보 요청받는 핸들러*/
+      socket.on('getFriendsInfo', () => {
+        console.log(1);
+        //1) 상대 userinfo 전송
         const friendsInfo = chatRoom.userPop && {
           username: chatRoom.userPop.username,
           introduce: chatRoom.userPop.introduce,
@@ -49,14 +86,15 @@ export class DirectGateway implements OnGatewayConnection {
         };
         socket.emit('getFriendsInfo', { friendsInfo });
 
-        //3-2) unread였던 채팅기록 read처리
+        //2) unread였던 채팅기록 read처리
+        // + 상대가 채팅에 들어와있다면 실시간 읽음처리 소켓전송
         this.directService.readMessages(chatRoom);
-        //3-2++) 상대가 채팅에 들어와있다면 실시간 읽음처리 socket emit 보내기
-        socket.emit('init');
-      }
+      });
 
-      //3-3) 채팅기록 싹다 긁어와서 전송
+      /**chatroom에 들어와서 채팅기록 요청받는 핸들러*/
       socket.on('getMessages', async (data: { startAt?: number }) => {
+        console.log(2);
+
         return await this.directService.getMessages(
           socket,
           chatRoom,
@@ -64,13 +102,14 @@ export class DirectGateway implements OnGatewayConnection {
         );
       });
 
-      //2-2. inbox 입장
-      //2) 내 채팅방 긁어와서 클라이언트에 전송
+      /**inbox에 들어와서 내 채팅방 전송 요청받는 핸들러 */
       socket.on('getInbox', (data: { page: number }) => {
-        return this.directService.getDataForInbox(decUserId, data.page, socket);
+        console.log(3);
+
+        return this.directService.getDataForInbox(userId, data.page, socket);
       });
 
-      //3. dm 전송
+      /**chatroom에서 메세지 전송 핸들러 */
       socket.on(
         'sendMessage',
         (data: {
@@ -80,6 +119,8 @@ export class DirectGateway implements OnGatewayConnection {
             tmpId: number;
           };
         }) => {
+          console.log(4);
+
           this.directService.sendMessage({
             messageForm: data.messageForm,
             chatRoom,
@@ -92,10 +133,20 @@ export class DirectGateway implements OnGatewayConnection {
 
       //4. dm 나가기
       socket.on('disconnecting', () => {
-        this.directService.exitDirect(decUserId);
+        console.log(5);
+
+        this.directService.exitDirect(userId);
       });
+
+      //서버측에서 on 등록 후 ready 전송
+      socket.emit('init');
     } catch (error) {
-      console.log(error);
+      //에러 시 exit처리 후 연결끊기
+      this.logger.error(error);
+      this.logger.error('socket disconnected because err');
+      this.directService.exitDirect(userId);
+
+      socket.disconnect();
     }
   }
 }

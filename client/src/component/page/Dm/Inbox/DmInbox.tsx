@@ -10,13 +10,12 @@ import { InboxCard } from './InboxCard';
 import { ChatRoomWithUserPop } from '../interfaces';
 import Navbar from '../../../common/Navbar/Navbar';
 
-const pageItemLen = 12; //12개씩 서버에서 보내줌
+const pageItemLen = 20; //12개씩 서버에서 보내줌
 
 const InBox = () => {
   const navigate = useNavigate();
 
   const [page, setPage] = useState<number>(0);
-  const [spin, setSpin] = useState<boolean>(true);
   const [chatRooms, setChatRooms] = useState<ChatRoomWithUserPop[]>([]);
   const [hasMoreChatRooms, setHasMoreChatRooms] = useState<boolean>(true);
   const [myUsername, setMyUsername] = useState<string>('');
@@ -37,9 +36,7 @@ const InBox = () => {
   };
 
   const getChatRooms = () => {
-    setSpin(true);
     dmsocket?.emit('getInbox', { page });
-    setPage(page + 1);
   };
 
   useEffect(() => {
@@ -52,39 +49,52 @@ const InBox = () => {
       }
       setMyUsername(res.username);
 
-      const socket = io('/direct', {
-        extraHeaders: {
-          userid: res.userId,
+      //1. 연결요청
+      const socket = io('/direct');
+      socket.on('disconnect', () => {
+        alert('서버와 연결이 끊어졌어요. 나중에 다시 시도해주세요.');
+        navigate('/');
+        return;
+      });
+
+      //2. 서버에서 핸들러 등록 전 정보요청
+      socket.on('gimmeUrState', (callback) => {
+        return callback({
+          userId: res.userId,
           location: 'inbox',
-        },
+        });
       });
 
-      socket.on('getInbox', (data: { chatRooms: ChatRoomWithUserPop[] }) => {
-        if (data.chatRooms.length < pageItemLen) {
-          setHasMoreChatRooms(false);
-        }
-
-        setPage(page + 1);
-        setChatRooms([...chatRooms, ...data.chatRooms]);
-        setSpin(false);
-      });
-
-      //3 이후 서버가 날리는 실시간 정보 받아서 업데이트
-
-      socket.on(
-        'realTimeUpdateForInbox',
-        (data: { updatedChatRoom: ChatRoomWithUserPop }) => {
-          updateChatRooms(data.updatedChatRoom);
-        }
-      );
-
-      socket.on('init', () => {
+      //3. 서버는 ready 됐다고 답장온거임
+      //핸들러 등록
+      socket.on('init', (callback) => {
         setSocket(socket);
+
+        socket.on('getInbox', (data: { chatRooms: ChatRoomWithUserPop[] }) => {
+          console.log(1);
+          if (data.chatRooms.length < pageItemLen) {
+            setHasMoreChatRooms(false);
+          }
+
+          setPage(page + 1);
+          setChatRooms((prev) => {
+            return [...prev, ...data.chatRooms];
+          });
+        });
+
+        //3 이후 서버가 날리는 실시간 정보 받아서 업데이트
+
+        socket.on(
+          'realTimeUpdateForInbox',
+          (data: { updatedChatRoom: ChatRoomWithUserPop }) => {
+            updateChatRooms(data.updatedChatRoom);
+          }
+        );
+
+        //핸들러 등록 후 data 요청
+        socket.emit('getInbox', { page });
         setOpenBackSpin(false);
       });
-      socket.emit('getInbox', { page });
-
-      setSpin(false);
     });
 
     return () => {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../common/Navbar/Navbar';
 import LandingPost from './LandingPost';
 import LandingComment from './LandingComment';
-import { Box, Modal, Button, Grid } from '@mui/material';
+import { Box, Modal, Grid } from '@mui/material';
 import { LandingContent, defaultLandingContent } from './interface';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate } from 'react-router-dom';

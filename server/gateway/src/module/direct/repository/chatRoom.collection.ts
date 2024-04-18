@@ -5,6 +5,7 @@ import {
   ChatRoomDocument,
   ChatRoomSchemaDefinition,
   ChatRoomSchemaDefinitionExecPop,
+  UserPop,
 } from './schema/chatRoom.schema';
 import { pgdb } from '../../../configs/postgres';
 
@@ -36,7 +37,7 @@ export class ChatRoomCollection {
         ownerUserId: data.ownerUserId,
         chatRoomId: data.chatRoomId,
       })
-      .populate('userPop')
+      .populate(UserPop)
       .lean();
   }
 
@@ -130,10 +131,10 @@ export class ChatRoomCollection {
     userId: number,
     page: number,
   ): Promise<ChatRoomSchemaDefinitionExecPop[]> {
-    const size = 12;
+    const size = 20;
     return this.chatRoomModel
       .find({ ownerUserId: userId })
-      .populate('userPop')
+      .populate(UserPop)
       .sort({ lastUpdatedAt: -1 })
       .skip(page * size)
       .limit(size)
