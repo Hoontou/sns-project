@@ -89,7 +89,7 @@ export class FollowCollection {
     });
   }
 
-  async getAllFollowingUserIdListByUserId(userId: number): Promise<number[]> {
+  async getMyFollowingUserIds(userId: number): Promise<number[]> {
     const userIds = await this.followModel.find({ userFrom: userId });
 
     return userIds.map((item) => {

@@ -52,46 +52,16 @@ export class CocommentLikeCollection {
     return;
   }
 
-  async getCocommentLiked(data: { cocommentIdList: number[]; userId: number }) {
-    const likedList: CocommentLikeSchemaDefinition[] =
-      await this.cocommentLikeModel
-        .find({
-          cocommentId: { $in: data.cocommentIdList },
-          userId: data.userId,
-        })
-        .sort({ cocommentId: -1 })
-        .exec();
-
-    if (likedList.length === 0) {
-      return {
-        cocommentLikedList: Array(data.cocommentIdList.length).fill(false),
-      };
-    }
-
-    //투포인터로 밀고가면서 좋아요 체크결과 맞으면 true
-    let tmpIndex: number = 0;
-    const tmp = [...data.cocommentIdList].map((i) => {
-      if (i === likedList[tmpIndex].cocommentId) {
-        tmpIndex += 1;
-        return true;
-      }
-      return false;
-    });
-    return { cocommentLikedList: tmp };
-
-    //위는 제대로된 데이터만 들어온다면, index초과 오류는 안날거임.
-    //아래는 훨씬 느린 대신 index초과 따윈 없을거임
-
-    // console.log(data);
-    // console.log(likedList);
-
-    // const cocommentLikedList: boolean[] = Array(
-    //   data.cocommentIdList.length,
-    // ).fill(false);
-    // for (const i of likedList) {
-    //   cocommentLikedList[data.cocommentIdList.indexOf(i.cocommentId)] = true;
-    // }
-
-    // return { cocommentLikedList };
+  getCocommentLikes(data: {
+    cocommentIdList: number[];
+    userId: number;
+  }): Promise<CocommentLikeSchemaDefinition[]> {
+    return this.cocommentLikeModel
+      .find({
+        cocommentId: { $in: data.cocommentIdList },
+        userId: data.userId,
+      })
+      .sort({ cocommentId: -1 })
+      .exec();
   }
 }

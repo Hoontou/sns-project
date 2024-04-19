@@ -4,12 +4,12 @@ import { crypter } from 'src/common/crypter';
 import { AlertDto } from 'sns-interfaces/alert.interface';
 import { PostLikeCollection } from './repository/postLike.collection';
 import { PostService } from '../post/post.service';
-import { FflRepository } from './ffl.repository';
 import { CommentLikeCollection } from './repository/commentLike.collection';
 import { CocommentLikeCollection } from './repository/cocommentLike.collection';
 import { AlertService } from '../alert/alert.service';
 import { FollowCollection } from './repository/follow.collection';
 import { PostLikeSchemaDefinition } from './repository/schema/postLike.schema';
+import { CocommentLikeSchemaDefinition } from './repository/schema/cocommentLike.schema';
 
 @Injectable()
 export class FflService {
@@ -17,7 +17,6 @@ export class FflService {
 
   constructor(
     private userService: UserService,
-    private fflRepository: FflRepository,
     private followCollection: FollowCollection,
     private postLikeCollection: PostLikeCollection,
     private commentLikeCollection: CommentLikeCollection,
@@ -55,6 +54,7 @@ export class FflService {
     this.userService.increaseFollowCount(form);
     return;
   }
+
   async removeFollow(body: { userTo: string; userFrom: number }) {
     const userTo = crypter.decrypt(body.userTo);
     const form = { userTo, userFrom: body.userFrom };
@@ -95,9 +95,12 @@ export class FflService {
       return;
     }
 
-    if (body.userId !== crypter.decrypt(body.postOwnerUserId)) {
+    const decPostOwnerUserId = crypter.decrypt(body.postOwnerUserId);
+
+    //타인의 게시물에 좋아요 했으면 알림전송
+    if (body.userId !== decPostOwnerUserId) {
       const alertForm: AlertDto = {
-        userId: Number(crypter.decrypt(body.postOwnerUserId)),
+        userId: decPostOwnerUserId,
         content: {
           type: 'like',
           userId: Number(body.userId),
@@ -133,8 +136,7 @@ export class FflService {
     userList: { userId: string; img: string; username: string }[];
   }> {
     //1 먼저 userId들을 가져옴
-    const { userIds }: { userIds: number[] } =
-      await this.fflRepository.getUserIds(body);
+    const { userIds }: { userIds: number[] } = await this.getUserIdsByFfl(body);
 
     if (userIds.length === 0) {
       //1.1 없으면 빈리스트 리턴
@@ -159,10 +161,10 @@ export class FflService {
     };
   }
 
-  async getAllFollowingUserlistByUserId(userId: number) {
+  async getMyFollowingUserInfos(userId: number) {
     //1 먼저 userId들을 가져옴
     const userIds: number[] =
-      await this.fflRepository.getAllFollowingUserIdListByUserId(userId);
+      await this.followCollection.getMyFollowingUserIds(userId);
 
     if (userIds.length === 0) {
       //1.1 없으면 빈리스트 리턴
@@ -225,7 +227,25 @@ export class FflService {
   }): Promise<{
     commentLikedList: boolean[];
   }> {
-    return this.commentLikeCollection.getCommentLiked(data);
+    //각각의 댓글에 좋아요 저장된거 가져옴
+    const likesList = await this.commentLikeCollection.getCommentLiked(data);
+
+    if (likesList.length === 0) {
+      return {
+        commentLikedList: Array(data.commentIdList.length).fill(false),
+      };
+    }
+
+    //투포인터로 밀고가면서 좋아요 체크결과 맞으면 true
+    let tmpIndex: number = 0;
+    const tmp = [...data.commentIdList].map((i) => {
+      if (i === likesList[tmpIndex].commentId) {
+        tmpIndex += 1;
+        return true;
+      }
+      return false;
+    });
+    return { commentLikedList: tmp };
   }
 
   async getCocommentLiked(data: {
@@ -234,7 +254,26 @@ export class FflService {
   }): Promise<{
     cocommentLikedList: boolean[];
   }> {
-    return this.cocommentLikeCollection.getCocommentLiked(data);
+    //각각의 대댓글에 좋아요 저장된거 가져옴
+    const likesList: CocommentLikeSchemaDefinition[] =
+      await this.cocommentLikeCollection.getCocommentLikes(data);
+
+    if (likesList.length === 0) {
+      return {
+        cocommentLikedList: Array(data.cocommentIdList.length).fill(false),
+      };
+    }
+
+    //투포인터로 밀고가면서 좋아요 체크결과 맞으면 true
+    let tmpIndex: number = 0;
+    const tmp = [...data.cocommentIdList].map((i) => {
+      if (i === likesList[tmpIndex].cocommentId) {
+        tmpIndex += 1;
+        return true;
+      }
+      return false;
+    });
+    return { cocommentLikedList: tmp };
   }
 
   async searchUserFfl(data: {
@@ -242,7 +281,7 @@ export class FflService {
     searchString: string;
     target: string;
   }) {
-    const { userList } = await this.fflRepository.serchUserFfl(data);
+    const userList = await this.requestSearchingUsersByType(data);
     if (userList.length === 0) {
       return { userList: [] };
     }
@@ -251,5 +290,61 @@ export class FflService {
 
   getMyLikes(data: { userId: number; page: number }) {
     return this.postLikeCollection.getMyLikes(data);
+  }
+
+  /**target에 팔로우 | 팔로잉 | 좋아요 한 사람들 id 가져오는 */
+  private async getUserIdsByFfl(data: {
+    id: string | number;
+    type: 'like' | 'follower' | 'following'; //어떤 유저리스트를 요청하는지
+    page: number;
+  }): Promise<{
+    userIds: number[];
+  }> {
+    //좋아요 누른 사람들 or 팔로우 한 사람들 or 팔로잉 하는 사람들
+    if (data.type === 'like') {
+      return {
+        userIds: await this.postLikeCollection.getUserIds(
+          String(data.id), //_id
+          data.page,
+        ),
+      };
+    }
+
+    return {
+      userIds: await this.followCollection.getUserIds(
+        crypter.decrypt(data.id), //encrypted userId
+        data.type as 'follower' | 'following',
+        data.page,
+      ),
+    };
+  }
+
+  private requestSearchingUsersByType(data: {
+    type: 'like' | 'follower' | 'following';
+    searchString: string;
+    target: string;
+  }): Promise<
+    {
+      username: string;
+      introduceName: string;
+      img: string;
+    }[]
+  > {
+    if (data.type === 'follower') {
+      return this.followCollection.searchUserFollower({
+        targetUser: data.target,
+        searchString: data.searchString,
+      });
+    }
+    if (data.type === 'following') {
+      return this.followCollection.searchUserFollowing({
+        targetUser: data.target,
+        searchString: data.searchString,
+      });
+    }
+    return this.postLikeCollection.searchUserLike({
+      targetPostId: data.target,
+      searchString: data.searchString,
+    });
   }
 }

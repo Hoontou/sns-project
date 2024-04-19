@@ -28,8 +28,7 @@ export class AppService {
     //가져올게 아무것도 없을 시 metadatas.map 에서 오류남. 추후 수정필요.
     //1 팔로우 목록 가져오기
 
-    const { userList } =
-      await this.fflService.getAllFollowingUserlistByUserId(userId);
+    const { userList } = await this.fflService.getMyFollowingUserInfos(userId);
     userList.push({ userId: userId, username: '', img: '' });
 
     //2 유저들의 최근3일 meta 가져오기

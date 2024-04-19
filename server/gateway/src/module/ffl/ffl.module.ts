@@ -9,7 +9,6 @@ import { CommentLikeSchema } from './repository/schema/commentLike.schema';
 import { CocommentLikeSchema } from './repository/schema/cocommentLike.schema';
 import { PostLikeCollection } from './repository/postLike.collection';
 import { PostModule } from '../post/post.module';
-import { FflRepository } from './ffl.repository';
 import { CommentLikeCollection } from './repository/commentLike.collection';
 import { CocommentLikeCollection } from './repository/cocommentLike.collection';
 import { AlertModule } from '../alert/alert.module';
@@ -30,7 +29,6 @@ import { FollowCollection } from './repository/follow.collection';
   controllers: [FflController],
   providers: [
     FflService,
-    FflRepository,
     FollowCollection,
     PostLikeCollection,
     CommentLikeCollection,
