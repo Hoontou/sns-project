@@ -53,8 +53,7 @@ export class CocommentManager {
 
   async getHighlightCocomment(body: { cocommentId: number; userId: number }) {
     //1 commentId로 대댓 가져옴
-    const { cocommentItem } =
-      await this.cocommentRepository.cocommentTable.getCocomment(body);
+    const { cocommentItem } = await this.cocommentRepository.getCocomment(body);
 
     //대댓 찾기 miss나면 그냥 빈 리스트 리턴
     if (cocommentItem === undefined) {
@@ -94,9 +93,9 @@ export class CocommentManager {
       await this.cocommentRepository.addCocomment(cocommentDto);
     this.commentManager.increaseCocommentCount(cocommentDto);
 
-    const decUserId = Number(crypter.decrypt(cocommentDto.userId));
-    const decCommentOwnerUserId = Number(
-      crypter.decrypt(cocommentDto.commentOwnerUserId),
+    const decUserId = crypter.decrypt(cocommentDto.userId);
+    const decCommentOwnerUserId = crypter.decrypt(
+      cocommentDto.commentOwnerUserId,
     );
 
     this.alertService.sendUserTagAlertIfExist({
@@ -125,16 +124,23 @@ export class CocommentManager {
 
   deleteCocomment(body: { cocommentId: string; commentId }) {
     //cocomment Id로 삭제, comment에서 cocommentCount감소
-    this.cocommentRepository.deleteCocomment(body.cocommentId);
+    this.cocommentRepository.orm.delete(body.cocommentId);
     this.commentManager.decrementCocommentCount(body.commentId);
     return;
   }
 
   increaseLikeCount(data: { cocommentId: number; type: 'cocomment' }) {
-    return this.cocommentRepository.cocommentTable.increaseLikeCount(data);
+    return this.cocommentRepository.orm.increment(
+      { id: data.cocommentId },
+      'likes',
+      1,
+    );
   }
-
   decreaseLikeCount(data: { cocommentId: number; type: 'cocomment' }) {
-    return this.cocommentRepository.cocommentTable.decreaseLikeCount(data);
+    return this.cocommentRepository.orm.decrement(
+      { id: data.cocommentId },
+      'likes',
+      1,
+    );
   }
 }

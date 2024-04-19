@@ -17,9 +17,6 @@ import { CocommentManager } from './manager/cocomment.manager';
 import { CommentRepository } from './repository/comment.repository';
 import { CocommentRepository } from './repository/cocomment.repository';
 import { PostRepository } from './repository/post.repository';
-import { CommentTable } from './repository/table/comment.table';
-import { PostTable } from './repository/table/post.table';
-import { CocommentTable } from './repository/table/cocomment.table';
 
 @Module({
   imports: [
@@ -39,9 +36,6 @@ import { CocommentTable } from './repository/table/cocomment.table';
     PostRepository,
     CommentRepository,
     CocommentRepository,
-    PostTable,
-    CommentTable,
-    CocommentTable,
   ],
   exports: [PostService],
 })

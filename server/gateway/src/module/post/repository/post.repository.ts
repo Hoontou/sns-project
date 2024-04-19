@@ -1,33 +1,45 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PostContent } from 'sns-interfaces/client.interface';
 import { crypter } from 'src/common/crypter';
-import { PostDto, CommentDto } from '../dto/post.dto';
-import { CocommentTable } from './table/cocomment.table';
-import { CommentTable } from './table/comment.table';
-import { PostTable } from './table/post.table';
+import { PostDto } from '../dto/post.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Post } from './entity/post.entity';
+import { pgdb } from 'src/configs/postgres';
 
 @Injectable()
 export class PostRepository {
   private logger = new Logger(PostRepository.name);
 
   constructor(
-    public readonly postTable: PostTable,
-    public readonly commentTable: CommentTable,
-    public readonly cocommentTable: CocommentTable,
+    @InjectRepository(Post)
+    public readonly orm: Repository<Post>,
   ) {}
-  addPost(data: PostDto) {
-    return this.postTable.addPost(data);
-  }
-  increaseCommentCount(data: CommentDto) {
-    return this.postTable.addCommentCount(data.postId);
-  }
 
-  decreaseCommentCount(postId) {
-    return this.postTable.db.decrement({ id: postId }, 'commentcount', 1);
+  addPost(postDto: PostDto) {
+    const { postId, userId, title } = postDto;
+    this.orm
+      .createQueryBuilder()
+      .insert()
+      .into(Post)
+      .values({
+        id: postId,
+        title,
+        user: () => `${crypter.decrypt(String(userId))}`,
+      })
+      .execute()
+      .then(() => {
+        // this.logger.debug('post stored in pgdb successfully');
+      })
+      .catch((err) => {
+        this.logger.error('err when insert post table, at post.repo.ts', err);
+        throw new Error(err);
+      });
+    return;
   }
 
   async getPost(postId: string): Promise<PostContent> {
-    const post = await this.postTable.getPost(postId);
+    const post = await this.getPostById(postId);
 
     if (post === undefined) {
       this.logger.error('Err while getPost at post.repo.ts, must be not found');
@@ -42,16 +54,41 @@ export class PostRepository {
       userId: crypter.encrypt(post.userId),
     };
   }
-  getCommentList(data: { postId: string; page: number }) {
-    return this.commentTable.getCommentList(data.postId, data.page);
+
+  async getPostIdsOrderByLikes(page: number) {
+    const limit = 12;
+
+    const query = `
+    SELECT P.id AS _id
+    FROM post AS P
+    ORDER BY P.likes DESC
+    LIMIT ${limit} OFFSET ${page * limit};
+    `;
+
+    const result = await pgdb.client.query(query);
+
+    const tmp: string[] = result.rows.map((i) => {
+      return i._id;
+    });
+
+    return { _ids: tmp };
   }
-  getCocommentList(data: { commentId: number; page: number }) {
-    return this.cocommentTable.getCocommentList(data.commentId, data.page);
-  }
-  getCocomment(data: { cocommentId: number }) {
-    return this.cocommentTable.getCocomment(data);
-  }
-  getPostIdsOrderByLikes(page: number) {
-    return this.postTable.getPostIdsOrderByLikes(page);
+
+  private async getPostById(postId: string) {
+    const query = `
+    SELECT * FROM public.post
+    WHERE id = '${postId}'
+    `;
+
+    const result = await pgdb.client.query(query);
+
+    const rows: {
+      id: string;
+      title: string;
+      likes: number;
+      commentcount: number;
+      userId: number;
+    }[] = result.rows;
+    return rows[0];
   }
 }

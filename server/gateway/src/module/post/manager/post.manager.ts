@@ -31,7 +31,14 @@ export class PostManager {
     return this.postRepository.getPost(postId);
   }
   increaseCommentCount(data: CommentDto) {
-    return this.postRepository.increaseCommentCount(data);
+    return this.postRepository.orm.increment(
+      { id: data.postId },
+      'commentcount',
+      1,
+    );
+  }
+  decreaseCommentCount(postId) {
+    return this.postRepository.orm.decrement({ id: postId }, 'commentcount', 1);
   }
 
   async getPostsByHashtag(
@@ -100,16 +107,13 @@ export class PostManager {
   // 글삭제 엘라스틱에 남은 정보삭제 메타삭제 카운트감소
   deletePost(body: { postId: string }, userId) {
     //pgdg에서 포스트삭제
-    this.postRepository.postTable.db.delete(body.postId);
+    this.postRepository.orm.delete(body.postId);
     //엘라스틱에서 포스트삭제, 태그카운트 감소
     this.searchService.deletePost(body);
     this.userService.decreasePostCount({ ...body, userId });
     //사진url 삭제
     this.metadataService.deleteMetadata(body.postId);
     return;
-  }
-  decreaseCommentCount(postId) {
-    return this.postRepository.decreaseCommentCount(postId);
   }
 
   async getCommentPageContent(data: { postId: string; userId: number }) {
@@ -153,16 +157,20 @@ export class PostManager {
     return;
   }
 
-  async getPostIdsOrderByLikes(data: { page: number }) {
+  async getPostIdsOrderByLikes(data: { page: number }): Promise<{
+    _ids: string[];
+  }> {
     return this.postRepository.getPostIdsOrderByLikes(data.page);
   }
 
   increaseLikeCount(data: { postId: string; type: 'post' }) {
-    return this.postRepository.postTable.increaseLikeCount(data);
+    this.postRepository.orm.increment({ id: data.postId }, 'likes', 1);
+    return;
   }
 
   decreaseLikeCount(data: { postId: string; type: 'post' }) {
-    return this.postRepository.postTable.decreaseLikeCount(data);
+    this.postRepository.orm.decrement({ id: data.postId }, 'likes', 1);
+    return;
   }
 
   /**게시글 좋아요 했나?, 게시글에 달린 좋아요수, 작정자 정보 */

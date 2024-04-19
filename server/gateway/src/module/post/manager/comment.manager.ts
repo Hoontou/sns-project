@@ -49,8 +49,7 @@ export class CommentManager {
   }
 
   async getComment(data: { userId: number; commentId: number }) {
-    const { commentItem } =
-      await this.commentRepository.commentTable.getComment(data);
+    const { commentItem } = await this.commentRepository.getComment(data);
 
     if (commentItem === undefined) {
       return {
@@ -111,25 +110,41 @@ export class CommentManager {
 
   async increaseCocommentCount(data: CocommentDto) {
     //comment에다가 대댓글 카운터 증가.
-    return this.commentRepository.increaseCocommentCount(data);
+    return this.commentRepository.orm.increment(
+      { id: data.commentId },
+      'cocommentcount',
+      1,
+    );
   }
 
   deleteComment(body: { commentId: string; postId: string }) {
     // comment Id로 삭제, post에서 commentCount감소
-    this.commentRepository.deleteComment(body.commentId);
+    this.commentRepository.orm.delete(body.commentId);
     this.postManager.decreaseCommentCount(body.postId);
     return;
   }
 
   decrementCocommentCount(commentId: string) {
-    return this.commentRepository.decreaseCocommentCount(commentId);
+    return this.commentRepository.orm.decrement(
+      { id: Number(commentId) },
+      'cocommentcount',
+      1,
+    );
   }
 
   increaseLikeCount(data: { commentId: number; type: 'comment' }) {
-    return this.commentRepository.commentTable.increaseLikeCount(data);
+    return this.commentRepository.orm.increment(
+      { id: data.commentId },
+      'likes',
+      1,
+    );
   }
 
   decreaseLikeCount(data: { commentId: number; type: 'comment' }) {
-    return this.commentRepository.commentTable.decreaseLikeCount(data);
+    return this.commentRepository.orm.decrement(
+      { id: data.commentId },
+      'likes',
+      1,
+    );
   }
 }
