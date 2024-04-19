@@ -94,12 +94,6 @@ const DmChatRoom = () => {
       }
       //1. 연결요청
       const socket = io('/direct');
-      socket.on('disconnect', () => {
-        alert('서버와 연결이 끊어졌어요. 나중에 다시 시도해주세요.');
-        navigate('/');
-        return;
-      });
-
       //2. 서버에서 핸들러 등록 전 정보요청
       socket.on('gimmeUrState', (callback) => {
         return callback({
@@ -107,19 +101,24 @@ const DmChatRoom = () => {
           location: chatRoomId === undefined ? '' : chatRoomId,
         });
       });
+      //서버와 연결 해제시 튕김 등록
+      socket.on('disconnect', () => {
+        alert('서버와 연결이 끊어졌어요. 나중에 다시 시도해주세요.');
+        navigate('/');
+        return;
+      });
+      //room owner check 실패 시 튕김 등록
+      socket.on('cannotEnter', () => {
+        socket.close();
+        alert('cannot access this chat room');
+        navigate('/direct/inbox');
+        return;
+      });
 
       //3. 서버는 ready 됐다고 답장온거임
-      //핸들러 등록
+      //주요 로직 핸들러 등록
       socket.on('init', () => {
         setSocket(socket);
-
-        //room owner check 실패 시 튕김
-        socket.on('cannotEnter', () => {
-          socket.close();
-          alert('cannot enter chat room');
-          navigate('/direct/inbox');
-          return;
-        });
 
         socket.on('getFriendsInfo', (data: { friendsInfo: DirectUserInfo }) => {
           setFriendsInfo(data.friendsInfo);
@@ -184,12 +183,6 @@ const DmChatRoom = () => {
 
         socket.on('readSignal', (data: any) => {
           setReadSignal(true);
-        });
-
-        socket.on('disconnect', () => {
-          alert('서버와 연결이 끊어졌어요. 나중에 다시 시도해주세요.');
-          navigate('/');
-          return;
         });
 
         //핸들러 등록 후 data 요청

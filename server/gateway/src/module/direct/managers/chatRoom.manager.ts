@@ -6,6 +6,24 @@ import {
   emptyChatRoom,
 } from '../repository/schema/chatRoom.schema';
 import { Injectable } from '@nestjs/common';
+import { Types } from 'mongoose';
+
+export interface parsedChatRoom {
+  _id: Types.ObjectId;
+  chatRoomId: number;
+  lastTalk: string;
+  lastUpdatedAt: Date;
+  newChatCount: number;
+  totalChatCount: number;
+  chatWithUserInfo: {
+    userId: undefined;
+    _id: Types.ObjectId;
+    username: string;
+    introduce: string;
+    introduceName: string;
+    img: string;
+  };
+}
 
 @Injectable()
 export class ChatRoomManager {
@@ -57,24 +75,13 @@ export class ChatRoomManager {
     messageForm: { messageType: 'text' | 'photo'; content: string };
     isRead: boolean;
   }) {
-    const result: {
-      myChatRoom;
-      friendsChatRoom;
-    } = await this.chatRoomCollection.updateChatRoomAndReturn(data);
+    const { myChatRoom, friendsChatRoom } =
+      await this.chatRoomCollection.updateChatRoomAndReturn(data);
 
-    const parsedChatRoom = {
-      _id: result.friendsChatRoom?._id,
-      chatRoomId: result.friendsChatRoom?.chatRoomId,
-      lastTalk: result.friendsChatRoom?.lastTalk,
-      lastUpdatedAt: result.friendsChatRoom?.lastUpdatedAt,
-      newChatCount: result.friendsChatRoom?.newChatCount,
-      totalChatCount: result.friendsChatRoom?.totalChatCount,
-      chatWithUserInfo: {
-        ...result.friendsChatRoom?.userPop._doc,
-        userId: undefined,
-      },
+    return {
+      myChatRoom: myChatRoom,
+      friendsChatRoom: this.parseChatRoomDate(friendsChatRoom),
     };
-    return { myChatRoom: result.myChatRoom, friendsChatRoom: parsedChatRoom };
   }
 
   async getMyChatRooms(userId: number, page: number) {
@@ -117,5 +124,39 @@ export class ChatRoomManager {
     }
 
     return false;
+  }
+
+  private parseChatRoomDate(
+    chatRoom: ChatRoomSchemaDefinitionExecPop,
+  ): parsedChatRoom {
+    const {
+      _id,
+      chatRoomId,
+      lastTalk,
+      lastUpdatedAt,
+      newChatCount,
+      totalChatCount,
+      userPop,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ...rest
+    } = chatRoom;
+
+    if (!userPop) {
+      console.trace();
+      throw new Error('cannot find friends info');
+    }
+
+    return {
+      _id,
+      chatRoomId,
+      lastTalk,
+      lastUpdatedAt,
+      newChatCount,
+      totalChatCount,
+      chatWithUserInfo: {
+        ...userPop,
+        userId: undefined,
+      },
+    };
   }
 }

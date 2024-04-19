@@ -1,8 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { UserSchemaDefinition } from '../../../user/schema/user.schema';
+import {
+  emptyUser,
+  UserSchemaDefinition,
+} from '../../../user/schema/user.schema';
 
-export const emptyChatRoom: Readonly<ChatRoomSchemaDefinition> = {
+export const emptyChatRoom: Readonly<ChatRoomSchemaDefinitionExecPop> = {
   _id: new Types.ObjectId(),
   chatRoomId: 0,
   lastTalk: '',
@@ -11,6 +14,7 @@ export const emptyChatRoom: Readonly<ChatRoomSchemaDefinition> = {
   chatWithUserId: 0,
   newChatCount: 0,
   totalChatCount: 0,
+  userPop: emptyUser,
 };
 
 export type ChatRoomDocument = HydratedDocument<ChatRoomSchemaDefinition>;

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
@@ -11,6 +11,8 @@ import { pgdb } from '../../../configs/postgres';
 
 @Injectable()
 export class ChatRoomCollection {
+  private logger = new Logger(ChatRoomCollection.name);
+
   private readonly pgClient;
   constructor(
     @InjectModel('chatroom')
@@ -72,8 +74,8 @@ export class ChatRoomCollection {
     messageForm: { messageType: 'text' | 'photo'; content: string };
     isRead: boolean;
   }): Promise<{
-    myChatRoom: ChatRoomSchemaDefinition | null;
-    friendsChatRoom: ChatRoomSchemaDefinitionExecPop | null;
+    myChatRoom: ChatRoomSchemaDefinition;
+    friendsChatRoom: ChatRoomSchemaDefinitionExecPop;
   }> {
     const lastUpdatedAt = Date.now();
     //내 챗룸에서
@@ -124,6 +126,12 @@ export class ChatRoomCollection {
         .populate('userPop')
         .lean(),
     ]);
+
+    if (!myChatRoom || !friendsChatRoom) {
+      console.trace();
+      throw new Error('cannot find chatroom');
+    }
+
     return { myChatRoom, friendsChatRoom };
   }
 

@@ -1,6 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
+export const emptyUser: Readonly<UserSchemaDefinition> = {
+  _id: new Types.ObjectId(),
+  userId: 0,
+  username: '',
+  introduce: '',
+  introduceName: '',
+  img: '',
+};
+
 export type UserDocument = HydratedDocument<UserSchemaDefinition>;
 
 @Schema()

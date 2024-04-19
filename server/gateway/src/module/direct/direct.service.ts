@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ChatRoomManager } from './managers/chatRoom.manager';
+import { ChatRoomManager, parsedChatRoom } from './managers/chatRoom.manager';
 import { MessageManager } from './managers/message.manager';
 import { SocketManager } from './managers/socket.manager';
 import { UserLocationManager } from './managers/userLocation.manager';
@@ -47,22 +47,15 @@ export class DirectService {
     const { userId, userLocation, socket } = data;
 
     //유저 등록 시도
-    try {
-      if (userLocation === 'inbox') {
-        //register to inbox
-        //inbox에 들어왔으면 바로 등록후 리턴
-        this.userLocationManager.enterInbox(userId);
-        this.socketManager.setSock(userId, socket);
-        return emptyChatRoom;
-      }
-
-      return this.registerToChatRoom(data);
-    } catch (error) {
-      this.logger.error('err while registering user--------');
-      this.logger.error(error);
-
+    if (userLocation === 'inbox') {
+      //register to inbox
+      //inbox에 들어왔으면 바로 등록후 리턴
+      this.userLocationManager.enterInbox(userId);
+      this.socketManager.setSock(userId, socket);
       return emptyChatRoom;
     }
+
+    return this.registerToChatRoom(data);
   }
 
   private async registerToChatRoom(data: {
@@ -83,7 +76,6 @@ export class DirectService {
     if (ownerCheckResult === false) {
       //클라이언트로 faild 시그널 보냄
       socket.emit('cannotEnter');
-      socket.disconnect();
       throw new Error(`user is not owner of chatroom ${userLocation}`);
     }
 
@@ -122,6 +114,7 @@ export class DirectService {
       const friendsState = this.userLocationManager.getUserLocation(
         data.chatRoom.chatWithUserId,
       );
+
       //1 pgdb삽입
       const sendedMessage: DirectMessage =
         await this.messageManager.sendMessage({
@@ -138,42 +131,24 @@ export class DirectService {
           isRead: friendsState === data.chatRoom.chatRoomId ? true : false,
         });
 
-      //3 친구가 접속중? 실시간알림 전송
-      if (friendsState === 'inbox') {
-        const friendsSocket = this.socketManager.getSock(
-          data.chatRoom.chatWithUserId,
-        );
-
-        friendsSocket?.emit('realTimeUpdateForInbox', {
-          updatedChatRoom: friendsChatRoom,
-        });
-      }
-
-      if (friendsState === data.chatRoom.chatRoomId) {
-        const friendsSocket = this.socketManager.getSock(
-          data.chatRoom.chatWithUserId,
-        );
-
-        friendsSocket?.emit('receiveNewMessage', {
-          message: {
-            id: sendedMessage.id,
-            chatRoomId: sendedMessage.chatRoomId,
-            isMyChat: false,
-            messageType: sendedMessage.messageType,
-            content: sendedMessage.content,
-            createdAt: sendedMessage.createdAt,
-            isRead: sendedMessage.isRead,
-          },
-        });
-      }
-
-      //4 이후 본인한테도 실시간 정보 보냄
+      //3 본인한테 실시간 정보 보냄
       data.socket.emit('sendingSuccess', {
         tmpId: data.messageForm.tmpId,
         isRead: sendedMessage.isRead,
       });
+
+      //4 다시한번 친구 위치체크 + 친구 소켓 가져와서 소켓전송 함수호출
+      this.sendRealTimeNewMessageToFriend(
+        this.socketManager.getSock(data.chatRoom.chatWithUserId),
+        this.userLocationManager.getUserLocation(data.chatRoom.chatWithUserId),
+        friendsChatRoom,
+        sendedMessage,
+      );
+
+      return;
     } catch (error) {
       this.logger.error('sending message failed');
+      this.logger.error(error);
       data.socket.emit('sendingFailed', { tmpId: data.messageForm.tmpId });
     }
   }
@@ -218,5 +193,41 @@ export class DirectService {
     const friendsSocket = this.socketManager.getSock(chatRoom.chatWithUserId);
     friendsSocket?.emit('readSignal');
     return;
+  }
+
+  private sendRealTimeNewMessageToFriend(
+    friendsSocket: Socket | undefined,
+    friendsState: number | 'inbox' | undefined,
+    friendsChatRoom: parsedChatRoom,
+    sendedMessage: DirectMessage,
+  ) {
+    if (!friendsSocket || !friendsState) {
+      return;
+    }
+    //state가 inbox일 경우
+    if (friendsState === 'inbox') {
+      friendsSocket.emit('realTimeUpdateForInbox', {
+        updatedChatRoom: friendsChatRoom,
+      });
+      return;
+    }
+
+    //state가 메세지 온 채팅방일 경우
+    if (friendsState === friendsChatRoom.chatRoomId) {
+      friendsSocket.emit('receiveNewMessage', {
+        message: {
+          id: sendedMessage.id,
+          chatRoomId: sendedMessage.chatRoomId,
+          isMyChat: false,
+          messageType: sendedMessage.messageType,
+          content: sendedMessage.content,
+          createdAt: sendedMessage.createdAt,
+          isRead: sendedMessage.isRead,
+        },
+      });
+
+      //state가 메세지 온 채팅방이 아닐 경우
+      return;
+    }
   }
 }
