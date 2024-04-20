@@ -87,33 +87,14 @@ export class PostLikeCollection {
 
     // this.logger.debug(`missing from ${type} container, loading requested`);
     //캐시에 없다면 디비에서 가져온다
-    const tmpAllUserList: userinfo[] = await this.postLikeModel
-      .find({ postId: data.targetPostId })
-      .populate(UserPop)
-      .lean()
-      .then((res) => {
-        return res.map((item: PostLikeSchemaDefinitionExecPop) => {
-          const userinfo = item.userPop
-            ? {
-                username: item.userPop.username,
-                img: item.userPop.img,
-                introduceName: item.userPop.introduceName,
-              }
-            : defaultUserinfo;
-          //하지만, 데이터가 제대로 들어가있으면 default값이 들어가는일은 없을거임.
-
-          return userinfo;
-        });
-      });
-
     //가져온거 캐시에 등록
     cacheManager.loadUserList({
       type,
-      userList: tmpAllUserList,
+      userList: await this.getAllLikeUserList(data.targetPostId),
       target: data.targetPostId,
     });
-    //prefix find 해서 리턴
-    return findMatchingIndices(tmpAllUserList, data.searchString);
+
+    return this.searchUserLike(data);
   }
 
   async getMyLikes(data: {
@@ -130,5 +111,26 @@ export class PostLikeCollection {
       .limit(len)
       .skip(len * data.page)
       .lean();
+  }
+
+  private getAllLikeUserList(targetPostId: string): Promise<userinfo[]> {
+    return this.postLikeModel
+      .find({ postId: targetPostId })
+      .populate(UserPop)
+      .lean()
+      .then((res) => {
+        return res.map((item: PostLikeSchemaDefinitionExecPop) => {
+          const userinfo = item.userPop
+            ? {
+                username: item.userPop.username,
+                img: item.userPop.img,
+                introduceName: item.userPop.introduceName,
+              }
+            : defaultUserinfo;
+          //하지만, 데이터가 제대로 들어가있으면 default값이 들어가는일은 없을거임.
+
+          return userinfo;
+        });
+      });
   }
 }

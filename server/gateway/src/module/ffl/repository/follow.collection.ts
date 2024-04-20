@@ -124,33 +124,16 @@ export class FollowCollection {
 
     // this.logger.debug(`missing from ${type} container, loading requested`);
     //캐시에 없다면 디비에서 가져온다
-    const tmpAllUserList: userinfo[] = await this.followModel
-      .find({ userTo: targetUserId })
-      .populate(UserFromPop)
-      .lean()
-      .then((res) => {
-        return res.map((item: FollowSchemaDefinitionExecPop) => {
-          const userinfo = item.userFromPop
-            ? {
-                username: item.userFromPop.username,
-                img: item.userFromPop.img,
-                introduceName: item.userFromPop.introduceName,
-              }
-            : defaultUserinfo;
-          //하지만, 데이터가 제대로 들어가있으면 default값이 들어가는일은 없을거임.
-
-          return userinfo;
-        });
-      });
 
     //가져온거 캐시에 등록
     cacheManager.loadUserList({
       type,
-      userList: tmpAllUserList,
+      userList: await this.getAllFollowUserList(targetUserId),
+
       target: targetUserId,
     });
-    //prefix find 해서 리턴
-    return findMatchingIndices(tmpAllUserList, data.searchString);
+
+    return this.searchUserFollower(data);
   }
 
   /**팔로잉에서 사람검색 */
@@ -175,7 +158,17 @@ export class FollowCollection {
     // this.logger.debug(`missing from ${type} container, loading requested`);
 
     //캐시에 없다면 디비에서 가져온다
-    const tmpAllUserList: userinfo[] = await this.followModel
+    cacheManager.loadUserList({
+      type,
+      userList: await this.getAllFollowingUserList(targetUserId),
+      target: targetUserId,
+    });
+
+    return this.searchUserFollowing(data);
+  }
+
+  private getAllFollowingUserList(targetUserId: number): Promise<userinfo[]> {
+    return this.followModel
       .find({ userFrom: targetUserId })
       .populate(UserToPop)
       .lean()
@@ -193,15 +186,27 @@ export class FollowCollection {
           return userinfo;
         });
       });
+  }
 
-    //가져온거 캐시에 등록
-    cacheManager.loadUserList({
-      type,
-      userList: tmpAllUserList,
-      target: targetUserId,
-    });
-    //prefix find 해서 리턴
-    return findMatchingIndices(tmpAllUserList, data.searchString);
+  private getAllFollowUserList(targetUserId: number): Promise<userinfo[]> {
+    return this.followModel
+      .find({ userTo: targetUserId })
+      .populate(UserFromPop)
+      .lean()
+      .then((res) => {
+        return res.map((item: FollowSchemaDefinitionExecPop) => {
+          const userinfo = item.userFromPop
+            ? {
+                username: item.userFromPop.username,
+                img: item.userFromPop.img,
+                introduceName: item.userFromPop.introduceName,
+              }
+            : defaultUserinfo;
+          //하지만, 데이터가 제대로 들어가있으면 default값이 들어가는일은 없을거임.
+
+          return userinfo;
+        });
+      });
   }
 }
 
