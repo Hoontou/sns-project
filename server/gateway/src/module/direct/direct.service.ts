@@ -74,8 +74,6 @@ export class DirectService {
 
     //1-2) check실패, 유저 내보내기
     if (ownerCheckResult === false) {
-      //클라이언트로 faild 시그널 보냄
-      socket.emit('cannotEnter');
       throw new Error(`user is not owner of chatroom ${userLocation}`);
     }
 
@@ -123,19 +121,19 @@ export class DirectService {
           isRead: friendsState === data.chatRoom.chatRoomId ? true : false,
         });
 
-      //2 몽고 chatroom 업데이트
+      //2 본인한테 실시간 정보 보냄
+      data.socket.emit('sendingSuccess', {
+        tmpId: data.messageForm.tmpId,
+        isRead: sendedMessage.isRead,
+      });
+
+      //3 몽고 chatroom 업데이트
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { myChatRoom, friendsChatRoom } =
         await this.chatRoomManager.updateChatRoom({
           ...data,
           isRead: friendsState === data.chatRoom.chatRoomId ? true : false,
         });
-
-      //3 본인한테 실시간 정보 보냄
-      data.socket.emit('sendingSuccess', {
-        tmpId: data.messageForm.tmpId,
-        isRead: sendedMessage.isRead,
-      });
 
       //4 다시한번 친구 위치체크 + 친구 소켓 가져와서 소켓전송 함수호출
       this.sendRealTimeNewMessageToFriend(

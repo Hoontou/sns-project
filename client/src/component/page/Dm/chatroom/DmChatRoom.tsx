@@ -107,13 +107,6 @@ const DmChatRoom = () => {
         navigate('/');
         return;
       });
-      //room owner check 실패 시 튕김 등록
-      socket.on('cannotEnter', () => {
-        socket.close();
-        alert('cannot access this chat room');
-        navigate('/direct/inbox');
-        return;
-      });
 
       //3. 서버는 ready 됐다고 답장온거임
       //주요 로직 핸들러 등록

@@ -23,7 +23,7 @@ export class DirectGateway implements OnGatewayConnection {
       const timeoutSec = 3000;
 
       const timer = setTimeout(() => {
-        reject('direct init time out');
+        reject('time out when direct init');
       }, timeoutSec);
 
       //소켓연결 후 정보요청 보냄
@@ -46,6 +46,7 @@ export class DirectGateway implements OnGatewayConnection {
   async handleConnection(socket: Socket) {
     this.logger.debug('direct socket connected');
 
+    //1.유저 정보요청 보냄
     const { userId, userLocation } = await this.initUserState(socket).catch(
       (err) => {
         this.logger.error(err);
@@ -61,8 +62,6 @@ export class DirectGateway implements OnGatewayConnection {
     }
 
     try {
-      //1.유저 정보요청 보냄
-
       //2. 유저 등록하고 위치한 chatroom 정보 가져오기
       //inbox면 empty값임.
       const chatRoom: ChatRoomSchemaDefinitionExecPop =
@@ -76,7 +75,6 @@ export class DirectGateway implements OnGatewayConnection {
 
       /**chatroom에 들어와서 상대 정보 요청받는 핸들러*/
       socket.on('getFriendsInfo', () => {
-        console.log(1);
         //1) 상대 userinfo 전송
         const friendsInfo = chatRoom.userPop && {
           username: chatRoom.userPop.username,
@@ -88,24 +86,16 @@ export class DirectGateway implements OnGatewayConnection {
 
         //2) unread였던 채팅기록 read처리
         // + 상대가 채팅에 들어와있다면 실시간 읽음처리 소켓전송
-        this.directService.readMessages(chatRoom);
+        return this.directService.readMessages(chatRoom);
       });
 
       /**chatroom에 들어와서 채팅기록 요청받는 핸들러*/
-      socket.on('getMessages', async (data: { startAt?: number }) => {
-        console.log(2);
-
-        return await this.directService.getMessages(
-          socket,
-          chatRoom,
-          data.startAt,
-        );
+      socket.on('getMessages', (data: { startAt?: number }) => {
+        return this.directService.getMessages(socket, chatRoom, data.startAt);
       });
 
       /**inbox에 들어와서 내 채팅방 전송 요청받는 핸들러 */
       socket.on('getInbox', (data: { page: number }) => {
-        console.log(3);
-
         return this.directService.getDataForInbox(userId, data.page, socket);
       });
 
@@ -119,23 +109,17 @@ export class DirectGateway implements OnGatewayConnection {
             tmpId: number;
           };
         }) => {
-          console.log(4);
-
-          this.directService.sendMessage({
+          return this.directService.sendMessage({
             messageForm: data.messageForm,
             chatRoom,
             socket,
           });
-
-          return;
         },
       );
 
       //4. dm 나가기
       socket.on('disconnecting', () => {
-        console.log(5);
-
-        this.directService.exitDirect(userId);
+        return this.directService.exitDirect(userId);
       });
 
       //서버측에서 on 등록 후 ready 전송
