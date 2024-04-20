@@ -36,10 +36,10 @@ export class UserRepository {
   /**pg삽입 후 엘라스틱 삽입 */
   async signUp(signUpDto: SignUpDto) {
     //데이터 파싱
-    let newUser = new User();
+    const newUser = new User();
     newUser.email = signUpDto.email;
     newUser.password = signUpDto.password;
-    newUser = await newUser.save();
+    await this.userTable.db.save(newUser);
 
     const newUserinfo = new Userinfo();
     newUserinfo.username = signUpDto.username;
@@ -53,8 +53,8 @@ export class UserRepository {
     //유저 먼저 생성 후
     //나머지 저장
     return Promise.all([
-      newUserinfo.save(),
-      newUsernums.save(),
+      this.userinfoTable.db.save(newUserinfo),
+      this.usernumsTable.db.save(newUsernums),
       this.userCollection.createUser({
         username: signUpDto.username,
         userId: newUser.id,
@@ -142,9 +142,8 @@ export class UserRepository {
     return result.rows;
   }
 
-  changeUsername(data: { userId: string; username: string }) {
-    const decUserId = crypter.decrypt(data.userId);
-    const form = { userId: decUserId, username: data.username };
+  changeUsername(data: { userId: number; username: string }) {
+    const form = { userId: data.userId, username: data.username };
 
     return Promise.all([
       this.userinfoTable.changeUsername(form),
@@ -152,9 +151,8 @@ export class UserRepository {
     ]);
   }
 
-  changeIntro(data: { userId: string; intro: string }) {
-    const decUserId = crypter.decrypt(data.userId);
-    const form = { userId: decUserId, intro: data.intro };
+  changeIntro(data: { userId: number; intro: string }) {
+    const form = { userId: data.userId, intro: data.intro };
 
     return Promise.all([
       this.userinfoTable.changeIntro(form),
@@ -162,9 +160,8 @@ export class UserRepository {
     ]);
   }
 
-  changeIntroduceName(data: { userId: string; introduceName: string }) {
-    const decUserId = crypter.decrypt(data.userId);
-    const form = { userId: decUserId, introduceName: data.introduceName };
+  changeIntroduceName(data: { userId: number; introduceName: string }) {
+    const form = { userId: data.userId, introduceName: data.introduceName };
 
     return Promise.all([
       this.userinfoTable.changeIntroduceName(form),

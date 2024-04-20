@@ -13,8 +13,6 @@ export class UsernameDto {
     message: 'username에는 영어와 숫자만 가능해요.',
   })
   username: string;
-
-  userId: string;
 }
 export class IntroduceUsernameDto {
   @MaxLength(10, {
@@ -24,6 +22,4 @@ export class IntroduceUsernameDto {
     message: '소개 이름에는 특수문자가 들어갈 수 없어요.',
   })
   introduceName: string;
-
-  userId: string;
 }

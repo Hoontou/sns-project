@@ -16,7 +16,7 @@ export class UsernumsTable {
   async increaseFollowCount(data: { userTo: number; userFrom: number }) {
     const queryTo = `
     UPDATE public.usernums
-    SET follower = follower + 1
+    SET follower = follower + 1 
     WHERE "userId" = ${data.userTo};
     `;
     const queryFrom = `

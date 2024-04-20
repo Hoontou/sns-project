@@ -43,7 +43,7 @@ const UserSetting = () => {
     setOpenBackSpin(true);
 
     axiosInstance
-      .post('/user/changeusername', { userId, username })
+      .post('/user/changeusername', { username })
       .then((res) => {
         setOpenBackSpin(false);
         const result: { success: boolean; exist?: boolean } = res.data;
@@ -78,7 +78,7 @@ const UserSetting = () => {
     setOpenBackSpin(true);
 
     axiosInstance
-      .post('/user/changeintroducename', { userId, introduceName })
+      .post('/user/changeintroducename', { introduceName })
       .then((res) => {
         setOpenBackSpin(false);
         const result: { success: boolean; exist?: boolean } = res.data;
@@ -120,7 +120,7 @@ const UserSetting = () => {
       return;
     }
 
-    axiosInstance.post('/user/changeintro', { userId, intro }).then((res) => {
+    axiosInstance.post('/user/changeintro', { intro }).then((res) => {
       setOpenBackSpin(false);
       const { success } = res.data;
       if (success === false) {

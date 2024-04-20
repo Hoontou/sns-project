@@ -56,7 +56,7 @@ export class UserService {
   }
 
   async changeUsername(body: {
-    userId: string;
+    userId: number;
     username: string;
   }): Promise<{ success: boolean; exist?: boolean }> {
     try {
@@ -75,7 +75,7 @@ export class UserService {
     }
   }
   /**자기소개 바꾸기 */
-  async changeIntro(body: { userId: string; intro: string }) {
+  async changeIntro(body: { userId: number; intro: string }) {
     try {
       await this.userRepo.changeIntro(body);
       return { success: true };
@@ -88,7 +88,7 @@ export class UserService {
 
   async changeIntroduceName(body: {
     introduceName: string;
-    userId: string;
+    userId: number;
   }): Promise<{ success: boolean }> {
     try {
       await this.userRepo.changeIntroduceName(body);

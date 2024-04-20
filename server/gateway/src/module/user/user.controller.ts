@@ -17,22 +17,31 @@ export class UserController {
   @Post('/changeusername')
   async changeUsername(
     @Body(ValidationPipe) body: UsernameDto,
+    @Req() req: ExReq,
   ): Promise<{ success: boolean; exist?: boolean }> {
-    return this.userService.changeUsername(body);
+    return this.userService.changeUsername({
+      ...body,
+      userId: req.user.userId,
+    });
   }
 
   @Post('/changeintro')
   async changeIntro(
-    @Body() body: { userId: string; intro: string },
+    @Body() body: { intro: string },
+    @Req() req: ExReq,
   ): Promise<{ success: boolean }> {
-    return this.userService.changeIntro(body);
+    return this.userService.changeIntro({ ...body, userId: req.user.userId });
   }
 
   @Post('/changeintroducename')
   async changeIntroduceName(
     @Body(ValidationPipe) body: IntroduceUsernameDto,
+    @Req() req: ExReq,
   ): Promise<{ success: boolean }> {
-    return this.userService.changeIntroduceName(body);
+    return this.userService.changeIntroduceName({
+      ...body,
+      userId: req.user.userId,
+    });
   }
 
   @Get('/getusernamewithimg')
