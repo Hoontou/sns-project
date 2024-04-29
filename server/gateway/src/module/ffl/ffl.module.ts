@@ -13,6 +13,7 @@ import { CommentLikeCollection } from './repository/commentLike.collection';
 import { CocommentLikeCollection } from './repository/cocommentLike.collection';
 import { AlertModule } from '../alert/alert.module';
 import { FollowCollection } from './repository/follow.collection';
+import { CacheManager } from './common/userlist.cache.manager';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { FollowCollection } from './repository/follow.collection';
     PostLikeCollection,
     CommentLikeCollection,
     CocommentLikeCollection,
+    CacheManager,
   ],
   exports: [FflService],
 })

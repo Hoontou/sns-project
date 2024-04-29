@@ -9,7 +9,7 @@ import {
   UserToPop,
 } from './schema/follow.schema';
 import {
-  cacheManager,
+  CacheManager,
   defaultUserinfo,
   userinfo,
 } from '../common/userlist.cache.manager';
@@ -21,6 +21,7 @@ export class FollowCollection {
   constructor(
     @InjectModel('follow')
     private followModel: Model<FollowDocument>,
+    private cacheManager: CacheManager,
   ) {}
 
   async checkFollowed(data: { userTo: number; userFrom: number }): Promise<{
@@ -111,7 +112,7 @@ export class FollowCollection {
     const targetUserId = crypter.decrypt(data.targetUser);
 
     //캐시에서 가져온다
-    const userList: userinfo[] | undefined = cacheManager.getUserList({
+    const userList: userinfo[] | undefined = this.cacheManager.getUserList({
       type,
       target: targetUserId,
       searchString: data.searchString,
@@ -126,7 +127,7 @@ export class FollowCollection {
     //캐시에 없다면 디비에서 가져온다
 
     //가져온거 캐시에 등록
-    cacheManager.loadUserList({
+    this.cacheManager.loadUserList({
       type,
       userList: await this.getAllFollowUserList(targetUserId),
 
@@ -145,7 +146,7 @@ export class FollowCollection {
     const targetUserId = crypter.decrypt(data.targetUser);
 
     //캐시에서 가져온다
-    const userList: userinfo[] | undefined = cacheManager.getUserList({
+    const userList: userinfo[] | undefined = this.cacheManager.getUserList({
       type,
       target: targetUserId,
       searchString: data.searchString,
@@ -158,7 +159,7 @@ export class FollowCollection {
     // this.logger.debug(`missing from ${type} container, loading requested`);
 
     //캐시에 없다면 디비에서 가져온다
-    cacheManager.loadUserList({
+    this.cacheManager.loadUserList({
       type,
       userList: await this.getAllFollowingUserList(targetUserId),
       target: targetUserId,

@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 export interface userinfo {
   username: string;
   img: string;
@@ -14,7 +16,8 @@ interface Container {
   [key: string]: { userList: userinfo[]; timer: NodeJS.Timeout };
 }
 
-class CacheManager {
+@Injectable()
+export class CacheManager {
   private containers: { [key: string]: Container } = {
     follower: {},
     following: {},
@@ -67,5 +70,3 @@ class CacheManager {
     return target.userList;
   }
 }
-
-export const cacheManager = new CacheManager();

@@ -9,9 +9,9 @@ import {
   UserPop,
 } from './schema/postLike.schema';
 import {
-  cacheManager,
   defaultUserinfo,
   userinfo,
+  CacheManager,
 } from '../common/userlist.cache.manager';
 import { findMatchingIndices } from './follow.collection';
 @Injectable()
@@ -20,6 +20,7 @@ export class PostLikeCollection {
   constructor(
     @InjectModel('like')
     public readonly postLikeModel: Model<PostLikeDocument>,
+    private cacheManager: CacheManager,
   ) {}
 
   addLike(data: { userId: number; postId: string }) {
@@ -74,7 +75,7 @@ export class PostLikeCollection {
     const type = 'like';
 
     //캐시에서 가져온다
-    const userList = cacheManager.getUserList({
+    const userList = this.cacheManager.getUserList({
       type,
       target: data.targetPostId,
       searchString: data.searchString,
@@ -88,7 +89,7 @@ export class PostLikeCollection {
     // this.logger.debug(`missing from ${type} container, loading requested`);
     //캐시에 없다면 디비에서 가져온다
     //가져온거 캐시에 등록
-    cacheManager.loadUserList({
+    this.cacheManager.loadUserList({
       type,
       userList: await this.getAllLikeUserList(data.targetPostId),
       target: data.targetPostId,
