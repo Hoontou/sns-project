@@ -32,13 +32,13 @@ const Signup = () => {
   const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
 
   const registerTestAccounts = () => {
-    const tmp = Array.from({ length: 50 }, (_, index) =>
+    const tmp = Array.from({ length: 1000 }, (_, index) =>
       (index + 1).toString()
     );
     tmp.forEach((i) => {
       axiosInstance.post('/auth/signup', {
-        email: 'test' + i + '@gmail.com',
-        username: 'test' + i,
+        email: 'mo' + i + '@gmail.com',
+        username: 'mo' + i,
         password: 'test',
       });
     });

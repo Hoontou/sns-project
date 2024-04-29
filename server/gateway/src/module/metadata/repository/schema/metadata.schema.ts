@@ -20,3 +20,5 @@ export class MetadataSchemaDefinition {
 export const MetadataSchema = SchemaFactory.createForClass(
   MetadataSchemaDefinition,
 );
+
+MetadataSchema.index({ userId: 1, createdAt: -1 });

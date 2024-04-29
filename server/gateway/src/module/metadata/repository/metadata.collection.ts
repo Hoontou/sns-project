@@ -60,6 +60,7 @@ export class MetadataCollection {
     const len = 10; //가져올 갯수
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3); //3일전 까지의 게시물
+    console.log(threeDaysAgo);
 
     const metadatas: MetadataSchemaDefinition[] = await this.metadataModel
       //3일 안으로, 10개씩

@@ -30,11 +30,6 @@ export class CocommentManager {
       return { cocommentItem: [] };
     }
 
-    //userId 암호화
-    for (const i of cocomments) {
-      i.userId = crypter.encrypt(i.userId);
-    }
-
     //2 대댓에 좋아요 눌렀나 체크
     const { cocommentLikedList } = await this.fflService.getCocommentLiked({
       cocommentIdList: cocomments.map((i) => {
@@ -48,7 +43,11 @@ export class CocommentManager {
       return { ...item, liked: cocommentLikedList[index] };
     });
 
-    return { cocommentItem };
+    return {
+      cocommentItem: cocommentItem.map((i) => {
+        return { ...i, userId: crypter.encrypt(i.userId) };
+      }),
+    };
   }
 
   async getHighlightCocomment(body: { cocommentId: number; userId: number }) {

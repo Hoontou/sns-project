@@ -44,7 +44,6 @@ export class PostController {
   ): Promise<{
     commentItem: CommentItemContent[] | undefined;
     userId: string;
-    // postFooterContent: PostFooterContent;
   }> {
     return this.postService.getComment({
       commentId: body.commentId,

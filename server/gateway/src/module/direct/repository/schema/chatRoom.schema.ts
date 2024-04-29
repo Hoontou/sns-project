@@ -48,8 +48,6 @@ export class ChatRoomSchemaDefinition {
 export const ChatRoomSchema = SchemaFactory.createForClass(
   ChatRoomSchemaDefinition,
 );
-ChatRoomSchema.index({ chatRoomId: 1 });
-ChatRoomSchema.index({ lastUpdatedAt: 1 });
 
 export const UserPop = 'userPop';
 

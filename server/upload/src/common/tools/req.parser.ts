@@ -1,6 +1,7 @@
 import { UploadRequest } from '../interface';
 import { UploadMessage } from 'sns-interfaces';
 import axios from 'axios';
+import { ObjectId } from './gen.objectid';
 
 export const reqParser = (req: UploadRequest): void => {
   const { title } = JSON.parse(req.body.title);
@@ -14,6 +15,24 @@ export const reqParser = (req: UploadRequest): void => {
 
   const uploadForm: UploadMessage = {
     userId,
+    postId,
+    alertId: alert_id,
+    files: postList,
+    title,
+  };
+
+  // rabbitMQ.publishMsg('upload', uploadForm);
+  axios.post('http://gateway/upload/post', { uploadForm });
+};
+
+export const reqParserForMocking = (userId: number): void => {
+  const title = 'mocking data'; //게시물 제목
+  const alert_id = ''; //지금은 안쓰이는 값.
+  const postId: string = ObjectId();
+  const postList: string[] = ['test'];
+
+  const uploadForm: UploadMessage = {
+    userId: String(userId),
     postId,
     alertId: alert_id,
     files: postList,

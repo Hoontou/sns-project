@@ -7,6 +7,7 @@ import {
   //JoinColumn,
   ManyToOne,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { Post } from './post.entity';
 import { Cocomment } from './cocomment.entity';
@@ -44,6 +45,7 @@ export class Comment extends BaseEntity {
 
   @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'SET NULL' })
   //@JoinColumn()
+  @Index()
   post: Post;
 
   @OneToMany(() => Cocomment, (cocomment) => cocomment.comment)

@@ -1,5 +1,7 @@
 ## 로컬에서 개발
 
+#### 0. /client, /server/gateway, /server/upload에서 npm i
+
 #### 1. db세팅
 
 ```
@@ -13,7 +15,7 @@ docker-compose -f 'db.yml' up
 ```
 
 하면 postgres, elastic, mongo 올라옴.
-이후 monstache 실행 위해 mgdb에 bash 띄워서
+이후 monstache 실행 위해 mgdb에(mgdb2말고) bash 띄워서
 
 ```
 mongosh /usr/src/config/set.js

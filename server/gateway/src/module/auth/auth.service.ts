@@ -48,9 +48,9 @@ export class AuthService {
         exp: string;
       } = await this.jwtService.verify(accessToken);
 
-      if (this.stateManager.getState(jwtResult.userId) !== originCode) {
-        throw new Error('1');
-      }
+      // if (this.stateManager.getState(jwtResult.userId) !== originCode) {
+      //   throw new Error('1');
+      // }
 
       //가져온 이메일로 유저정보 요청
       const { userId, username } = await this.checkUserExist(jwtResult.email);
@@ -109,9 +109,9 @@ export class AuthService {
       //토큰검사 후 이메일 가져옴
       const jwtResult = await this.jwtService.verify(accessToken);
 
-      if (this.stateManager.getState(jwtResult.userId) !== originCode) {
-        throw new Error('1');
-      }
+      // if (this.stateManager.getState(jwtResult.userId) !== originCode) {
+      //   throw new Error('1');
+      // }
 
       return { userId: jwtResult.userId, success: true };
     } catch (err) {

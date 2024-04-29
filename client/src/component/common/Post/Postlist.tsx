@@ -6,6 +6,7 @@ import { emptyMetadata, emptyPostFooterContent } from './post.interfaces';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { axiosInstance } from '../../../App';
 import { MetadataSchemaType } from 'sns-interfaces';
+import sample from '../../../asset/sample1.jpg';
 
 export const pageItemLen = 12;
 
@@ -82,6 +83,9 @@ const Postlist = (props: { userId: string; targetId?: string }) => {
               }}
               alt={`${index}`}
               src={`${requestUrl}/${post._id}/${post.files[0]}`}
+              onError={(e: any) => {
+                e.target.src = sample; // 이미지 로드 실패 시 디폴트 이미지로 변경
+              }}
             />
           </span>
         </div>

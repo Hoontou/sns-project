@@ -29,8 +29,6 @@ export const PostLikeSchema = SchemaFactory.createForClass(
   PostLikeSchemaDefinition,
 );
 
-PostLikeSchema.index({ userId: 1, postId: 1 }, { unique: true });
-
 export const UserPop = 'userPop';
 export const MetadataPop = 'metadataPop';
 PostLikeSchema.virtual(UserPop, {

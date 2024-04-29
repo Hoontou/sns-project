@@ -29,15 +29,17 @@ export class AppService {
     //1 팔로우 목록 가져오기
 
     const { userList } = await this.fflService.getMyFollowingUserInfos(userId);
-    userList.push({ userId: userId, username: '', img: '' });
+
+    const userIds = userList.map((i) => {
+      return i.userId;
+    });
+    userIds.push(userId);
 
     //2 유저들의 최근3일 meta 가져오기
     //밑에서 metadata를 해체하기 때문에 ._doc으로 가져와야해서 any로 했음
     const { metadatas }: { metadatas: MetadataDto[] } =
       await this.metadataService.getMetadatasLast3Day({
-        userIds: userList.map((i) => {
-          return i.userId;
-        }),
+        userIds,
         page,
       });
 

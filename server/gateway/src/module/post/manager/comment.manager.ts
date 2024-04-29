@@ -27,11 +27,6 @@ export class CommentManager {
       return { commentItem: [] };
     }
 
-    //userId 암호화
-    for (const i of comments) {
-      i.userId = crypter.encrypt(i.userId);
-    }
-
     //2 가져온 코멘트 id로 좋아요눌렀나 체크
     const { commentLikedList } = await this.fflService.getCommentLiked({
       commentIdList: comments?.map((i) => {
@@ -45,7 +40,11 @@ export class CommentManager {
       return { ...item, liked: commentLikedList[index] };
     });
 
-    return { commentItem };
+    return {
+      commentItem: commentItem.map((i) => {
+        return { ...i, userId: crypter.encrypt(i.userId) };
+      }),
+    };
   }
 
   async getComment(data: { userId: number; commentId: number }) {

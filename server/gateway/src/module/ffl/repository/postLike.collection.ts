@@ -54,7 +54,7 @@ export class PostLikeCollection {
   }
 
   async getUserIds(postId: string, page: number): Promise<number[]> {
-    const pageLen = 5;
+    const pageLen = 15;
     const userIds =
       page === -1
         ? await this.postLikeModel.find({ postId })

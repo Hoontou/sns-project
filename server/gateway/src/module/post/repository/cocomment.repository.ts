@@ -48,12 +48,6 @@ export class CocommentRepository {
 
     const row: {
       id: number;
-      // comment: string;
-      // likes: number;
-      // cocommentcount: number;
-      // createdat: Date;
-      // userId: number;
-      // postId: string;
     } = result.rows[0];
     return row;
   }

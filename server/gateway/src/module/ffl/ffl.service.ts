@@ -26,6 +26,20 @@ export class FflService {
     private alertService: AlertService,
   ) {}
 
+  addFollowForTest() {
+    // for (let i = 2; i < 4; i++) {
+    //   for (let j = 1; j < 1000; i++) {
+    //     if (i === j) {
+    //       continue;
+    //     }
+    //     this.addFollow({ userTo: i, userFrom: j });
+    //   }
+    // } //이건 쌍방향으로 싹다하기엔 많음.
+    for (let i = 1; i < 6000; i++) {
+      this.addFollow({ userTo: String(i), userFrom: 50 });
+    }
+  }
+
   async checkFollowed(body: {
     userTo: number;
     userFrom: number;
@@ -33,7 +47,7 @@ export class FflService {
     return this.followCollection.checkFollowed(body);
   }
 
-  async addFollow(body: { userTo: string; userFrom: number }) {
+  async addFollow(body: { userTo: string | number; userFrom: number }) {
     const userTo = crypter.decrypt(body.userTo);
     const form = { userTo, userFrom: body.userFrom };
 
@@ -182,7 +196,7 @@ export class FflService {
       }[];
     } = await this.userService.getUsernameWithImgList(userIds);
 
-    return { userList };
+    return { userList: [...userList] };
   }
 
   async addCommentLike(body: { userId: number; commentId: number }) {

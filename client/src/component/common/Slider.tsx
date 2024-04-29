@@ -28,6 +28,9 @@ const Slider = (props: { images: string[] }) => {
             }}
             alt={`${idx}`}
             src={item}
+            onError={(e: any) => {
+              e.target.src = sample1; // 이미지 로드 실패 시 디폴트 이미지로 변경
+            }}
           />
         </SwiperSlide>
       );

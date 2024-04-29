@@ -11,7 +11,11 @@ import { UploadRequest } from './common/interface'; //req 파라미터의 타입
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
-import { reqParser, reqParserUserImg } from './common/tools/req.parser';
+import {
+  reqParser,
+  reqParserForMocking,
+  reqParserUserImg,
+} from './common/tools/req.parser';
 import {
   add_idToReq,
   uploadToLoacl,
@@ -30,6 +34,14 @@ server.register(cors, {
 server.register(fastifyStatic, {
   root: join(__dirname, 'files'),
   prefix: '/files/', // optional: default '/'
+});
+
+server.post('/uploadMockingData', (req, reply) => {
+  const body = req.body as { userId: number };
+  // reqParserForMocking(body.userId);
+  reqParserForMocking(1);
+
+  return 'hi';
 });
 
 //나중에 기존프사 삭제하는 기능 추가해야함.

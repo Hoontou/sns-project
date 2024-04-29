@@ -27,11 +27,6 @@ export class AlertSchemaDefinition {
 
 export const AlertSchema = SchemaFactory.createForClass(AlertSchemaDefinition);
 
-// AlertSchema.index({
-//   userId: 1,
-//   content: 1,
-// });
-
 AlertSchema.virtual('userPop', {
   ref: 'user',
   localField: 'content.userId',

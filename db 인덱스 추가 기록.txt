@@ -1,0 +1,255 @@
+먼저, 접근이 많을거라 예상되는 rest api들을 빈도 예측해서 나열해보자면,
+
+1. 피드에서 게시물 preview 메타데이터 가져오기.
+  /metadata/getmetadatas
+2. landing에서 3일간 게시물 가져오기.
+  /landing
+3. search 페이지에서 모든 게시물 둘러보기.
+  /metadata/getMetadatasOrderByDate
+  /metadata/getMetadatasOrderByLikes
+4. postfooter 가져오기.
+  /post/postfooter
+5. 댓글 가져오기
+  /post/getcommentlist
+6. ffl 유저 리스트 가져오기
+  /ffl/getuserlist
+7. 유저 정보 가져오기(이건 내부 메서드)
+  -> pg랑 mgdb에 둘다 있음.
+
+서버에서 사용되는 거의 모든 쿼리가 복잡하지 않긴 한데,
+그나마 쿼리 복잡하거나 여러곳의 데이터가 필요한걸 고르자면
+2번, 4번 정도.
+
+04.26
+upload서버에 mocking 게시물 삽입 api 추가,
+client에 사진 missing 시 sample display 추가.
+(css img태그 onerror로)
+
+테스트 위해 세팅 기록.
+
+0. 하나의 기기에서 로그인 끄기 
+  -> auth.service.ts 에서 auth 메서드 두개에 statemanager호출 주석처리.
+1. mock post 업로드
+  -> /uploadMockingData
+2. 테스트 계정 생성 
+  -> signup.tsx, username에 '테스트계정등록'넣고 회원가입 누르면 됨.
+3. 팔로우 다량 추가 
+  -> ffl.service.ts에서 addFollowForTest 메서드. contructor로 돌리면 됨.
+서버에서 삽입 필요한 경우는 이정도, 나머지는 db에서 직접 삽입.
+
+일정횟수 이상을 insert메서드 연속호출하면 아예 디비가 응답을 안하는거같다.
+insert를 천번씩 끊어서 삽입했음.. 귀찮다.
+몽고디비 만을 호출하는건 꽤많이(6천이상) for문 썡으로 돌려버러도 잘되는데
+음..
+
+1.피드에서 게시물 preview 메타데이터 가져오기
+ find(userId).sort(_id)가 전부. userId 인덱스 추가로 가능.
+
+6. ffl 유저 리스트 가져오기
+ 쿼리가 단순해서 그런지 데이터 갯수가 부족해서인지(5만개로 했음.),
+인덱스 조차 필요없을 정도의 속도.
+한명의 유저한테 팔로우했나 찾는건 그냥 1ms
+내가 팔로우한 6천명 정도의 사람 가져오는건 20ms정도
+
+데이터 부족해서가 맞는듯.
+물론 개선하려면 userTo, userFrom으로 복합인덱스 추가로 개선 가능.
+
+4. postfooter 가져오기
+ 좋아요체크(mongo), post가져오기(pg), 유저 이름이랑 사진 가져오기(pg)
+ * 좋아요 체크는, 위 6번과 같이 복합인덱스 추가로 가능, 아직은 보류
+ * post가져오기 -> where Id 쿼리로, primary 컬럼 이기도 하니까 그냥
+ id에 인덱스 추가했음.
+ * 유저 이름이랑 사진 가져오기 -> 아래 7번에서.
+
+7. 유저정보 가져오기
+ 근데 이게, 유저정보 가져오기가 세개 저장소(pg, elastic, mgdb)에
+ 모두 가져오는거라..
+ pg는 username, userId 포린키 두개로 접근함.
+  -> username은 유니크 걸어둬서 어차피 인덱스 있고, 
+  username테이블에 id로 접근하는 일은 없으니, primary에 인덱스 두지말고
+  포린키에 인덱스. 둘다 equal로 select 시 30ms 나옴
+
+ mgdb는 아마 userId로만 접근할거임.
+  ->인덱스추가는 보류. 인덱스 없어도 3ms정도 나옴.
+
+이까지 굴려보면서 깨닳은건, (데이터 갯수 만개정도)
+미래를 생각해서 테이블 고민해 짜는건 좋은데,
+인덱스를 성급하게 다 걸어버릴 필요는 없는듯. 컴퓨터는 생각보다 빠르다.
+물론 이용자가 겁나게 많으면 + 하드웨어 스펙에 따라 말이 달라지겠지만.
+또 몽고디비는 빠르다.
+
+3. search 페이지에서 모든 게시물 둘러보기.
+ 최근순, 오래된순, 좋아요 순으로 가져옴.
+ 최근순, 오래된 순은 mgdb에서 sort(_id)이고, 건드릴필요 없음.
+ 좋아요순은, pgdb에서 post테이블에서 ORDER BY likes이고, 
+ likes에 인덱스 걸면 됨.
+ 근데... 걸리는게 몇가지 있다.
+
+ 1) likes는 좋아요 카운터로, 값이 매우 많이 변함. 
+  -> 인덱스가 걸려있으면 인덱스도 업데이트해야함.
+ 2) postgres는 업데이트가 엄청 많으면 장애가능성 up
+
+ 2)의 경우 맨처음 테이블 구상할 때 부터 걱정했었는데,
+ 때문에 카운터들을 몽고에 넣을까 고민했지만 cascade delete를 이용하려고
+ postgres에 넣었었음. 유저 삭제 시 싹다삭제 시킬려고.
+ 아직 유저삭제를 구현을 안했지만..
+ 1)을 고려해서 인덱스 있을때, 인덱스 없을때 장단점을 생각해보면,
+ 인덱스 없으면 당연히 order 빠를것이고, 없으면 당연히 update 빠를것임.
+ 그리고 카운터 update는 급한 작업이 아님, 결과를 반환할 필요가 없어서
+ 그냥 update가 수행만 된다면 상관없음. 근데 좋아요 순으로 정렬이 느려지면
+ 게시물 display가 느려짐. -> 를 고려했을때, 인덱스가 있는게 맞다.
+
+ 일단 테스트. post에 likes를 랜덤돌려서 넣고, 성능테스트.
+
+5천개의 게시물에 likes 카운터의 값을 0~1만 까지 랜덤으로 업데이트후,
+
+UPDATE 1 row -> 30ms
+
+
+ORDER BY likes DESC LIMIT 100 
+->인덱스 추가 전) 55ms정도 나오는데, 값이 많이 튐
+-> 인덱스 추가 해도 속도가 변함없음.
+
+LIMIT 1000
+-> 인덱스 사용) 70ms
+-> 인덱스 없애도 70ms.
+
+데이터가 적어서 그런듯.
+행(게시물) 7만개, likes 랜덤 10만으로 테스트.
+ORDER BY likes DESC LIMIT 1000
+ 인덱스 없이) 130ms
+ 인덱스 있으면 120ms
+근데 속도 변동이 심해서 있든 없든 별 차이가 안난다. 데이터가 적어서 그런가
+SELECT * 을 해서 결국엔 테이블에 접근해야해서 그런가?
+ ->likes만 SELECT 해도 눈에 띄는 결과는 없다..
+
+업데이트 쿼리도 인덱스 있든없든 30ms로 일정.
+
+이정도 테스트로는 택도없는듯.
+
+
+2. 랜딩에서 팔로우 3일간 게시물
+흐름은,
+1) mg follow 컬렉션에서 {userFrom: 내꺼} 로 해서 userTo의 Id 다가져옴
+2) mg metadata 에서 {userId: 위에서 온 id들, createdAt: 최근3일} 로 가져옴
+3) postfooter메서드 재귀적으로 호출해서 가져옴.
+
+1)과 3)의 개선은 위에서 다뤘음.
+2)는 userId, createdAt의 복합인덱스로 해결가능.
+
+게시물 7만개 들어간 상태 -> metadata mock데이터도 7만개.
+테스트 전,
+1- 모든 metadata의 userId를 1~10만으로 랜덤수정
+db.getCollection("metadatas").find().forEach(function(doc) {
+    var randomUserId = Math.floor(Math.random() * 100000) + 1;
+    db.getCollection("metadatas").updateOne(
+        { _id: doc._id },
+        { $set: { userId: randomUserId } }
+    );
+});
+2- 모든 데이터의 createdAt을 지금부터 300일 사이로 랜덤수정
+var now = new Date();
+var threeHundredDaysAgo = new Date(now.getTime() - (300 * 24 * 60 * 60 * 1000)); // 현재 시간으로부터 300일 전의 시간
+
+db.getCollection("metadatas").find().forEach(function(doc) {
+    var randomDate = new Date(threeHundredDaysAgo.getTime() + Math.random() * (now.getTime() - threeHundredDaysAgo.getTime()));
+    db.getCollection("metadatas").updateOne(
+        { _id: doc._id },
+        { $set: { createdAt: randomDate } }
+    );
+});
+
+이상태에서, {userId 랜덤선택 1000개, 최근 3일간} 해서 쿼리수행
+var now = new Date();
+var threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
+
+var a = Array.from({length: 1000}, ()=>{
+    return Math.floor(Math.random()*100000) + 1
+})
+
+db.getCollection("metadatas").find({
+        userId: { $in: a },
+        createdAt: { $gte: threeDaysAgo },
+      })
+      .sort({ _id: -1 })
+      .limit(100)
+
+인덱스 없을때) 
+쿼리 17ms
+삽입 65ms ?? 삽입이 벌써 느린데?
+
+인덱스 있을때) {userId: 1, createdAt: -1}
+쿼리 6ms 오 겁나 빨라졌다 ㅋㅋㅋㅋㅋㅋ 드디어 의미있는 결과 얻었음.
+삽입 66ms 삽입 느려지는건 이정도에선 고려사항이 아닌듯.
+
+결과로, 복합인덱스 추가.
+
+마지막 5. 댓글가져오기.
+댓글 쿼리는
+    FROM public.cocomment AS C
+    JOIN public.userinfo AS A ON C."userId" = A."userId"
+    WHERE C."commentId" = ${data.commentId}
+    ORDER BY C.createdAt DESC
+    LIMIT ${limit} OFFSET ${data.page * limit};
+postId에 인덱스 걸면 될듯.
+
+데이터 삽입은 pgadmin에서.
+7만 postId중 랜덤선택해서 댓글삽입 * 16만개 후, 댓글많은 post 한개 찝어서
+댓글 싹다 가져오기. 댓글 제일 많이 가진애가 11개..
+조인 테이블인 userinfo에는 포린키 userId에 인덱스가 걸려있음.
+
+인덱스 없이 -> 85ms
+인덱스 있으면 80ms
+아주 근소하게 빠르게 나오긴 하는데 속도가 출렁거린다..
+
+EXPLAIN
+1"Sort  (cost=16.55..16.56 rows=3 width=80)"
+2"  Sort Key: c.createdat DESC"
+3"  ->  Merge Join  (cost=16.44..16.53 rows=3 width=80)"
+4"        Merge Cond: (a.""userId"" = c.""userId"")"
+5"        ->  Index Scan using ""userinfo_userId_idx"" on userinfo a  (cost=0.28..346.28 rows=7768 width=18)"
+6"        ->  Sort  (cost=16.16..16.16 rows=3 width=62)"
+7"              Sort Key: c.""userId"""
+8"              ->  Bitmap Heap Scan on comment c  (cost=4.44..16.13 rows=3 width=62)"
+9"                    Recheck Cond: ((""postId"")::text = '662c4fd57743fc8e7cb8f5b5'::text)"
+10"                    ->  Bitmap Index Scan on ""comment_postId_idx""  (cost=0.00..4.44 rows=3 width=0)"
+11"                          Index Cond: ((""postId"")::text = '662c4fd57743fc8e7cb8f5b5'::text)"
+여기서, postId 인덱스로 가져와서 JOIN 위해 포린키인 userId로 정렬하는데
+비용이 많이든다. 그래서 postId, userId로 복합인덱스로 해봤음
+
+근데 써먹질 않는다. 도대체 왜지???????
+explain에서만 표시 안될 뿐 postId, userId로된 복합인덱스로 comment들 가져오면
+이미 정렬된 상태라서 제대로 인덱스의 효과를 보는게 아닐까, 라는 희망사항.
+아니면 애초에 userId로 정렬하라는 쿼리가 아니기 때문인가..
+그게 아니라면 나머지 데이터를 가져와야해서 어차피 테이블까지 가야해서?
+여러 테스트 결과, 나머지 데이터를 실제 테이블로 가지러 가야하는경우
+sort할때 index 도움을 못본다.
+
+좀 찾아본 결과, 
+https://m.blog.naver.com/fbfbf1/223152480008
+오라클이고, 복합인덱스 순으로 where order by 하면 인덱스에서 가져올 때
+이미 정렬돼 있어서 sort를 안한다-> 당연한 생각인데 왜 인덱스를 안써먹을까..
+
+테스트중 일부,
+EXPLAIN SELECT "postId", "userId"
+	FROM comment
+	WHERE "postId"='662cae695017aae0a3b00ad9'
+	ORDER BY "userId"; 이고, postId, userId로 복합인덱스 걸면,
+이 쿼리에선 당연히 postid userid만 가져와서 index only 스캔을 한다.
+order by의 sort를 안함.
+근데 SELECT * 하면 sort가 실행계획에 들어감.
+
+"진짜로" sort 효과를 아예못보는건지, 인덱스를 보고 테이블에서 데이터 가져왔을때 이미
+userId가 정렬된 상태로 가져와 져서 인덱스 도움을 받긴 하는건지 모르겠다.
+
+아니면, join을 쓰지말고
+postId, createdAt의 복합인덱스로 where postId order by createdAt으로
+가져온 다음, userId로 
+.. 아니다 아니야...
+
+근데 위에 post에서, likes 단일 인덱스로 order by 할때도
+결국엔 테이블 가서 데이터 가져와야하는데 plan에서는 sort 안하고 index 스캔만 한단 말이야.
+근데 왜 복합인덱스에서는 sort 하냐고.
+
+인덱스 안쓰는게 빠르다고 생각하는 경우를 찾아보긴 했는데 아닌것같다.
+정렬된 결과를 앞에두고 sort를 왜하는지 모르겠다.
