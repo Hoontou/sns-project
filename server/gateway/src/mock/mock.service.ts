@@ -16,7 +16,7 @@ export class MockDataService {
 
   //회원가입
   async insertMockUser() {
-    const howManyInsert = 1000;
+    const howManyInsert = 100;
 
     const get5Letter = (): string => {
       const alphabets = 'abcdefghijklmnopqrstuvwxyz';
@@ -72,8 +72,6 @@ export class MockDataService {
       for (const uploadForm of mockPostList) {
         await this.uploadService.uploadPost({ uploadForm });
       }
-
-      await this.delay(1000);
     }
   }
   //팔로잉

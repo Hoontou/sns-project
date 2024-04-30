@@ -11,10 +11,10 @@ export class UploadService {
     private postService: PostService,
     private userService: UserService,
   ) {}
-  uploadPost(body: { uploadForm: UploadMessage }) {
+  async uploadPost(body: { uploadForm: UploadMessage }) {
     const form = body.uploadForm;
     this.metadataService.saveMetadata(form);
-    this.postService.posting(form);
+    await this.postService.posting(form);
     this.userService.increasePostCount(form);
 
     return;

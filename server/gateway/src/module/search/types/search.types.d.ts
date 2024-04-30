@@ -14,7 +14,7 @@ export interface SnsPostsDocType {
 /**tag의 중복방지를 위해 _id==tagName으로 저장하고, 검색은 tagName, 태그DOC 가져오는건 _id로 수행 */
 export interface SnsTagsDocType {
   tagName: string;
-  count: number;
+  objId: string;
 }
 
 export interface SearchResult {

@@ -8,12 +8,17 @@ import {
   SnsTagsDocType,
 } from './types/search.types';
 import { ElasticIndex } from './elastic.index';
+import { HashtagCollection } from './repository/hashtag.collection';
+import { HashtagDocType } from './repository/hashtag.schema';
 
 @Injectable()
 export class SearchService {
   private logger = new Logger(SearchService.name);
 
-  constructor(private elasticIndex: ElasticIndex) {}
+  constructor(
+    private elasticIndex: ElasticIndex,
+    private hashtagCollection: HashtagCollection,
+  ) {}
 
   //업로드 메서드로부터 오는 해시태그 핸들링 요청
   //해시태그 존재여부 체크후 없으면 추가,
@@ -41,14 +46,15 @@ export class SearchService {
     return;
   }
 
+  //아.. 이거 진짜 개판인데 왜 이렇게 대충짜놨지
   async getPostsIdsByHashtag(data: { hashtag: string; page: number }): Promise<{
     _ids: string[];
     count: number;
     searchSuccess: boolean;
   }> {
-    const tagInfo: SnsTagsDocType =
+    const tagInfo: HashtagDocType =
       data.page === 0
-        ? await this.elasticIndex.getTagById(data.hashtag)
+        ? await this.hashtagCollection.getTagDocByTagName(data.hashtag)
         : { tagName: data.hashtag, count: 0 };
 
     if (tagInfo === undefined) {
@@ -176,20 +182,45 @@ export class SearchService {
   }
 
   async searchUserOrHashtag(string: string): Promise<SearchResult> {
-    const pageSize = 10;
-
     const type = string.at(0);
     const searchString = string.substring(1);
 
     const result =
       type === '#'
-        ? await this.elasticIndex.searchTags(0, pageSize, searchString)
-        : await this.elasticIndex.searchUsername(pageSize, searchString);
+        ? await this.searchHashtag(searchString)
+        : await this.searchUser(searchString);
+
+    return { resultList: result, type: type === '#' ? 'hashtag' : 'user' };
+  }
+
+  private async searchHashtag(string: string): Promise<SearchedHashtag[]> {
+    const pageSize = 10;
+
+    const result = await this.elasticIndex.searchTags(0, pageSize, string);
 
     const resultList = result.body.hits.hits.map((item) => {
       return item._source;
-    }) as SearchedUser[] | SearchedHashtag[];
+    }) as SnsTagsDocType[];
 
-    return { resultList, type: type === '#' ? 'hashtag' : 'user' };
+    const tagsFetchedCount: SearchedHashtag[] = await Promise.all(
+      resultList.map(async (i) => {
+        const count = await this.hashtagCollection.getTagCountBy_id(i.objId);
+        return { tagName: i.tagName, count };
+      }),
+    );
+
+    return tagsFetchedCount;
+  }
+
+  private async searchUser(string: string): Promise<SearchedUser[]> {
+    const pageSize = 10;
+
+    const result = await this.elasticIndex.searchUsername(pageSize, string);
+
+    const resultList = result.body.hits.hits.map((item) => {
+      return item._source;
+    }) as SearchedUser[];
+
+    return resultList;
   }
 }

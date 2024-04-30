@@ -138,7 +138,7 @@ export class PostManager {
     }
   }
 
-  posting(content: UploadMessage) {
+  async posting(content: UploadMessage) {
     //필요한 데이터만 파싱 후 포스트테이블에 내용 삽입
     const postDto: PostDto = {
       postId: content.postId,
@@ -146,7 +146,7 @@ export class PostManager {
       title: content.title,
     };
     //태그 핸들링 요청, 테이블 삽입 요청, 유저태그 알람전송 요청
-    this.searchService.handlePostTag(postDto);
+    await this.searchService.handlePostTag(postDto);
     this.postRepository.addPost(postDto);
     this.alertService.sendUserTagAlertIfExist({
       type: 'post',

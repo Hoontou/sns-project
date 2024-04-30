@@ -10,6 +10,7 @@ import {
   awsElasticSearch,
 } from '../../configs/elascit.config';
 import { SnsPostsDocType } from './types/search.types';
+import { HashtagCollection } from './repository/hashtag.collection';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -21,7 +22,7 @@ export class ElasticIndex {
   public readonly SnsTagsIndex = 'sns.tags';
   public readonly SnsUsersIndex = 'sns.users';
 
-  constructor() {
+  constructor(private hashtagCollection: HashtagCollection) {
     this.client = new Client(NODE_ENV ? localElasticSearch : awsElasticSearch);
   }
 
@@ -46,42 +47,32 @@ export class ElasticIndex {
   }
 
   /**태그가 존재하는지 체크해서 있으면 카운터증가, 없으면 DOC삽입 */
-  insertTagDocIfNotExist(tag: string) {
-    return this.client
-      .get({
-        index: this.SnsTagsIndex,
-        id: tag,
-      })
-      .then(async (res) => {
-        //2-1. 존재하는 태그면 count 증가
-        await this.client.update({
-          index: this.SnsTagsIndex,
-          id: tag,
-          body: {
-            script: {
-              //https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/update_examples.html
-              //integer값을 증가시키는법
-              lang: 'painless',
-              source: 'ctx._source.count++',
-            },
-          },
-        });
-        return res.body.found; //여기서는 true 리턴
-      })
-      .catch(async (err) => {
-        this.logger.error(`${tag} tag is missing, create tag DOC`);
+  async insertTagDocIfNotExist(tag: string) {
+    const resultTryingInc =
+      await this.hashtagCollection.incrementTagCountByTagName(tag);
 
-        //2-2. 존재하지 않으면 새로운 DOC 추가, missing하면 err뱉어내서 여기로 옴
-        await this.client.index({
-          index: this.SnsTagsIndex,
-          id: tag,
-          body: {
-            tagName: tag,
-            count: 1,
-          },
-        });
-        return err.body.found; //못찾아서 에러뜨면 여기로 오고, false 리턴임
-      });
+    if (resultTryingInc) {
+      return true;
+    }
+
+    this.logger.error(`${tag} tag is missing, create tag DOC`);
+    //2-2. 존재하지 않으면 새로운 DOC 추가, missing하면 err뱉어내서 여기로 옴
+
+    //몽고랑 elastic에 저장
+
+    //몽고에 삽입하고 받은 _id
+    const objId = await this.hashtagCollection.insertTagReturning_id(tag);
+
+    await this.client.index({
+      index: this.SnsTagsIndex,
+      id: tag,
+      body: {
+        tagName: tag,
+        objId,
+      },
+    });
+
+    return false;
   }
 
   getTagById(id: string) {
@@ -305,7 +296,7 @@ export class ElasticIndex {
           mappings: {
             properties: {
               tagName: { type: 'keyword' },
-              count: { type: 'integer' },
+              objId: { type: 'text', index: false },
             },
           },
         },
