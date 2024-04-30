@@ -29,33 +29,32 @@ export class ElasticIndex {
     this.init();
   }
 
-  insertPostDoc(postId, postDoc: SnsPostsDocType) {
-    return this.client
-      .index({
-        index: this.SnsPostsIndex,
-        id: postId,
-        body: postDoc,
-      })
-      .then(() => {
-        //삽입 후 tags가 있다면, 순회하면서 엘라스틱에서 존재하는 태그인지 체크
-        if (postDoc.tags !== undefined) {
-          postDoc.tags.split(' ').forEach((tag) => {
-            this.insertTagDocIfNotExist(tag);
-          });
-        }
-      });
+  async insertPostDoc(postId, postDoc: SnsPostsDocType) {
+    await this.client.index({
+      index: this.SnsPostsIndex,
+      id: postId,
+      body: postDoc,
+    });
+    if (!postDoc.tags) {
+      return;
+    }
+
+    //삽입 후 tags가 있다면, 순회하면서 엘라스틱에서 존재하는 태그인지 체크
+    for (const tag of postDoc.tags.split(' ')) {
+      await this.insertTagDocIfNotExist(tag);
+    }
   }
 
   /**태그가 존재하는지 체크해서 있으면 카운터증가, 없으면 DOC삽입 */
   insertTagDocIfNotExist(tag: string) {
-    this.client
+    return this.client
       .get({
         index: this.SnsTagsIndex,
         id: tag,
       })
-      .then((res) => {
+      .then(async (res) => {
         //2-1. 존재하는 태그면 count 증가
-        this.client.update({
+        await this.client.update({
           index: this.SnsTagsIndex,
           id: tag,
           body: {
@@ -69,11 +68,11 @@ export class ElasticIndex {
         });
         return res.body.found; //여기서는 true 리턴
       })
-      .catch((err) => {
+      .catch(async (err) => {
         this.logger.error(`${tag} tag is missing, create tag DOC`);
 
         //2-2. 존재하지 않으면 새로운 DOC 추가, missing하면 err뱉어내서 여기로 옴
-        this.client.index({
+        await this.client.index({
           index: this.SnsTagsIndex,
           id: tag,
           body: {

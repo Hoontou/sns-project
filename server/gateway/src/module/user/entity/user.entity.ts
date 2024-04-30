@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   OneToMany,
   OneToOne,
+  Index,
 } from 'typeorm';
 import { Userinfo } from './userinfo.entity';
 import { Post } from '../../post/repository/entity/post.entity';
@@ -15,6 +16,7 @@ import { Comment } from '../../post/repository/entity/comment.entity';
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
+  @Index()
   id: number;
 
   @Column({ unique: true })
@@ -35,6 +37,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Cocomment, (cocomment) => cocomment.user)
   cocomments: Cocomment[]; //유저는 대댓 여러개 쓸 수 있음.
 
-  @OneToOne(() => Userinfo)
+  @OneToOne(() => Userinfo, (userinfo) => userinfo.user)
   userinfo: Userinfo;
 }

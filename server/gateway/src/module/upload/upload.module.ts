@@ -9,5 +9,6 @@ import { UserModule } from '../user/user.module';
   imports: [MetadataModule, PostModule, UserModule],
   controllers: [UploadController],
   providers: [UploadService],
+  exports: [UploadService],
 })
 export class UploadModule {}

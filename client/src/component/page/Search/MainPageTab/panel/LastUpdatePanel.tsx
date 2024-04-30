@@ -11,6 +11,7 @@ import {
 } from '../../../../common/Post/post.interfaces';
 import { MetadataSchemaType } from 'sns-interfaces';
 import sample from '../../../../../asset/sample1.jpg';
+import { staticImgServer } from '../../../../../common/randomImage';
 
 const LastUpdatePanel = (props: {
   index: number;
@@ -84,7 +85,7 @@ const LastUpdatePanel = (props: {
               alt={`${index}`}
               src={`${requestUrl}/${post._id}/${post.files[0]}`}
               onError={(e: any) => {
-                e.target.src = sample; // 이미지 로드 실패 시 디폴트 이미지로 변경
+                e.target.src = staticImgServer.getRandomImg(); // 이미지 로드 실패 시 디폴트 이미지로 변경
               }}
             />
           </span>

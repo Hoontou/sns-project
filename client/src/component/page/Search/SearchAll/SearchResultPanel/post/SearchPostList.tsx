@@ -11,6 +11,7 @@ import { requestUrl } from '../../../../../../common/etc';
 import { pageItemLen } from '../../../../../common/Post/Postlist';
 import { axiosInstance } from '../../../../../../App';
 import { MetadataSchemaType } from 'sns-interfaces';
+import { staticImgServer } from '../../../../../../common/randomImage';
 
 const SearchPostList = (props: { searchString?: string; userId: string }) => {
   const [spin, setSpin] = useState<boolean>(true);
@@ -91,6 +92,9 @@ const SearchPostList = (props: { searchString?: string; userId: string }) => {
               }}
               alt={`${index}`}
               src={`${requestUrl}/${post._id}/${post.files[0]}`}
+              onError={(e: any) => {
+                e.target.src = staticImgServer.getRandomImg(); // 이미지 로드 실패 시 디폴트 이미지로 변경
+              }}
             />
           </span>
         </div>

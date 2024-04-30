@@ -37,7 +37,7 @@ export class SearchService {
       postDoc.tags = tmp.join(' ');
     }
 
-    this.elasticIndex.insertPostDoc(postDto.postId, postDoc);
+    await this.elasticIndex.insertPostDoc(postDto.postId, postDoc);
     return;
   }
 

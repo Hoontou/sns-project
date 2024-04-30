@@ -238,6 +238,10 @@ EXPLAIN SELECT "postId", "userId"
 이 쿼리에선 당연히 postid userid만 가져와서 index only 스캔을 한다.
 order by의 sort를 안함.
 근데 SELECT * 하면 sort가 실행계획에 들어감.
+ 
+반면에, 위에 post에서, likes 단일 인덱스로 order by 할때도
+결국엔 테이블 가서 데이터 가져와야하는데 plan에서는 sort 안하고 index 스캔만 한단 말이야.
+근데 왜 복합인덱스에서는 sort 하냐고.
 
 "진짜로" sort 효과를 아예못보는건지, 인덱스를 보고 테이블에서 데이터 가져왔을때 이미
 userId가 정렬된 상태로 가져와 져서 인덱스 도움을 받긴 하는건지 모르겠다.
@@ -246,10 +250,6 @@ userId가 정렬된 상태로 가져와 져서 인덱스 도움을 받긴 하는
 postId, createdAt의 복합인덱스로 where postId order by createdAt으로
 가져온 다음, userId로 
 .. 아니다 아니야...
-
-근데 위에 post에서, likes 단일 인덱스로 order by 할때도
-결국엔 테이블 가서 데이터 가져와야하는데 plan에서는 sort 안하고 index 스캔만 한단 말이야.
-근데 왜 복합인덱스에서는 sort 하냐고.
 
 인덱스 안쓰는게 빠르다고 생각하는 경우를 찾아보긴 했는데 아닌것같다.
 정렬된 결과를 앞에두고 sort를 왜하는지 모르겠다.

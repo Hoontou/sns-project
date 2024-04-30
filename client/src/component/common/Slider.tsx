@@ -9,6 +9,7 @@ import 'swiper/css/pagination';
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper';
 import sample1 from '../../asset/sample1.jpg';
 import sample2 from '../../asset/sample2.jpg';
+import { staticImgServer } from '../../common/randomImage';
 
 const Slider = (props: { images: string[] }) => {
   const sampleList = [sample1, sample2];
@@ -29,7 +30,7 @@ const Slider = (props: { images: string[] }) => {
             alt={`${idx}`}
             src={item}
             onError={(e: any) => {
-              e.target.src = sample1; // 이미지 로드 실패 시 디폴트 이미지로 변경
+              e.target.src = staticImgServer.getRandomImg(); // 이미지 로드 실패 시 디폴트 이미지로 변경
             }}
           />
         </SwiperSlide>

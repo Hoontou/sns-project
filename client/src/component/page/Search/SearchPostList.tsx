@@ -11,6 +11,7 @@ import Spinner from '../../../common/Spinner';
 import { pageItemLen } from '../../common/Post/Postlist';
 import { axiosInstance } from '../../../App';
 import { MetadataSchemaType } from 'sns-interfaces';
+import { staticImgServer } from '../../../common/randomImage';
 
 //targetId가 없으면 내 피드로 접근했다는 뜻.
 //내 포스트를 가져오면 됨.
@@ -115,6 +116,9 @@ const SearchPostList = (props: {
               }}
               alt={`${index}`}
               src={`${requestUrl}/${post._id}/${post.files[0]}`}
+              onError={(e: any) => {
+                e.target.src = staticImgServer.getRandomImg(); // 이미지 로드 실패 시 디폴트 이미지로 변경
+              }}
             />
           </span>
         </div>

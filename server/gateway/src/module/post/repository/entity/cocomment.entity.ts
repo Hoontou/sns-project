@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   //JoinColumn,
   ManyToOne,
+  Index,
 } from 'typeorm';
 import { Comment } from './comment.entity';
 import { User } from '../../../user/entity/user.entity';
@@ -41,5 +42,6 @@ export class Cocomment extends BaseEntity {
     onDelete: 'SET NULL',
   })
   //@JoinColumn()
+  @Index()
   comment: Comment;
 }

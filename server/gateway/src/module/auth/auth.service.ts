@@ -48,9 +48,9 @@ export class AuthService {
         exp: string;
       } = await this.jwtService.verify(accessToken);
 
-      // if (this.stateManager.getState(jwtResult.userId) !== originCode) {
-      //   throw new Error('1');
-      // }
+      if (this.stateManager.getState(jwtResult.userId) !== originCode) {
+        throw new Error('1');
+      }
 
       //가져온 이메일로 유저정보 요청
       const { userId, username } = await this.checkUserExist(jwtResult.email);
@@ -109,9 +109,9 @@ export class AuthService {
       //토큰검사 후 이메일 가져옴
       const jwtResult = await this.jwtService.verify(accessToken);
 
-      // if (this.stateManager.getState(jwtResult.userId) !== originCode) {
-      //   throw new Error('1');
-      // }
+      if (this.stateManager.getState(jwtResult.userId) !== originCode) {
+        throw new Error('1');
+      }
 
       return { userId: jwtResult.userId, success: true };
     } catch (err) {
@@ -162,10 +162,11 @@ export class AuthService {
     success: boolean;
     msg?: string | undefined;
   }> {
+    const lowerUsername = signUpDto.username.toLocaleLowerCase();
     //1 username 중복체크
     const existTest = await Promise.all([
       this.userRepo.userinfoTable.db.findOneBy({
-        username: signUpDto.username,
+        username: lowerUsername,
       }),
       this.userRepo.userTable.db.findOneBy({ email: signUpDto.email }),
     ]);
@@ -178,7 +179,7 @@ export class AuthService {
     //유저테이블, 유저인포테이블에 수동넣고 트리거로 유저넘
     //트라이로 해서 리턴 success true
 
-    const user = signUpDto;
+    const user: SignUpDto = { ...signUpDto, username: lowerUsername };
     const salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(user.password, salt);
 
