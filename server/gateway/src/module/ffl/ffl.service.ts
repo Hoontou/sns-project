@@ -26,20 +26,6 @@ export class FflService {
     private alertService: AlertService,
   ) {}
 
-  addFollowForTest() {
-    // for (let i = 2; i < 4; i++) {
-    //   for (let j = 1; j < 1000; i++) {
-    //     if (i === j) {
-    //       continue;
-    //     }
-    //     this.addFollow({ userTo: i, userFrom: j });
-    //   }
-    // } //이건 쌍방향으로 싹다하기엔 많음.
-    for (let i = 1; i < 6000; i++) {
-      this.addFollow({ userTo: String(i), userFrom: 50 });
-    }
-  }
-
   async checkFollowed(body: {
     userTo: number;
     userFrom: number;
@@ -50,6 +36,10 @@ export class FflService {
   async addFollow(body: { userTo: string | number; userFrom: number }) {
     const userTo = crypter.decrypt(body.userTo);
     const form = { userTo, userFrom: body.userFrom };
+
+    if (userTo === body.userFrom) {
+      return;
+    }
 
     const { followed } = await this.checkFollowed(form);
     if (followed) {
@@ -64,7 +54,7 @@ export class FflService {
       },
     };
     this.alertService.saveAlert(alertForm);
-    this.followCollection.addFollow(form);
+    await this.followCollection.addFollow(form);
     this.userService.increaseFollowCount(form);
     return;
   }
@@ -78,8 +68,8 @@ export class FflService {
       return;
     }
     //팔로우 돼 있으면 팔로우 취소
+    await this.followCollection.removeFollow(form);
     this.userService.decreaseFollowCount(form);
-    this.followCollection.removeFollow(form);
     return;
   }
 
@@ -91,7 +81,8 @@ export class FflService {
     //userId가 postId에 좋아요 눌렀는지 가져와야함.
     const liked: PostLikeSchemaDefinition[] =
       await this.postLikeCollection.postLikeModel.find({
-        ...body,
+        userId: body.userId,
+        postId: body.postId,
       });
 
     return { liked: liked.length === 0 ? false : true };
@@ -126,8 +117,11 @@ export class FflService {
     }
 
     //ffl에 Doc추가, post에 likesCount증가
-    this.postService.increaseLikeCount({ type: 'post', postId: body.postId });
-    this.postLikeCollection.addLike(body);
+    this.postService.increaseLikeCount({
+      type: 'post',
+      postId: body.postId,
+    });
+    await this.postLikeCollection.addLike(body);
     return;
   }
 
@@ -135,7 +129,7 @@ export class FflService {
     const { liked } = await this.checkLiked(body);
     //좋아요 돼 있으면 좋아요 취소
     if (liked === true) {
-      this.postLikeCollection.removeLike(body);
+      await this.postLikeCollection.removeLike(body);
       this.postService.decreaseLikeCount({ type: 'post', postId: body.postId });
       return;
     }
@@ -201,7 +195,7 @@ export class FflService {
 
   async addCommentLike(body: { userId: number; commentId: number }) {
     //ffl msa에서 commentId, userId를 commentLikeSchema에 삽입
-    this.commentLikeCollection.addCommentLike(body);
+    await this.commentLikeCollection.addCommentLike(body);
     //post msa에서 comment의 likescount 증가
     this.postService.increaseLikeCount({ type: 'comment', ...body });
 
@@ -210,7 +204,7 @@ export class FflService {
 
   async removeCommentLike(body: { userId: number; commentId: number }) {
     //ffl msa에서 commentId, userId를 commentLikeSchema에 삭제
-    this.commentLikeCollection.removeCommentLike(body);
+    await this.commentLikeCollection.removeCommentLike(body);
     //post msa에서 comment의 likescount 감소
     this.postService.decreaseLikeCount({ type: 'comment', ...body });
 
@@ -219,7 +213,7 @@ export class FflService {
 
   async addCocommentLike(body: { userId: number; cocommentId: number }) {
     //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삽입
-    this.cocommentLikeCollection.addCocommentLike(body);
+    await this.cocommentLikeCollection.addCocommentLike(body);
     //post msa에서 cocomment의 likescount 증가
     this.postService.increaseLikeCount({ type: 'cocomment', ...body });
 
@@ -228,7 +222,7 @@ export class FflService {
 
   async removeCocommentLike(body: { userId: number; cocommentId: number }) {
     //ffl msa에서 cocommentId, userId를 cocommentLikeSchema에 삭제
-    this.cocommentLikeCollection.removeCocommentLike(body);
+    await this.cocommentLikeCollection.removeCocommentLike(body);
     //post msa에서 cocomment의 likescount 감소
     this.postService.decreaseLikeCount({ type: 'cocomment', ...body });
 
@@ -249,16 +243,22 @@ export class FflService {
         commentLikedList: Array(data.commentIdList.length).fill(false),
       };
     }
+    console.log(likesList);
 
     //투포인터로 밀고가면서 좋아요 체크결과 맞으면 true
     let tmpIndex: number = 0;
     const tmp = [...data.commentIdList].map((i) => {
+      if (tmpIndex === likesList.length) {
+        return false;
+      }
+
       if (i === likesList[tmpIndex].commentId) {
         tmpIndex += 1;
         return true;
       }
       return false;
     });
+    console.log(tmp);
     return { commentLikedList: tmp };
   }
 
@@ -281,6 +281,10 @@ export class FflService {
     //투포인터로 밀고가면서 좋아요 체크결과 맞으면 true
     let tmpIndex: number = 0;
     const tmp = [...data.cocommentIdList].map((i) => {
+      if (tmpIndex === likesList.length) {
+        return false;
+      }
+
       if (i === likesList[tmpIndex].cocommentId) {
         tmpIndex += 1;
         return true;

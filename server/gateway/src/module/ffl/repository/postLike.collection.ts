@@ -23,12 +23,12 @@ export class PostLikeCollection {
     private cacheManager: CacheManager,
   ) {}
 
-  addLike(data: { userId: number; postId: string }) {
+  async addLike(data: { userId: number; postId: string }) {
     const newOne = new this.postLikeModel({
       userId: crypter.decrypt(data.userId),
       postId: data.postId,
     });
-    newOne
+    await newOne
       .save()
       .then(() => {
         // this.logger.debug('like stored in mongo successfully');
@@ -39,8 +39,8 @@ export class PostLikeCollection {
     return;
   }
 
-  removeLike(data: { userId: number; postId: string }) {
-    this.postLikeModel
+  async removeLike(data: { userId: number; postId: string }) {
+    await this.postLikeModel
       .findOneAndDelete({
         userId: crypter.decrypt(data.userId),
         postId: data.postId,
@@ -64,6 +64,7 @@ export class PostLikeCollection {
             .skip(page * pageLen)
             .limit(pageLen)
             .exec();
+    console.log(userIds.length);
 
     return userIds.map((item) => {
       return item.userId;

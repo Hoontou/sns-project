@@ -16,13 +16,13 @@ export class CocommentLikeCollection {
   ) {}
 
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
-  addCocommentLike(data: { userId: number; cocommentId: number }) {
+  async addCocommentLike(data: { userId: number; cocommentId: number }) {
     const newOne = new this.cocommentLikeModel({
       userId: crypter.decrypt(data.userId),
       cocommentId: data.cocommentId,
     });
 
-    newOne
+    await newOne
       .save()
       .then(() => {
         this.logger.debug('cocomment like stored in mongo successfully');
@@ -35,8 +35,8 @@ export class CocommentLikeCollection {
     return;
   }
 
-  removeCocommentLike(data: { userId: number; cocommentId: number }) {
-    this.cocommentLikeModel
+  async removeCocommentLike(data: { userId: number; cocommentId: number }) {
+    await this.cocommentLikeModel
       .findOneAndDelete({
         userId: crypter.decrypt(data.userId),
         cocommentId: data.cocommentId,

@@ -15,7 +15,8 @@ import { User } from '../../../user/entity/user.entity';
 export class Post extends BaseEntity {
   @PrimaryColumn()
   @Index()
-  id: string; //post objectId를 내가 넣어줘야함. 자동생성 아님
+  id: string;
+  //post objectId를 내가 넣어줘야함. 자동생성 아님
 
   @Column()
   title: string;

@@ -3,6 +3,8 @@ import { Types } from 'mongoose';
 import { SignUpDto, UploadMessage } from 'sns-interfaces';
 import { pgdb } from 'src/configs/postgres';
 import { AuthService } from 'src/module/auth/auth.service';
+import { FflService } from 'src/module/ffl/ffl.service';
+import { PostService } from 'src/module/post/post.service';
 import { UploadService } from 'src/module/upload/upload.service';
 
 @Injectable()
@@ -10,13 +12,17 @@ export class MockDataService {
   constructor(
     private authService: AuthService,
     private uploadService: UploadService,
+    private fflService: FflService,
+    private postService: PostService,
   ) {
     // this.insertMockPost();
+    // this.addMockFollow();
+    // this.addMockLikes();
   }
 
   //회원가입
   async insertMockUser() {
-    const howManyInsert = 100;
+    const howManyInsert = 200;
 
     const get5Letter = (): string => {
       const alphabets = 'abcdefghijklmnopqrstuvwxyz';
@@ -32,35 +38,27 @@ export class MockDataService {
     });
 
     for (const [index, i] of randomNames.entries()) {
-      console.log(index);
       const dto: SignUpDto = {
         email: 'mock' + String(index) + '@gmail.com',
         password: 'test',
         username: i,
       };
       await this.authService.signUp(dto);
-      console.log(index, ' completed');
     }
 
     return 'completed';
   }
+
   //postging
   async insertMockPost() {
     //모든유저에게, 최소 5개, 최대 15개 삽입
-    // -> 평균 10개, 유저 5000명 -> 50000개.
+    // -> 평균 10개, 유저 n명 -> 10n개.
 
-    const query = `
-    SELECT id AS "userId"
-    FROM public."user"
-    ORDER BY id DESC
-    LIMIT 1;
-    `;
-    const resultOfGetLastuserId = await pgdb.client.query(query);
-    const lastUserId = resultOfGetLastuserId.rows[0].userId;
+    const lastUserId = await this.getLastUserId();
 
     for (let currentUserId = 1; currentUserId < lastUserId; currentUserId++) {
       //5개~ 15개
-      const howMany = Math.floor(Math.random() * 11) + 5;
+      const howMany = this.getRandomNum(5, 15);
 
       const mockPostList: UploadMessage[] = Array.from(
         { length: howMany },
@@ -73,20 +71,153 @@ export class MockDataService {
         await this.uploadService.uploadPost({ uploadForm });
       }
     }
-  }
-  //팔로잉
-  //댓글
-  //좋아요
 
-  async delay(ms: number) {
+    return 'completed';
+  }
+
+  //팔로잉
+  async addMockFollow() {
+    const lastUserId = await this.getLastUserId();
+
+    for (let currentUserId = 1; currentUserId < lastUserId; currentUserId++) {
+      const howMany = this.getRandomNum(20, 100);
+
+      const tmp = Array.from({ length: howMany }, () => {
+        return this.getRandomNum(1, lastUserId);
+      });
+
+      for (const userTo of tmp) {
+        await this.fflService.addFollow({
+          userTo: String(userTo),
+          userFrom: currentUserId,
+        });
+      }
+    }
+
+    return 'completed';
+  }
+
+  //댓글
+  async addMockComments() {
+    const getPostquery = `
+    SELECT id, "userId"
+    FROM post
+    `;
+
+    const getPostresult = await pgdb.client.query(getPostquery);
+    const _ids: { id: string; userId: number }[] = getPostresult.rows;
+
+    const lastUserId = await this.getLastUserId();
+
+    for (const { id, userId } of _ids) {
+      const howMany = this.getRandomNum(5, 15);
+
+      //해당 post에 댓글 달 유저들
+      const tmp = Array.from({ length: howMany }, () => {
+        return this.getRandomNum(1, lastUserId);
+      });
+
+      for (const i of tmp) {
+        await this.postService.addComment({
+          userId: i,
+          postId: id,
+          postOwnerUserId: String(userId),
+          comment: titles[Math.floor(Math.random() * titles.length)],
+        });
+      }
+    }
+    return 'completed';
+  }
+
+  async addMockCommentLikes() {
+    const getCommentquery = `
+    SELECT id
+    FROM comment
+    `;
+
+    const getCommentResult = await pgdb.client.query(getCommentquery);
+    const ids: { id: number }[] = getCommentResult.rows;
+    console.log(ids);
+
+    const lastUserId = await this.getLastUserId();
+
+    for (const { id } of ids) {
+      const howMany = this.getRandomNum(3, 6);
+
+      //해당 post에 댓글 달 유저들
+      const tmp = Array.from({ length: howMany }, () => {
+        return this.getRandomNum(1, lastUserId);
+      });
+
+      for (const i of tmp) {
+        await this.fflService.addCommentLike({
+          userId: i,
+          commentId: id,
+        });
+      }
+    }
+
+    return 'completed';
+  }
+
+  //좋아요
+  async addMockLikes() {
+    const getPostquery = `
+    SELECT id, "userId"
+    FROM post
+    `;
+
+    const getPostresult = await pgdb.client.query(getPostquery);
+    const _ids: { id: string; userId: number }[] = getPostresult.rows;
+
+    const lastUserId = await this.getLastUserId();
+
+    for (const { id, userId } of _ids) {
+      const howMany = this.getRandomNum(20, 30);
+
+      //해당 post를 like 누를 유저들
+      const tmp = Array.from({ length: howMany }, () => {
+        return this.getRandomNum(1, lastUserId);
+      });
+
+      for (const i of tmp) {
+        await this.fflService.addLike({
+          userId: i,
+          postId: id,
+          postOwnerUserId: String(userId),
+        });
+      }
+    }
+
+    return 'completed';
+  }
+
+  private async delay(ms: number) {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
     });
   }
 
+  private getRandomNum(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  private async getLastUserId() {
+    const query = `
+    SELECT id AS "userId"
+    FROM public."user"
+    ORDER BY id DESC
+    LIMIT 1;
+    `;
+    const resultOfGetLastuserId = await pgdb.client.query(query);
+    const lastUserId: number = resultOfGetLastuserId.rows[0].userId;
+    return lastUserId;
+  }
+
   private generateMockPost(userId: number): UploadMessage {
     const title = titles[Math.floor(Math.random() * titles.length)];
     const tag1 = '#' + hashtags[Math.floor(Math.random() * hashtags.length)];
+    const tag2 = '#' + hashtags[Math.floor(Math.random() * hashtags.length)];
 
     const postId: string = new Types.ObjectId().toString();
     const postList: string[] = ['test'];
@@ -95,7 +226,7 @@ export class MockDataService {
       userId: String(userId),
       postId,
       files: postList,
-      title: tag1 + ' ' + title,
+      title: tag1 + ' ' + tag2 + ' ' + title,
     };
 
     return uploadForm;

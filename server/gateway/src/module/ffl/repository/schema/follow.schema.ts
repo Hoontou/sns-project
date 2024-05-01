@@ -19,6 +19,8 @@ export const FollowSchema = SchemaFactory.createForClass(
   FollowSchemaDefinition,
 );
 
+FollowSchema.index({ userTo: 1, userFrom: 1 }, { unique: true });
+
 export const UserToPop = 'userToPop';
 export const UserFromPop = 'userFromPop';
 FollowSchema.virtual(UserToPop, {

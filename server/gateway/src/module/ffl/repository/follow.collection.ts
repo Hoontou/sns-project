@@ -39,12 +39,12 @@ export class FollowCollection {
     return { followed: followed.length === 0 ? false : true };
   }
 
-  addFollow(data: { userTo: number; userFrom: number }) {
+  async addFollow(data: { userTo: number; userFrom: number }) {
     const newOne = new this.followModel({
       userTo: data.userTo,
       userFrom: data.userFrom,
     });
-    newOne
+    await newOne
       .save()
       .then(() => {
         this.logger.debug('follow stored in mongo successfully');
@@ -57,8 +57,8 @@ export class FollowCollection {
     return;
   }
 
-  removeFollow(data: { userTo: number; userFrom: number }) {
-    this.followModel
+  async removeFollow(data: { userTo: number; userFrom: number }) {
+    await this.followModel
       .findOneAndDelete({
         userTo: data.userTo,
         userFrom: data.userFrom,

@@ -18,7 +18,7 @@ export const HashtagSchema = SchemaFactory.createForClass(
   HashtagSchemaDefinition,
 );
 
-HashtagSchema.index({ tagName: 1 });
+HashtagSchema.index({ tagName: 1 }, { unique: true });
 
 export interface HashtagDocType {
   _id?: Types.ObjectId;

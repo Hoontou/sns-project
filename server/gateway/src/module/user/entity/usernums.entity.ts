@@ -5,7 +5,6 @@ import {
   Column,
   JoinColumn,
   OneToOne,
-  Index,
 } from 'typeorm';
 import { User } from './user.entity';
 
@@ -26,6 +25,5 @@ export class Usernums extends BaseEntity {
   //유저테이블과 포린키 연결하고 cascade 삭제 설정.
   @OneToOne(() => User)
   @JoinColumn()
-  @Index()
   user: User;
 }
