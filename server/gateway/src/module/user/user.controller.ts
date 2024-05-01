@@ -9,6 +9,7 @@ import {
 import { UserService } from './user.service';
 import { IntroduceUsernameDto, UsernameDto } from './dto/changeInfo.dto';
 import { ExReq } from '../auth/auth.middleware';
+import { crypter } from 'src/common/crypter';
 
 @Controller('user')
 export class UserController {
@@ -48,9 +49,12 @@ export class UserController {
   async getUsernameWithImg(@Req() req: ExReq): Promise<{
     username: string;
     img: string;
-    userId: number;
+    userId: string;
+    introduceName: string;
   }> {
-    return this.userService.getUsernameWithImg(req.user.userId);
+    const tmp = await this.userService.getUsernameWithImg(req.user.userId);
+
+    return { ...tmp, userId: crypter.encrypt(tmp.userId) };
   }
 
   @Post('/getFollowCount')

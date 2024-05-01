@@ -12,6 +12,7 @@ import { Userinfo } from './userinfo.entity';
 import { Post } from '../../post/repository/entity/post.entity';
 import { Cocomment } from '../../post/repository/entity/cocomment.entity';
 import { Comment } from '../../post/repository/entity/comment.entity';
+import { Usernums } from './usernums.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -39,4 +40,7 @@ export class User extends BaseEntity {
 
   @OneToOne(() => Userinfo, (userinfo) => userinfo.user)
   userinfo: Userinfo;
+
+  @OneToOne(() => Usernums, (usernums) => usernums.user)
+  usernums: Usernums;
 }

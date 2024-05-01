@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   Index,
+  JoinColumn,
 } from 'typeorm';
 import { Comment } from './comment.entity';
 import { User } from '../../../user/entity/user.entity';
@@ -28,8 +29,8 @@ export class Post extends BaseEntity {
   @Column({ default: 0 })
   commentcount: number;
 
-  @ManyToOne(() => User, (user) => user.posts)
-  //@JoinColumn()
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User; //포린키, 작성자 uuid
 
   @OneToMany(() => Comment, (comment) => comment.post)
