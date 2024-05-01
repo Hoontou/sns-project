@@ -22,7 +22,7 @@ export class MockDataService {
 
   //회원가입
   async insertMockUser() {
-    const howManyInsert = 200;
+    const howManyInsert = 500;
 
     const get5Letter = (): string => {
       const alphabets = 'abcdefghijklmnopqrstuvwxyz';
@@ -80,7 +80,7 @@ export class MockDataService {
     const lastUserId = await this.getLastUserId();
 
     for (let currentUserId = 1; currentUserId < lastUserId; currentUserId++) {
-      const howMany = this.getRandomNum(20, 100);
+      const howMany = this.getRandomNum(20, 80);
 
       const tmp = Array.from({ length: howMany }, () => {
         return this.getRandomNum(1, lastUserId);
@@ -144,7 +144,7 @@ export class MockDataService {
     for (const { id } of ids) {
       const howMany = this.getRandomNum(3, 6);
 
-      //해당 post에 댓글 달 유저들
+      //해당 댓글에 좋아요 누를 유저들
       const tmp = Array.from({ length: howMany }, () => {
         return this.getRandomNum(1, lastUserId);
       });

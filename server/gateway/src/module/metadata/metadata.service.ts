@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { crypter } from 'src/common/crypter';
 import {
+  emptyMetadata,
   MetadataCollection,
   MetadataDto,
 } from './repository/metadata.collection';
@@ -113,17 +114,18 @@ export class MetadataService {
   }> {
     const myLikesPost_ids = await this.fflService.getMyLikes(data);
 
-    const tmp: MetadataDto[] = [];
-
-    myLikesPost_ids.forEach((i: PostLikeSchemaDefinitionExecPop) => {
-      if (i.metadataPop) {
-        tmp.push({
-          ...i.metadataPop,
-          _id: i.metadataPop._id.toString(),
-          userId: crypter.encrypt(i.userId),
-        });
-      }
-    });
+    const tmp: MetadataDto[] = myLikesPost_ids.map(
+      (i: PostLikeSchemaDefinitionExecPop) => {
+        if (i.metadataPop) {
+          return {
+            ...i.metadataPop,
+            _id: i.metadataPop._id.toString(),
+            userId: crypter.encrypt(i.metadataPop.userId),
+          };
+        }
+        return emptyMetadata;
+      },
+    );
 
     return { metadatas: tmp };
   }

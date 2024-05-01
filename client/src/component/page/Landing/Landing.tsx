@@ -133,7 +133,7 @@ const Landing = () => {
                 fontWeight: '600',
               }}
             >
-              Pepsi is the best
+              CreamIsBeast
             </span>
           </Grid>
           <Grid item xs={3}>

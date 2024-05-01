@@ -114,13 +114,20 @@ export class SearchService {
 
     const searchedTagList = result.body.hits.hits.map((item) => {
       return item._source;
-    }) as { tagName: string; count: number }[];
+    }) as SnsTagsDocType[];
 
     if (searchedTagList === undefined) {
       return { searchedTags: [] };
     }
 
-    return { searchedTags: searchedTagList };
+    const tagsFetchedCount: SearchedHashtag[] = await Promise.all(
+      searchedTagList.map(async (i) => {
+        const count = await this.hashtagCollection.getTagCountBy_id(i.objId);
+        return { tagName: i.tagName, count };
+      }),
+    );
+
+    return { searchedTags: tagsFetchedCount };
   }
 
   async deletePost(data) {

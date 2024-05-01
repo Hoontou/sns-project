@@ -15,7 +15,7 @@ export class MockDataController {
   insertMockPost() {
     return this.mockDataService.insertMockPost();
   }
-  //팔로잉
+  //팔로우 추가
   @Get('/addMockFollow')
   addMockFollow() {
     return this.mockDataService.addMockFollow();
@@ -25,12 +25,12 @@ export class MockDataController {
   addMockComments() {
     return this.mockDataService.addMockComments();
   }
-  //댓글 좋아요
+  //댓글에 좋아요
   @Get('/addMockCommentLikes')
   addMockCommentLikes() {
     return this.mockDataService.addMockCommentLikes();
   }
-  //좋아요
+  //게시물에 좋아요
   @Get('/addMockLikes')
   addMockLikes() {
     return this.mockDataService.addMockLikes();

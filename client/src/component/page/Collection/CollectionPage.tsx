@@ -14,6 +14,7 @@ import { Typography } from 'antd';
 import Navbar from '../../common/Navbar/Navbar';
 import { axiosInstance } from '../../../App';
 import { MetadataSchemaType } from 'sns-interfaces';
+import { staticImgServer } from '../../../common/randomImage';
 const { Title } = Typography;
 
 const CollectionPage = () => {
@@ -88,6 +89,9 @@ const CollectionPage = () => {
               }}
               alt={`${index}`}
               src={`${requestUrl}/${post._id}/${post.files[0]}`}
+              onError={(e: any) => {
+                e.target.src = staticImgServer.getRandomImg(); // 이미지 로드 실패 시 디폴트 이미지로 변경
+              }}
             />
           </span>
         </div>

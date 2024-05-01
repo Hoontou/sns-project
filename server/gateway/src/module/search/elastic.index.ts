@@ -42,6 +42,10 @@ export class ElasticIndex {
 
     //삽입 후 tags가 있다면, 순회하면서 엘라스틱에서 존재하는 태그인지 체크
     for (const tag of postDoc.tags.split(' ')) {
+      if (this.hasSpecialCharacters(tag)) {
+        continue;
+      }
+
       await this.insertTagDocIfNotExist(tag);
     }
   }
@@ -307,5 +311,11 @@ export class ElasticIndex {
       );
       this.logger.error(error.meta.body.error);
     }
+  }
+
+  private hasSpecialCharacters(input: string): boolean {
+    const specialCharactersRegex = /[^a-zA-Z0-9]/;
+
+    return specialCharactersRegex.test(input);
   }
 }
