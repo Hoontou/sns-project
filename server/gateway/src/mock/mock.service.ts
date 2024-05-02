@@ -14,15 +14,11 @@ export class MockDataService {
     private uploadService: UploadService,
     private fflService: FflService,
     private postService: PostService,
-  ) {
-    // this.insertMockPost();
-    // this.addMockFollow();
-    // this.addMockLikes();
-  }
+  ) {}
 
   //회원가입
   async insertMockUser() {
-    const howManyInsert = 500;
+    const howManyInsert = 200;
 
     const get5Letter = (): string => {
       const alphabets = 'abcdefghijklmnopqrstuvwxyz';
@@ -81,7 +77,7 @@ export class MockDataService {
     const lastUserId = await this.getLastUserId();
 
     for (let currentUserId = 1; currentUserId < lastUserId; currentUserId++) {
-      const howMany = this.getRandomNum(20, 80);
+      const howMany = this.getRandomNum(20, 40);
 
       const tmp = Array.from({ length: howMany }, () => {
         return this.getRandomNum(1, lastUserId);

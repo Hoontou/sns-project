@@ -1,9 +1,15 @@
-/**userId 프로퍼티가 굳이 필요한가 싶은데, 일단 넣어놨음. 지금 docId == userId 상태임. */
 export interface SnsUsersDocType {
   username: string;
   introduce: string;
   img: string;
   introduceName: string;
+}
+
+export interface SnsUsersUpdateForm {
+  username?: string;
+  introduce?: string;
+  img?: string;
+  introduceName?: string;
 }
 
 export interface SnsPostsDocType {

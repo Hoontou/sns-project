@@ -26,7 +26,6 @@ import { MockDataController } from './mock/mock.controller';
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://mgdb:27017/sns';
 const NODE_ENV = process.env.NODE_ENV;
-
 @Module({
   imports: [
     TypeOrmModule.forRoot(NODE_ENV ? localTypeORMConfig : awsTypeORMConfig),

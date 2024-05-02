@@ -56,19 +56,19 @@ services:
   #mgdb bash에 접속 후 mongosh /usr/src/config/set.js 입력하면 레플리카셋 설정
   mgdb:
     image: mongo:latest
-    volumes:
-      - ./db/mgdb.repl.config:/usr/src/config
-    command: mongod --replSet rs0 --bind_ip_all
+    #volumes:
+    #  - ./db/mgdb.repl.config:/usr/src/config
+    #command: mongod --replSet rs0 --bind_ip_all
     restart: always
     ports:
       - 27018:27017
 
-  mgdb2:
-    image: mongo:latest
-    command: mongod --replSet rs0 --bind_ip_all
-    restart: always
-    ports:
-      - 27019:27017
+  # mgdb2:
+  #   image: mongo:latest
+  #   command: mongod --replSet rs0 --bind_ip_all
+  #   restart: always
+  #   ports:
+  #     - 27019:27017
 
   # monstache:
   #   restart: always

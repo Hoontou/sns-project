@@ -10,6 +10,8 @@ import { UploadMessage } from 'sns-interfaces';
 import { UserCollection } from './repository/user.collection';
 import { crypter } from 'src/common/crypter';
 import { pgdb } from '../../configs/postgres';
+import { SearchService } from '../search/search.service';
+import { SnsUsersUpdateForm } from '../search/types/search.types';
 
 export interface GetUserInfoData {
   userId: number;
@@ -31,6 +33,7 @@ export class UserRepository {
     public readonly userinfoTable: UserinfoTable,
     public readonly usernumsTable: UsernumsTable,
     public readonly userCollection: UserCollection,
+    private searchService: SearchService,
   ) {}
 
   /**pg삽입 후 엘라스틱 삽입 */
@@ -55,10 +58,21 @@ export class UserRepository {
     return Promise.all([
       this.userinfoTable.db.save(newUserinfo),
       this.usernumsTable.db.save(newUsernums),
-      this.userCollection.createUser({
-        username: signUpDto.username,
-        userId: newUser.id,
-      }),
+      this.userCollection
+        .createUser({
+          username: signUpDto.username,
+          userId: newUser.id,
+        })
+        .then(async (doc) => {
+          const userDocDto = {
+            username: doc.username,
+            introduce: doc.introduce,
+            img: doc.img,
+            introduceName: doc.introduceName,
+          };
+          await this.searchService.insertUser(doc._id.toString(), userDocDto);
+          return doc;
+        }),
     ]);
   }
 
@@ -150,7 +164,14 @@ export class UserRepository {
 
     return Promise.all([
       this.userinfoTable.changeUsername(form),
-      this.userCollection.changeUsername(form),
+      this.userCollection.changeUsername(form).then(async (doc) => {
+        const form: SnsUsersUpdateForm = {
+          username: data.username,
+        };
+        await this.searchService.updateUser(doc?._id, form);
+
+        return doc;
+      }),
     ]);
   }
 
@@ -159,7 +180,14 @@ export class UserRepository {
 
     return Promise.all([
       this.userinfoTable.changeIntro(form),
-      this.userCollection.changeIntro(form),
+      this.userCollection.changeIntro(form).then(async (doc) => {
+        const form: SnsUsersUpdateForm = {
+          introduce: data.intro,
+        };
+        await this.searchService.updateUser(doc?._id, form);
+
+        return doc;
+      }),
     ]);
   }
 
@@ -168,7 +196,14 @@ export class UserRepository {
 
     return Promise.all([
       this.userinfoTable.changeIntroduceName(form),
-      this.userCollection.changeIntroduceName(form),
+      this.userCollection.changeIntroduceName(form).then(async (doc) => {
+        const form: SnsUsersUpdateForm = {
+          introduceName: data.introduceName,
+        };
+        await this.searchService.updateUser(doc?._id, form);
+
+        return doc;
+      }),
     ]);
   }
 
@@ -178,7 +213,14 @@ export class UserRepository {
 
     return Promise.all([
       this.userinfoTable.changeImg(form),
-      this.userCollection.changeImg(form),
+      this.userCollection.changeImg(form).then(async (doc) => {
+        const form: SnsUsersUpdateForm = {
+          img: data.img,
+        };
+        await this.searchService.updateUser(doc?._id, form);
+
+        return doc;
+      }),
     ]).catch((err) => {
       console.log('user -> user.repo.ts -> changeImg 에서 err');
       console.log(err);

@@ -42,12 +42,3 @@ services:
     environment:
       - NODE_ENV=development
       - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=snsupload;AccountKey=HlOXNf3LOx7nzTHawQQtCCuAQZ0/mMT32yF73YZykRXGsZTUOfsO6CuL25MIjNG5/r0OHcOpU0zO+AStAMadrg==;EndpointSuffix=core.windows.net
-
-  monstache:
-    restart: always
-    image: rwynn/monstache:rel6
-    command: -f /usr/src/mons.config.toml &
-    volumes:
-      - ./db/mons.config.toml:/usr/src/mons.config.toml
-    ports:
-      - '8089:8080'

@@ -6,6 +6,7 @@ import {
   SearchResult,
   SnsPostsDocType,
   SnsTagsDocType,
+  SnsUsersDocType,
 } from './types/search.types';
 import { ElasticIndex } from './elastic.index';
 import { HashtagCollection } from './repository/hashtag.collection';
@@ -19,6 +20,14 @@ export class SearchService {
     private elasticIndex: ElasticIndex,
     private hashtagCollection: HashtagCollection,
   ) {}
+
+  insertUser(user_id: string, userDoc: SnsUsersDocType) {
+    return this.elasticIndex.insertUserDoc(user_id, userDoc);
+  }
+
+  updateUser(user_id, form) {
+    return this.elasticIndex.updateUserDoc(user_id, form);
+  }
 
   //업로드 메서드로부터 오는 해시태그 핸들링 요청
   //해시태그 존재여부 체크후 없으면 추가,

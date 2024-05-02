@@ -9,7 +9,11 @@ import {
   localElasticSearch,
   awsElasticSearch,
 } from '../../configs/elascit.config';
-import { SnsPostsDocType } from './types/search.types';
+import {
+  SnsPostsDocType,
+  SnsUsersDocType,
+  SnsUsersUpdateForm,
+} from './types/search.types';
 import { HashtagCollection } from './repository/hashtag.collection';
 
 const NODE_ENV = process.env.NODE_ENV;
@@ -28,6 +32,34 @@ export class ElasticIndex {
 
   onModuleInit() {
     this.init();
+  }
+
+  async insertUserDoc(user_id, userDoc: SnsUsersDocType) {
+    await this.client.index({
+      index: this.SnsUsersIndex,
+      id: user_id,
+      body: userDoc,
+    });
+    return;
+  }
+
+  async updateUserDoc(user_id: string, userDocUpdateForm: SnsUsersUpdateForm) {
+    try {
+      await this.client.update({
+        index: this.SnsUsersIndex,
+        id: user_id,
+        body: {
+          doc: userDocUpdateForm,
+        },
+      });
+    } catch (error) {
+      this.logger.error('Error updating document field:', {
+        _id: user_id,
+        ...userDocUpdateForm,
+      });
+      console.trace();
+      this.logger.error(error);
+    }
   }
 
   async insertPostDoc(postId, postDoc: SnsPostsDocType) {
@@ -301,6 +333,19 @@ export class ElasticIndex {
             properties: {
               tagName: { type: 'keyword' },
               objId: { type: 'text', index: false },
+            },
+          },
+        },
+      });
+      await this.client.indices.create({
+        index: this.SnsUsersIndex,
+        body: {
+          mappings: {
+            properties: {
+              username: { type: 'keyword' },
+              introduceName: { type: 'keyword' },
+              img: { type: 'text', index: false },
+              introduce: { type: 'text', index: false },
             },
           },
         },
