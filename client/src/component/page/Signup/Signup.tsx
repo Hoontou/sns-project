@@ -103,7 +103,7 @@ const Signup = () => {
       style={{ width: '90%', margin: '1.5rem auto' }}
     >
       <div>계정 등록</div>
-      username은 영어만 가능해요.
+      username은 영어 소문자와 숫자만 가능해요.
       <div>실제 계정을 입력하지 마세요.</div>
       <hr></hr>
       <form onSubmit={onSubmitHandler}>

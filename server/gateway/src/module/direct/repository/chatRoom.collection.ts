@@ -141,7 +141,7 @@ export class ChatRoomCollection {
   ): Promise<ChatRoomSchemaDefinitionExecPop[]> {
     const size = 20;
     return this.chatRoomModel
-      .find({ ownerUserId: userId })
+      .find({ ownerUserId: userId, totalChatCount: { $gte: 1 } })
       .populate(UserPop)
       .sort({ lastUpdatedAt: -1 })
       .skip(page * size)
@@ -168,7 +168,7 @@ export class ChatRoomCollection {
     userId: number,
   ): Promise<ChatRoomSchemaDefinition | null> {
     return this.chatRoomModel
-      .findOne({ ownerUserId: userId })
+      .findOne({ ownerUserId: userId, totalChatCount: { $gte: 1 } })
       .sort({ lastUpdatedAt: -1 })
       .limit(1)
       .exec();

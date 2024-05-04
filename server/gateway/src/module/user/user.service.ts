@@ -91,7 +91,10 @@ export class UserService {
     userId: number;
   }): Promise<{ success: boolean }> {
     try {
-      await this.userRepo.changeIntroduceName(body);
+      await this.userRepo.changeIntroduceName({
+        ...body,
+        introduceName: body.introduceName,
+      });
       return { success: true };
     } catch (error) {
       this.logger.error(

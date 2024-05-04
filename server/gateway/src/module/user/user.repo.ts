@@ -165,10 +165,14 @@ export class UserRepository {
     return Promise.all([
       this.userinfoTable.changeUsername(form),
       this.userCollection.changeUsername(form).then(async (doc) => {
+        if (!doc) {
+          return doc;
+        }
+
         const form: SnsUsersUpdateForm = {
           username: data.username,
         };
-        await this.searchService.updateUser(doc?._id, form);
+        await this.searchService.updateUser(doc?._id.toString(), form);
 
         return doc;
       }),
@@ -181,10 +185,14 @@ export class UserRepository {
     return Promise.all([
       this.userinfoTable.changeIntro(form),
       this.userCollection.changeIntro(form).then(async (doc) => {
+        if (!doc) {
+          return doc;
+        }
+
         const form: SnsUsersUpdateForm = {
           introduce: data.intro,
         };
-        await this.searchService.updateUser(doc?._id, form);
+        await this.searchService.updateUser(doc?._id.toString(), form);
 
         return doc;
       }),
@@ -197,10 +205,14 @@ export class UserRepository {
     return Promise.all([
       this.userinfoTable.changeIntroduceName(form),
       this.userCollection.changeIntroduceName(form).then(async (doc) => {
+        if (!doc) {
+          return doc;
+        }
+
         const form: SnsUsersUpdateForm = {
           introduceName: data.introduceName,
         };
-        await this.searchService.updateUser(doc?._id, form);
+        await this.searchService.updateUser(doc?._id.toString(), form);
 
         return doc;
       }),
@@ -214,10 +226,14 @@ export class UserRepository {
     return Promise.all([
       this.userinfoTable.changeImg(form),
       this.userCollection.changeImg(form).then(async (doc) => {
+        if (!doc) {
+          return doc;
+        }
+
         const form: SnsUsersUpdateForm = {
           img: data.img,
         };
-        await this.searchService.updateUser(doc?._id, form);
+        await this.searchService.updateUser(doc?._id.toString(), form);
 
         return doc;
       }),

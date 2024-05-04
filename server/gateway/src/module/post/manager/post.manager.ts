@@ -45,9 +45,13 @@ export class PostManager {
     data: { hashtag: string; page: number },
     userId: number,
   ) {
+    const lowerTag = data.hashtag.toLowerCase();
     //1 post에 해시태그로 게시글id 가져오기
     const { _ids, count, searchSuccess } =
-      await this.searchService.getPostsIdsByHashtag(data);
+      await this.searchService.getPostsIdsByHashtag({
+        page: data.page,
+        hashtag: lowerTag,
+      });
 
     if (searchSuccess === false) {
       return { searchSuccess };

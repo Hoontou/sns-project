@@ -31,8 +31,8 @@ export class SignUpDto extends SignInDto {
   @MaxLength(10, {
     message: 'username이 10글자를 초과했어요.',
   })
-  @Matches(/^[a-zA-Z0-9]*$/, {
-    message: 'username에는 영어와 숫자만 가능해요.',
+  @Matches(/^[a-z0-9]+$/, {
+    message: 'username에는 영어 소문자와 숫자만 가능해요.',
   })
   username: string;
 }

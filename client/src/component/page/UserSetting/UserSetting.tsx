@@ -185,7 +185,7 @@ const UserSetting = () => {
           <ChangeImg img={img} />
           <hr></hr>
           <div>
-            <p>계정 이름. 영어랑 숫자만, 3~10자 입력가능</p>
+            <p>계정 이름. 영어 소문자랑 숫자만, 3~10자 입력가능</p>
 
             <TextField
               sx={{ m: 1, width: '30ch' }}

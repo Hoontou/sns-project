@@ -4,10 +4,10 @@ import Navbar from '../../common/Navbar/Navbar';
 import SearchPostList from './SearchPostList';
 import { authHoc } from '../../../common/auth.hoc';
 
-const hasSpecialCharacters = (input: string): boolean => {
-  const specialCharactersRegex = /[^a-zA-Z0-9]/;
+export const hasSpecialCharacters = (input: string): boolean => {
+  const specialCharactersRegex = /^[0-9a-zA-Z\u3131-\uD79D]+$/;
 
-  return specialCharactersRegex.test(input);
+  return !specialCharactersRegex.test(input);
 };
 
 //커밋로그
@@ -47,14 +47,16 @@ const SearchPostsByHashtagResultPage = () => {
       style={{ width: '90%', margin: '0.7rem auto', paddingBottom: '3.5rem' }}
     >
       {/* 상단 hashtag 이름, count 보여주고 */}
-      <div style={{ fontSize: '2.5rem' }}>{`#${targetHashtag}`}</div>
+      <div
+        style={{ fontSize: '2.5rem' }}
+      >{`#${targetHashtag?.toLowerCase()}`}</div>
       <div style={{ marginTop: '-0.6rem', marginBottom: '-0.5rem' }}>
         게시물 {totalPostCount}
       </div>
       <hr></hr>
       {/* 아래 feed처럼 postlist 띄우고 */}
       <SearchPostList
-        targetHashtag={targetHashtag}
+        targetHashtag={targetHashtag?.toLowerCase()}
         setSearchSuccess={setSearchSuccess}
         setTotalPostCount={setTotalPostCount}
       />

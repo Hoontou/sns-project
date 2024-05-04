@@ -68,13 +68,16 @@ export class ElasticIndex {
       id: postId,
       body: postDoc,
     });
+
     if (!postDoc.tags) {
       return;
     }
 
-    //삽입 후 tags가 있다면, 순회하면서 엘라스틱에서 존재하는 태그인지 체크
+    //삽입 후 tags가 있다면, 처리요청
     for (const tag of postDoc.tags.split(' ')) {
       if (this.hasSpecialCharacters(tag)) {
+        //특수문자 포함돼 있다면 처리안함.
+        this.logger.debug('tag에 특수문자 있음, 저장안함');
         continue;
       }
 
@@ -359,8 +362,8 @@ export class ElasticIndex {
   }
 
   private hasSpecialCharacters(input: string): boolean {
-    const specialCharactersRegex = /[^a-zA-Z0-9]/;
+    const specialCharactersRegex = /^[0-9a-zA-Z\u3131-\uD79D]+$/;
 
-    return specialCharactersRegex.test(input);
+    return !specialCharactersRegex.test(input);
   }
 }

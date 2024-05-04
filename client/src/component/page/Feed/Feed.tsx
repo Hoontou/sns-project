@@ -6,6 +6,7 @@ import Postlist from '../../common/Post/Postlist';
 import Navbar from '../../common/Navbar/Navbar';
 import Spinner from '../../../common/Spinner';
 import { axiosInstance } from '../../../App';
+import { hasSpecialCharacters } from '../Search/SearchPostsByHashtagResultPage';
 
 export const emptyUserInfo: UserInfo = {
   userId: '',
