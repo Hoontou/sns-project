@@ -124,7 +124,7 @@ export class MockDataService {
           comment: titles[Math.floor(Math.random() * titles.length)],
         });
       }
-      await this.delay(3000);
+      await this.delay(5000);
     }
     return 'completed';
   }
@@ -188,7 +188,7 @@ export class MockDataService {
           postOwnerUserId: String(userId),
         });
       }
-      await this.delay(3000);
+      await this.delay(5000);
     }
 
     return 'completed';
