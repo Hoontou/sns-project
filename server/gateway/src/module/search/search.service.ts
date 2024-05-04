@@ -54,7 +54,6 @@ export class SearchService {
     //post DOC 삽입. 태그일치 검색을 위한 tag문자열, 전문검색을 위한 title 전문
     const postDoc: SnsPostsDocType = {
       title: postDto.title.replace(/[@#]/g, '').toLowerCase(), //검색에 잘 잡히게 태그문자열 삭제
-      createdAt: new Date(), //이거 굳이 필요한지 고민중임.
       tags: hashtags ? [...new Set(hashtags)].join(' ') : undefined,
     };
 
