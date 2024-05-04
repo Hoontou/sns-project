@@ -25,7 +25,7 @@ export class PostLikeCollection {
 
   async addLike(data: { userId: number; postId: string }) {
     const newOne = new this.postLikeModel({
-      userId: crypter.decrypt(data.userId),
+      userId: data.userId,
       postId: data.postId,
     });
     await newOne
