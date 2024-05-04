@@ -36,25 +36,19 @@ export class SearchService {
   updateUser(user_id: string, form: SnsUsersUpdateForm) {
     return this.elasticIndex.updateUserDoc(
       user_id,
-      this.parseLowerFormForUpdateUser(form),
+      this.parseToLowerFormForUpdateUser(form),
     );
   }
 
-  //업로드 메서드로부터 오는 해시태그 핸들링 요청
-  //해시태그 존재여부 체크후 없으면 추가,
-  //해시태그가 사용된 횟수 카운트? 필요할까 업데이트가 꽤 많을듯
-  //해시태그 추출, postId와 해시태그 나열해서 엘라스틱에 저장
-  /**해시태그 엘라스틱에 등록, 유저태그 알림요청 alert에 전송 */
-  async handlePostTag(postDto: PostDto) {
-    //title로부터 해시태그만을 추출, 소문자로 파싱
-    const hashtags = postDto.title.match(/#\S+/g)?.map((item) => {
+  async indexTitleAndHashtags(postDto: PostDto) {
+    const parsedHashtags = postDto.title.match(/#\S+/g)?.map((item) => {
       return item.substring(1).toLowerCase();
     });
 
     //post DOC 삽입. 태그일치 검색을 위한 tag문자열, 전문검색을 위한 title 전문
     const postDoc: SnsPostsDocType = {
       title: postDto.title.replace(/[@#]/g, '').toLowerCase(), //검색에 잘 잡히게 태그문자열 삭제
-      tags: hashtags ? [...new Set(hashtags)].join(' ') : undefined,
+      tags: parsedHashtags ? [...new Set(parsedHashtags)].join(' ') : undefined,
     };
 
     await this.elasticIndex.insertPostDoc(postDto.postId, postDoc);
@@ -148,6 +142,7 @@ export class SearchService {
     return { searchedTags: tagsFetchedCount };
   }
 
+  /**not used yet */
   async deletePost(data) {
     try {
       const { body: targetDoc } = await this.elasticIndex.client.get({
@@ -249,7 +244,7 @@ export class SearchService {
     return resultList;
   }
 
-  private parseLowerFormForUpdateUser(
+  private parseToLowerFormForUpdateUser(
     form: SnsUsersUpdateForm,
   ): SnsUsersUpdateForm {
     const tmpUsernameObj = form.username

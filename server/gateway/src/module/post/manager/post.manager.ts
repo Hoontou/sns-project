@@ -150,14 +150,17 @@ export class PostManager {
       title: content.title,
     };
     //태그 핸들링 요청, 테이블 삽입 요청, 유저태그 알람전송 요청
-    await this.searchService.handlePostTag(postDto);
-    this.postRepository.addPost(postDto);
-    this.alertService.sendUserTagAlertIfExist({
-      type: 'post',
-      userId: Number(crypter.decrypt(postDto.userId)),
-      text: postDto.title,
-      whereId: postDto.postId,
-    });
+    await Promise.all([
+      this.searchService.indexTitleAndHashtags(postDto),
+      this.postRepository.addPost(postDto),
+      this.alertService.sendUserTagAlertIfExist({
+        type: 'post',
+        userId: Number(crypter.decrypt(postDto.userId)),
+        text: postDto.title,
+        whereId: postDto.postId,
+      }),
+    ]);
+
     return;
   }
 
