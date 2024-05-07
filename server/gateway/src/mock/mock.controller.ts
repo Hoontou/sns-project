@@ -35,4 +35,14 @@ export class MockDataController {
   addMockLikes() {
     return this.mockDataService.addMockLikes();
   }
+
+  @Get('/updateMockUserInfo')
+  updateMockUserInfo() {
+    return this.mockDataService.updateMockUserInfo();
+  }
+
+  @Get('/addMockFollowToTest123456')
+  addMockFollowToTest123456() {
+    return this.mockDataService.addMockFollowToTest123456();
+  }
 }

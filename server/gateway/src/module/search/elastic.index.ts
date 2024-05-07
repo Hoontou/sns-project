@@ -10,9 +10,12 @@ import {
   awsElasticSearch,
 } from '../../configs/elascit.config';
 import {
+  PostIndexSearchResult,
   SnsPostsDocType,
+  SnsTagsDocType,
   SnsUsersDocType,
   SnsUsersUpdateForm,
+  UserIndexSearchResult,
 } from './types/search.types';
 import { HashtagCollection } from './repository/hashtag.collection';
 
@@ -129,10 +132,10 @@ export class ElasticIndex {
   }
 
   /** 일치하는 태그를 가지고 있는 게시물 검색, 최근삽입 순으로 가져옴*/
-  getPostsByHashtag(page: number, hashtag: string) {
+  async getPostsByMatchHashtag(page: number, hashtag: string) {
     const pageSize = 12; // 페이지당 수
 
-    return this.client.search({
+    const result = await this.client.search({
       index: this.SnsPostsIndex,
       body: {
         from: page * pageSize, // 시작 인덱스 계산
@@ -151,13 +154,24 @@ export class ElasticIndex {
         ],
       },
     });
+
+    const post_ids: string[] = result.body.hits.hits.map(
+      (item: PostIndexSearchResult) => {
+        return item._id;
+      },
+    );
+
+    return { post_ids };
   }
 
   /**게시글의 title에 string을 접두사로 하는 단어가 있으면 가져옴 */
-  async searchPostsByTitle(page: number, searchString: string) {
+  async searchPostsByTitle(
+    page: number,
+    searchString: string,
+  ): Promise<{ post_ids: string[] }> {
     const pageSize = 12; // 페이지당 수
 
-    const res = await this.client.search({
+    const result = await this.client.search({
       index: this.SnsPostsIndex,
       body: {
         from: page * pageSize, // 시작 인덱스 계산
@@ -175,12 +189,18 @@ export class ElasticIndex {
       },
     });
 
-    return res;
+    const post_ids: string[] = result.body.hits.hits.map(
+      (item: PostIndexSearchResult) => {
+        return item._id;
+      },
+    );
+
+    return { post_ids };
   }
 
   /**prefix로 우선적으로 찾아보고, size가 남으면 와일드 카드로도 찾아봄*/
-  searchTags(page: number, size: number, searchString: string) {
-    return this.client.search({
+  async searchTags(page: number, size: number, searchString: string) {
+    const result = await this.client.search({
       index: this.SnsTagsIndex,
       body: {
         from: page * size, // 시작 인덱스 계산
@@ -199,6 +219,12 @@ export class ElasticIndex {
         },
       },
     });
+
+    const searchedTags = result.body.hits.hits.map((item) => {
+      return item._source;
+    }) as SnsTagsDocType[];
+
+    return { searchedTags };
   }
 
   decrementPostCountOfHashtag(tag: string) {
@@ -220,15 +246,14 @@ export class ElasticIndex {
   async searchUserByString(
     page,
     searchString,
-  ): Promise<
-    {
-      userId: number;
+  ): Promise<{
+    searchedUserList: {
       username: string;
       introduce: string;
       img: string;
       introduceName: string;
-    }[]
-  > {
+    }[];
+  }> {
     const pageSize = 20; // 페이지당 수
 
     const wildString = '*' + searchString + '*';
@@ -265,38 +290,13 @@ export class ElasticIndex {
       },
     });
 
-    const userList: {
-      userId: number;
-      username: string;
-      introduce: string;
-      img: string;
-      introduceName: string;
-    }[] = result.body.hits.hits.map((item) => {
-      return item._source;
-    });
-
-    return userList;
-  }
-  /**prefix로 우선적으로 찾아보고, size가 남으면 와일드 카드로도 찾아봄*/
-  searchUsername(size: number, searchString: string) {
-    return this.client.search({
-      index: this.SnsUsersIndex,
-      body: {
-        size: size,
-        query: {
-          bool: {
-            should: [
-              {
-                prefix: { username: searchString },
-              },
-              {
-                wildcard: { username: '*' + searchString + '*' },
-              },
-            ],
-          },
-        },
+    const userList: SnsUsersDocType[] = result.body.hits.hits.map(
+      (item: UserIndexSearchResult) => {
+        return item._source;
       },
-    });
+    );
+
+    return { searchedUserList: userList };
   }
 
   async init() {

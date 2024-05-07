@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Dispatch, useEffect } from 'react';
 import { Avatar, List, ListItem, ListItemAvatar } from '@mui/material';
 import sample from '../../../asset/sample1.jpg';
 import { requestUrl } from '../../../common/etc';
@@ -145,8 +145,20 @@ const MainSearchResultModal = (props: {
       }}
     >
       {props.spin && (
-        <div style={{ position: 'absolute', top: '40%', left: '45%' }}>
-          <Spinner />
+        <div
+          style={{
+            fontSize: '1.5rem',
+            color: 'gray',
+            justifyContent: 'center',
+            display: 'flex',
+            marginTop: '7rem',
+            paddingBottom: '5rem',
+            marginLeft: '-3rem',
+          }}
+        >
+          <div style={{ position: 'absolute', top: '40%', left: '45%' }}>
+            <Spinner />
+          </div>
         </div>
       )}
       {!props.spin && renderItem}

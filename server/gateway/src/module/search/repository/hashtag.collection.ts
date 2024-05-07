@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { HashtagDocument } from './hashtag.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -33,7 +33,7 @@ export class HashtagCollection {
     if (!doc) {
       console.log('cannot find hashtag doc on mongo');
       console.trace();
-      throw new Error('cannot find hashtag doc on mongo');
+      throw new NotFoundException('cannot find hashtag doc on mongo');
     }
     return doc;
   }

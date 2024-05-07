@@ -12,6 +12,8 @@ import { pageItemLen } from '../../common/Post/Postlist';
 import { axiosInstance } from '../../../App';
 import { MetadataSchemaType } from 'sns-interfaces';
 import { staticImgServer } from '../../../common/randomImage';
+import { BackSpin } from '../../../common/BackSpin';
+import { useNavigate } from 'react-router-dom';
 
 //targetId가 없으면 내 피드로 접근했다는 뜻.
 //내 포스트를 가져오면 됨.
@@ -20,6 +22,7 @@ const SearchPostList = (props: {
   setSearchSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   setTotalPostCount: React.Dispatch<React.SetStateAction<number>>;
 }) => {
+  const navigate = useNavigate();
   const [spin, setSpin] = useState<boolean>(true);
   const [posts, setPosts] = useState<MetadataSchemaType[]>([]);
   const [open, setOpen] = useState(false);
@@ -89,7 +92,8 @@ const SearchPostList = (props: {
           return;
         });
     } catch (error) {
-      //아직 에러처리 생각안함
+      alert('해시태그가 존재하지 않거나 잘못된 접근입니다.');
+      navigate(-1);
       return;
     } finally {
       setSpin(false);
@@ -128,7 +132,7 @@ const SearchPostList = (props: {
 
   return (
     <div>
-      {spin && 'waiting...'}
+      {spin && <BackSpin msg='게시물을 가져오는 중' />}
       {!spin && posts.length === 0 && (
         <div
           style={{

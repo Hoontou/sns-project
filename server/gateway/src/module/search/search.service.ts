@@ -5,7 +5,6 @@ import {
   SearchedUser,
   SearchResult,
   SnsPostsDocType,
-  SnsTagsDocType,
   SnsUsersDocType,
   SnsUsersUpdateForm,
 } from './types/search.types';
@@ -20,7 +19,9 @@ export class SearchService {
   constructor(
     private elasticIndex: ElasticIndex,
     private hashtagCollection: HashtagCollection,
-  ) {}
+  ) {
+    this.searchHashtagsBySearchString({ searchString: 'arawr', page: 0 });
+  }
 
   /**색인, 검색을 위해 username, introName은 소문자로 파싱 */
   insertUser(user_id: string, userDoc: SnsUsersDocType) {
@@ -47,7 +48,8 @@ export class SearchService {
 
     //post DOC 삽입. 태그일치 검색을 위한 tag문자열, 전문검색을 위한 title 전문
     const postDoc: SnsPostsDocType = {
-      title: postDto.title.replace(/[@#]/g, '').toLowerCase(), //검색에 잘 잡히게 태그문자열 삭제
+      //검색에 잘 잡히게 태그문자열 삭제
+      title: postDto.title.replace(/[@#]/g, '').toLowerCase(),
       tags: parsedHashtags ? [...new Set(parsedHashtags)].join(' ') : undefined,
     };
 
@@ -62,49 +64,41 @@ export class SearchService {
     count: number;
     searchSuccess: boolean;
   }> {
-    const lowerHashtag = data.hashtag.toLowerCase();
+    const lowerTag = data.hashtag.toLowerCase();
 
-    const tagInfo: HashtagDocType =
+    const hashtagDoc: HashtagDocType =
       data.page === 0
-        ? await this.hashtagCollection.getTagDocByTagName(lowerHashtag)
+        ? await this.hashtagCollection.getTagDocByTagName(lowerTag)
         : { tagName: data.hashtag, count: 0 };
 
-    if (tagInfo === undefined) {
+    if (hashtagDoc === undefined) {
       return { searchSuccess: false, _ids: [], count: 0 };
     }
 
-    const result = await this.elasticIndex.getPostsByHashtag(
+    const getResult = await this.elasticIndex.getPostsByMatchHashtag(
       data.page,
-      lowerHashtag,
+      lowerTag,
     );
 
-    const postIdList: string[] = result.body.hits.hits.map((item) => {
-      return item._id;
-    });
-
     return {
-      _ids: postIdList,
-      count: tagInfo.count,
+      _ids: getResult.post_ids,
+      count: hashtagDoc.count,
       searchSuccess: true,
     };
   }
 
-  async searchPostIdsBySearchString(data: {
+  async searchPostsBySearchString(data: {
     searchString: string;
     page: number;
   }): Promise<{
     _ids: string[];
   }> {
-    const result = await this.elasticIndex.searchPostsByTitle(
+    const searchResult = await this.elasticIndex.searchPostsByTitle(
       data.page,
       data.searchString.toLowerCase(),
     );
 
-    const postIdList: string[] = result.body.hits.hits.map((item) => {
-      return item._id;
-    });
-
-    return { _ids: postIdList };
+    return { _ids: searchResult.post_ids };
   }
 
   async searchHashtagsBySearchString(data: {
@@ -118,22 +112,18 @@ export class SearchService {
   }> {
     const pageSize = 20;
 
-    const result = await this.elasticIndex.searchTags(
+    const { searchedTags } = await this.elasticIndex.searchTags(
       data.page,
       pageSize,
       data.searchString.toLowerCase(),
     );
 
-    const searchedTagList = result.body.hits.hits.map((item) => {
-      return item._source;
-    }) as SnsTagsDocType[];
-
-    if (searchedTagList === undefined) {
+    if (searchedTags === undefined) {
       return { searchedTags: [] };
     }
 
     const tagsFetchedCount: SearchedHashtag[] = await Promise.all(
-      searchedTagList.map(async (i) => {
+      searchedTags.map(async (i) => {
         const count = await this.hashtagCollection.getTagCountBy_id(i.objId);
         return { tagName: i.tagName, count };
       }),
@@ -142,7 +132,6 @@ export class SearchService {
     return { searchedTags: tagsFetchedCount };
   }
 
-  /**not used yet */
   async deletePost(data) {
     try {
       const { body: targetDoc } = await this.elasticIndex.client.get({
@@ -185,25 +174,23 @@ export class SearchService {
       introduceName: string;
     }[];
   }> {
-    const userList = await this.elasticIndex.searchUserByString(
-      data.page,
-      data.searchString.toLowerCase(),
-    );
+    const { searchedUserList }: { searchedUserList: SnsUsersDocType[] } =
+      await this.elasticIndex.searchUserByString(
+        data.page,
+        data.searchString.toLowerCase(),
+      );
 
-    if (userList.length === 0) {
+    if (searchedUserList.length === 0) {
       return { userList: [] };
     }
 
     return {
-      userList: userList.map((i) => {
-        return { ...i, userId: undefined };
-      }),
+      userList: searchedUserList,
     };
   }
 
   async searchUserOrHashtag(string: string): Promise<SearchResult> {
-    const type = string.at(0);
-    const searchString = string.substring(1).toLowerCase();
+    const { type, searchString } = this.parseSearchString(string);
 
     const result =
       type === '#'
@@ -213,17 +200,33 @@ export class SearchService {
     return { resultList: result, type: type === '#' ? 'hashtag' : 'user' };
   }
 
+  private parseSearchString(string: string): {
+    searchString: string;
+    type: '#' | '@';
+  } {
+    const type = string.at(0) === '#' ? '#' : '@';
+
+    if (type === '#') {
+      return { searchString: string.substring(1).toLowerCase(), type };
+    }
+
+    return {
+      searchString: (type === '@' ? string.substring(1) : string).toLowerCase(),
+      type,
+    };
+  }
+
   private async searchHashtag(string: string): Promise<SearchedHashtag[]> {
-    const pageSize = 10;
+    const pageSize = 20;
 
-    const result = await this.elasticIndex.searchTags(0, pageSize, string);
-
-    const resultList = result.body.hits.hits.map((item) => {
-      return item._source;
-    }) as SnsTagsDocType[];
+    const { searchedTags } = await this.elasticIndex.searchTags(
+      0,
+      pageSize,
+      string,
+    );
 
     const tagsFetchedCount: SearchedHashtag[] = await Promise.all(
-      resultList.map(async (i) => {
+      searchedTags.map(async (i) => {
         const count = await this.hashtagCollection.getTagCountBy_id(i.objId);
         return { tagName: i.tagName, count };
       }),
@@ -233,15 +236,9 @@ export class SearchService {
   }
 
   private async searchUser(string: string): Promise<SearchedUser[]> {
-    const pageSize = 10;
+    const result = await this.elasticIndex.searchUserByString(0, string);
 
-    const result = await this.elasticIndex.searchUsername(pageSize, string);
-
-    const resultList = result.body.hits.hits.map((item) => {
-      return item._source;
-    }) as SearchedUser[];
-
-    return resultList;
+    return result.searchedUserList;
   }
 
   private parseToLowerFormForUpdateUser(

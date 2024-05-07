@@ -10,6 +10,7 @@ import { AlertService } from '../alert/alert.service';
 import { FollowCollection } from './repository/follow.collection';
 import { PostLikeSchemaDefinition } from './repository/schema/postLike.schema';
 import { CocommentLikeSchemaDefinition } from './repository/schema/cocommentLike.schema';
+import { CommentLikeSchemaDefinition } from './repository/schema/commentLike.schema';
 
 @Injectable()
 export class FflService {
@@ -236,30 +237,40 @@ export class FflService {
     commentLikedList: boolean[];
   }> {
     //각각의 댓글에 좋아요 저장된거 가져옴
-    const likesList = await this.commentLikeCollection.getCommentLiked(data);
+    const likesList: CommentLikeSchemaDefinition[] =
+      await this.commentLikeCollection.getCommentLiked(data);
 
     if (likesList.length === 0) {
       return {
         commentLikedList: Array(data.commentIdList.length).fill(false),
       };
     }
-    console.log(likesList);
 
     //투포인터로 밀고가면서 좋아요 체크결과 맞으면 true
-    let tmpIndex: number = 0;
-    const tmp = [...data.commentIdList].map((i) => {
-      if (tmpIndex === likesList.length) {
-        return false;
-      }
+    //let을 쓰는게 굉장히 마음에 안들었는데, 차선책으로 클로져로 넣었음.
+    //굳이... 싶긴 하지만..
+    const generateCommentLikedList = (
+      commentIdList: number[],
+      likesList: CommentLikeSchemaDefinition[],
+    ) => {
+      let tmpIndex = 0;
+      return commentIdList.map((i) => {
+        console.log(tmpIndex);
+        if (tmpIndex === likesList.length) {
+          return false;
+        }
 
-      if (i === likesList[tmpIndex].commentId) {
-        tmpIndex += 1;
-        return true;
-      }
-      return false;
-    });
-    console.log(tmp);
-    return { commentLikedList: tmp };
+        if (i === likesList[tmpIndex].commentId) {
+          tmpIndex += 1;
+          return true;
+        }
+        return false;
+      });
+    };
+
+    return {
+      commentLikedList: generateCommentLikedList(data.commentIdList, likesList),
+    };
   }
 
   async getCocommentLiked(data: {
@@ -278,20 +289,31 @@ export class FflService {
       };
     }
 
-    //투포인터로 밀고가면서 좋아요 체크결과 맞으면 true
-    let tmpIndex: number = 0;
-    const tmp = [...data.cocommentIdList].map((i) => {
-      if (tmpIndex === likesList.length) {
-        return false;
-      }
+    const generateCocommentLikedList = (
+      cocommentIdList: number[],
+      likesList: CocommentLikeSchemaDefinition[],
+    ) => {
+      let tmpIndex = 0;
+      return cocommentIdList.map((i) => {
+        console.log(tmpIndex);
+        if (tmpIndex === likesList.length) {
+          return false;
+        }
 
-      if (i === likesList[tmpIndex].cocommentId) {
-        tmpIndex += 1;
-        return true;
-      }
-      return false;
-    });
-    return { cocommentLikedList: tmp };
+        if (i === likesList[tmpIndex].cocommentId) {
+          tmpIndex += 1;
+          return true;
+        }
+        return false;
+      });
+    };
+
+    return {
+      cocommentLikedList: generateCocommentLikedList(
+        data.cocommentIdList,
+        likesList,
+      ),
+    };
   }
 
   async searchUserFfl(data: {

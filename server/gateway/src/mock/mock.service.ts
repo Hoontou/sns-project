@@ -6,6 +6,7 @@ import { AuthService } from 'src/module/auth/auth.service';
 import { FflService } from 'src/module/ffl/ffl.service';
 import { PostService } from 'src/module/post/post.service';
 import { UploadService } from 'src/module/upload/upload.service';
+import { UserService } from 'src/module/user/user.service';
 
 @Injectable()
 export class MockDataService {
@@ -14,6 +15,7 @@ export class MockDataService {
     private uploadService: UploadService,
     private fflService: FflService,
     private postService: PostService,
+    private userService: UserService,
   ) {}
 
   //회원가입
@@ -194,6 +196,64 @@ export class MockDataService {
     return 'completed';
   }
 
+  async updateMockUserInfo() {
+    const lastUserId = await this.getLastUserId();
+
+    for (
+      let currentUserId = 1;
+      currentUserId < lastUserId + 1;
+      currentUserId++
+    ) {
+      const first = firstNames[this.getRandomNum(0, firstNames.length - 1)];
+      const last = lastNames[this.getRandomNum(0, lastNames.length - 1)];
+      const tag = '#' + hashtags[Math.floor(Math.random() * hashtags.length)];
+      const title = titles[Math.floor(Math.random() * titles.length)];
+
+      await this.userService.changeIntroduceName({
+        introduceName: first + last,
+        userId: currentUserId,
+      });
+      await this.userService.changeIntro({
+        userId: currentUserId,
+        intro: tag + '\n' + title,
+      });
+      console.log(`${currentUserId} completed`);
+      await this.delay(500);
+    }
+
+    return 'completed';
+  }
+
+  async addMockFollowToTest123456() {
+    const testUserIds = [201, 202, 203, 204, 205, 206];
+    const lastUserId = await this.getLastUserId();
+
+    for (const currentUserId of testUserIds) {
+      const howMany = this.getRandomNum(20, 35);
+
+      const tmp = Array.from({ length: howMany }, () => {
+        return this.getRandomNum(1, lastUserId);
+      });
+
+      for (const userTo of tmp) {
+        await this.fflService.addFollow({
+          userTo: String(userTo),
+          userFrom: currentUserId,
+        });
+      }
+
+      for (const tmpUserId of testUserIds) {
+        await this.fflService.addFollow({
+          userTo: currentUserId,
+          userFrom: tmpUserId,
+        });
+      }
+      await this.delay(3000);
+    }
+
+    return 'completed';
+  }
+
   private async delay(ms: number) {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
@@ -234,6 +294,35 @@ export class MockDataService {
     return uploadForm;
   }
 }
+
+const firstNames = [
+  '김',
+  '나',
+  '박',
+  '이',
+  '독고',
+  '권',
+  '석',
+  '최',
+  '정',
+  '윤',
+  '장',
+];
+const lastNames = [
+  '용수',
+  '기영',
+  '기철',
+  '덕칠',
+  '덕순',
+  '두팔',
+  '판근',
+  '만수',
+  '만복',
+  '영철',
+  '두식',
+  '재민',
+  '민수',
+];
 const titles: Readonly<string[]> = [
   '내 방 창문은 북쪽을 향해 있어 하루 종일 해가 들지 않어',
   '삭막함에 화분을 키워도 순식간에 시들시들해지잖아',

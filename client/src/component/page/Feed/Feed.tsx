@@ -7,6 +7,7 @@ import Navbar from '../../common/Navbar/Navbar';
 import Spinner from '../../../common/Spinner';
 import { axiosInstance } from '../../../App';
 import { hasSpecialCharacters } from '../Search/SearchPostsByHashtagResultPage';
+import { BackSpin } from '../../../common/BackSpin';
 
 export const emptyUserInfo: UserInfo = {
   userId: '',
@@ -44,7 +45,7 @@ const Feed = () => {
         | { success: false } = res.data;
 
       if (data.success === false) {
-        alert('access denied');
+        alert('cannot found user or access denied');
         navigate('/');
         return;
       }
@@ -59,11 +60,7 @@ const Feed = () => {
 
   return (
     <div style={{ paddingBottom: '3.5rem', width: '97%', margin: 'auto' }}>
-      {spin && (
-        <div style={{ position: 'absolute', left: '45%', top: '30%' }}>
-          <Spinner />
-        </div>
-      )}
+      <BackSpin isOpen={spin} msg='정보를 가져오는 중' />
       {!spin && (
         <>
           <div style={{ width: '95%', margin: '0.7rem auto' }}>

@@ -126,8 +126,8 @@ const UserlistModal = (props: {
         maxWidth={'xs'}
         style={{
           maxHeight: '45rem',
-          position: 'absolute',
-          top: '15%',
+          // position: 'absolute',
+          // top: '15%',
         }}
       >
         <DialogTitle

@@ -36,3 +36,27 @@ export interface SearchedHashtag {
   tagName: string;
   count: number;
 }
+
+export interface UserIndexSearchResult {
+  _index: 'sns.posts';
+  _id: string;
+  _score: null | number;
+  _source: SnsUsersDocType;
+  _sort?: number[];
+}
+
+export interface PostIndexSearchResult {
+  _index: 'sns.posts';
+  _id: string;
+  _score: null | number;
+  _source: SnsPostsDocType;
+  _sort?: number[];
+}
+
+export interface TagIndexSearchResult {
+  _index: 'sns.tags';
+  _id: string;
+  _score: null | number;
+  _source: SnsTagsDocType;
+  _sort?: number[];
+}

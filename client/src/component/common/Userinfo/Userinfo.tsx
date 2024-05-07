@@ -7,6 +7,7 @@ import { UserInfo } from 'sns-interfaces/client.interface';
 import { ReqUser } from 'sns-interfaces';
 import { useEffect, useState } from 'react';
 import ButtonsUnderUserInfo from './ButtonsUnderUserInfo';
+import { renderTitle } from '../Post/PostFooter';
 
 //타겟아이디가 없다? 내 피드에서 온 요청이라는 뜻.
 const Userinfo = (props: {
@@ -28,7 +29,7 @@ const Userinfo = (props: {
   const renderIntro = props.userinfo.introduce
     .split('\n')
     .map((item, index) => {
-      return <div key={index}>{item}</div>;
+      return <div key={index}>{renderTitle(item)}</div>;
     });
   return (
     <div>
