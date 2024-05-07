@@ -142,6 +142,8 @@ const MainSearchResultModal = (props: {
         zIndex: 999,
         backgroundColor: 'white',
         width: '100%',
+        maxHeight: '20rem',
+        overflow: 'auto',
       }}
     >
       {props.spin && (
@@ -177,6 +179,7 @@ const MainSearchResultModal = (props: {
           <span
             onClick={() => {
               navigate(`/search/all/${removeHashIfFirst(props.searchString)}`);
+              window.location.reload();
             }}
           >
             더 찾아보기

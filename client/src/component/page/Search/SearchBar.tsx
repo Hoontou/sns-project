@@ -11,6 +11,7 @@ const SearchBar = (props: {
   openSearchModal: boolean;
   defaultValue?: string;
 }) => {
+  const [isClicked, setIsClicked] = useState<boolean>(false);
   const [searchSocket, setSearchSocket] = useState<Socket | undefined>(
     undefined
   );
@@ -46,23 +47,33 @@ const SearchBar = (props: {
 
   //웹소켓에 검색날리는 effect, 연속입력 대비해서  타임아웃 걸었음
   useEffect(() => {
-    if (searchRequestString.length === 0) {
-      setSearchBarSpin(false);
+    if (isClicked === false) {
+      return;
     }
 
-    connectSocket();
+    if (searchRequestString.length === 0) {
+      props.setOpenSearchModal(false);
+      setSearchBarSpin(false);
+      return;
+    }
 
     //글자없어지면 검색결과 삭제
     //해시태그 검색일 때, 두글자부터 검색시작
-    if (searchRequestString.at(0) === '#' && searchRequestString.length < 2) {
+    if (searchRequestString.at(0) === '#' && searchRequestString.length < 3) {
+      setSearchBarSpin(false);
+      props.setOpenSearchModal(false);
       setSearchResult(undefined);
       return;
     }
     //사람 검색일 때,
-    if (searchRequestString.at(0) !== '#' && searchRequestString.length < 1) {
+    if (searchRequestString.at(0) !== '#' && searchRequestString.length < 2) {
+      setSearchBarSpin(false);
+      props.setOpenSearchModal(false);
       setSearchResult(undefined);
       return;
     }
+
+    props.setOpenSearchModal(true);
 
     //스핀돌리고
     setSearchBarSpin(true);
@@ -152,7 +163,8 @@ const SearchBar = (props: {
     <div>
       <OutlinedInput
         onClick={() => {
-          props.setOpenSearchModal(true);
+          connectSocket();
+          setIsClicked(true);
         }}
         id='outlined-adornment-weight'
         startAdornment={
