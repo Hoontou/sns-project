@@ -19,9 +19,7 @@ export class SearchService {
   constructor(
     private elasticIndex: ElasticIndex,
     private hashtagCollection: HashtagCollection,
-  ) {
-    this.searchHashtagsBySearchString({ searchString: 'arawr', page: 0 });
-  }
+  ) {}
 
   /**색인, 검색을 위해 username, introName은 소문자로 파싱 */
   insertUser(user_id: string, userDoc: SnsUsersDocType) {

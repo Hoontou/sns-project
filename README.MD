@@ -4,6 +4,18 @@ creamisbeast.xyz
 
 인스타그램을 클론코딩 하는 느낌으로 sns을 만들어보자.
 
+### 프로젝트 실행
+
+루트 디렉터리에서
+
+1. docker-compose -f 'db.yml' up
+2. docker-compose up
+3. docker-compose -f 'nginx.yml' up
+
+순서로 docker 띄우고 다 올라오면 localhost 3000번으로 진입.
+
+docker-compose.yml에 프런트 react, 백 서버가 다 있어서 1, 3번은 -d로 올려도 됨.
+
 ### 주요 스택
 
     FRONT - react
