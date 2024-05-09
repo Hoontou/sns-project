@@ -16,6 +16,12 @@ creamisbeast.xyz
 
 docker-compose.yml에 프런트 react, 백 서버가 다 있어서 1, 3번은 -d로 올려도 됨.
 
+### 테스트용 mock data 삽입
+
+mock.controller.ts 에 있는 api를 이용하면 됨.
+
+예시) GET localhost:4000/mock/insertMockUser
+
 ### 주요 스택
 
     FRONT - react
@@ -90,7 +96,7 @@ postgres -> AWS RDS
 
 elasticsearch -> AWS Opensearch
 
-mongoDB -> atlas에 올리려 했지만 클러스터 돈아까워서 ec2에 올렸음
+mongoDB -> atlas
 
 사진 storage는 ms azure 저장소 사용.
 
