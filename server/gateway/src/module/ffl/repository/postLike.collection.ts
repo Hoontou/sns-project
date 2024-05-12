@@ -13,7 +13,7 @@ import {
   userinfo,
   CacheManager,
 } from '../common/userlist.cache.manager';
-import { findMatchingIndices } from './follow.collection';
+import { filterMatchingUser } from './follow.collection';
 @Injectable()
 export class PostLikeCollection {
   private logger = new Logger(PostLikeCollection.name);
@@ -72,7 +72,10 @@ export class PostLikeCollection {
   }
 
   /**좋아요에서 사람검색 */
-  async searchUserLike(data: { targetPostId: string; searchString: string }) {
+  async searchUserLike(data: {
+    targetPostId: string;
+    searchString: string;
+  }): Promise<userinfo[]> {
     const type = 'like';
 
     //캐시에서 가져온다
@@ -84,7 +87,7 @@ export class PostLikeCollection {
 
     if (userList) {
       // this.logger.debug('list is existed, no db request');
-      return findMatchingIndices(userList, data.searchString);
+      return filterMatchingUser(userList, data.searchString);
     }
 
     // this.logger.debug(`missing from ${type} container, loading requested`);

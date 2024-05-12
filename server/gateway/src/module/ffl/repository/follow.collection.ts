@@ -101,13 +101,7 @@ export class FollowCollection {
   async searchUserFollower(data: {
     targetUser: string;
     searchString: string;
-  }): Promise<
-    {
-      username: string;
-      introduceName: string;
-      img: string;
-    }[]
-  > {
+  }): Promise<userinfo[]> {
     const type = 'follower';
     const targetUserId = crypter.decrypt(data.targetUser);
 
@@ -120,7 +114,7 @@ export class FollowCollection {
 
     if (userList) {
       // this.logger.debug('list is existed, no db request');
-      return findMatchingIndices(userList, data.searchString);
+      return filterMatchingUser(userList, data.searchString);
     }
 
     // this.logger.debug(`missing from ${type} container, loading requested`);
@@ -141,7 +135,7 @@ export class FollowCollection {
   async searchUserFollowing(data: {
     targetUser: string;
     searchString: string;
-  }) {
+  }): Promise<userinfo[]> {
     const type = 'following';
     const targetUserId = crypter.decrypt(data.targetUser);
 
@@ -154,7 +148,7 @@ export class FollowCollection {
 
     if (userList) {
       // this.logger.debug('list is existed, no db request');
-      return findMatchingIndices(userList, data.searchString);
+      return filterMatchingUser(userList, data.searchString);
     }
     // this.logger.debug(`missing from ${type} container, loading requested`);
 
@@ -211,8 +205,7 @@ export class FollowCollection {
   }
 }
 
-/**인풋으로 온 리스트 돌면서 prefix로 매칭되는것만 리턴 */
-export const findMatchingIndices = (userList: userinfo[], string: string) => {
+export const filterMatchingUser = (userList: userinfo[], string: string) => {
   return userList.filter((user) => {
     if (user.username.startsWith(string)) {
       return true;
