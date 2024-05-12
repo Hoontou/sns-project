@@ -13,15 +13,17 @@ export const defaultUserinfo: Readonly<userinfo> = {
 };
 
 interface Container {
-  [key: string]: { userList: userinfo[]; timer: NodeJS.Timeout };
+  follower: Map<number, { userList: userinfo[]; timer: NodeJS.Timeout }>;
+  following: Map<number, { userList: userinfo[]; timer: NodeJS.Timeout }>;
+  like: Map<string, { userList: userinfo[]; timer: NodeJS.Timeout }>;
 }
 
 @Injectable()
 export class CacheManager {
-  private containers: { [key: string]: Container } = {
-    follower: {},
-    following: {},
-    like: {},
+  private containers: Container = {
+    follower: new Map(),
+    following: new Map(),
+    like: new Map(),
   };
   private removeCount = 30000; // 30초
 
