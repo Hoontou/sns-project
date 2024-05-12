@@ -242,7 +242,6 @@ export class ElasticIndex {
     });
   }
 
-  /**string을 접두사로 하는 유저를 먼저 가져오고, ~string~의 와일드 카드로 가져옴 */
   async searchUserByString(
     page,
     searchString,
@@ -317,9 +316,8 @@ export class ElasticIndex {
         body: {
           mappings: {
             properties: {
-              // postId: { type: 'text' },
-              title: { type: 'text' },
-              tags: { type: 'text' },
+              title: { type: 'text' }, //한국어 토크나이저 적용.
+              tags: { type: 'text' }, //분석기 적용 안함.
             },
           },
         },
