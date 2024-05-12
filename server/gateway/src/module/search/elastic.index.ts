@@ -276,11 +276,6 @@ export class ElasticIndex {
               },
               {
                 wildcard: {
-                  username: wildString,
-                },
-              },
-              {
-                wildcard: {
                   introduceName: wildString,
                 },
               },

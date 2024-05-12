@@ -44,6 +44,7 @@ export class DirectGateway implements OnGatewayConnection {
   server: Server;
 
   async handleConnection(socket: Socket) {
+    console.log(socket);
     this.logger.debug('direct socket connected');
 
     //1.유저 정보요청 보냄
