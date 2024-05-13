@@ -146,15 +146,12 @@ export class UserRepository {
       }[]
     | undefined
   > {
-    console.log(userIds);
     const query = `
     SELECT ui.username, ui.img, ui."userId", ui.introduce_name
     FROM public.userinfo AS ui
     WHERE ui."userId" IN (${userIds});
     `;
     const result = await pgdb.client.query(query);
-    console.log(result.rows);
-    console.log(result.rows.length);
 
     return result.rows;
   }

@@ -19,15 +19,13 @@ export class AlertCollection {
   ) {}
 
   /**Dto파싱해서 document로 만들어 저장까지 해주는 함수. */
-  saveAlert(
-    alertDto: AlertDto | UploadAlertDto,
-  ): Promise<AlertSchemaDefinition> {
+  saveAlert(alertDto: AlertDto | UploadAlertDto) {
     const newOne = new this.alertModel({
       userId: Number(alertDto.userId),
       content: alertDto.content,
     });
 
-    return newOne
+    newOne
       .save()
       .then((res) => {
         this.logger.debug('alert stored in mongo successfully');
@@ -37,7 +35,7 @@ export class AlertCollection {
         this.logger.error('err when storing alert in mongo');
         throw new Error(err);
       });
-    //Document만들어서 저장까지 해준다. 비동기처리로 하게하고 함수는 그냥 반환.
+    return;
   }
 
   getAllAlerts(
