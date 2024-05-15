@@ -23,6 +23,7 @@ import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../../common/SearchResultModal';
 import { axiosInstance } from '../../../App';
 import { SearchResult } from '../Search/interface';
+import { renderTitle } from '../../common/Post/PostFooter';
 
 const LandingComment = (props: {
   index: number;
@@ -384,7 +385,7 @@ const LandingComment = (props: {
                     {getElapsedTimeString(props.createdAt)}
                   </span>
                   <div style={{ fontSize: '0.9rem' }}>
-                    {props.postFooterContent.title}
+                    {renderTitle(props.postFooterContent.title)}
                   </div>
                 </div>
               </Grid>

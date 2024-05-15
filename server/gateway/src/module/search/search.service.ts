@@ -136,6 +136,7 @@ export class SearchService {
         index: this.elasticIndex.SnsPostsIndex,
         id: data.postId,
       });
+      console.log(targetDoc);
 
       const tags = targetDoc._source.tags;
       // 1. 검색용 데이터를 postIndex에서 삭제
@@ -147,8 +148,8 @@ export class SearchService {
       // 2. 검색용 데이터에 tag가 있다면 해당 tag의 카운터 decre
       if (tags !== undefined) {
         const tagList = tags.split(' ');
-        for (const item of tagList) {
-          await this.elasticIndex.decrementPostCountOfHashtag(item);
+        for (const tagName of tagList) {
+          await this.hashtagCollection.decrementTagCount(tagName);
         }
       }
 

@@ -47,9 +47,9 @@ export class HashtagCollection {
     );
   }
 
-  async decrementTagCount(_id) {
+  async decrementTagCount(tagName) {
     await this.hashtagModel.findOneAndUpdate(
-      { _id },
+      { tagName },
       {
         $inc: { count: -1 },
       },

@@ -227,21 +227,6 @@ export class ElasticIndex {
     return { searchedTags };
   }
 
-  decrementPostCountOfHashtag(tag: string) {
-    return this.client.update({
-      index: this.SnsTagsIndex,
-      id: tag,
-      body: {
-        script: {
-          //https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/update_examples.html
-          //integer값을 증가시키는법
-          lang: 'painless',
-          source: 'ctx._source.count--',
-        },
-      },
-    });
-  }
-
   async searchUserByString(
     page,
     searchString,
