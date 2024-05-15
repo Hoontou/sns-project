@@ -36,6 +36,10 @@ server.register(fastifyStatic, {
   prefix: '/files/', // optional: default '/'
 });
 
+server.get('/hi', (req, reply) => {
+  return 'hi';
+});
+
 server.post('/uploadMockingData', (req, reply) => {
   const body = req.body as { userId: number };
   // reqParserForMocking(body.userId);

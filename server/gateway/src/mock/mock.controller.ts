@@ -5,6 +5,11 @@ import { MockDataService } from './mock.service';
 export class MockDataController {
   constructor(private mockDataService: MockDataService) {}
 
+  @Get('/hi')
+  hi() {
+    return 'hi';
+  }
+
   //회원가입
   @Get('/insertMockUser')
   insertMockUser() {
