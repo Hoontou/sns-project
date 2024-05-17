@@ -19,8 +19,6 @@ const Signin = () => {
   const [openBackSpin, setOpenBackSpin] = useState<boolean>(false);
 
   const tryTestAccount = (target: string) => {
-    alert('다른 사용자가 이 계정으로 로그인 시 당신은 로그인 해제됩니다.');
-
     const testEmail = 'test' + target + '@gmail.com';
     const testPassword = 'test';
 
@@ -141,7 +139,8 @@ const Signin = () => {
         </form>
       </div>
       <hr></hr>
-      <div>Sign in using test accounts</div>
+      <div>테스트 계정으로 진입, 아래 버튼을 누르세요.</div>
+      <div>다른 사용자가 똑같은 계정으로 접근하면 로그아웃 됩니다.</div>
       <Button
         variant='outlined'
         size='medium'
