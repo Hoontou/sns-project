@@ -67,7 +67,6 @@ const Landing = () => {
   useEffect(() => {
     authHoc().then((authRes) => {
       if (authRes.success === false) {
-        alert('Err while Authentication, need login');
         navigate('/signin');
         return;
       }
