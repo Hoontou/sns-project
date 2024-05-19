@@ -104,7 +104,8 @@ export class CommentManager {
       },
     };
 
-    return this.alertService.saveAlert(alertForm);
+    this.alertService.saveAlert(alertForm);
+    return;
   }
 
   async increaseCocommentCount(data: CocommentDto) {

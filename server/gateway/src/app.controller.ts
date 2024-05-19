@@ -27,7 +27,7 @@ export class AppController {
     @Req() req: ExReq,
     @Body() body: { page: number },
   ): Promise<{ last3daysPosts: LandingContent[] }> {
-    return this.appService.landing(req.user.userId, body.page);
+    return this.appService.getLanding(req.user.userId, body.page);
   }
 
   @Post('/userinfo')
@@ -47,6 +47,9 @@ export class AppController {
       }
     | { success: false }
   > {
-    return this.appService.userInfo(req.user.userId, body.targetUsername);
+    return this.appService.getUserInfoForFeed(
+      req.user.userId,
+      body.targetUsername,
+    );
   }
 }

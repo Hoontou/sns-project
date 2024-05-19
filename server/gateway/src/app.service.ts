@@ -19,15 +19,13 @@ export class AppService {
   ) {}
 
   /**랜딩페이지, 팔로우목록의 최근 3일 포스트를 가져온다. */
-  async landing(
+  async getLanding(
     userId: number,
     page: number,
   ): Promise<{
     last3daysPosts: LandingContent[];
   }> {
-    //가져올게 아무것도 없을 시 metadatas.map 에서 오류남. 추후 수정필요.
     //1 팔로우 목록 가져오기
-
     const { userList } = await this.fflService.getMyFollowingUserInfos(userId);
 
     const userIds = userList.map((i) => {
@@ -36,16 +34,13 @@ export class AppService {
     userIds.push(userId);
 
     //2 유저들의 최근3일 meta 가져오기
-    //밑에서 metadata를 해체하기 때문에 ._doc으로 가져와야해서 any로 했음
     const { metadatas }: { metadatas: MetadataDto[] } =
       await this.metadataService.getMetadatasLast3Day({
         userIds,
         page,
       });
 
-    //3 metadata로 PostFooter 가져옴,
-    //재귀적 인데 나중에 성능체크해야할듯 list로 보내는것과.
-
+    //3 metadata로 PostFooter 가져옴.
     const postFooter: PostFooterContent[] = await Promise.all(
       metadatas.map((i) => {
         return this.postService.getPostFooter({
@@ -69,7 +64,7 @@ export class AppService {
   }
 
   /**userinfo(팔로우수, 팔로잉수, 게시글수, 사진, 소개글, username) + 해당유저를 팔로우했는지 정보 리턴해야함. */
-  async userInfo(
+  async getUserInfoForFeed(
     userId: number,
     targetUsername: string | undefined,
   ): Promise<
