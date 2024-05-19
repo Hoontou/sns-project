@@ -51,6 +51,62 @@ const HighlightCocommentPage = () => {
     emptyCocommentContent
   );
 
+  const addLike = (type: 'comment' | 'cocomment') => {
+    if (type === 'comment' && comment !== undefined) {
+      axiosInstance.post('/ffl/addcommentlike', {
+        commentId: comment.commentId,
+      });
+      setComment({
+        ...comment,
+        liked: !comment.liked,
+        likesCount: comment.likesCount + 1,
+      });
+      return;
+    }
+
+    if (cocomment === undefined) {
+      return;
+    }
+
+    axiosInstance.post('/ffl/addcocommentlike', {
+      cocommentId: cocomment.cocommentId,
+    });
+    setCocomment({
+      ...cocomment,
+      liked: !cocomment.liked,
+      likesCount: cocomment.likesCount + 1,
+    });
+    return;
+  };
+
+  const removeLike = (type: 'comment' | 'cocomment') => {
+    if (type === 'comment' && comment !== undefined) {
+      axiosInstance.post('/ffl/removecommentlike', {
+        commentId: comment.commentId,
+      });
+      setComment({
+        ...comment,
+        liked: !comment.liked,
+        likesCount: comment.likesCount - 1,
+      });
+      return;
+    }
+
+    if (cocomment === undefined) {
+      return;
+    }
+
+    axiosInstance.post('/ffl/removecocommentlike', {
+      cocommentId: cocomment.cocommentId,
+    });
+    setCocomment({
+      ...cocomment,
+      liked: !cocomment.liked,
+      likesCount: cocomment.likesCount - 1,
+    });
+    return;
+  };
+
   /**코멘트 가져오기 */
   const getComment = async () => {
     axiosInstance
@@ -272,7 +328,7 @@ const HighlightCocommentPage = () => {
                             <VscHeart
                               fontSize='20px'
                               onClick={() => {
-                                // addLike();
+                                addLike('cocomment');
                               }}
                             />
                           ) : (
@@ -280,7 +336,7 @@ const HighlightCocommentPage = () => {
                               fontSize='20px'
                               style={{ color: 'red' }}
                               onClick={() => {
-                                // removeLike();
+                                removeLike('cocomment');
                               }}
                             />
                           )}
@@ -391,7 +447,7 @@ const HighlightCocommentPage = () => {
                             <VscHeart
                               fontSize='20px'
                               onClick={() => {
-                                // addLike();
+                                addLike('comment');
                               }}
                             />
                           ) : (
@@ -399,7 +455,7 @@ const HighlightCocommentPage = () => {
                               fontSize='20px'
                               style={{ color: 'red' }}
                               onClick={() => {
-                                // removeLike();
+                                removeLike('comment');
                               }}
                             />
                           )}

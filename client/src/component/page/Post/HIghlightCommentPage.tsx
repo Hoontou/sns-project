@@ -99,6 +99,7 @@ const HighlightCommentPage = () => {
   const renderComment = commentItems?.map((content, index) => {
     return (
       <CommentItem
+        disableWriteCommentButton={true}
         content={content}
         key={content.commentId}
         setSubmitForm={setSubmitForm}

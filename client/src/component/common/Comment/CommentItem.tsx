@@ -12,6 +12,7 @@ import CommentMenu from './CommentMenu';
 import { axiosInstance } from '../../../App';
 
 const CommentItem = (props: {
+  disableWriteCommentButton?: boolean;
   postId: string;
   userId: string;
   content: CommentItems;
@@ -162,19 +163,21 @@ const CommentItem = (props: {
                   fontSize: '0.7rem',
                 }}
               >
-                <span
-                  onClick={() => {
-                    props.setSubmitForm({
-                      type: 'cocomment',
-                      commentId: props.content.commentId,
-                      targetUsername: props.content.username,
-                      commentOwnerUserId: props.content.userId,
-                      index: props.index,
-                    });
-                  }}
-                >
-                  답글 달기
-                </span>
+                {props.disableWriteCommentButton !== true && (
+                  <span
+                    onClick={() => {
+                      props.setSubmitForm({
+                        type: 'cocomment',
+                        commentId: props.content.commentId,
+                        targetUsername: props.content.username,
+                        commentOwnerUserId: props.content.userId,
+                        index: props.index,
+                      });
+                    }}
+                  >
+                    답글 달기
+                  </span>
+                )}
               </div>
             )}
           </div>
