@@ -33,9 +33,9 @@ https://www.notion.so/96e1a3db3fd745d497ae8513257e4d29
 ## ERD
 
 postgres ERD
-![postgres erd](./readmeImgs/erd.png)
+![postgres erd](./readmeImgs/ERD.png)
 mongo ERD
-![mongo erd](./readmeImgs/erd2.png)
+![mongo erd](./readmeImgs/ERD2.png)
 
 ## 주요 Backend 코드 위치
 
