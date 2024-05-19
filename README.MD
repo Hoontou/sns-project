@@ -86,5 +86,3 @@ docker-compose.yml에 프런트 react, 백 서버가 다 있어서 1, 3번은 -d
 mock.controller.ts 에 있는 api를 이용하면 됨.
 
 예시) GET localhost:4000/mock/insertMockUser
-
-사진 storage는 ms azure 저장소 사용.
