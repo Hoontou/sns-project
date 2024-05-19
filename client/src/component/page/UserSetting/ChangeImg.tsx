@@ -6,7 +6,6 @@ import { authHoc } from '../../../common/auth.hoc';
 import { resizer } from '../../../common/image.resizer';
 import { requestUrl } from '../../../common/etc';
 import sample from '../../../asset/sample1.jpg';
-import axios from 'axios';
 import { axiosUploadInstance } from '../../../App';
 
 const ChangeImg = (props: { img: string }) => {
@@ -80,8 +79,8 @@ const ChangeImg = (props: { img: string }) => {
       await axiosUploadInstance //업로드 서버로 보낸다.
         .post('/uploaduserimgtoloacl', formData);
     } else {
-      await axios //업로드 서버로 보낸다.
-        .post('http://13.125.255.84:4001/uploaduserimgtoazure', formData);
+      await axiosUploadInstance //업로드 서버로 보낸다.
+        .post('/uploaduserimgtoazure', formData);
     }
 
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
