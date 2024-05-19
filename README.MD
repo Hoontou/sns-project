@@ -1,6 +1,10 @@
-creamisbeast.xyz
+https://creamisbeast.xyz
 
 # sns 프로젝트
+
+배포 도메인
+
+https://creamisbeast.xyz
 
 인스타그램을 클론코딩 하는 느낌으로 sns을 만들어보자.
 

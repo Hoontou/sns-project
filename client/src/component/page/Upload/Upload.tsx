@@ -13,6 +13,7 @@ import { Socket, io } from 'socket.io-client';
 import SearchResultModal from '../../common/SearchResultModal';
 import { SearchResult } from '../Search/interface';
 import { axiosUploadInstance } from '../../../App';
+import axios from 'axios';
 
 export const titleLen = 80;
 
@@ -122,8 +123,8 @@ const Upload = () => {
       await axiosUploadInstance //업로드 서버로 보낸다.
         .post('/uploadtolocal', formData);
     } else {
-      await axiosUploadInstance //업로드 서버로 보낸다.
-        .post('/uploadtoazure', formData);
+      await axios //업로드 서버로 보낸다.
+        .post('http://13.125.255.84:4001/uploadtoazure', formData);
     }
 
     //이거 파일 보내는동안 페이지를 벗어나면 안되나? 알아봐야함.
