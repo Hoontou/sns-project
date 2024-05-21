@@ -12,7 +12,7 @@ https://creamisbeast.xyz
 
 각 페이지별 DEMO
 
-https://www.notion.so/96e1a3db3fd745d497ae8513257e4d29
+https://innovative-persimmon-c0d.notion.site/96e1a3db3fd745d497ae8513257e4d29
 
 ## 기술스택
 
