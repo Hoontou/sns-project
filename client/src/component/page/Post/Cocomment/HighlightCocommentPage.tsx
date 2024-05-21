@@ -551,7 +551,7 @@ const HighlightCocommentPage = () => {
                             <VscHeart
                               fontSize='20px'
                               onClick={() => {
-                                // addLike();
+                                addLike('cocomment');
                               }}
                             />
                           ) : (
@@ -559,7 +559,7 @@ const HighlightCocommentPage = () => {
                               fontSize='20px'
                               style={{ color: 'red' }}
                               onClick={() => {
-                                // removeLike();
+                                removeLike('cocomment');
                               }}
                             />
                           )}

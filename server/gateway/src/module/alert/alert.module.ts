@@ -6,9 +6,14 @@ import { AlertSchema } from './repository/schema/alert.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MessageRepository } from '../direct/repository/message.repository';
 import { UserModule } from '../user/user.module';
+import { ClassSchema, RoomSchema } from './repository/schema/calss.schema';
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'alert', schema: AlertSchema }]),
+    MongooseModule.forFeature([
+      { name: 'alert', schema: AlertSchema },
+      { name: 'Class', schema: ClassSchema },
+      { name: 'Room', schema: RoomSchema },
+    ]),
     forwardRef(() => UserModule),
   ],
   controllers: [AlertController],
