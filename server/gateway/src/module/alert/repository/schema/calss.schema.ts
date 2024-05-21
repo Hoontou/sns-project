@@ -27,11 +27,16 @@ export class Student {
 }
 export const StudentSchema = SchemaFactory.createForClass(Student);
 
+//아래 컬렉션 이름 지정을 Rooms로 하고
+//모듈에서 주입을 위한 name필드는 Room으로 하고
+//populate하는 곳에서는 'room'으로 소문자, 복수형 떼서 해라.
+//다르게 하면 오류뱉는다.
+
 @Schema({ collection: 'Rooms' })
 export class Room {
   _id: Types.ObjectId;
 
-  @Prop({ required: true, type: Number })
+  @Prop({ required: true, unique: true, type: Number })
   roomNum: number;
 }
 export const RoomSchema = SchemaFactory.createForClass(Room);
@@ -43,14 +48,16 @@ export class Class {
   @Prop({ required: true, type: String })
   className: string;
 
-  @Prop({ default: null, type: Types.ObjectId })
-  teacher: Types.ObjectId;
+  //임베디드
+  @Prop({ default: null, type: TeacherSchema })
+  teacher: Teacher;
 
   @Prop({ default: [], type: [StudentSchema] })
-  students: Types.ObjectId;
+  students: Student;
 
+  //참조
   @Prop({ default: null, type: Types.ObjectId, ref: 'Room' })
-  room: Room;
+  room: Types.ObjectId;
 }
 export const ClassSchema = SchemaFactory.createForClass(Class);
 
